@@ -9,7 +9,7 @@ The current project is in its early development steps. Don't expect it to be ful
 
 
 .. image:: ./docs/source/static/screenshot-1.png
-    :width: 300px
+    :align: center
 
 
 **It features:**
