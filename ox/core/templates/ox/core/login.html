@@ -1,0 +1,21 @@
+{% extends "./app.html" %}
+{% load i18n %}
+
+{% block app-container %}
+{% with no_nav=True %}
+{% with no_panels=True %}
+    {{ block.super }}
+{% endwith %}
+{% endwith %}
+{% endblock %}
+
+{% block title %}{% trans "Login into your account" %}{% endblock %}
+
+{% block app-main %}
+<v-container>
+    <h2>{% trans "Login..." %}</h2>
+    {# FIXME: csrf_token not passed #}
+    {% csrf_token %}
+    <ox-login next="{{ request.GET.next }}"/>
+</v-container>
+{% endblock %}

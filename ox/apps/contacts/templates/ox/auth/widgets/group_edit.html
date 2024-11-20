@@ -1,0 +1,21 @@
+{% load i18n %}
+<ox-edit-panel :repo="repos.groups"
+        v-model:value="{{ value|default:"value" }}"
+        icon="mdi-account-multiple" icon-new="mdi-account-multiple-plus">
+    {% block slots %}
+    <template #window-default="{editors, reset, value}">
+        <ox-group-editor @saved="reset" :editors="editors" :initial="value"/>
+    </template>
+
+    <template #tab-users="{value}">
+        <v-tab v-if="value?.id" text="{% trans "Members" %}" value="users"/>
+    </template>
+    <template #window-users="{value}">
+        <ox-group-users :group="value"/>
+    </template>
+
+    <template #actions="bind">
+        {% include "./group_actions.html" %}
+    </template>
+    {% endblock %}
+</ox-edit-panel>

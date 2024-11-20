@@ -1,0 +1,104 @@
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+
+[tool.poetry]
+name = "oxylus"
+description = "Back-office framework."
+version = "0.0.1"
+authors = ["Thomas Baquet <thomas bkfox net>"]
+readme = "README.md"
+license = "GPL-3.0-or-later"
+packages = [
+    { include = "ox" },
+]
+
+classifiers = [
+    "Framework :: Django",
+    "Framework :: Oxylus",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3.11",
+]
+
+
+[tool.poetry.build]
+# script = "oxylus/scripts/build.py"
+
+
+[tool.poetry.dependencies]
+python = "^3.13"
+Django = "^5"
+djangorestframework = "^3"
+django-filter = "^21.1"
+django-model-utils="^4.3"
+django-cities = "^0.6.2"
+ipython = "^8.29.0"
+pyyaml = "^6.0.2"
+
+
+[tool.poetry.group.dev.dependencies]
+pre-commit = "^3.1"
+black = "^23.3"
+ruff = "^0.0"
+pytest = "^7.3"
+pytest-django = "^4.5"
+model-bakery = "^1.17"
+
+[tool.poetry.group.docs.dependencies]
+Sphinx = "^8"
+sphinx-rtd-theme = "^3"
+sphinx-autodoc-typehints = "^2.5"
+
+
+[tool.pytest.ini_options]
+DJANGO_SETTINGS_MODULE = "ox.settings.test"
+python_files = ["tests.py", "test_*.py", "*_tests.py"]
+
+
+[tool.black]
+line-length = 120
+exclude = '''
+    /(
+          \.egg
+        | \.git
+        | \.hg
+        | \.tox
+        | \._build
+        | \.build
+        | \.bulk-out
+        | \.dist
+        | \.__pycache__
+        | \.venv
+        | \.migrations
+        | \.static
+        | \.ox/settings
+        | \.scripts
+    )
+'''
+
+
+[tool.ruff]
+line-length = 120
+exclude = [
+    "egg",
+    "git",
+    "hg",
+    "tox",
+    "_build",
+    "build",
+    "dist",
+    "__pycache__",
+    "venv",
+    "*/migrations",
+    "*/static",
+    "ox/settings",
+    "scripts/",
+]
+
+
+[tool.semantic_release]
+version_variables = ["ox/__init__.py:__version__"]
+version_toml = [
+    "pyproject.toml:tool.poetry.version",
+]

@@ -1,0 +1,6 @@
+{% extends "./actions.html" %}
+{% load i18n %}
+
+{% block actions %}
+<ox-action-model-delete :item="bind.item || bind.value" :button="bind.button"></ox-action-model-delete>
+{% endblock %}

@@ -1,0 +1,40 @@
+@use "./helpers.scss";
+
+@keyframes apploading {
+    from {
+        background-color: rgb(var(--v-theme-background));
+    }
+
+    to {
+        background-color: rgba(var(--v-theme-background), 0.9);
+    }
+}
+
+#loading-placeholder {
+    position: absolute;
+    z-index: 10000;
+    top: 0px;
+    left: 0px;
+    height: 100%;
+    width: 100%;
+    background-color: rgb(18,18,18);
+    display: none;
+
+}
+
+body {
+    &.loading {
+        background-color: rgb(18,18,18);
+        #app {
+            display: none;
+        }
+
+        #loading-placeholder {
+            display: block;
+            animation-duration: 1s;
+            animation-name: apploading;
+            animation-iteration-count: infinite;
+            animation-direction: alternate;
+        }
+    }
+}

@@ -1,0 +1,19 @@
+{% extends "ox/core/settings.html" %}
+{% load static i18n %}
+
+{% block app-nav %}
+<v-list-subheader class="ml-2">{% trans "Users & Groups" %}</v-list-subheader>
+{% block app-nav-auth %}
+<ox-panel-tab name="user-panel" href="{% url "ox_auth:index" %}"
+    title="{% trans "All Users" %}" icon="mdi-account"
+    v-if="context.user.can('auth.view_user')"
+    ></ox-panel-tab>
+<ox-panel-tab name="group-panel" href="{% url "ox_auth:index" %}"
+    title="{% trans "All Groups" %}" icon="mdi-account-multiple"
+    v-if="context.user.can('auth.view_group')"></ox-panel-tab>
+{% endblock %}
+{% endblock %}
+
+
+{% block app-main %}
+{% endblock %}

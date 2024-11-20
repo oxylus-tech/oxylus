@@ -1,0 +1,116 @@
+{% load i18n static ox_utils %}
+{% comment %}
+Base template for all pages.
+
+Context:
+- `app_config`: current AppConfig instance;
+- `app_data`: application data provided by the view;
+- `title`: page title
+- `no_nav`: if true remove applications and user navigation menus
+
+Blocks:
+- head: inside `<head>`
+- head-title: head's `<title>`
+- assets: head's script and stylesheets imports
+- title: page title (displayed in head & app-title)
+- app: inside `<ox-app>`
+- app-container: around `<ox-app>`
+- app-title: application title (slot)
+- app-main: application main content (slot: default)
+- app-nav: application panel tabs (with_panels=1, slot)
+- nav-start: start of navigation (slot)
+- nav-list: navigation list (slot)
+- nav-end: end of navigation (slot)
+- app-bar-right: application level actions (slot)
+
+{% endcomment %}
+<!DOCTYPE html>
+<html>
+    <head>
+    {% block head %}
+        <meta charset="utf-8" />
+        {% if site %}
+            <meta name="application-name" content="ox" />
+            {% if site.description %}
+            <meta name="description" content="{{ site.description }}" />{% endif %}
+            {% if site.keywords %}<meta name="keywords" content="{{ site.keywords }}" />{% endif %}
+            {% if site.generator %}
+            <meta name="generator" content="{{ site.generator }}" />{% endif %}
+            {# {% if site.icon %}<link rel="icon" href="{% thumbnail site.icon 32x32 crop %}" />{% endif %} #}
+        {% endif %}
+
+        <title>
+        {% block head-title %}
+            {% if request.site and request.site.name %}
+            {{ request.site.name }}
+            {% else %}
+            Oxerp
+            {% endif %}
+        {% endblock %}
+        </title>
+
+        {% spaceless %}
+        {% block assets %}
+        {% if app_config and app_config.assets %}
+        {% with app_config.assets as assets %}
+            <script type="importmap">
+                {{ assets.import_map|json|safe }}
+            </script>
+
+            {% for url in assets.css_urls %}
+            <link rel="stylesheet" type="text/css" href="{{ url }}"/>
+            {% endfor %}
+            {% for url in assets.js_urls %}
+            <script type="module" src="{{ url }}"></script>
+            {% endfor %}
+        {% endwith %}
+        {% endif %}
+        {% endblock %}
+        {% endspaceless %}
+    {% endblock %}
+    </head>
+    <body class="loading {% if request.is_mobile %}mobile{% endif %}"
+        data-api-url="{% url "api-index" %}" {% if app_data %}data-app-data="app-data"{% endif %}
+    >
+        {% if app_data %}{{ app_data|json_script:"app-data" }}{% endif %}
+        <div id="app">
+            {% block app-container %}
+            <ox-app api-url="{% url "api-index" %}">
+                {% block app %}
+                <template #title="{context}">
+                    {% block app-title %}
+                        {% block title %}
+                        {% if app_config %}{{ app_config.verbose_name }}{% endif %}
+                        {% endblock %}
+                    {% endblock %}
+                </template>
+
+                {% if not no_nav %}
+                <template #app-bar-right="{context}">{% block app-bar-right %}{% include './components/app_bar_right.html' %}{% endblock %}</template>
+                <template #nav-start="{context}">{% block nav-start %}{% endblock %}</template>
+                <template #nav-list="{context}">
+                    {% block nav-list %}
+                    {% endblock %}
+                    {% block nav-list-settings %}
+                    <v-list-subheader class="ml-2">{% trans "Settings" %}</v-list-subheader>
+                    {% endblock %}
+                </template>
+                <template #nav-end="{context}">{% block nav-end %}{% endblock %}</template>
+                {% endif %}
+
+                <template #default="{context}">{% block app-main %}{% endblock %}</template>
+                {% endblock %}
+            </ox-app>
+            {% endblock %}
+        </div>
+
+        <div id="loading-placeholder">
+            <div class="flex-column height-full">
+                <div class="grow-1">&nbsp;</div>
+                <div class="text-center">
+                    {% trans "Loading..." %}
+                </div>
+                <div class="grow-1">&nbsp;</div>
+        </div>
+    </body>
+</html>

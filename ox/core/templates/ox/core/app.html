@@ -1,0 +1,18 @@
+{% extends "./base.html" %}
+{% load i18n %}
+
+{% block head-title %}
+    {% block title %}{{ block.super }}{% endblock %} | {{ block.super }}
+{% endblock %}
+
+
+{% comment %}
+{% block app %}
+{{ block.super }}
+{% if not no_panels %}
+    <template #app-nav="{context}">{% block app-nav %}{% endblock %}</template>
+{% endif %}
+{% endblock %}
+<ox-component src="{% static "ox_auth/OxUserPanel.vue" %}" is="OxUserPanel">
+</ox-component>
+{% endcomment %}

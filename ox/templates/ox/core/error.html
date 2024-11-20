@@ -1,0 +1,18 @@
+{% extends "./app.html" %}
+{% load i18n %}
+
+{% block title %}
+    {% blocktrans %}{{ code }} oups...{% endblocktrans %}
+{% endblock %}
+
+{% block main %}
+<v-container>
+    <v-alert variant="tonal" type="error"
+            title="{{ title|escape }}"
+            >
+        {{ message }}
+    </v-alert>
+</v-container>
+{# FIXME: csrf_token not passed #}
+{% csrf_token %}
+{% endblock %}

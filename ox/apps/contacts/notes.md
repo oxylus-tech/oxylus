@@ -1,0 +1,11 @@
+# TODO:
+- as data source:
+    - country list:
+        - phone prefix
+        - pycountry info
+        - organisation types
+    - default organisation types
+- load data from static source files
+    -> can be a mechanism in utils:
+        - load data from directory
+        - allow user to add/edit data source/content
