@@ -11,9 +11,6 @@ The current project is in its early development steps. Don't expect it to be ful
 .. image:: ./docs/source/static/screenshot-1.png
     :width: 300px
 
-.. image:: ./docs/source/static/screenshot-2.png
-    :width: 300px
-
 
 **It features:**
 
