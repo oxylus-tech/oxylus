@@ -14,15 +14,15 @@ The current project is in its early development steps. Don't expect it to be ful
 
 **It features:**
 
-    - core runtime application;
-    - extensibility: through Django's views and Vue's components;
-    - applications (mostly planed):
+- core runtime application;
+- extensibility: through Django's views and Vue's components;
+- applications (mostly planed):
 
-        - authentication: users, groups, permissions;
-        - contacts: people, companies, address books management;
-        - user and applications settings;
+    - authentication: users, groups, permissions;
+    - contacts: people, companies, address books management;
+    - user and applications settings;
 
-    - development tools among other things
+- development tools among other things
 
 
 Go to documentation in order to get more information.
