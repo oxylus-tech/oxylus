@@ -1,33 +1,38 @@
-# Oxylus
+Oxylus
+======
 
-Django-based back-office framework. It aims to provide a basic set of applications and to be runnable as a standalone application.
+Oxylus is a web application and framework focused on back-office tools. It relies on the combination power of Django and Vue in order to provide full featured and modern user experience.
 
-This project is distributed under GPL-3.0-or-later license.
+It is fully extensible in order to provide solutions to many use case, and ease their interoperability. Some of them could be in the futures: retail business tools, ai development tools.
 
-
-## Build project
-### Python
-Build uses [Poetry](https://python-poetry.org).
-
-```
-poetry install
-poetry build
-```
-
-Running commands inside virtual environment prefix it with `poetry run`.
+The current project is in its early development steps. Don't expect it to be fully featured and free of bugs. We are at the step of setting up quality assurance on the proof of concept.
 
 
-### Assets
-Build uses [Vite](https://vitejs.dev/). From assets' package directory, run:
+.. image:: ./docs/source/static/screenshot-1.png
+    :width: 300px
 
-```
-npm run build # or watch
-```
-
-Files are generated inside Django application's static directory.
+.. image:: ./docs/source/static/screenshot-2.png
+    :width: 300px
 
 
-## Practices and conventions
+**It features:**
+
+    - core runtime application;
+    - extensibility: through Django's views and Vue's components;
+    - applications (mostly planed):
+
+        - authentication: users, groups, permissions;
+        - contacts: people, companies, address books management;
+        - user and applications settings;
+
+    - development tools among other things
+
+
+Go to documentation in order to get more information.
+
+
+Practices and conventions
+-------------------------
 Here are conventions and practices we want for this project.
 
 ### Root principles
@@ -46,18 +51,27 @@ Here are conventions and practices we want for this project.
 *Remember that code is easy to write, but is even more easy to get dirty. Good design and workflow are necessary as they avoid tons of problems. Providing projects is not a sprint, but a marathon -- a long harcheous journey between development, testing, quality assesment, production usage and debugging.*
 
 
-### Code quality
+Code quality
+------------
+
 - build tools:
+
     - python: poetry is the way;
     - assets: vitejs is the way;
+
 - modularity should be clean in usage:
+
     - extensibility should allow declarative subclassing, using class or instance attributes: this reduces code boilerplate;
     - clear separation of concerns and scope for each (sub-)class, including what should be at a class or instance level;
+
 - performances:
+
     - optimize by design, don't over-optimize;
     - batch operation as much as possible, without implying dirty and unreadable code;
+
 - multi-files modules will only expose public interfaces and classes in their `__init__.py` file;
 - when using external libraries, ensure that:
+
     - project well organised and coded;
     - project is active and won't die anytime soon if not yet dead;
     - maintainers are reactive and a community is behind them;
@@ -65,6 +79,7 @@ Here are conventions and practices we want for this project.
     - regardless whoever they are, people are respected;
 
 Regarding to Django specific conventions:
+
 - translation MUST be integrated;
 - views and templates:
     - exploit the extensibility of Django templates;
@@ -73,7 +88,8 @@ Regarding to Django specific conventions:
 - `QuerySet` should be used to provide batch db helpers;
 
 
-### Project structure
+Project structure
+-----------------
 
 The project is structured as follow:
 - `oxerp/`: application project instance and common tools, such as routers, utility function and classes to be used by applications and project;
