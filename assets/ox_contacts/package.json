@@ -15,7 +15,7 @@
     "@popperjs/core": "^2.11.8",
     "@rollup/plugin-commonjs": "^25.0.8",
     "core-js": "^3.38.1",
-    "oxerp": "file:../../../assets/package.json",
+    "ox": "file:../ox_core/package.json",
     "pinia": "^2.2.2",
     "pinia-orm": "^1.9.2",
     "vue": "^3.4.21",

@@ -1,5 +1,5 @@
 from .dev import *
 
 INSTALLED_APPS = [
-    "ox.tests.app",
+    "tests.app",
 ] + INSTALLED_APPS

@@ -1,10 +1,15 @@
 Oxylus
 ======
-Oxylus is a web application and framework focused on back-office tools. It relies on the combination power of Django and Vue in order to provide full featured and modern user experience.
 
-It is fully extensible in order to provide solutions to many use case, and ease their interoperability. Some of them could be in the futures: retail business tools, ai development tools.
+Oxylus is a web platform and framework focused on providing a back-office integrating the needs
+of companies and institutions. It aims to offer a versatile platform that can be reused for custom
+tools and development.
 
-The current project is in its early development steps. Don't expect it to be fully featured and free of bugs. We are at the step of setting up quality assurance on the proof of concept.
+A lot of tools are domain specific (eg. blogging, eshop, administration, monitoring). Oxylus is a
+home for all of them, and even more: anyone can reuse it.
+
+It provides common toolz out-of-the-box, such as user management, user settings and contacts. Later
+on the way, more will come.
 
 
 .. image:: ./static/screenshot-1.png
@@ -12,19 +17,6 @@ The current project is in its early development steps. Don't expect it to be ful
 
 .. image:: ./static/screenshot-2.png
     :width: 300px
-
-
-**It features:**
-
-    - core runtime application;
-    - extensibility: through Django's views and Vue's components;
-    - applications (mostly planed):
-
-        - authentication: users, groups, permissions;
-        - contacts: people, companies, address books management;
-        - user and applications settings;
-
-    - development tools among other things
 
 
 Documentation
@@ -36,6 +28,46 @@ Documentation
    guide
    api
 
+
+Why do we need Oxylus?
+----------------------
+
+When it comes for enterprise to develop or use IT tools, they have multiple choices: using an already
+existing solution (FLOSS, or proprietary licensed ones), or do things at home. This last choice
+often leads to custom spaghetti code that costs a lot in term of development and technical debt.
+
+Part of it is the lack of a framework that segregate the main layout and workflow to domain specific
+ones. It also leads at the start of a project to reinvent the wheel, with a high probability of
+refactoring what should have been trivial regarding the overall project.
+
+This is where Oxylus enters into action. It provides a framework that integrate custom applications
+into a single interface, while being domain agnostic. This means:
+
+- Reduce the amount of work: no need to worry about creating a complete layout and fullstack integration.
+- Exploit extensibility and reusability: we want to develop reusable applications, by sharing and mutualize
+  efforts towards a digitalized world. Technology should be affordable to anyone: *lets do it*.
+- Ensure quality product: by ensuring a quality we reduce costs due to bugs and lack of documentation.
+  We want clear and complete documentation to anyone. We want quality. We provide a methodology over a
+  product development workflow.
+
+
+Project orientation
+-------------------
+
+There is a huge gap of comprehension between technical and non-technical users. The project here aims
+to reduce this gap at its level: being comprehensive and accessible to both parts.
+
+- Taking in account end-user experience;
+- Document development process as well as the tools used;
+- Provide a working methodology;
+- Follow best practices and deliver quality product;
+
+Technicaly speaking, we provide a stack relying on the power of well known and tested
+existing frameworks. It integrates the power of Django (on the backend) with Vue's one
+(on the frontend).
+
+It allows integrating cutting edge technologies, notably in domain of AI while make it
+accessible to small companies and groups of people.
 
 
 Core Principles
@@ -66,32 +98,6 @@ We must enlight here some frontiers as they may be blur:
     - In order to allow extensibility over templates rendering there still might be an equivalent as django's template.
     - Translation handling is kept under the respective owner of the text (backend or frontend).
 
-
-
-Project Roadmap: MVP
-====================
-
-- [ ] resolve questions raised by POC and *Are we there yet?*
-- [ ] stabilization -- phase 1:
-    - [ ] documentation (including generating docs):
-        - [ ] main documentation
-        - [ ] backend
-        - [ ] frontend
-    - [ ] backend tests
-    - [ ] frontend tests:
-    - [ ] start using typescript
-    - [ ] tools:
-        - frontend project generator
-        - assets tests
-- [ ] expand:
-
-    Start a second simple application ``oxylus_contacts`` in order to improve and
-    stabilize. Version 1 goals:
-
-    - [ ] Contact, Compagnies, assignment
-    - [ ] link to User & groups
-    - [ ] Address book (user & groups)
-    - [ ] views, widgets, actions
 
 
 

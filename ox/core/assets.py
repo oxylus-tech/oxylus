@@ -19,6 +19,7 @@ to have them unfold.
 The entry point for assets are Oxylus' :py:class:`~ox.core.apps.AppConfig` which are looked
 for in order to execute commands or rendering views.
 """
+
 from __future__ import annotations
 
 
@@ -62,7 +63,16 @@ class Asset(Owned):
 
     project_module_dir = settings.BASE_DIR / "ox"
 
-    def __init__(self, name, js="", css="", dev_js="", dist="dist", static_dir=None, app=None):
+    def __init__(
+        self,
+        name: str,
+        js: str = "",
+        css: str = "",
+        dev_js: str = "",
+        dist: str = "dist",
+        static_dir: str = None,
+        app: str = None,
+    ):
         self.name: str = name
         """Asset's package/module name, used as is for generated import map and
         in order to find packages in ``node_modules``."""
@@ -90,7 +100,7 @@ class Asset(Owned):
     def css_url(self):
         return self.css and static(f"{self.static_dir}/{self.css}") or None
 
-    def collect(self, assets: Assets = None, **_) -> AssetPaths | None:
+    def collect(self, assets: Assets | None = None, **_) -> AssetPaths | None:
         """Copy assets into statics if source exists."""
         path = assets.paths.source / "node_modules" / self.name
         if self.dist:

@@ -8,10 +8,18 @@ name = "oxylus"
 description = "Back-office framework."
 version = "0.0.1"
 authors = ["Thomas Baquet <thomas bkfox net>"]
-readme = "README.md"
+readme = "README.rst"
 license = "GPL-3.0-or-later"
 packages = [
     { include = "ox" },
+]
+include = [
+    # assets are provided as npm packages
+    # {path="assets", format="sdist"},
+    {path="docs", format="sdist"},
+    {path="tests", format="sdist"},
+]
+exclude = [
 ]
 
 classifiers = [
@@ -22,8 +30,8 @@ classifiers = [
 ]
 
 
-[tool.poetry.build]
-# script = "oxylus/scripts/build.py"
+[tool.poetry.scripts]
+ox-cookies = "ox_tools.cookies.app:CookiesApp.main"
 
 
 [tool.poetry.dependencies]

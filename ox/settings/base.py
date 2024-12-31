@@ -24,7 +24,6 @@ INSTALLED_APPS = [
     # ox
     "ox.apps.auth",
     "ox.core",
-    "ox.tools",
     # others
     "django.contrib.admin",
     "django.contrib.auth",

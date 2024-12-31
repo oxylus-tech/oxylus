@@ -9,7 +9,7 @@ Oxylus is organised around different parts:
 - backend: django application provides views, templates, API and platform integration.
 - frontend: ``assets`` are built and distributed into ``static``. This is where Vite and Vue enter into action.
 
-The code is organised in order to keep coherency between both sides. Each side handles things its own ways (project buiding, testing, code documentation): this keeps bests practices on. However, we provide utilities in order to integrate frontend into backend (including assets management, see :doc:`Assets <api/core/assets>`).
+The code is organised in order to keep coherency between both sides. Each side handles things its own ways (project buiding, testing, code documentation): this keeps bests practices on. However, we provide utilities in order to integrate frontend into backend (including assets management, see :doc:`Assets <../api/core/assets>`).
 
 *Note:* All oxylus libraries and modules use the abbreviation ``ox`` (as ``ox_core`` for core frontend libraries and AppConfig's label).
 
