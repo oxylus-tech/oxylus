@@ -12,8 +12,23 @@ export const States = {
 
 export type IStateData = {[k: string]: any} | null
 
+
+/**
+ * Colors associated with states
+ */
+export const StateColors = {}
+StateColors[States.NONE] = ''
+StateColors[States.PROCESSING] = 'info'
+StateColors[States.SENDING] = 'info'
+StateColors[States.SENT] = 'success'
+StateColors[States.OK] = 'success'
+StateColors[States.ERROR] = 'error'
+
+
 /**
  * This class handle state management with associated data.
+ *
+ * The different states and methods correspond to {@link States}.
  */
 export default class State {
     state: symbol
@@ -55,6 +70,8 @@ export default class State {
         return this
     }
 
+
+    get color() : string { return StateColors[this.state] }
 
     get isNone() : boolean { return this.state == States.NONE }
     get isOk() : boolean { return this.state == States.OK }

@@ -27,11 +27,12 @@
     </v-sheet>
 </template>
 <script setup>
-import { computed, defineEmits, defineProps } from 'vue'
+import { computed, defineEmits, defineProps, inject } from 'vue'
 
 const emits = defineEmits(['click'])
+const list = inject('list')
+
 const props = defineProps({
-    items: Array,
     itemTitle: String,
     itemValue: String,
     field: String,
@@ -44,6 +45,7 @@ const props = defineProps({
     colorVariant: {type: String, default: 'lighten-2'},
 })
 
+const items = computed(() => list.items)
 
 function color(idx) {
     idx = idx % props.colors.length
@@ -62,8 +64,8 @@ function assign(result, item, val) {
 
 const sorted = computed(() => {
     const result = {}
-    if(props.items)
-        for(var item of props.items) {
+    if(items.value)
+        for(var item of items.value) {
             const vals = item[props.field]
             if(Array.isArray(vals)) {
                 if(vals.length)

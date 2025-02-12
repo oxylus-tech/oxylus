@@ -13,6 +13,7 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+
 from collections import namedtuple
 from functools import cached_property
 from typing import ClassVar
@@ -78,7 +79,7 @@ class Router:
 
     def get_app_urls(self, app, urls: AppUrls) -> list:
         """Return urls for a specific app."""
-        root_url, patterns = app.get_path_label(), []
+        root_url, patterns = app.get_root_url(), []
 
         if urls.urls:
             patterns.append(path(f"{root_url}/", include((urls.urls, app.label))))

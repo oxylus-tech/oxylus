@@ -1,18 +1,28 @@
-export {default as OxAction} from './OxAction.vue'
-export {default as OxActionModelDelete} from './OxActionModelDelete.vue'
-export {default as OxActions} from './OxActions.vue'
-export {default as OxApp} from './OxApp.vue'
-export {default as OxComponent} from './OxComponent.vue'
-export {default as OxFieldDetails} from './OxFieldDetails.vue'
-export {default as OxListFilters} from './OxListFilters.vue'
-export {default as OxListKanban} from './OxListKanban.vue'
-export {default as OxListTable} from './OxListTable.vue'
-export {default as OxLogin} from './OxLogin.vue'
-export {default as OxModelPanel} from './OxModelPanel.vue'
-export {default as OxPanel} from './OxPanel.vue'
-export {default as OxPanelSheet} from './OxPanelSheet.vue'
-// export {default as OxPanelTab} from './OxPanelTab.vue'
-export {default as OxPanelNav} from './OxPanelNav.vue'
-export {default as OxModelEdit} from './OxModelEdit.vue'
-export {default as OxStateAlert} from './OxStateAlert.vue'
-export {default as OxValidationBtn} from './OxValidationBtn.vue'
+import * as ox from './ox.ts'
+import {components as vendor} from 'ox/vendor'
+
+export * from './ox.ts'
+
+
+/**
+ * This is the base app config used for Oxylus' Vue based applicationns.
+ *
+ * It includes Oxylus components and some Vuetify's ones.
+ *
+ *
+ * @example
+ * // Example app.ts for another application.
+ *
+ * import {App} from 'ox/components'
+ * import * as components from './components'
+ *
+ * export default {
+ *     extends: App,
+ *     components,
+ * }
+ */
+export const App = {
+    el: "#app",
+    delimiters: ['[[', ']]'],
+    components: {...ox, ...vendor},
+}

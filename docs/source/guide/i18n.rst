@@ -10,7 +10,7 @@ Client-side
 -----------
 Message are provided under project's root ``public/locales/[locale].json`` files. This allows Vite to copy them at building into django's application ``static`` directory where lies all generated statics.
 
-Lazy loading is done through the ``ox_core.useI18n`` composable. It internally call ``vue-i18n``'s homonymous function, and dynamically load the files based on configured locale (using fallback locale if the user selected one has failed). When locale change, the corresponding file will be loaded.
+Lazy loading is done through the ``ox.useI18n`` composable. It internally call ``vue-i18n``'s homonymous function, and dynamically load the files based on configured locale (using fallback locale if the user selected one has failed). When locale change, the corresponding file will be loaded.
 
 A client application only needs to load thoses files once, for example as the ``ox_core`` does through the ``OxApp`` component. Nested *non-SFC* components can use ``vue-i18n``s ``useI18n`` instead of Oxylus' one. Since SFC components can be embedded into another application, they require to load locale file (thus use ``ox_core.useI18n``).
 
@@ -26,6 +26,7 @@ Here is a list of conventions used in Oxylus:
 
     - ``actions.[name].confirm``: ask for confirmation.
 
+- ``fields.[field]``: field labels as displayed to user.
 - ``filters.[]``: labels used in filters.
 - ``models.[entity]``: model name as displayed to user (where ``[entity]`` is the model's ``entity``). The value should provide pluralization.
 - ``panels.[name]``: panel displayed name (by panel name)..

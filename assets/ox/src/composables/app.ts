@@ -5,24 +5,54 @@ import {User, Model} from '../models'
 import type {Repos} from '../models'
 import { Panel } from './panel'
 import { useModels } from './models'
+import { State } from '../utils'
 import type {IObject} from '../utils'
 
 
+/**
+ * Interface describing application data.
+ *
+ * Application data is initial data passed down to application from
+ * Django generated page.
+ */
 export interface IAppData extends IObject {
     panel: string
     user: IObject
 }
 
+/**
+ * This provide configuration to {@link AppContext}.
+ */
 export interface IApp {
+    /**
+     * Root API url
+     */
     apiUrl?: string
+    /**
+     * Id of `<script>` element containing initial application data.
+     */
     dataEl?: string
+    /**
+     * Models used by application.
+     */
     models?: (typeof Model)[]
+    /**
+     * Extra application data.
+     */
     data?: IAppData
 }
 
 
 /**
- * Provide initial application data.
+ * This class provides context for Oxylus application.
+ *
+ * Which is:
+ * - initial data: this is loaded from `<script>` HTML object.
+ * - models: it will create adequate `pinia-orm/axios` repositories for them.
+ * - panel: current Panel information.
+ *
+ * The context is provided to Vue components in order to allow them
+ * to access global information, such as current user or Panel.
  */
 export class AppContext {
     static reactive(opts: IApp) : IRAppContext {
@@ -31,12 +61,11 @@ export class AppContext {
         return obj
     }
 
-    constructor({apiUrl=undefined, dataEl=undefined, models=undefined, data=undefined}: IApp = {}) {
-        this.apiUrl = apiUrl
-        this.dataEl = dataEl
-        this.models = models
-        this.data = data
+    constructor(opts: IApp = {}) {
+        Object.assign(this, opts)
         this.panel = new Panel()
+        this.state = State.none()
+        this.showState = false
     }
 
     /**
@@ -71,15 +100,38 @@ export class AppContext {
     }
 }
 export interface AppContext extends IApp {
+    /**
+     * Models' repositories
+     */
     repos?: Repos
+    /**
+     * Current panel
+     */
     panel: Panel
+    /**
+     * Application level state. This can be displayed to user using
+     * {@link AppContext.showState}.
+     *
+     * This element can display errors to users.
+     */
+    state: State
+    /**
+     * Show application state to user.
+     */
+    showState: boolean
 }
 export interface IRAppContext extends Reactive<AppContext> {
     user: ComputedRef<User>
 }
 
 
-export function useAppContext(opts: IApp, load: boolean = true): IRAppContext {
+/**
+ * Create a new {@link AppContext} and provide the following values:
+ * - `context`: {@link AppContext} object;
+ * - `user`: current {@link models.User};
+ * - `panel`: application {@link Panel};
+ */
+export function useAppContext(opts: IApp, load: boolean = true): AppContext {
     const obj = AppContext.reactive(opts)
     load && obj.dataEl && obj.load()
 

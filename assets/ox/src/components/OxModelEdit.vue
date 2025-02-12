@@ -3,7 +3,7 @@
         <template v-if="tabs && Object.keys(tabs).length">
             <v-tabs v-model="tab">
                 <slot name="tab.default" v-bind="bind">
-                    <v-tab :text="model?.meta?.verbose" value="model"/>
+                    <v-tab :text="t(`models.${model.entity}`)" value="model"/>
                 </slot>
                 <template v-for="(_, name) in tabs">
                     <slot :name="name" v-bind="bind"></slot>
@@ -30,13 +30,19 @@
 </template>
 <script setup>
 import { computed, ref, defineProps, defineModel, inject, useSlots, watch } from 'vue'
+import { useI18n } from 'ox'
 
 import OxActions from './OxActions.vue'
 import OxPanelSheet from './OxPanelSheet.vue'
 
 import {filterSlots} from '../utils/vue'
 
+const { t } = useI18n()
 const context = inject('context')
+
+const props = defineProps({
+    subtitle: String,
+})
 
 
 // ---- Editors

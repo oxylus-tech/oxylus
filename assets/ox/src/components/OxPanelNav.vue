@@ -2,13 +2,13 @@
     <v-list-item v-if="visible"
         :active="panel.name == props.name"
         :prepend-icon="props.icon" :title="props.title"
-        @click.stop="panel.reset(props.name, props.data, props)"/>
+        @click.stop="panel.show({path: props.path ?? props.name })"/>
 </template>
-<script setup>
+<script setup lang="ts">
 import { computed, defineProps, inject, defineExpose } from 'vue'
-import { panelNavProps } from '../composables'
+import type {IPanelNavProps} from '../composables'
 
-const props = defineProps(panelNavProps)
+const props = defineProps<IPanelNavProps>()
 const panel = inject('panel')
 const visible = computed(() => !props.auto || panel.name == props.name)
 

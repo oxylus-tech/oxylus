@@ -4,9 +4,13 @@ import type { Field } from 'pinia-orm'
 import type { Repository } from '@pinia-orm/axios'
 
 import { reset, State } from '../utils'
+import type { IObject } from '../utils'
 import type { Model } from '../models'
 
 
+/**
+ * Editor class interface.
+ */
 export interface IEditor<T> {
     [index: string]: any
 
@@ -39,8 +43,17 @@ export interface IEditor<T> {
 }
 
 
-export interface IREditor<T> extends Editor<T> {
+/**
+ * Reactive Editor class interface.
+ */
+export interface IREditor<T> extends Reactive<Editor<T>> {
+    /**
+     * Value has been edited.
+     */
     edited: ComputedRef<boolean>
+    /**
+     * Input data are valid.
+     */
     valid: ComputedRef<boolean>
 }
 
@@ -54,29 +67,24 @@ export interface IREditor<T> extends Editor<T> {
  * Default implementation handles raw Object edition, but not saving data to the server.
  * Note: this might lead to errors due to reactivity when returned from composable.
  */
-export class Editor<T> {
-    static reactive<T>({initial, ...opts}: IEditor<T>) : Reactive<IREditor<T>> {
-        const obj = reactive(new this({initial: unref(initial), ...opts})) as Reactive<IREditor<T>>
+export class Editor<T extends IObject> {
+    static reactive<T>({initial, ...opts}: IEditor<T>) : IREditor<T> {
+        const obj = reactive(new this({initial: unref(initial), ...opts})) as IREditor<T>
         obj.edited = computed(() => obj.isEdited())
         // obj.valid = computed(() => obj.isValid())
         isRef(initial) && watch(initial, (v: T) => obj.reset(v))
         return obj
     }
 
-    constructor({initial, name=null, saved=null, url=null, state=new State()}: IEditor<T>,
-                _attrs: {[k: string]: any}={})
+    constructor(attrs: IEditor<T>, _attrs: IObject={})
     {
-        this.initial = initial
-        this.name = name
-        this.saved = saved
-        this.url = url
-        this.state = state
-
-        for(const key in _attrs)
-            this[key] = _attrs[key]
+        Object.assign(this, attrs)
+        Object.assign(this, _attrs)
+        if(!this.state)
+            this.state = new State()
 
         this.value = {} as T
-        this.reset(initial)
+        this.reset(this.initial)
     }
 
     get errors() : any {
@@ -111,6 +119,15 @@ export class Editor<T> {
         return Object.keys(this.value).some(k => this.value[k] != this.initial[k])
     }
 
+    /**
+     * Save data. It will `serialize()` value then `send()` it.
+     *
+     * Note: default implementation does not provide `send()` method
+     * and thus will raise an error.
+     *
+     * @param [value] if provided use this instead of `this.value`.
+     * @return state.
+     */
     async save(value: T|null = null): Promise<State> {
         this.state.processing()
         if(!this.isValid())
@@ -128,8 +145,14 @@ export class Editor<T> {
         return this.state
     }
 
+    /**
+     * Serialize value before sending
+     */
     serialize<R>(value: T): any { return value }
 
+    /**
+     * Send value (not implemented, MUST BE in subclasses).
+     */
     send<D>(_: D): Promise<State> {
         throw "not implemented"
     }
@@ -137,6 +160,9 @@ export class Editor<T> {
 export interface Editor<T> extends IEditor<T> {}
 
 
+/**
+ * ModelEditor interface.
+ */
 interface IModelEditor<T extends Model> extends IEditor<T> {
     repo: Repository
     initial: T & {[k: string]: any}
@@ -216,7 +242,7 @@ export class ModelEditor<T extends Model> extends Editor<T> {
 export function editor({editorClass=Editor, emits=null, panel=null, ...opts}) {
     // provide default saved method
     if(emits)
-        opts.saved ??= ((item, editor) => emits('saved', item, editor))
+        opts.saved ??= ((item: IObject, editor) => emits('saved', item, editor))
 
     const editor = editorClass.reactive(opts)
     if(panel)

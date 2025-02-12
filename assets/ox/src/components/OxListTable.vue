@@ -1,8 +1,8 @@
 <template>
     <v-data-table-server
-            :items="props.list.items" item-index="id" :items-length="props.list.count || props.list.items.length"
-            :loading="props.list.state?.isProcessing"
-            :headers="props.headers"
+            :items="list.items" item-index="id" :items-length="list.count || list.items.length"
+            :loading="list.state?.isProcessing"
+            :headers="headers"
             @update:options="updateOptions">
         <template v-slot:loading>
             <v-skeleton-loader type="table-row@10"></v-skeleton-loader>
@@ -24,28 +24,40 @@
     </v-data-table-server>
 </template>
 <script setup lang="ts">
-import { defineProps, inject, useSlots } from 'vue'
-import { useI18n } from 'vue-i18n'
+import { computed, defineProps, inject, useSlots } from 'vue'
 
-import OxAction from './OxAction.vue'
+import { useI18n, tKeys } from 'ox'
 import { Permissions } from '../models'
 import { filterSlots } from '../utils'
+import OxAction from './OxAction.vue'
 
 const { t } = useI18n()
 const slots = useSlots()
 const itemSlots = filterSlots(slots, 'item.', {exclude: ['item.actions']})
 
 const panel = inject('panel')
+const list = inject('list')
 const permissions = new Permissions('change')
 const props = defineProps({
-    list: Object,
+    // list: Object,
     headers: Array,
     edit: Boolean,
 })
 
 
+const headers = computed(() => {
+    return props.headers.reduce((dst, field) => {
+        dst.push(
+            (typeof(field) == 'string') ?
+            {key: field, title: t(tKeys.field(field))} : field
+        )
+        return dst
+    }, [])
+})
+
+
 function updateOptions(event) {
-    return props.list.fetch({
+    return list.fetch({
         filters: {
             "page": event.page,
             "page_size": event.itemsPerPage,
@@ -55,6 +67,6 @@ function updateOptions(event) {
 }
 
 function runEdit(user, item) {
-    panel.reset('.edit', item)
+    panel.show({path: '.detail.edit', value: item})
 }
 </script>

@@ -1,5 +1,5 @@
 <template>
-    <v-alert v-if="props.state.isNone && slots.none" type="info" variant="outline" class="mb-3"
+    <v-alert v-if="props.state.isNone && slots.none" type="info" variant="tonal" class="mb-3"
             :state="state" :title="noneTitle">
         <slot name="none" :state="state"></slot>
     </v-alert>

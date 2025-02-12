@@ -1,6 +1,6 @@
 import type {Response} from '@pinia-orm/axios'
-import { Model, Meta } from './model.ts'
-import type { IModel } from './model.ts'
+import { Model, Meta } from './model'
+import type { IModel } from './model'
 
 
 export interface IContentType extends IModel {

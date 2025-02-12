@@ -1,4 +1,4 @@
-import { Model as PModel } from 'pinia-orm'
+import { Model as PModel, Relation } from 'pinia-orm'
 
 
 export interface IMeta {
@@ -11,8 +11,7 @@ export interface IMeta {
 
 export class Meta {
     constructor(attrs: IMeta = {app: ""}) {
-        for(const key in attrs)
-            this[key] = attrs[key]
+        Object.assign(this, attrs)
     }
 
     getTitle<M extends Model>(obj: M & {[index:string]: any}): string | null {
@@ -29,6 +28,13 @@ export interface Meta extends IMeta {}
 export interface IModel {
     id: number
 }
+
+
+/**
+ * :js:meth:`Model.getRelatedFields` return type.
+ */
+type IRelations = { [s: string]: Relation }
+
 
 
 export class Model extends PModel {

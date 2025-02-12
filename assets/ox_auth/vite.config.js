@@ -19,7 +19,7 @@ export default defineConfig({
         sourcemap: true,
 
         rollupOptions: {
-            external: ['vue', 'vuex', 'axios', 'ox', 'ox/app', 'ox/components'],
+            external: ['vue', 'vuex', 'axios', 'ox', 'ox/app', 'ox/components', 'ox/vendor'],
             input: {
                 index: "src/index.js",
                 sfc: "src/sfc.js",

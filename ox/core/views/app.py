@@ -78,7 +78,7 @@ class AppView(AppMixin, TemplateView):
             names = []
 
         if hasattr(self, "app_config"):
-            names.append(f"{self.app_config.get_path_label()}/app.html")
+            names.append(f"{self.app_config.get_root_url()}/app.html")
         return names
 
     def get(self, *args, service=None, **kwargs):

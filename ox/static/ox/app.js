@@ -1,12 +1,12 @@
-import { c as t } from "./index-LgL6uci2.js";
-import { v as o } from "./vuetify-RRDtTCor.js";
-const s = o, m = {
+import * as t from "ox/components";
+import { v as o } from "./vuetify-DPZGna4M.js";
+const p = o, s = {
   el: "#app",
   delimiters: ["[[", "]]"],
   components: { ...t, ...o }
 };
 export {
-  m as default,
-  s as vuetifyComponents
+  s as default,
+  p as vuetifyComponents
 };
 //# sourceMappingURL=app.js.map

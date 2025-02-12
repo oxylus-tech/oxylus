@@ -181,7 +181,7 @@ The urls will be prefixed with application :py:attr:`~ox.core.apps.AppConfig.pat
 (defaults to :py:attr:`~ox.core.apps.AppConfig.label`), such as they are prefixed with:
 
 - ``{path_label}/``: for views;
-- ``api/{path_label}``: for api entry points;
+- ``api/{path_label}``: for api entry points. They are namespaced under ``{{ app.label }}-api``, such as for example ``ox_core-api:account``;
 
 For example:
 

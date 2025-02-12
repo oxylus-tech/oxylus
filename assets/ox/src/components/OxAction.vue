@@ -1,5 +1,5 @@
 <template>
-    <template v-if="allowed">
+    <template v-if="action.allowed">
         <v-btn v-if="props.button" variant="text"
             :color="props.color" :icon="props.icon"
             :title="props.title" :aria-label="props.title"
@@ -12,51 +12,21 @@
 </template>
 <script setup lang="ts">
 import {computed, defineProps, defineEmits, inject, toRefs} from 'vue'
-import {useAction} from '../composables'
+import {useAction} from 'ox'
 
-import type {IPermission, Model} from '../models'
-import type {ActionRun, ActionCompleted} from '../composables'
+import type {IPermission, Model} from 'ox'
+import type {ActionRun, ActionCompleted} from 'ox'
+import type {ActionProps} from '../composables/actions'
 
-const props = defineProps<{
-    /**
-     * @property {Model} value - value or model instance.
-     */
-    item: Model
-    /**
-     * @property {String} text - text displayed to user.
-     */
-    title: string
-    /**
-     * @property {String} icon
-     */
-    icon: string
-    /**
-     * @property {String} color
-     */
-    color?: string
-    /**
-     * @property {Boolean} button - display action as a small button
-     */
-    button?: boolean
-    /**
-     * @property {String} confirm - if provided ask user for confirmation before
-     * executing the action.
-     */
-    confirm?: string
-    /**
-     * @property {Array<string | Function>} permissions - required permission to run the action
-     */
-    permissions: IPermission
-    /**
-     * @property {ActionRun} run: function to call when action is executed
-     */
-    run: ActionRun
-}>()
-
+const props = defineProps<ActionProps>()
 
 const emits = defineEmits<{
     completed: ActionCompleted
 }>()
 const context = inject('context')
-const {processing, permissions, allowed, run} = useAction(props, {user: context.user, emits})
+const action = useAction({user: context.user, emits}, props)
+
+async function run(...args) {
+    await action.run(...args)
+}
 </script>

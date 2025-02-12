@@ -71,8 +71,8 @@ ox_assets = Assets(
     Asset("vuetify", css="vuetify.min.css"),
     # note:
     Asset("ox", "ox.js", css="style.css", static_dir="ox"),
-    Asset("ox/app", "app.js", static_dir="ox"),
     Asset("ox/components", "components.js", static_dir="ox"),
+    Asset("ox/vendor", "vendor.js", static_dir="ox"),
     lookup_dirs=[("{BASE_DIR}/assets/ox/", "{BASE_DIR}/ox/static")],
     static_dir="ox",
 )
@@ -97,7 +97,7 @@ class AppConfig(apps.AppConfig):
 
     icon: str = "mdi-home"
     """Material design icon class."""
-    path_label: str = ""
+    root_url: str = ""
     """Provide an alternative to app label when we target application in paths.
 
     For example Oxylus will nest template directories as ``ox/core/``
@@ -111,10 +111,10 @@ class AppConfig(apps.AppConfig):
         self.assets = self.assets.contribute(self)
         # self.meta = self.meta.contribute(self)
 
-    def get_path_label(self):
+    def get_root_url(self):
         """Return path label or label if not set."""
-        if self.path_label:
-            return self.path_label
+        if self.root_url:
+            return self.root_url
         return self.label
 
 

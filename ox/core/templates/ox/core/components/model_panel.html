@@ -4,7 +4,6 @@ Render a panel component.
 Context:
 - `tag="ox-model-panel`: component's tag
 - `attrs`: component's attributes
-- `tabbed`: if true, add `tabbed` attribute to model panel
 - `filters`: if true, add `list-filters` block
 - `actions`: path to item's action django template.
 
@@ -15,7 +14,7 @@ Block:
 
 {% block outer %}
 {% with tag|default:"ox-model-panel" as tag %}
-<{{ tag }} {% if tabbed %}tabbed{% endif %} {{ attrs }}>
+<{{ tag }} {{ attrs }}>
     {% block slots %}
     {% if filters %}
     <template #list.filters="{filters,list}">

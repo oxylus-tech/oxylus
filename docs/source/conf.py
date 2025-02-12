@@ -30,12 +30,17 @@ extensions = [
     "sphinx.ext.autosummary",
     "sphinx_autodoc_typehints",
     "sphinx_rtd_theme",
+    "sphinx_js",
 ]
 
 templates_path = ["_templates"]
 exclude_patterns = []
 
 root_doc = "index"
+
+# --- js doc
+js_language = "typescript"
+js_source_path = "../js/"
 
 
 # -- Options for HTML output -------------------------------------------------

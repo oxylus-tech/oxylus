@@ -16,122 +16,124 @@ export type ActionCompleted<M extends Model, R> = (user: User, item: Model, resu
 export interface ActionProps<M extends Model, R>
 {
     /**
-     * @property {Model} value - value or model instance.
+     * Value or model instance.
      */
     item: M
     /**
-     * @property {String} text - text displayed to user.
+     * Label text displayed to user.
      */
     title: string
     /**
-     * @property {String} icon
+     * Displayed icon
      */
     icon: string
     /**
-     * @property {String} color
+     * Displayed color
      */
     color?: string
     /**
-     * @property {Boolean} button - display action as a small button
+     * Display action as a small button
      */
     button?: boolean
     /**
-     * @property {String} confirm - if provided ask user for confirmation before
-     * executing the action.
+     * If provided, ask user for a confirmation before executing the action.
      */
     confirm?: string
     /**
-     * @property {Array<string | Function>} permissions - required permission to run the action
+     * Required permission to run the action
      */
     permissions: IPermissionItem[]
     /**
-     * @property {ActionRun} run: function to call when action is executed
+     * The function to call when action is executed
      */
     run: ActionRun<M,R>
 }
 
 
 export interface IAction<M extends Model, R> {
+    /**
+     * Wether the action is running.
+     */
     processing: Ref<boolean>
+    /**
+     * List of required {@link Permission} to run the action.
+     */
     permissions: Permissions
+    /**
+     * Wether the user is allowed to run the action.
+     */
     allowed: ComputedRef<boolean>
-    run: (...args: any[]) => Promise<R>
+    /**
+     * Action properties
+     */
+    props: ActionProps<M, R>
 }
 
+/**
+ * Action's parameters, `user` MUST be provided.
+ */
 type ActionOpts = {
+    /**
+     * The user running the action.
+     */
     user: User
+    /**
+     * If provided, emits `completed` once the action has been
+     * executed.
+     */
     emits?: (event: string, ...opts: any[]) => void
 }
 
-export function useAction<M extends Model,R>(props: ActionProps<M,R>, {user, emits=undefined}: ActionOpts) : IAction<M,R> {
-    const processing = ref(false)
-    const {permissions, allowed} = usePermissions(user, props.permissions, props.item)
 
-    async function run(...args: any[]): Promise<any> {
-        if(props.confirm && !confirm(props.confirm))
+/**
+ * An `Action` is a function executable by the user.
+ *
+ * This class provides:
+ * - user permissions check: {@link ActionProps.permissions}, {@link Action.permissions}, {@link Action.allowed}
+ * - running status: {@link Action.processing}
+ * - event emits when action is done: `completed` ({@link ActionCompleted})
+ */
+class Action<M extends Model, R> {
+    constructor(opts: ActionOpts, props: ActionProps<M,R>) {
+        Object.assign(this, opts)
+        this.props = props
+
+        this.processing = ref(false)
+        const perms = usePermissions(this.user, props.permissions, props.item)
+        this.permissions = perms.permissions
+        this.allowed = perms.allowed
+    }
+
+    /**
+     * Execute the action.
+     */
+    async run(...args: any[]): Promise<R> {
+        if(this.props.confirm && !confirm(this.props.confirm))
             return
-        if(!allowed.value)
+        if(!this.allowed.value)
             throw Error(`You are not allowed to execute this action`)
 
-        processing.value = true
-        let result : any = props.run(user, props.item, ...args)
+        this.processing.value = true
+        let result : R = this.props.run(this.user, this.props.item, ...args)
         if(result instanceof Promise)
             result = await result
 
-        processing.value = false
-        if(emits)
-            emits('completed', props.item, ...args)
+        this.processing.value = false
+        if(this.emits)
+            this.emits('completed', this.props.item, ...args)
         return result
     }
-    return { processing, permissions, allowed, run }
 }
 
-
-type modelApiActionOptionFunc<M extends Model> = (user: User, item: M) => object
-type modelApiActionSerialize<M extends Model> = (user: User, item: M) => object
-
-/**
- * Options passed down to `makeModelApiAction` function.
- */
-interface modelApiActionOpts<M extends Model> {
-    repo: Repository<M>
-    /**
-     * @property method - HTTP method
-     */
-    method: string,
-    /**
-     * @property options - request options (as an object or a callable)
-     */
-    options?: {[k: string]: any} | modelApiActionOptionFunc<M>,
-    /**
-     * @property serialize - serialization function before sending object.
-     */
-    serialize?: modelApiActionSerialize<M>,
-    /**
-     * @property url - use this url instead of item's one.
-     */
-    url?: string,
-    /**
-     * @property path - append path to request url
-     */
-    path?: string,
-}
+interface Action<M extends Model, R> extends IAction<M,R> {}
 
 
 /**
- * Create `run` function for action calling model's api.
+ * Create a new {@link Action}.
+ *
+ * Important note: the object is NOT reactive, although some of its
+ * attributes are.
  */
-export function makeModelApiAction<M extends Model, R>(
-    {repo, method, options=undefined, serialize=undefined, url=undefined, path=undefined} : modelApiActionOpts<M>
-) : ActionRun<M,R> {
-    return async function(user: User, item: M) {
-        const args : any[] = [
-            url ?? item.$url(path)
-        ]
-        if(serialize)
-            args.push(serialize(user, item))
-
-        const opts = options instanceof Function ? options(user, item) : options
-        return await repo.api()[method](...args, opts)
-    }
+export function useAction<M extends Model,R>(opts: ActionOpts, props: ActionProps<M,R>) : Action<M,R> {
+    return new Action(opts, props)
 }

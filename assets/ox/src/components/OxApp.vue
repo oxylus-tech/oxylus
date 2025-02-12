@@ -1,5 +1,8 @@
 <template>
     <v-app>
+        <v-snackbar v-model="context.showState" :color="context.state.color" multi-line>
+            {{ context.state.data }}
+        </v-snackbar>
         <v-app-bar color="primary">
             <template v-slot:prepend>
                 <v-app-bar-nav-icon icon="mdi-apps"
@@ -9,15 +12,9 @@
                     icon="mdi-menu"
                     @click="nav.drawer2 = true; nav.drawer = false"/>
             </template>
-            <v-app-bar-title>
-                <template v-if="context.panel?.title">
-                    <v-icon v-if="context.panel.icon" :icon="context.panel.icon" />
-
-                    {{ context.panel.title }}
-                </template>
-                <template v-else>
-                    <slot name="title" :context="context"/>
-                </template>
+            <v-app-bar-title id="app-bar-sheet-title"/>
+            <v-app-bar-title id="app-bar-title">
+                <slot name="title" :context="context"/>
             </v-app-bar-title>
             <v-spacer/>
             <div id="app-bar-right" class="mr-3"></div>
@@ -40,14 +37,14 @@
     </v-app>
 </template>
 <script setup lang="ts">
-import { useSlots, withDefaults } from 'vue'
+import { useSlots, withDefaults, onErrorCaptured } from 'vue'
 import { computed, defineProps, inject, provide, reactive, watch } from 'vue'
 
-import {useAppContext} from '../composables'
+import {useAppContext} from 'ox'
 import type {Model} from '../models'
 
 // we force ox_core locales to be loaded
-import { useI18n } from '../composables'
+import { useI18n } from 'ox'
 const { t } = useI18n()
 
 const slots = useSlots()
@@ -68,4 +65,12 @@ const nav = reactive({
 })
 
 const context = useAppContext(props)
+
+watch(() => [context.state.state, context.state.data], () => {
+    context.showState = true
+})
+
+onErrorCaptured((err, instance, info) => {
+    context.state.error(`${err}`)
+})
 </script>

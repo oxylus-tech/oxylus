@@ -25,5 +25,16 @@
     "models.contentTypes": "Content Type | Content Types",
     "models.permissions": "Permission | Permissions",
     "models.groups": "Group | Groups",
-    "models.users": "User | Users"
+    "models.users": "User | Users",
+
+    "fields.id": "Id",
+    "fields.name": "Name",
+    "fields.username": "Username",
+    "fields.last_name": "Last Name",
+    "fields.first_name": "First Name",
+    "fields.email": "Email",
+    "fields.is_superuser": "Is Superuser",
+    "fields.all_permissions": "All Permissions",
+    "fields.permissions": "Permissions",
+    "fields.groups": "Groups"
 }

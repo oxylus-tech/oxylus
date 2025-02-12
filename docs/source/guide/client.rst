@@ -170,3 +170,9 @@ Panels can have a provided state which will be rendered when required (such as p
 
 Models
 ------
+
+
+Actions
+-------
+
+Actions are buttons that can execute a specific behaviour. It checks user's permission in order to execute, and can display in two different ways: as select list item, or as a button.

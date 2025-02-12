@@ -2,49 +2,124 @@ import {Repository} from 'pinia-orm'
 import {Relation} from 'pinia-orm'
 import {Response} from '@pinia-orm/axios'
 
-import {aggregateValues} from '../utils'
+import {collectAttr} from '../utils'
 import {Meta, Model} from '../models'
 import type {Repos} from '../models'
 
 
-interface IQuery<M extends Model> {
-    repos: Repos
+/**
+ * Interface of {@link Query} class.
+ */
+export interface IQuery<M extends Model> {
+    /**
+     * Model repository used to store results.
+     */
     repo: Repository<M>
+    /**
+     * Repositories used to store relations.
+     *
+     * This argument may be ignored if there is no need to fetch
+     * relations.
+     */
+    repos: Repos
 }
 
-interface IQueryFetch<M extends Model> extends Partial<object> {
-    ids?: number[] | Set<number>
-    repo?: Repository<Model>
+/**
+ * {@link Query.fetch} parameters.
+ */
+export interface IQueryFetch<M extends Model> extends Partial<object> {
+    /**
+     * Fetch from this url
+     */
     url?: string
+    /**
+     * Fetch items with this id
+     */
+    ids?: number[] | Set<number>
+    /**
+     * Model repository (instead of `Query.repo`'s one)
+     */
+    repo?: Repository<Model>
+    /**
+     * Lookup field for ids (default: `id__in`)
+     */
     lookup?: string
+    /**
+     * Extra GET parameters.
+     */
     params?: object
+    /**
+     * Fetch items from thoses relations.
+     */
+    relations?: string[]
 }
 
-interface IQueryAll<M extends Model> extends IQueryFetch<M> {
+/**
+ * {@link Query.all} parameters.
+ */
+export interface IQueryAll<M extends Model> extends IQueryFetch<M> {
+    /**
+     * Key of object returned by server that provide url to next items.
+     */
     nextKey?: string
+    /**
+     * Provide a limit to the number of request to do consecutivelly.
+     * If `-1`, no limit (**use with caution!**).
+     */
     limit?: number
 }
 
-interface IQueryRequest<M extends Model> extends IQueryAll<M> {
-    all?: boolean
-}
 
-type IRelations = { [s: string]: Relation }
-
-
-
+/**
+ * This class allows to fetch objects from api, and optionally their
+ * relations.
+ *
+ * It is a utility class built around ``pinia-orm/axios``, using
+ * repositories' ``api().get`` method.
+ *
+ * It allows:
+ *
+ * - to fetch a model list or all values (using `next` key);
+ * - to fetch relations of objects based on fields names;
+ *
+ * When fetching relations, please ensure that {@link Query.repos} is provided.
+ *
+ * @example
+ * const query = new Query(repos.users, repos)
+ *
+ * // this fetch User model objects from API, then the related groups.
+ * const result = await query.fetch({url: '/users', relations: ['groups']})
+ */
 export class Query<M extends Model> {
-    constructor(repos: Repos, repo: Repository<M>) {
+    /**
+    * @param {Repos} [repos] all models repositories
+    * @param {Repository<M>} [repo] the main repository
+    */
+    constructor(repo: string|Repository<M>, repos: Repos|null=null) {
+        if(typeof(repo) == "string") {
+            if(!repos)
+                throw Error(`Repository "${repo}" is provided as string, but no "repos" argument is provided.`)
+            if(!(repo in repos))
+                throw Error(`Repository "${repo}" is not present in provided repositories.`)
+            this.repo = repos[repo]
+        }
+        else
+            this.repo = repo
         this.repos = repos
-        this.repo = repo
     }
 
-    async request({all=false, ...opts} : IQueryRequest<M> ={}) : Promise<Response> {
-        const func = all ? this.all : this.fetch
-        return await func.apply(this, [opts])
-    }
-
-    async fetch({ids=null, repo=null, url=null, lookup="id__in", params=undefined, ...opts}: IQueryFetch<M> = {}) : Promise<Response> {
+    /**
+     * Fetch items from api.
+     *
+     * @param [options.ids] select by ids
+     * @param {Repository} [options.repo] use this repository instead of \
+     * ``Query.repo``.
+     * @param [options.url] use this url instead of repository's one.
+     * @param [options.lookup] query GET parameters used to get ids.
+     * @param [options.params] extra GET parameters
+     * @param [options.opts] options passed down to ``repo.api.get``
+     */
+    async fetch({ids=null, repo=null, url=null, lookup="id__in", params=undefined, relations=null, ...opts}: IQueryFetch<M> = {}) : Promise<Response> {
         repo ??= this.repo
         if(!url)
             url = repo.use?.meta?.url
@@ -55,9 +130,21 @@ export class Query<M extends Model> {
             params = {...(params || {})}
             params[lookup] = [...ids]
         }
-        return await repo.api().get(url, {...opts, params})
+        const response = await repo.api().get(url, {...opts, params})
+
+        if(relations)
+            response.relations = await this.relations(response.entities, relations, {...opts, params: {}})
+        return response
     }
 
+    /**
+     * Fetch all items from api.
+     *
+     * @param [options.nextKey] response object key to get next url
+     * @param [options.limit] max count of consecutive requests
+     * @return Response of the first request, whoses ``entities`` has \
+     * model instances of all requests.
+     */
     async all({nextKey='next', limit=-1, ...opts} : IQueryAll<M> ={}) : Promise<Response> {
         const result = await this.fetch(opts)
 
@@ -73,8 +160,17 @@ export class Query<M extends Model> {
         return result
     }
 
+    /**
+     * Fetch related objects for the provided list and field names.
+     *
+     * @param objs - the objects to get related ids from.
+     * @param options.fields - list of field names.
+     * @param options.opts - options to pass down to 'relation'.
+     * @return the resulting entities.
+     */
     async relations(objs: M[], fields: string[], opts = {}) : Promise<{[s: string]: Response}>
     {
+        this._ensureRepos("relations")
         const entities: {[s: string]: Response} = {}
         const relations = this.repo.use?.fields()
         if(relations)
@@ -88,7 +184,23 @@ export class Query<M extends Model> {
         return entities
     }
 
+    protected _ensureRepos(funcName: string) {
+        if(!this.repos)
+            throw Error(`Query.repos is not provided although it is mandatory to call ${funcName}.`)
+    }
+
+    /**
+     * Fetch related objects for the provided object list and field name.
+     * It uses {@link Query.all} in order to fetch all items.
+     *
+     * @param objs - the objects to get ids from.
+     * @param relation - objects' field or field name.
+     * @param [options.thin] if True, only fetch objects not already present in repos.
+     * @param options.opts - extra options to pass down to `all()`.
+     */
     async relation(objs: Array<Model>, relation: string | Relation, {thin=false, ...opts} : {thin?: boolean}={}) : Promise<Response> {
+        this._ensureRepos("relations")
+
         if(typeof relation == "string") {
             const fields = this.repo.use?.fields()
             if(!fields || !(fields[relation]))
@@ -101,7 +213,7 @@ export class Query<M extends Model> {
         if(!repo2)
             throw Error(`No repository "${key}" found.`)
 
-        let ids = aggregateValues(objs, relation.foreignKey)
+        let ids = collectAttr(objs, relation.foreignKey)
         let dbIds = null
         if(thin) {
             dbIds = new Set(Object.keys(repo2.pinia.state[key]?.value.data).filter(i => i in ids))
@@ -110,40 +222,21 @@ export class Query<M extends Model> {
                 ids = missingIds
         }
 
-        const result = await this.request({ids, repo: repo2, ...opts})
+        const result = await this.all({ids, repo: repo2, ...opts})
         if(thin && dbIds) {
             const dbObjs = repo2.whereId(dbIds).get()
             result.entities = [...(result.entities || []), ...dbObjs]
         }
         return result
     }
-
-    getRelations(fields: Array<string> | null): IRelations {
-        const fields_ = this.repo.use?.fields()
-        if(!fields)
-            return {}
-        let relations = Object.entries(fields_)
-            .filter(([_, f]) => f instanceof Relation && f.related instanceof Model && f.related.meta)
-
-        if(fields)
-            relations = relations.filter(([k, f]) => fields.includes(k) && f.related?.meta)
-
-        return relations.reduce((dst, [k, f]) => { dst[k] = f; return dst}, {} as IRelations)
-    }
 }
 
 export interface Query<M extends Model> extends IQuery<M> {}
 
 
-export function query(repos: Repos) {
-    return <M extends Model>(repo: Repository<M>|string) => {
-        if(typeof repo == "string")
-            repo = repos[repo]
-        return new Query(repos, repo)
-    }
-}
-
-
-export function useQuery() {
-    return { query, Query }
+/**
+ * This composable return a new query from provided arguments.
+ */
+export function query(repo: Repository, repos: Repos|null=null) {
+    return new Query(repo, repos)
 }

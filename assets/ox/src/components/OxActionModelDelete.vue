@@ -4,14 +4,13 @@
         icon="mdi-delete" color="error"
         :title="t('actions.delete')" :confirm="t('actions.delete.confirm')"
         :permissions="['delete', (u, o) => o.id]"
-        :run="run" @completed="panel?.reset('')"
+        :run="run" @completed="panel?.show()"
     />
 </template>
 <script setup lang="ts">
 import { defineProps, inject } from 'vue'
 import { useI18n } from 'vue-i18n'
 
-import { makeModelApiAction } from '../composables/actions'
 import OxAction from './OxAction.vue'
 
 const { t } = useI18n()
@@ -23,9 +22,8 @@ const props = defineProps<{
     button?: boolean
 }>()
 
-const run = makeModelApiAction({
-    repo: repos[props.item.constructor.entity],
-    method: 'delete',
-    options: (user, item) => ({delete: props.item.id}),
-})
+async function run(user, item) {
+    const repo = repos[item.constructor.entity]
+    return await repo.api().delete(item.$url(), {delete: props.item.id})
+}
 </script>

@@ -1,6 +1,6 @@
 <script>
 import { h, computed, shallowRef, watch } from 'vue'
-import { defineAsyncComponent } from '../composables'
+import { defineAsyncComponent } from 'ox'
 
 export default {
     props: {

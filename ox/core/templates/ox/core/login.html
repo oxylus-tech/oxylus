@@ -16,6 +16,6 @@
     <h2>{% trans "Login..." %}</h2>
     {# FIXME: csrf_token not passed #}
     {% csrf_token %}
-    <ox-login next="{{ request.GET.next }}"/>
+    <ox-login next="{{ request.GET.next }}" url="{% url "ox_core-api:account-login" %}"/>
 </v-container>
 {% endblock %}

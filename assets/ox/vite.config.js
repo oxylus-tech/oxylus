@@ -26,11 +26,15 @@ export default defineConfig({
         sourcemap: true,
 
         lib : {
-              // Could also be a dictionary or array of multiple entry points
             entry : {
+                // main library, including:
+                // - composables
+                // - utils
+                // - app
                 'ox': resolve(__dirname , 'src/lib.ts'),
-                'app': resolve(__dirname, 'src/app.ts'),
+                // main library components
                 'components': resolve(__dirname, 'src/components/index.ts'),
+                'vendor': resolve(__dirname, 'src/vendor.ts'),
             },
             name : 'ox',
             // the proper extensions will be added
@@ -41,7 +45,10 @@ export default defineConfig({
         },
 
         rollupOptions: {
-            external: ['vue', 'vuex', 'axios'],
+            external: [
+                'vue', 'vuex', 'axios',
+                'ox', 'ox/components', 'ox/vendor',
+            ],
             /*input: {
                 index: "src/index.js",
                 lib: "src/lib.js",
@@ -66,6 +73,7 @@ export default defineConfig({
         extensions: ['.js', '.ts', '.json', '.vue', '.scss'],
         alias: {
             '@': fileURLToPath(new URL('./src', import.meta.url)),
+            '@composables': fileURLToPath(new URL('./src/composables', import.meta.url)),
         }
     }
 })

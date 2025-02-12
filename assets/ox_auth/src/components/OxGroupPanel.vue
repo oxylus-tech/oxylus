@@ -1,5 +1,5 @@
 <template>
-    <ox-model-panel :name="props.name" :tabbed="props.tabbed"
+    <ox-model-panel :name="props.name"
             icon="mdi-account-multiple" :repo="repos.groups"
             :headers="props.headers"
             :relations="props.relations"
@@ -43,10 +43,7 @@ const props = defineProps(
     useModelPanelProps({
         name: "group-panel",
         relations: [],
-        headers: [
-            {key: 'id', title: 'Id'},
-            {key: 'name', title: 'Name'},
-        ]
+        headers: ["id", "name"],
     })
 )
 </script>

@@ -1,4 +1,4 @@
-import App from 'ox/app'
+import {App} from 'ox/components'
 import * as components from './components'
 
 export default {

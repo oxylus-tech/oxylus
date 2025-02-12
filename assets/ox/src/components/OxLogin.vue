@@ -14,13 +14,15 @@
     <template v-if="!state.isOk">
         <v-text-field variant="underlined"
                 label="Enter login" v-model="credentials.username"
+                @keyup.enter.stop="passwordInput.focus()"
                 >
         </v-text-field>
-        <v-text-field variant="underlined"
+        <v-text-field variant="underlined" ref="password"
                 label="Enter password" v-model="credentials.password"
                 :type="showPassword ? 'text' : 'password'"
                 :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
                 @click:append="showPassword = !showPassword"
+                @keyup.enter.stop="login()"
                 >
         </v-text-field>
         <div class="text-right mt-3">
@@ -34,7 +36,7 @@
     </template>
 </template>
 <script setup>
-import {computed, inject, ref, reactive, defineModel, defineProps} from 'vue'
+import {computed, inject, ref, reactive, defineModel, defineProps, useTemplateRef} from 'vue'
 
 import OxStateAlert from './OxStateAlert'
 import OxValidationBtn from './OxValidationBtn.vue'
@@ -45,9 +47,12 @@ import State from '../utils/state'
 import {reset as $reset} from '../utils'
 import {User} from '../models/auth'
 
-const repos = inject("repos")
+
+const passwordInput = useTemplateRef('password')
+
 const props = defineProps({
     next: {type: String},
+    url: {type: String},
 })
 
 const emit = defineEmits(['save', 'saved'])
@@ -67,7 +72,7 @@ async function login() {
     state.processing()
 
     try {
-        const resp = await fetch("/api/ox/core/account/login/", {
+        const resp = await fetch(props.url, {
             method: "POST",
             headers: config.axiosConfig.headers,
             body: JSON.stringify(credentials),

@@ -38,3 +38,8 @@ body {
         }
     }
 }
+
+#app-bar-sheet-title {
+    &:not(:empty) + #app-bar-title { display: none }
+    &:empty { display: none; }
+}

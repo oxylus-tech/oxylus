@@ -1,5 +1,4 @@
 import { createApp as $createApp, reactive, watch } from 'vue'
-import { createI18n as $createI18n } from 'vue-i18n'
 import { createVuetify as $createVuetify } from 'vuetify'
 import { md3 } from 'vuetify/blueprints'
 
@@ -9,27 +8,70 @@ import { createPiniaOrmAxios } from '@pinia-orm/axios'
 import axios from 'axios'
 
 import '../styles/index.scss'
-import * as vuetifyComponents from '../components/vuetify'
+import * as vendorComponents from 'ox/vendor'
 import config from '../config'
-import {getCookie} from '../utils'
+import {i18n} from './i18n'
+
+import type {IObject} from '../utils'
+
+
+/**
+ * {@link createVuetify} parameters. Theses are passed down to Vuetify's
+ * plugin initialization.
+ */
+export interface ICreateVuetifyOpts extends IObject {
+    components?: IObject[]
+}
+
+
+/**
+ * Options passed to {@link createApp}.
+ */
+export interface ICreateAppOpts {
+    /**
+     * Vue's `createApp` `props` arguments
+     */
+    props: IObject
+    /**
+     *  Vuetify plugin's parameters (passed to {@link createVuetify})
+     */
+    vuetify: ICreateVuetifyOpts
+    /**
+     * Plugins to add to Vue application.
+     */
+    plugins?: IObject[]
+}
+
+export interface IInitOpts extends ICreateAppOpts {
+    /**
+     * Vue's App config.
+     */
+    App: IObject
+    /**
+     * Element selector to mount application on.
+     */
+    el: string
+    /**
+     * If True (default), defer application creation after page has been
+     * loaded (on `window.load` event)
+     */
+    onLoad: boolean
+}
 
 
 /**
  * Main entry point to initialize and mount an application.
+ *
+ * The base `App` config is provided by `ox/components` modules.
  */
-export function init({App=null, el='#app', ...options}={}, onLoad=true) {
+export function init({App=null, el='#app', onLoad=true, ...options}: IInitOpts={}) {
     function initApp() {
         const app = createApp(App, options)
         const vm = el ? app.mount(el) : null
-
-        // setGlobals && setOxerpGlobals({app, vm})
         document.body.classList.remove('loading')
         return {app, el, vm}
     }
 
-    // return window.addEventListener(
-    //    'load', () => initApp()
-    //)
     return new Promise((resolve) => {
         if(onLoad)
             return window.addEventListener(
@@ -45,39 +87,25 @@ export function init({App=null, el='#app', ...options}={}, onLoad=true) {
  * It also provide app's global property `window` in order to allow components
  * access to this object.
  */
-export function createApp(app, {props={}, vuetify={}, plugins=null}={}) {
+export function createApp(app: IObject, {props={}, vuetify={}, plugins=null}: ICreateAppOpts={}) {
     app = $createApp(app, props)
     app.config.globalProperties.window = window
 
     app.use(createVuetify(vuetify))
-    app.use(createI18n())
+    app.use(i18n)
     plugins && plugins.forEach(plugin => app.use(plugin))
     return app
 }
 
-
-export function createI18n() {
-    // remove country specific locale as they are not provided by locales
-    // client side
-    const candidates = (getCookie("lang", ",") || ["en"]).map(
-        x => x.toLowerCase().replace(/[_-](\w+)/, "")
-    )
-    const locale = candidates.find(x => x in config.locales)
-    return $createI18n({
-        legacy: false,
-        fallbackLocale: 'en',
-        locale
-    })
-}
 
 
 /**
  * Create and return vuetify plugin with default components set.
  * This is called by `createApp`.
  */
-export function createVuetify({components={}, ...opts}) {
+export function createVuetify({components={}, ...opts}: ICreateVuetifyOpts) {
     opts.components = {
-        ...vuetifyComponents,
+        ...vendorComponents,
         ...components
     }
     return $createVuetify({
@@ -93,7 +121,7 @@ export function createVuetify({components={}, ...opts}) {
  * Create Pinia and PiniaOrm plugins instances.
  * If no `baseURL` is provided, get it from `document.body.dataset.apiUrl`.
  */
-export function createPinia({axiosConfig=null, baseURL=null}={}) {
+export function createPinia({axiosConfig=null, baseURL=null}: IObject={}) {
     if(!baseURL)
         baseURL = document.body.dataset.apiUrl
 

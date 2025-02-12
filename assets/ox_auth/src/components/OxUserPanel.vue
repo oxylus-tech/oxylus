@@ -1,5 +1,5 @@
 <template>
-    <ox-model-panel :name="props.name" :tabbed="props.tabbed"
+    <ox-model-panel :name="props.name"
             icon="mdi-account" :repo="repos.users"
             :headers="props.headers"
             :relations="props.relations"
@@ -25,9 +25,9 @@
         </template>
 
         <template #views.list.kanban="{panel,items,list}">
-            <ox-list-kanban :items="items" field="groups_id" :headers="kanbanHeaders"
+            <ox-list-kanban field="groups_id" :headers="kanbanHeaders"
                 item-title="username"
-                @click="(item) => panel.reset('.detail.edit', item)"/>
+                @click="(item) => panel.show({path: '.detail.edit', value: item})"/>
         </template>
 
         <template #views.detail.add="{value,saved}"
@@ -44,7 +44,7 @@
 <script setup>
 import { computed, defineProps, inject, useSlots } from 'vue'
 
-import { useModels, useModelPanelProps, api } from 'ox'
+import { useModels, useModelPanelProps, api, query } from 'ox'
 import {OxModelPanel, OxListKanban} from 'ox/components'
 
 import {useAuthModels} from '../composables'
@@ -55,9 +55,7 @@ const slots = useSlots()
 const forwardSlots = Object.keys(slots).filter(x => !(['list.filters', 'item.groups'].includes(x)))
 
 const {repos, models} = useAuthModels()
-const query = api.query(repos)
-
-query('groups').all({dataKey: 'results'})
+query(repos.groups).all({dataKey: 'results'})
 
 const groups = computed(() => repos.groups.all())
 const kanbanHeaders = computed(() => {
@@ -71,14 +69,7 @@ const props = defineProps(
     useModelPanelProps({
         name: 'user-panel',
         relations: ['groups'],
-        headers: [
-            {key: 'id', title: 'Id'},
-            {key: 'username', title: 'Username'},
-            {key: 'first_name', title: 'First_name'},
-            {key: 'last_name', title: 'Last_name'},
-            {key: 'email', title: 'Email'},
-            {key: 'groups', title: 'Groups'},
-        ]
+        headers: ['id', 'username', 'first_name', 'last_name', 'email', 'groups'],
     })
 )
 </script>

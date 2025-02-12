@@ -1,14 +1,15 @@
 import { defineAsyncComponent as $defineAsyncComponent } from 'vue'
 
-export * from './actions'
 export * from './app'
+export * from './actions'
 export * from './edit'
 export * from './init'
 export * from './i18n'
 export * from './list'
 export * from './models'
 export * from './panel'
-export * as api from './api'
+export * from './model_panel'
+export * from './api'
 
 
 /**
@@ -25,3 +26,10 @@ export function defineAsyncComponent(url: string, name: string) {
         })
     })
 }
+
+
+/**
+ * This exception is used in order to display the message to user
+ * when it is raised.
+ */
+class UserError extends Error {}
