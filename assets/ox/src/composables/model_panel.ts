@@ -1,4 +1,4 @@
-import {computed, reactive} from 'vue'
+import {computed, reactive, toRefs} from 'vue'
 import type {Reactive} from 'vue'
 
 import {Model} from '../models'
@@ -13,12 +13,18 @@ import type {Repos} from '../models'
 import {OxList} from 'ox/components'
 
 
+/**
+ * Model panel component properties.
+ */
 export type IModelPanelProps = IListProps & IPanelProps & {
     search: string
     view: string
     headers?: string[]
 }
 
+/**
+ * Model panel interface.
+ */
 export interface IModelPanel {
     panel: IPanel
     repos: Repos
@@ -26,15 +32,29 @@ export interface IModelPanel {
     list: IList
 }
 
+/**
+ * Reactive model panel interface.
+ */
 export interface IRModelPanel extends Reactive<IModelPanel> {
     title: ComputedRef<string>,
     icon: ComputedRef<string>,
 }
 
+
+/**
+ * This class handles model panel (used by {@link OxModelPanel}.
+ *
+ * It is connected to the current {@link Panel}.
+ *
+ */
 class ModelPanel {
     showFilters: boolean = false
 
+    /**
+     * Instanciate and return a reactive model panel.
+     */
     static reactive<M extends Model>(options: IModelPanel): IRModelPanel<M> {
+        console.log(options)
         const obj = reactive(new this(options))
         obj.title = computed(() => obj.getTitle())
         obj.icon = computed(() => obj.getIcon())
@@ -48,8 +68,18 @@ class ModelPanel {
         this.showFilters = this.props?.showFilters || false
     }
 
+    /**
+     * Current model's repository.
+     */
     get repo() { return this.props.repo }
+
+    /**
+     * Current model.
+     */
     get model() { return this.repo.use }
+    /**
+     * Current panel's view.
+     */
     get view() { return this.panel.view }
 
     getIcon(): string { return this.props?.icon || this.model.meta?.icon || null }
@@ -69,8 +99,8 @@ class ModelPanel {
                 return t(tKeys.model(model), 3)
 
             if(panel.value) {
-                if(panel.value.title)
-                    return panel.value.title
+                if(panel.value.$title)
+                    return panel.value.$title
 
                 const name = t(tKeys.model(model))
                 return panel.value.id
@@ -86,7 +116,7 @@ class ModelPanel {
      */
     getList() {
         const listProps = mapToObject(OxList.props, this.props)
-        const {value} = this.panel
+        const {value} = toRefs(this.panel)
         return useList({...listProps, value, repos: this.repos})
     }
 

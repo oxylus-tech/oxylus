@@ -64,7 +64,7 @@
                     <v-icon>mdi-view-column</v-icon>
                 </v-btn>
                 <v-btn value="detail.add" v-if="slots['views.detail.add']"
-                        @click.stop="create()"
+                        @click.stop="modelPanel.create()"
                         :title="t('panels.nav.add')"
                         :aria-label="t('panels.nav.add')">
                     <v-icon>mdi-plus-box</v-icon>
@@ -113,12 +113,12 @@
 
         <template #views.detail.add v-if="slots['views.detail.add']">
             <slot name="views.detail.add" v-bind="bind"
-                :saved="(item) => model_panel.created(item)"/>
+                :saved="(item) => modelPanel.created(item)"/>
         </template>
     </ox-panel>
 </template>
 <script setup lang="ts">
-import { computed, defineProps, inject, useTemplateRef, useSlots } from 'vue'
+import { computed, defineProps, inject, useTemplateRef, useSlots, toRefs } from 'vue'
 import { Teleport } from 'vue'
 
 import OxAction from './OxAction.vue'
@@ -142,7 +142,7 @@ const repos = inject('repos')
 const panel = inject('panel')
 
 const modelPanel = useModelPanel({repos, panel, props})
-const {list, showFilters} = modelPanel
+const {list, showFilters} = toRefs(modelPanel)
 
 const bind = computed(() => {
     return ({
