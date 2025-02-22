@@ -44,7 +44,7 @@
 <script setup>
 import { computed, defineProps, inject, useSlots } from 'vue'
 
-import { useModels, useModelPanelProps, api, query } from 'ox'
+import { useModels, panels, api, query } from 'ox'
 import {OxModelPanel, OxListKanban} from 'ox/components'
 
 import {useAuthModels} from '../composables'
@@ -66,7 +66,7 @@ const kanbanHeaders = computed(() => {
 })
 
 const props = defineProps(
-    useModelPanelProps({
+    panels.useModelPanelProps({
         name: 'user-panel',
         relations: ['groups'],
         headers: ['id', 'username', 'first_name', 'last_name', 'email', 'groups'],

@@ -1,7 +1,7 @@
-import * as ox from './ox.ts'
+import * as ox from './ox'
 import {components as vendor} from 'ox/vendor'
 
-export * from './ox.ts'
+export * from './ox'
 
 
 /**

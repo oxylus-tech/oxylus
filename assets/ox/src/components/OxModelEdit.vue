@@ -33,7 +33,6 @@ import { computed, ref, defineProps, defineModel, inject, useSlots, watch } from
 import { useI18n } from 'ox'
 
 import OxActions from './OxActions.vue'
-import OxPanelSheet from './OxPanelSheet.vue'
 
 import {filterSlots} from '../utils/vue'
 
@@ -54,10 +53,10 @@ const model = computed(() => value.value?.constructor)
 
 
 // ---- Panel
-const panel = inject('panel')
+const panels = inject('panels')
 function updatePanel(val) {
-    if(panel.value && val)
-        panel.value.title = `Edit ${val.$title}`
+    if(panels.value && val)
+        panels.value.title = `Edit ${val.$title}`
 }
 updatePanel(value.value)
 watch(value, updatePanel)
@@ -73,7 +72,7 @@ const windows = filterSlots(slots, "window.", {exclude: "window.default"})
 
 const bind = computed(() => {
     return {
-        panel,
+        panels,
         value: value.value,
         model: model.value,
     }

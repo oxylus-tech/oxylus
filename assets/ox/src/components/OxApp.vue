@@ -30,9 +30,13 @@
             </template>
         </v-navigation-drawer>
         <v-main>
-            <v-tabs-window v-model="context.panel.name">
-                <slot name="default" :context="context"></slot>
-            </v-tabs-window>
+            <slot name="main">
+                <ox-panels>
+                    <template #default="bind">
+                        <slot name="default" v-bind="bind" :context="context"></slot>
+                    </template>
+                </ox-panels>
+            </slot>
         </v-main>
     </v-app>
 </template>
@@ -40,7 +44,7 @@
 import { useSlots, withDefaults, onErrorCaptured } from 'vue'
 import { computed, defineProps, inject, provide, reactive, watch } from 'vue'
 
-import {useAppContext} from 'ox'
+import {useAppContext, panels} from 'ox'
 import type {Model} from '../models'
 
 // we force ox_core locales to be loaded
@@ -65,6 +69,7 @@ const nav = reactive({
 })
 
 const context = useAppContext(props)
+const panels = panels.useTarget()
 
 watch(() => [context.state.state, context.state.data], () => {
     context.showState = true

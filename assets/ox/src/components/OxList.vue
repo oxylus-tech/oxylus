@@ -9,8 +9,8 @@ import {useList} from 'ox'
 
 const props = defineProps<IListProps>()
 const repos = inject('repos')
-const panel = inject('panel')
-const {value} = toRefs(panel)
+const panels = inject('panels')
+const {value} = toRefs(panels)
 const list = useList({...props, value, repos})
 
 defineExpose({list, value})

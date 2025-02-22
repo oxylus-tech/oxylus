@@ -3,12 +3,15 @@ import type {Reactive} from 'vue'
 
 import {Model} from '../models'
 import {mapToObject} from '../utils'
-import {useList} from './list'
-import {t, tKeys} from './i18n'
+import {useList} from '../composables/list'
+import {t, tKeys} from '../composables/i18n'
 
-import type {IList, IListProps} from './list'
+import type {IList, IListProps} from '../composables/list'
 import type {IPanel, IPanelProps} from './panel'
 import type {Repos} from '../models'
+
+import Panel from './panel'
+
 
 import {OxList} from 'ox/components'
 
@@ -22,9 +25,7 @@ export type IModelPanelProps = IListProps & IPanelProps & {
     headers?: string[]
 }
 
-/**
- * Model panel interface.
- */
+/** Model panel interface. */
 export interface IModelPanel {
     panel: IPanel
     repos: Repos
@@ -32,29 +33,19 @@ export interface IModelPanel {
     list: IList
 }
 
-/**
- * Reactive model panel interface.
- */
+/** Reactive model panel interface. */
 export interface IRModelPanel extends Reactive<IModelPanel> {
     title: ComputedRef<string>,
     icon: ComputedRef<string>,
 }
 
 
-/**
- * This class handles model panel (used by {@link OxModelPanel}.
- *
- * It is connected to the current {@link Panel}.
- *
- */
+/** This class handles model panel (used by {@link OxModelPanel}. */
 class ModelPanel {
     showFilters: boolean = false
 
-    /**
-     * Instanciate and return a reactive model panel.
-     */
+    /** Instanciate and return a reactive model panel. */
     static reactive<M extends Model>(options: IModelPanel): IRModelPanel<M> {
-        console.log(options)
         const obj = reactive(new this(options))
         obj.title = computed(() => obj.getTitle())
         obj.icon = computed(() => obj.getIcon())
@@ -68,25 +59,16 @@ class ModelPanel {
         this.showFilters = this.props?.showFilters || false
     }
 
-    /**
-     * Current model's repository.
-     */
+    /** Current model's repository. */
     get repo() { return this.props.repo }
 
-    /**
-     * Current model.
-     */
+    /** Current model. */
     get model() { return this.repo.use }
-    /**
-     * Current panel's view.
-     */
-    get view() { return this.panel.view }
 
+    /** Return adequate icon based on props and model **/
     getIcon(): string { return this.props?.icon || this.model.meta?.icon || null }
 
-    /**
-     * Return panel's title based on view and current item.
-     */
+    /** Return panel's title based on view and current item. */
     getTitle(): string {
         const {props, list, panel} = this
         if(this.props.title)
@@ -111,12 +93,10 @@ class ModelPanel {
         return ''
     }
 
-    /**
-     * Get instance of list.
-     */
+    /** Get instance of list. */
     getList() {
         const listProps = mapToObject(OxList.props, this.props)
-        const {value} = toRefs(this.panel)
+        const {value} = toRefs(this.target)
         return useList({...listProps, value, repos: this.repos})
     }
 
@@ -125,18 +105,17 @@ class ModelPanel {
      *
      * @param path - path to edit view.
      */
-    create(path:string='.detail.add') {
-        this.panel.show({path, value: new this.model()})
+    create(view: string='.detail.add') {
+        this.target.show({panel: this.name, view, value: new this.model()})
     }
 
-    /**
-     * Called when an item has been created. By default, show edit view.
-     */
-    created(item, path: string=".detail.edit") {
-        this.panel.show({path, value: item, force: true})
+    /** Called when an item has been created. By default, show edit view. */
+    created(value, view: string=".detail.edit") {
+        this.target.show({panel: this.name, view, value, force: true})
         this.list.fetch()
     }
 }
+
 
 export interface ModelPanel extends IModelPanel {
     showFilters: boolean
@@ -145,4 +124,15 @@ export interface ModelPanel extends IModelPanel {
 
 export function useModelPanel(options: IModelPanel) : IRModelPanel<M> {
     return ModelPanel.reactive(options)
+}
+
+export function useModelPanelProps({name="", relations=[], headers=[]}={}) : IObject {
+    return {
+        name: {type: String, default: name},
+        tabbed: {type: Boolean, default: false},
+        relations: {type: Array, default: () => relations},
+        headers: {type: Array, default: () => [
+            ...headers, {key: 'actions', title: 'Actions'}
+        ]},
+    }
 }

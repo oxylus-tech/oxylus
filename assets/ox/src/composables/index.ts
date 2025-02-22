@@ -7,8 +7,8 @@ export * from './init'
 export * from './i18n'
 export * from './list'
 export * from './models'
-export * from './panel'
-export * from './model_panel'
+// export * from './panel'
+// export * from './model_panel'
 export * from './api'
 
 

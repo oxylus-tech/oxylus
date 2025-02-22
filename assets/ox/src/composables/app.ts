@@ -3,7 +3,6 @@ import type {ComputedRef, Reactive} from 'vue'
 
 import {User, Model} from '../models'
 import type {Repos} from '../models'
-import { Panel } from './panel'
 import { useModels } from './models'
 import { State } from '../utils'
 import type {IObject} from '../utils'
@@ -16,8 +15,12 @@ import type {IObject} from '../utils'
  * Django generated page.
  */
 export interface IAppData extends IObject {
-    panel: string
-    user: IObject
+    //! Current panel name
+    panel?: string
+    //! Current panel's view name
+    view?: string
+    //! User's data.
+    user?: IObject
 }
 
 /**
@@ -63,7 +66,6 @@ export class AppContext {
 
     constructor(opts: IApp = {}) {
         Object.assign(this, opts)
-        this.panel = new Panel()
         this.state = State.none()
         this.showState = false
     }
@@ -100,14 +102,8 @@ export class AppContext {
     }
 }
 export interface AppContext extends IApp {
-    /**
-     * Models' repositories
-     */
+    /** Models' repositories */
     repos?: Repos
-    /**
-     * Current panel
-     */
-    panel: Panel
     /**
      * Application level state. This can be displayed to user using
      * {@link AppContext.showState}.
@@ -137,7 +133,6 @@ export function useAppContext(opts: IApp, load: boolean = true): AppContext {
 
     provide('context', obj)
     provide('user', obj.user)
-    provide('panel', obj.panel)
     // provide('repos')
     return obj
 }

@@ -47,10 +47,10 @@ const props = defineProps({
 const {initial} = toRefs(props)
 const form = useTemplateRef('form')
 
-const panel = inject("panel")
+const panels = inject("panels")
 const editor = modelEditor({
     name: "group-editor",
-    panel, initial, emits,
+    panels, initial, emits,
     repo: repos.groups,
 })
 </script>

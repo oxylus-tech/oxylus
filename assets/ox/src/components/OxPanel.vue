@@ -1,43 +1,49 @@
 <template>
     <ox-state-alert v-if="props.state" :state="props.state" delay/>
-    <v-tabs-window-item :value="props.name"
-            @group:selected="panel.reset(props, props.name)">
-        <ox-panel-sheet :name="props.name" :title="props.title" :icon="props.icon">
-            <template #append-title>
-                <slot name="append-title"></slot>
-            </template>
+    <v-sheet class="ma-4">
+        <Teleport to="#app-bar-sheet-title" :disabled="!mounted || panel.name != props.name">
+            <v-icon v-if="props.icon" :icon="props.icon"/>
+            {{ props.title }}
+        </Teleport>
 
-            <template #default>
-                <slot name="views.before"></slot>
+        <Teleport to="#app-bar-right" :disabled="!mounted || panel.name != props.name">
+            <slot name="append-title"/>
+            <v-btn v-if="props.help" class="ml-3"
+                :href="props.help" target="new"
+                icon="mdi-information-outline" />
+        </Teleport>
 
-                <v-window v-model="panel.view">
+        <slot name="top"></slot>
+
+        <slot name="default">
+            <template v-if="viewSlots">
+                <v-window v-model="panels.view">
                     <template v-for="(name, slot) in viewsSlots" :key="name">
                         <v-window-item :value="name">
                             <slot :name="slot"></slot>
                         </v-window-item>
                     </template>
                 </v-window>
-
-                <slot name="views.after"></slot>
             </template>
-        </ox-panel-sheet>
-    </v-tabs-window-item>
+        </slot>
+
+        <slot name="bottom"></slot>
+    </v-sheet>
 </template>
 <script setup lang="ts">
-import { computed, defineProps, defineExpose, inject, toRefs, useSlots } from 'vue'
-import type {IPanelProps} from '../composables/panel'
-
-import OxPanelSheet from './OxPanelSheet.vue'
-import OxStateAlert from './OxStateAlert.vue'
-
+import { defineProps, inject, onMounted, ref, useSlots, watch } from 'vue'
 import {filterSlots} from 'ox'
 
-const slots = useSlots()
-const viewsSlots = filterSlots(slots, 'views.', {
-    exclude: ['views.before', 'views.after']
-})
-const props = defineProps<IPanelProps>()
+import type {IPanelProps} from '../panels'
 
-const context = inject('context')
-const panel = inject('panel')
+
+const slots = useSlots()
+const props = defineProps<IPanelProps>()
+const viewsSlots = filterSlots(slots, 'views.')
+
+// ensure teleport will be set after component has been mounted
+const mounted = ref(false)
+onMounted(() => { mounted.value = true })
+
+const panels = inject('panels')
 </script>

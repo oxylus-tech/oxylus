@@ -1,21 +1,14 @@
 <template>
     <v-list-item v-if="visible"
-        :active="panel.name == props.name"
+        :active="panels.panel == props.name"
         :prepend-icon="props.icon" :title="props.title"
-        @click.stop="panel.show({path: props.path ?? props.name })"/>
+        @click.stop="panels.show(props)"/>
 </template>
 <script setup lang="ts">
 import { computed, defineProps, inject, defineExpose } from 'vue'
-import type {IPanelNavProps} from '../composables'
+import type {IPanelNavProps} from '../panels'
 
 const props = defineProps<IPanelNavProps>()
-const panel = inject('panel')
+const panels = inject('panels')
 const visible = computed(() => !props.auto || panel.name == props.name)
-
-const title = computed(() => {
-    const postfix = panel.name == props.name && panel.edited ? "*" : ""
-    return props.title + postfix
-})
-
-defineExpose({title, name: props.name})
 </script>

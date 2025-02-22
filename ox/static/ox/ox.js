@@ -1,127 +1,42 @@
 var ae = Object.defineProperty;
 var ue = (r, e, t) => e in r ? ae(r, e, { enumerable: !0, configurable: !0, writable: !0, value: t }) : r[e] = t;
 var g = (r, e, t) => ue(r, typeof e != "symbol" ? e + "" : e, t);
-import { C as le, G as ce, M as he, a as de, P as fe, b as C, U as S, c as Z, g as me, u as z, d as ge, R as pe, e as Y, S as A, r as ye, f as we, h as R, i as ve, j as be, k as De, l as Me, s as Ae, m as Te, n as J, o as Se } from "./vue-i18n-CcErOqM_.js";
-import { w as kr, t as Pr, x as Er, q as Cr, v as Fr, p as Ir } from "./vue-i18n-CcErOqM_.js";
-import { reactive as w, provide as b, computed as y, unref as D, ref as xe, isRef as Oe, watch as k, nextTick as ke, createApp as Pe, toRefs as Ee, defineAsyncComponent as Ce } from "vue";
-import Fe from "axios";
+import { a as Z, C as ce, G as le, M as he, b as de, P as fe, c as E, U as S, g as me, u as z, d as ge, R as pe, e as C, S as D, r as ye, f as we, h as I, i as ve, j as be, k as De, l as Me, s as Ae, m as Te, n as J, o as Se } from "./vue-i18n-BYedKuo6.js";
+import { v as Fr, q as Rr, x as Ir, p as Cr, t as _r, w as Yr } from "./vue-i18n-BYedKuo6.js";
+import { reactive as y, provide as M, computed as p, unref as v, ref as xe, isRef as Oe, watch as O, nextTick as ke, createApp as Pe, defineAsyncComponent as Ee, toRefs as Fe } from "vue";
+import Re from "axios";
 import * as Ie from "ox/vendor";
-import { OxList as Re } from "ox/components";
-import { c as Ye, p as _, m as Q, a as _e, b as $e, d as Le, e as Ne, f as Ve, g as je, h as Be, D as $, i as L, T as N, I as V, L as j, G as Ue, j as Ke, k as We, l as He } from "./theme-CVupjJDc.js";
-const fr = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+import { OxList as Ce } from "ox/components";
+import { c as _e, p as _, m as Q, a as Ye, b as $e, d as Le, e as Ne, f as je, g as Ve, h as Be, D as Y, i as $, T as L, I as N, L as j, G as Ue, j as Ke, k as We, l as He } from "./theme-CVaNJMoW.js";
+class Ge {
+  /**
+   * Create a new reactive instance of the object.
+   * This where you can add watchers and computed properties.
+   */
+  static reactive(e) {
+    return y(new this(e));
+  }
+  constructor(e = {}) {
+    e && Z(this, e);
+  }
+}
+const yr = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
-  ContentType: le,
-  Group: ce,
+  ContentType: ce,
+  Group: le,
   Meta: he,
   Model: de,
   Permission: fe,
-  Permissions: C,
+  Permissions: E,
   User: S
 }, Symbol.toStringTag, { value: "Module" }));
-class Ge {
-  constructor(e) {
-    g(this, "view", "list.table");
-    g(this, "index", "list.table");
-    g(this, "confirm", "There are unsaved changes on the current page. Are you sure to proceed?");
-    Z(this, e);
-  }
-  static reactive(e) {
-    return w(new this(e));
-  }
-  /**
-   * Wether there are still edited items on current view.
-   */
-  get edited() {
-    var e;
-    return !!((e = this.editions) != null && e.size);
-  }
-  /**
-   * Set or remove an edition by name.
-   */
-  setEdition(e, t) {
-    t ? this.editions.add(e) : this.editions.delete(e);
-  }
-  /**
-   * Change the current panel and view.
-   *
-   * @param path - view's path.
-   * @param value - value or model instance associated with the view
-   * @param options - view's informations.
-   * @param reset - if provided, {@link Panel.reset} with these options
-   */
-  show({ path: e = "", value: t = null, force: n = !1, href: s = "" } = {}, o = null) {
-    if (!this.askConfirmation(n))
-      return;
-    if (s && window.location.pathname != s) {
-      window.location.href = `${s}?panel=${e}`;
-      return;
-    }
-    o && this.reset(o);
-    const [i, a] = this.splitPath(e);
-    i && (this.name = i), this.view = a || this.index, this.value = t, this.editions = /* @__PURE__ */ new Set();
-  }
-  /**
-   * Reset current panel informations.
-   *
-   * @param options - update those informations;
-   * @param name - if provided, only update information if current panel name is this one.
-   */
-  reset(e, t = null) {
-    (!t || t == this.name) && Object.assign(this, e);
-  }
-  /**
-   * Ask user for confirmation if there is unsaved changes (aka editions).
-   * @return true if we can discard changes.
-   */
-  askConfirmation(e = !1) {
-    return e || !this.edited ? !0 : confirm(this.confirm);
-  }
-  splitPath(e) {
-    if (!e)
-      return ["", ""];
-    const t = e.indexOf(".");
-    return t < 0 ? [e, ""] : [e.substring(0, t), e.substring(t + 1)];
-  }
-  /**
-   * Return panel's title based on current view and value.
-   *
-   * @param t - vue-i18n composer.
-   * @return a string with the title or empty if none is suitable.
-   */
-  getTitle() {
-    var t, n;
-    const e = (t = this.value) == null ? void 0 : t.constructor;
-    if (e instanceof Model) {
-      if ((n = this.view) != null && n.startsWith("list."))
-        return p(O(e), 3);
-      if (this.value) {
-        if (this.value.title)
-          return this.value.title;
-        const s = p(O(e));
-        return this.value.id ? p("models._.title", { model: s, id: this.value.id }) : p("models._.title.new", { model: s });
-      }
-    }
-    return "";
-  }
-}
-function mr({ name: r = "", relations: e = [], headers: t = [] } = {}) {
-  return {
-    name: { type: String, default: r },
-    tabbed: { type: Boolean, default: !1 },
-    relations: { type: Array, default: () => e },
-    headers: { type: Array, default: () => [
-      ...t,
-      { key: "actions", title: "Actions" }
-    ] }
-  };
-}
-var qe = Object.defineProperty, Ze = (r, e, t) => e in r ? qe(r, e, { enumerable: !0, configurable: !0, writable: !0, value: t }) : r[e] = t, M = (r, e, t) => (Ze(r, typeof e != "symbol" ? e + "" : e, t), t);
+var qe = Object.defineProperty, Ze = (r, e, t) => e in r ? qe(r, e, { enumerable: !0, configurable: !0, writable: !0, value: t }) : r[e] = t, b = (r, e, t) => (Ze(r, typeof e != "symbol" ? e + "" : e, t), t);
 class ze {
   /**
    * Create a new response instance.
    */
   constructor(e, t, n) {
-    M(this, "repository"), M(this, "config"), M(this, "response"), M(this, "entities", null), M(this, "isSaved", !1), this.repository = e, this.config = t, this.response = n;
+    b(this, "repository"), b(this, "config"), b(this, "response"), b(this, "entities", null), b(this, "isSaved", !1), this.repository = e, this.config = t, this.response = n;
   }
   /**
    * Save response data to the store.
@@ -191,13 +106,13 @@ class ze {
     return ["save", "insert"].includes(e);
   }
 }
-var Je = Object.defineProperty, Qe = (r, e, t) => e in r ? Je(r, e, { enumerable: !0, configurable: !0, writable: !0, value: t }) : r[e] = t, B = (r, e, t) => (Qe(r, typeof e != "symbol" ? e + "" : e, t), t);
+var Je = Object.defineProperty, Qe = (r, e, t) => e in r ? Je(r, e, { enumerable: !0, configurable: !0, writable: !0, value: t }) : r[e] = t, V = (r, e, t) => (Qe(r, typeof e != "symbol" ? e + "" : e, t), t);
 class Xe {
   /**
    * Create a new api instance.
    */
   constructor(e) {
-    B(this, "repository"), B(this, "config", {
+    V(this, "repository"), V(this, "config", {
       save: !0
     }), this.repository = e, this.registerActions();
   }
@@ -293,11 +208,11 @@ class Xe {
     return t.delete !== void 0 ? (await n.delete(), n) : (t.save && await n.save(), n);
   }
 }
-var et = Object.defineProperty, tt = (r, e, t) => e in r ? et(r, e, { enumerable: !0, configurable: !0, writable: !0, value: t }) : r[e] = t, E = (r, e, t) => (tt(r, typeof e != "symbol" ? e + "" : e, t), t);
-class U extends pe {
+var et = Object.defineProperty, tt = (r, e, t) => e in r ? et(r, e, { enumerable: !0, configurable: !0, writable: !0, value: t }) : r[e] = t, P = (r, e, t) => (tt(r, typeof e != "symbol" ? e + "" : e, t), t);
+class B extends pe {
   constructor() {
     var e, t, n;
-    super(...arguments), E(this, "axios", ((t = (e = Y) == null ? void 0 : e.axiosApi) == null ? void 0 : t.axios) || null), E(this, "globalApiConfig", ((n = Y) == null ? void 0 : n.axiosApi) || {}), E(this, "apiConfig", {});
+    super(...arguments), P(this, "axios", ((t = (e = C) == null ? void 0 : e.axiosApi) == null ? void 0 : t.axios) || null), P(this, "globalApiConfig", ((n = C) == null ? void 0 : n.axiosApi) || {}), P(this, "apiConfig", {});
   }
   api() {
     return rt(this);
@@ -311,7 +226,7 @@ function rt(r) {
 }
 function nt(r) {
   const e = me();
-  return U.useModel = r, z(U, e);
+  return B.useModel = r, z(B, e);
 }
 function st(r) {
   return ge((e) => (e.config.axiosApi = r, e));
@@ -325,27 +240,27 @@ function it(r, e = !0) {
         continue;
       z(n), t[n.entity] = nt(n);
     }
-  return b("models", r), b("repos", t), { models: r, repos: t };
+  return M("models", r), M("repos", t), { models: r, repos: t };
 }
-function gr() {
+function wr() {
   return {
     permissions: [String, Function, Object, Array]
   };
 }
 function ot(r, e, t) {
-  const n = e instanceof C ? e : new C(e), s = y(() => n.can(D(r), D(t)));
+  const n = e instanceof E ? e : new E(e), s = p(() => n.can(v(r), v(t)));
   return { permissions: n, allowed: s };
 }
 class at {
   static reactive(e) {
-    const t = w(new this(e));
-    return t.user = y(() => {
+    const t = y(new this(e));
+    return t.user = p(() => {
       var n;
       return new S(((n = t.data) == null ? void 0 : n.user) || {});
     }), t;
   }
   constructor(e = {}) {
-    Object.assign(this, e), this.panel = new Ge(), this.state = A.none(), this.showState = !1;
+    Object.assign(this, e), this.state = D.none(), this.showState = !1;
   }
   /**
    * Load data into AppData. If no `value` is provided, read it from
@@ -366,9 +281,9 @@ class at {
     return t.innerText ? JSON.parse(t.innerText) : {};
   }
 }
-function pr(r, e = !0) {
+function vr(r, e = !0) {
   const t = at.reactive(r);
-  return e && t.dataEl && t.load(), b("context", t), b("user", t.user), b("panel", t.panel), t;
+  return e && t.dataEl && t.load(), M("context", t), M("user", t.user), t;
 }
 class ut {
   constructor(e, t) {
@@ -389,16 +304,16 @@ class ut {
     return t instanceof Promise && (t = await t), this.processing.value = !1, this.emits && this.emits("completed", this.props.item, ...e), t;
   }
 }
-function yr(r, e) {
+function br(r, e) {
   return new ut(r, e);
 }
 class X {
   static reactive({ initial: e, ...t }) {
-    const n = w(new this({ initial: D(e), ...t }));
-    return n.edited = y(() => n.isEdited()), Oe(e) && k(e, (s) => n.reset(s)), n;
+    const n = y(new this({ initial: v(e), ...t }));
+    return n.edited = p(() => n.isEdited()), Oe(e) && O(e, (s) => n.reset(s)), n;
   }
   constructor(e, t = {}) {
-    Object.assign(this, e), Object.assign(this, t), this.state || (this.state = new A()), this.value = {}, this.reset(this.initial);
+    Object.assign(this, e), Object.assign(this, t), this.state || (this.state = new D()), this.value = {}, this.reset(this.initial);
   }
   get errors() {
     return this.state.isError && this.state.data || null;
@@ -454,7 +369,7 @@ class X {
     throw "not implemented";
   }
 }
-class lt extends X {
+class ct extends X {
   constructor({ repo: e, url: t, ...n }) {
     var s, o;
     t = t || ((o = (s = e.use) == null ? void 0 : s.meta) == null ? void 0 : o.url), super({ url: t, ...n }, { repo: e });
@@ -463,7 +378,7 @@ class lt extends X {
     return this._fields || (this._fields = Object.keys(this.repo.use.fields())), this._fields;
   }
   _reset(e) {
-    this.value = w(new this.initial.constructor()), this.fields.reduce((t, n) => (t[n] = e[n], t), this.value);
+    this.value = y(new this.initial.constructor()), this.fields.reduce((t, n) => (t[n] = e[n], t), this.value);
   }
   isEdited() {
     return this.fields.some((e) => this.value[e] != this.initial[e]);
@@ -474,20 +389,20 @@ class lt extends X {
   send(e) {
     let [t, n] = ["post", this.url];
     return e.id && (n = `${n}${e.id}/`, t = "put"), this.repo.api()[t](n, e).then(
-      (s) => A.ok(s.entities[0]),
-      (s) => A.error(s.response.data)
+      (s) => D.ok(s.entities[0]),
+      (s) => D.error(s.response.data)
     );
   }
 }
-function ct({ editorClass: r = X, emits: e = null, panel: t = null, ...n }) {
+function lt({ editorClass: r = X, emits: e = null, panel: t = null, ...n }) {
   e && (n.saved ?? (n.saved = (o, i) => e("saved", o, i)));
   const s = r.reactive(n);
-  return t && k(() => s.edited, (o) => t.setEdition(s.name, o)), s;
+  return t && O(() => s.edited, (o) => t.setEdition(s.name, o)), s;
 }
-function wr(r) {
-  return ct({ ...r, editorClass: lt });
+function Dr(r) {
+  return lt({ ...r, editorClass: ct });
 }
-const P = {
+const k = {
   "001": 1,
   AD: 1,
   AE: 6,
@@ -643,29 +558,29 @@ const P = {
 function ht(r, e, t) {
   const n = [];
   let s = [];
-  const o = ee(r), i = te(r), a = t ?? P[e.slice(-2).toUpperCase()] ?? 0, u = (o.getDay() - a + 7) % 7, f = (i.getDay() - a + 7) % 7;
-  for (let l = 0; l < u; l++) {
+  const o = ee(r), i = te(r), c = t ?? k[e.slice(-2).toUpperCase()] ?? 0, a = (o.getDay() - c + 7) % 7, f = (i.getDay() - c + 7) % 7;
+  for (let u = 0; u < a; u++) {
     const h = new Date(o);
-    h.setDate(h.getDate() - (u - l)), s.push(h);
+    h.setDate(h.getDate() - (a - u)), s.push(h);
   }
-  for (let l = 1; l <= i.getDate(); l++) {
-    const h = new Date(r.getFullYear(), r.getMonth(), l);
+  for (let u = 1; u <= i.getDate(); u++) {
+    const h = new Date(r.getFullYear(), r.getMonth(), u);
     s.push(h), s.length === 7 && (n.push(s), s = []);
   }
-  for (let l = 1; l < 7 - f; l++) {
+  for (let u = 1; u < 7 - f; u++) {
     const h = new Date(i);
-    h.setDate(h.getDate() + l), s.push(h);
+    h.setDate(h.getDate() + u), s.push(h);
   }
   return s.length > 0 && n.push(s), n;
 }
 function dt(r, e, t) {
-  const n = t ?? P[e.slice(-2).toUpperCase()] ?? 0, s = new Date(r);
+  const n = t ?? k[e.slice(-2).toUpperCase()] ?? 0, s = new Date(r);
   for (; s.getDay() !== n; )
     s.setDate(s.getDate() - 1);
   return s;
 }
 function ft(r, e) {
-  const t = new Date(r), n = ((P[e.slice(-2).toUpperCase()] ?? 0) + 6) % 7;
+  const t = new Date(r), n = ((k[e.slice(-2).toUpperCase()] ?? 0) + 6) % 7;
   for (; t.getDay() !== n; )
     t.setDate(t.getDate() + 1);
   return t;
@@ -692,12 +607,12 @@ function re(r) {
   }
   return null;
 }
-const K = new Date(2e3, 0, 2);
+const U = new Date(2e3, 0, 2);
 function pt(r, e) {
-  const t = e ?? P[r.slice(-2).toUpperCase()] ?? 0;
-  return Ye(7).map((n) => {
-    const s = new Date(K);
-    return s.setDate(K.getDate() + t + n), new Intl.DateTimeFormat(r, {
+  const t = e ?? k[r.slice(-2).toUpperCase()] ?? 0;
+  return _e(7).map((n) => {
+    const s = new Date(U);
+    return s.setDate(U.getDate() + t + n), new Intl.DateTimeFormat(r, {
       weekday: "narrow"
     }).format(s);
   });
@@ -724,10 +639,10 @@ function yt(r, e, t, n) {
       };
       break;
     case "normalDate":
-      const a = s.getDate(), u = new Intl.DateTimeFormat(t, {
+      const c = s.getDate(), a = new Intl.DateTimeFormat(t, {
         month: "long"
       }).format(s);
-      return `${a} ${u}`;
+      return `${c} ${a}`;
     case "normalDateWithWeekday":
       i = {
         weekday: "short",
@@ -953,32 +868,32 @@ function Pt(r) {
 function Et(r) {
   return r.getHours();
 }
-function Ct(r) {
+function Ft(r) {
   return r.getMinutes();
 }
-function Ft(r) {
+function Rt(r) {
   return new Date(r.getFullYear(), 0, 1);
 }
 function It(r) {
   return new Date(r.getFullYear(), 11, 31);
 }
-function Rt(r, e) {
+function Ct(r, e) {
   return x(r, e[0]) && $t(r, e[1]);
 }
-function Yt(r) {
+function _t(r) {
   const e = new Date(r);
   return e instanceof Date && !isNaN(e.getTime());
 }
 function x(r, e) {
   return r.getTime() > e.getTime();
 }
-function _t(r, e) {
+function Yt(r, e) {
   return x(F(r), F(e));
 }
 function $t(r, e) {
   return r.getTime() < e.getTime();
 }
-function W(r, e) {
+function K(r, e) {
   return r.getTime() === e.getTime();
 }
 function Lt(r, e) {
@@ -987,10 +902,10 @@ function Lt(r, e) {
 function Nt(r, e) {
   return r.getMonth() === e.getMonth() && r.getFullYear() === e.getFullYear();
 }
-function Vt(r, e) {
+function jt(r, e) {
   return r.getFullYear() === e.getFullYear();
 }
-function jt(r, e, t) {
+function Vt(r, e, t) {
   const n = new Date(r), s = new Date(e);
   switch (t) {
     case "years":
@@ -1089,22 +1004,22 @@ class qt {
     return yt(e, t, this.locale, this.formats);
   }
   isEqual(e, t) {
-    return W(e, t);
+    return K(e, t);
   }
   isValid(e) {
-    return Yt(e);
+    return _t(e);
   }
   isWithinRange(e, t) {
-    return Rt(e, t);
+    return Ct(e, t);
   }
   isAfter(e, t) {
     return x(e, t);
   }
   isAfterDay(e, t) {
-    return _t(e, t);
+    return Yt(e, t);
   }
   isBefore(e, t) {
-    return !x(e, t) && !W(e, t);
+    return !x(e, t) && !K(e, t);
   }
   isSameDay(e, t) {
     return Lt(e, t);
@@ -1113,7 +1028,7 @@ class qt {
     return Nt(e, t);
   }
   isSameYear(e, t) {
-    return Vt(e, t);
+    return jt(e, t);
   }
   setMinutes(e, t) {
     return Ut(e, t);
@@ -1131,7 +1046,7 @@ class qt {
     return Ht(e, t);
   }
   getDiff(e, t, n) {
-    return jt(e, t, n);
+    return Vt(e, t, n);
   }
   getWeekdays(e) {
     return pt(this.locale, e ? Number(e) : void 0);
@@ -1155,7 +1070,7 @@ class qt {
     return Et(e);
   }
   getMinutes(e) {
-    return Ct(e);
+    return Ft(e);
   }
   startOfDay(e) {
     return F(e);
@@ -1164,13 +1079,13 @@ class qt {
     return Gt(e);
   }
   startOfYear(e) {
-    return Ft(e);
+    return Rt(e);
   }
   endOfYear(e) {
     return It(e);
   }
 }
-const Zt = Symbol.for("vuetify:date-options"), H = Symbol.for("vuetify:date-adapter");
+const Zt = Symbol.for("vuetify:date-options"), W = Symbol.for("vuetify:date-adapter");
 function zt(r, e) {
   const t = Q({
     adapter: qt,
@@ -1224,11 +1139,11 @@ function zt(r, e) {
   };
 }
 function Jt(r, e) {
-  const t = w(typeof r.adapter == "function" ? new r.adapter({
+  const t = y(typeof r.adapter == "function" ? new r.adapter({
     locale: r.locale[e.current.value] ?? e.current.value,
     formats: r.formats
   }) : r.adapter);
-  return k(e.current, (n) => {
+  return O(e.current, (n) => {
     t.locale = r.locale[n] ?? n ?? t.locale;
   }), t;
 }
@@ -1241,60 +1156,60 @@ function ne() {
     aliases: s = {},
     components: o = {},
     directives: i = {}
-  } = n, a = _e(n.defaults), u = $e(n.display, n.ssr), f = Le(n.theme), l = Ne(n.icons), h = Ve(n.locale), m = zt(n.date, h), T = je(n.goTo, h);
+  } = n, c = Ye(n.defaults), a = $e(n.display, n.ssr), f = Le(n.theme), u = Ne(n.icons), h = je(n.locale), m = zt(n.date, h), A = Ve(n.goTo, h);
   return {
-    install: (c) => {
+    install: (l) => {
       for (const d in i)
-        c.directive(d, i[d]);
+        l.directive(d, i[d]);
       for (const d in o)
-        c.component(d, o[d]);
+        l.component(d, o[d]);
       for (const d in s)
-        c.component(d, Be({
+        l.component(d, Be({
           ...s[d],
           name: d,
           aliasName: s[d].name
         }));
-      if (f.install(c), c.provide($, a), c.provide(L, u), c.provide(N, f), c.provide(V, l), c.provide(j, h), c.provide(Zt, m.options), c.provide(H, m.instance), c.provide(Ue, T), Ke && n.ssr)
-        if (c.$nuxt)
-          c.$nuxt.hook("app:suspense:resolve", () => {
-            u.update();
+      if (f.install(l), l.provide(Y, c), l.provide($, a), l.provide(L, f), l.provide(N, u), l.provide(j, h), l.provide(Zt, m.options), l.provide(W, m.instance), l.provide(Ue, A), Ke && n.ssr)
+        if (l.$nuxt)
+          l.$nuxt.hook("app:suspense:resolve", () => {
+            a.update();
           });
         else {
           const {
             mount: d
-          } = c;
-          c.mount = function() {
+          } = l;
+          l.mount = function() {
             const oe = d(...arguments);
-            return ke(() => u.update()), c.mount = d, oe;
+            return ke(() => a.update()), l.mount = d, oe;
           };
         }
-      We.reset(), c.mixin({
+      We.reset(), l.mixin({
         computed: {
           $vuetify() {
-            return w({
-              defaults: v.call(this, $),
-              display: v.call(this, L),
-              theme: v.call(this, N),
-              icons: v.call(this, V),
-              locale: v.call(this, j),
-              date: v.call(this, H)
+            return y({
+              defaults: w.call(this, Y),
+              display: w.call(this, $),
+              theme: w.call(this, L),
+              icons: w.call(this, N),
+              locale: w.call(this, j),
+              date: w.call(this, W)
             });
           }
         }
       });
     },
-    defaults: a,
-    display: u,
+    defaults: c,
+    display: a,
     theme: f,
-    icons: l,
+    icons: u,
     locale: h,
     date: m,
-    goTo: T
+    goTo: A
   };
 }
 const Qt = "3.7.3";
 ne.version = Qt;
-function v(r) {
+function w(r) {
   var n, s;
   const e = this.$, t = ((n = e.parent) == null ? void 0 : n.provides) ?? ((s = e.vnode.appContext) == null ? void 0 : s.provides);
   if (t && r in t)
@@ -1389,7 +1304,7 @@ const Xt = {
 function er() {
   const e = (we("lang", ",") || ["en"]).map(
     (t) => t.toLowerCase().replace(/[_-](\w+)/, "")
-  ).find((t) => t in R.locales);
+  ).find((t) => t in I.locales);
   return ve({
     legacy: !1,
     fallbackLocale: "en",
@@ -1397,44 +1312,44 @@ function er() {
   });
 }
 const se = er();
-function p(...r) {
+function T(...r) {
   return se.global.t(...r);
 }
-function vr(r, e, t) {
-  if (!(t in R.locales))
+function Mr(r, e, t) {
+  if (!(t in I.locales))
     throw Error("Locale is not provided by config.");
-  r.global.locale.value = t, I(r, e, t), document.querySelector("html").setAttribute("lang", t);
+  r.global.locale.value = t, R(r, e, t), document.querySelector("html").setAttribute("lang", t);
 }
-const G = /* @__PURE__ */ new Set();
-function br({ path: r = "./", fallback: e = !0, ...t } = {}) {
+const H = /* @__PURE__ */ new Set();
+function Ar({ path: r = "./", fallback: e = !0, ...t } = {}) {
   const n = be(t);
-  return q(n, { path: r, fallback: e }), k(() => n.locale, () => q(n, { path: r, fallback: e })), n;
+  return G(n, { path: r, fallback: e }), O(() => n.locale, () => G(n, { path: r, fallback: e })), n;
 }
-async function I(r, e, t) {
+async function R(r, e, t) {
   const n = t.replace(/[_-](\w+)/, "");
-  if (e = `${e}locales/${n}.json`, G.has(e))
+  if (e = `${e}locales/${n}.json`, H.has(e))
     return;
-  G.add(e);
+  H.add(e);
   const s = await fetch(e).then((o) => o.json());
   r.messages.value[t] = {
     ...r.messages.value[t],
     ...s
   };
 }
-function q(r, { path: e = "./", fallback: t = !0 } = {}) {
+function G(r, { path: e = "./", fallback: t = !0 } = {}) {
   e.startsWith("/") || (e = import.meta.resolve(e)), e.endsWith("/") || (e += "/");
-  let n = I(r, e, D(r.locale));
-  return t && r.fallbackLocale.value && (n = n.catch((s) => I(r, e, D(r.fallbackLocale))).catch((s) => {
+  let n = R(r, e, v(r.locale));
+  return t && r.fallbackLocale.value && (n = n.catch((s) => R(r, e, v(r.fallbackLocale))).catch((s) => {
     throw Error(
       `Could not load locale ${r.locale.value} nor its fallback ${r.fallbackLocale.value} (path: ${e}). Error: ${s}`
     );
   })), n;
 }
-const O = {
+const q = {
   model: (r) => `models.${r.entity}`,
   field: (r) => `fields.${r}`
 };
-function Dr({ App: r = null, el: e = "#app", onLoad: t = !0, ...n } = {}) {
+function Tr({ App: r = null, el: e = "#app", onLoad: t = !0, ...n } = {}) {
   function s() {
     const o = tr(r, n), i = e ? o.mount(e) : null;
     return document.body.classList.remove("loading"), { app: o, el: e, vm: i };
@@ -1461,13 +1376,13 @@ function rr({ components: r = {}, ...e }) {
     ...e
   });
 }
-function Mr({ axiosConfig: r = null, baseURL: e = null } = {}) {
+function Sr({ axiosConfig: r = null, baseURL: e = null } = {}) {
   e || (e = document.body.dataset.apiUrl);
   const t = De(), n = Me({});
   return n().use(
     st({
-      axios: Fe,
-      ...r || R.axiosConfig,
+      axios: Re,
+      ...r || I.axiosConfig,
       baseURL: e
     })
   ), Ae(t), t.use(n);
@@ -1499,13 +1414,13 @@ class ie {
    * @param [options.params] extra GET parameters
    * @param [options.opts] options passed down to ``repo.api.get``
    */
-  async fetch({ ids: e = null, repo: t = null, url: n = null, lookup: s = "id__in", params: o = void 0, relations: i = null, ...a } = {}) {
-    var f, l;
-    if (t ?? (t = this.repo), n || (n = (l = (f = t.use) == null ? void 0 : f.meta) == null ? void 0 : l.url), !n)
+  async fetch({ ids: e = null, repo: t = null, url: n = null, lookup: s = "id__in", params: o = void 0, relations: i = null, ...c } = {}) {
+    var f, u;
+    if (t ?? (t = this.repo), n || (n = (u = (f = t.use) == null ? void 0 : f.meta) == null ? void 0 : u.url), !n)
       throw Error("URL must be provided or Model must provide a `meta: Meta` with `url`");
     e && s !== void 0 && (o = { ...o || {} }, o[s] = [...e]);
-    const u = await t.api().get(n, { ...a, params: o });
-    return i && (u.relations = await this.relations(u.entities, i, { ...a, params: {} })), u;
+    const a = await t.api().get(n, { ...c, params: o });
+    return i && (a.relations = await this.relations(a.entities, i, { ...c, params: {} })), a;
   }
   /**
    * Fetch all items from api.
@@ -1537,12 +1452,12 @@ class ie {
     this._ensureRepos("relations");
     const s = {}, o = (i = this.repo.use) == null ? void 0 : i.fields();
     if (o)
-      for (const a of t) {
-        const u = o[a];
-        if (u instanceof Te)
-          s[a] = await this.relation(e, u, n);
+      for (const c of t) {
+        const a = o[c];
+        if (a instanceof Te)
+          s[c] = await this.relation(e, a, n);
         else
-          throw Error(`Field ${a} is not a relation`);
+          throw Error(`Field ${c} is not a relation`);
       }
     return s;
   }
@@ -1560,9 +1475,9 @@ class ie {
    * @param options.opts - extra options to pass down to `all()`.
    */
   async relation(e, t, { thin: n = !1, ...s } = {}) {
-    var l, h;
+    var u, h;
     if (this._ensureRepos("relations"), typeof t == "string") {
-      const m = (l = this.repo.use) == null ? void 0 : l.fields();
+      const m = (u = this.repo.use) == null ? void 0 : u.fields();
       if (!m || !m[t])
         throw Error(`Field ${t} is not a relation on ${this.repo.use} model`);
       t = m[t];
@@ -1570,21 +1485,21 @@ class ie {
     const o = t.related.constructor.entity, i = this.repos[o];
     if (!i)
       throw Error(`No repository "${o}" found.`);
-    let a = J(e, t.foreignKey), u = null;
+    let c = J(e, t.foreignKey), a = null;
     if (n) {
-      u = new Set(Object.keys((h = i.pinia.state[o]) == null ? void 0 : h.value.data).filter((T) => T in a));
-      const m = a.difference(u);
-      m && (a = m);
+      a = new Set(Object.keys((h = i.pinia.state[o]) == null ? void 0 : h.value.data).filter((A) => A in c));
+      const m = c.difference(a);
+      m && (c = m);
     }
-    const f = await this.all({ ids: a, repo: i, ...s });
-    if (n && u) {
-      const m = i.whereId(u).get();
+    const f = await this.all({ ids: c, repo: i, ...s });
+    if (n && a) {
+      const m = i.whereId(a).get();
       f.entities = [...f.entities || [], ...m];
     }
     return f;
   }
 }
-function Ar(r, e = null) {
+function xr(r, e = null) {
   return new ie(r, e);
 }
 class nr {
@@ -1593,14 +1508,14 @@ class nr {
     g(this, "nextKey", "next");
     g(this, "prevKey", "previous");
     g(this, "countKey", "count");
-    Z(this, e), this.filters || (this.filters = {}), this.state = A.none(), this.ids = [], this.nextUrl = this.nextUrl ?? null, this.prevUrl = this.prevUrl ?? null;
+    Z(this, e), this.filters || (this.filters = {}), this.state = D.none(), this.ids = [], this.nextUrl = this.nextUrl ?? null, this.prevUrl = this.prevUrl ?? null;
   }
   /**
    * Return a reactive object version.
    */
   static reactive({ value: e, ...t }) {
-    const n = w(new this(t));
-    return n.value = e, n.items = y(() => n.getItems()), n.prev = y(() => n.getSibling(n.value, -1)), n.next = y(() => n.getSibling(n.value, 1)), n;
+    const n = y(new this(t));
+    return n.value = e, n.items = p(() => n.getItems()), n.prev = p(() => n.getSibling(n.value, -1)), n.next = p(() => n.getSibling(n.value, 1)), n;
   }
   /**
    * Items' repository
@@ -1630,7 +1545,7 @@ class nr {
    * **Note**: this method is only available on the reactive object.
    */
   getSibling(e, t) {
-    const n = this.getSiblingIndex(D(e), t);
+    const n = this.getSiblingIndex(v(e), t);
     return n > -1 ? this.items[n] : null;
   }
   /**
@@ -1677,47 +1592,61 @@ class nr {
 function sr({ repo: r = null, repos: e = null, query: t = null, ...n }) {
   t ?? (t = new ie(r, e));
   const s = nr.reactive({ query: t, ...n });
-  return b("list", s), s;
+  return M("list", s), s;
 }
-class ir {
+function Or(r, e) {
+  return Ee(() => import(r).then((t) => e ? Object.values(t).filter((s) => s.__name == e)[0] : t));
+}
+class ir extends Ge {
+  constructor() {
+    super(...arguments);
+    g(this, "panel", "");
+    g(this, "view", "");
+    g(this, "value", null);
+    g(this, "current", null);
+  }
+  static readPath(t) {
+    if (!t)
+      return { panel: "", view: "" };
+    const n = t.indexOf(".");
+    return n < 0 ? { panel: t, view: "" } : { panel: t.substring(0, n), view: t.substring(n + 1) };
+  }
+  show({ force: t = !1, ...n }) {
+    (!this.current || this.current.onLeave({ target: n, force: t })) && this.reset(n);
+  }
+  reset(t) {
+    this.panel = t.panel || this.panel, this.view = t.view, this.value = t.value;
+  }
+}
+function or(r) {
+  const e = ir.reactive(r);
+  return provide("panelTarget", e), e;
+}
+class ar {
   constructor(e) {
     g(this, "showFilters", !1);
     var t;
     Object.assign(this, e), this.list || (this.list = this.getList()), this.showFilters = ((t = this.props) == null ? void 0 : t.showFilters) || !1;
   }
-  /**
-   * Instanciate and return a reactive model panel.
-   */
+  /** Instanciate and return a reactive model panel. */
   static reactive(e) {
-    console.log(e);
-    const t = w(new this(e));
-    return t.title = y(() => t.getTitle()), t.icon = y(() => t.getIcon()), t;
+    const t = y(new this(e));
+    return t.title = p(() => t.getTitle()), t.icon = p(() => t.getIcon()), t;
   }
-  /**
-   * Current model's repository.
-   */
+  /** Current model's repository. */
   get repo() {
     return this.props.repo;
   }
-  /**
-   * Current model.
-   */
+  /** Current model. */
   get model() {
     return this.repo.use;
   }
-  /**
-   * Current panel's view.
-   */
-  get view() {
-    return this.panel.view;
-  }
+  /** Return adequate icon based on props and model **/
   getIcon() {
     var e, t;
     return ((e = this.props) == null ? void 0 : e.icon) || ((t = this.model.meta) == null ? void 0 : t.icon) || null;
   }
-  /**
-   * Return panel's title based on view and current item.
-   */
+  /** Return panel's title based on view and current item. */
   getTitle() {
     var o;
     const { props: e, list: t, panel: n } = this;
@@ -1726,21 +1655,19 @@ class ir {
     const s = this.repo.use;
     if (s) {
       if ((o = this.view) != null && o.startsWith("list."))
-        return p(O.model(s), 3);
+        return T(q.model(s), 3);
       if (n.value) {
         if (n.value.$title)
           return n.value.$title;
-        const i = p(O.model(s));
-        return n.value.id ? p("models._.title", { model: i, id: n.value.id }) : p("models._.title.new", { model: i });
+        const i = T(q.model(s));
+        return n.value.id ? T("models._.title", { model: i, id: n.value.id }) : T("models._.title.new", { model: i });
       }
     }
     return "";
   }
-  /**
-   * Get instance of list.
-   */
+  /** Get instance of list. */
   getList() {
-    const e = Se(Re.props, this.props), { value: t } = Ee(this.panel);
+    const e = Se(Ce.props, this.props), { value: t } = Fe(this.target);
     return sr({ ...e, value: t, repos: this.repos });
   }
   /**
@@ -1749,64 +1676,75 @@ class ir {
    * @param path - path to edit view.
    */
   create(e = ".detail.add") {
-    this.panel.show({ path: e, value: new this.model() });
+    this.target.show({ panel: this.name, view: e, value: new this.model() });
   }
-  /**
-   * Called when an item has been created. By default, show edit view.
-   */
+  /** Called when an item has been created. By default, show edit view. */
   created(e, t = ".detail.edit") {
-    this.panel.show({ path: t, value: e, force: !0 }), this.list.fetch();
+    this.target.show({ panel: this.name, view: t, value: e, force: !0 }), this.list.fetch();
   }
 }
-function Tr(r) {
-  return ir.reactive(r);
+function ur(r) {
+  return ar.reactive(r);
 }
-function Sr(r, e) {
-  return Ce(() => import(r).then((t) => e ? Object.values(t).filter((s) => s.__name == e)[0] : t));
+function cr({ name: r = "", relations: e = [], headers: t = [] } = {}) {
+  return {
+    name: { type: String, default: r },
+    tabbed: { type: Boolean, default: !1 },
+    relations: { type: Array, default: () => e },
+    headers: { type: Array, default: () => [
+      ...t,
+      { key: "actions", title: "Actions" }
+    ] }
+  };
 }
+const kr = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+  __proto__: null,
+  useModelPanel: ur,
+  useModelPanelProps: cr,
+  useTarget: or
+}, Symbol.toStringTag, { value: "Module" }));
 export {
   at as AppContext,
   X as Editor,
   nr as List,
-  lt as ModelEditor,
-  Ge as Panel,
+  ct as ModelEditor,
   ie as Query,
-  A as State,
-  kr as States,
+  Ge as RObject,
+  D as State,
+  Fr as States,
   Z as assignNonEmpty,
   J as collectAttr,
-  R as config,
+  I as config,
   tr as createApp,
   er as createI18n,
-  Mr as createPinia,
+  Sr as createPinia,
   rr as createVuetify,
-  Pr as csrfToken,
-  Sr as defineAsyncComponent,
-  ct as editor,
-  Er as filterSlots,
+  Rr as csrfToken,
+  Or as defineAsyncComponent,
+  lt as editor,
+  Ir as filterSlots,
   Cr as getCookie,
   we as getCookieList,
-  Fr as getCsrf,
+  _r as getCsrf,
   se as i18n,
-  Dr as init,
-  G as loadedLocalePaths,
+  Tr as init,
+  H as loadedLocalePaths,
   Se as mapToObject,
-  wr as modelEditor,
-  fr as models,
-  Ar as query,
+  Dr as modelEditor,
+  yr as models,
+  kr as panels,
+  xr as query,
   ye as reset,
-  vr as setLocale,
-  Ir as shallowCopy,
-  p as t,
-  O as tKeys,
-  yr as useAction,
-  pr as useAppContext,
-  br as useI18n,
+  Mr as setLocale,
+  Yr as shallowCopy,
+  T as t,
+  q as tKeys,
+  br as useAction,
+  vr as useAppContext,
+  Ar as useI18n,
   sr as useList,
-  Tr as useModelPanel,
-  mr as useModelPanelProps,
   it as useModels,
   ot as usePermissions,
-  gr as usePermissionsProps
+  wr as usePermissionsProps
 };
 //# sourceMappingURL=ox.js.map

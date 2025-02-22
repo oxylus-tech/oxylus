@@ -85,10 +85,10 @@ const props = defineProps({
 const {initial} = toRefs(props)
 const form = useTemplateRef('form')
 
-const panel = inject("panel")
+const panels = inject("panels")
 const editor = modelEditor({
     name: "account-editor",
-    panel, initial, emits,
+    panels, initial, emits,
     repo: repos.users,
 })
 
