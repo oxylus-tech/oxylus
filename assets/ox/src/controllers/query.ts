@@ -20,13 +20,6 @@ export interface IQuery<M extends Model> {
     repos: Repos
 }
 
-/** {@link OxQuery} properties */
-export interface IQueryProps<M extends Model> {
-    /** Model repository */
-    repo: Repository<M>
-}
-
-
 /** {@link Query.fetch} parameters. */
 export interface IQueryFetch<M extends Model> extends Partial<object> {
     /**
@@ -235,11 +228,6 @@ export default class Query<M extends Model> {
 export interface Query<M extends Model> extends IQuery<M> {}
 
 
-/**
- * This composable return a new query from provided arguments.
- */
-export function useQuery(repo: Repository, repos: Repos|null=null) {
-    const query = new Query(repo, repos)
-    provide('query', query)
-    return query
+export function query<M extends Model>(repo: string|Repository<M>, repos: Repos|null): Query<M> {
+    return new Query(repo, repos)
 }

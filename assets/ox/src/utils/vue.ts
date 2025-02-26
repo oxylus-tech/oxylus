@@ -1,3 +1,6 @@
+import {inject, provide} from 'vue'
+
+
 export interface IFilterSlotOpts {
     exclude?: string[]
 }

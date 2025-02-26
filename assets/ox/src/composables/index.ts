@@ -5,10 +5,8 @@ export * from './actions'
 export * from './edit'
 export * from './init'
 export * from './i18n'
-export * from './list'
 export * from './models'
-export * from './layout'
-export * from './api'
+export * from './controllers'
 
 
 /**

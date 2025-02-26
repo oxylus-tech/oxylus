@@ -46,7 +46,7 @@ import { computed, defineProps, inject, useSlots, withDefaults } from 'vue'
 
 import { useModels, api, query } from 'ox'
 import {OxModelPanel, OxListKanban} from 'ox/components'
-import type {IModelPanelProps} from '@ox/layout'
+import type {IModelPanelProps} from '@ox/controllers'
 
 import {useAuthModels} from '../composables'
 import OxUserEdit from './OxUserEdit.vue'

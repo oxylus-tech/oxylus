@@ -6,7 +6,7 @@
 </template>
 <script setup lang="ts">
 import { computed, defineProps, inject } from 'vue'
-import type {IPanelNavProps} from '../layout'
+import type {IPanelNavProps} from '../controllers'
 
 const props = defineProps<IPanelNavProps>()
 const panels = inject('panels')

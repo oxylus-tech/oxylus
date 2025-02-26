@@ -1,17 +1,18 @@
 import {computed, reactive, toRefs} from 'vue'
 import type {Reactive} from 'vue'
+import type {Repository} from 'pinia-orm'
 
 import {Model} from '../models'
 import {mapToObject} from '../utils'
-import {useList} from '../composables/list'
 import {t, tKeys} from '../composables/i18n'
+import {useList} from './list'
 
-import type {List} from '../composables/list'
-import type {Query} from '../composables/api'
+import type {List} from './list'
+import type {Query} from './query'
 import type {IPanel, IPanelProps} from './panel'
 import type {Repos} from '../models'
 
-import type {Target} from './target'
+import type {Panels} from './panels'
 
 import Panel from './panel'
 
@@ -22,6 +23,7 @@ import {OxList} from 'ox/components'
  * Model panel component properties.
  */
 export type IModelPanelProps<M extends Model> = IPanelProps & {
+    repo: string|Repository<M>
     search: string
     view: string
     headers?: string[]
@@ -29,8 +31,8 @@ export type IModelPanelProps<M extends Model> = IPanelProps & {
 
 /** Model panel interface. */
 export interface IModelPanel<M extends Model> {
-    panels: Target
-    props: IModelPanelProps
+    panels: Panels
+    props: IModelPanelProps<M>
     list: List<M>
 }
 
@@ -44,7 +46,7 @@ export default class ModelPanel extends Panel {
 
     static reactive(options: IModelPanel): Reactive<this> {
         const obj = super.reactive(options)
-        obj.item = computed((val) => obj.onValueChange(val))
+        obj.item = computed((val) => obj.getItem(val))
         return obj
     }
 
@@ -59,11 +61,14 @@ export default class ModelPanel extends Panel {
     /** Current model. */
     get model() { return this.repo.use }
 
-    /** Return adequate icon based on props and model **/
-    getIcon(): string { return super.getIcon() || this.model.meta?.icon }
+    /** Query (shortcut to `this.list.query`). **/
+    get query() { return this.list.query }
+
+    /** Return icon based on props and model **/
+    get icon(): string { return super.icon || this.model.meta?.icon }
 
     /** Return panel's title based on view and current item. */
-    getTitle(): string {
+    get title(): string {
         const {props, list, panels} = this
         const model = this.repo.use
         if(model) {
@@ -81,13 +86,7 @@ export default class ModelPanel extends Panel {
                     : t(`models._.title.new`, {model: name})
             }
         }
-        return super.getTitle()
-    }
-
-    /** Get instance of list. */
-    createList() {
-        const {value} = toRefs(this.panels)
-        return useList({value, query: this.query})
+        return super.title
     }
 
     /**
@@ -96,12 +95,12 @@ export default class ModelPanel extends Panel {
      * @param path - path to edit view.
      */
     create(view: string='.detail.add') {
-        this.target.show({panel: this.name, view, value: new this.model()})
+        this.panels.show({panel: this.name, view, value: new this.model()})
     }
 
     /** Called when an item has been created. By default, show edit view. */
     created(value, view: string=".detail.edit") {
-        this.target.show({panel: this.name, view, value, force: true})
+        this.panels.show({panel: this.name, view, value, force: true})
         this.list.fetch()
     }
 

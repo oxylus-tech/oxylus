@@ -30,7 +30,7 @@
 import { defineProps, inject, useSlots, withDefaults } from 'vue'
 
 import { useModels} from 'ox'
-import type {IModelPanelProps} from '@ox/layout'
+import type {IModelPanelProps} from '@ox/controllers'
 
 import { OxModelPanel } from 'ox/components'
 import { useAuthModels } from '../composables'

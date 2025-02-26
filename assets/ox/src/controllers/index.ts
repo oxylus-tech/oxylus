@@ -1,7 +1,11 @@
+export * from './query'
+export * from './list'
 export * from './panel'
 export * from './panels'
 export * from './modelPanel'
 
+export {default as Query} from './query'
+export {default as List} from './list'
 export {default as Panel} from './panel'
 export {default as ModelPanel} from './modelPanel'
-export {default as Target} from './target'
+export {default as Panels} from './panels'

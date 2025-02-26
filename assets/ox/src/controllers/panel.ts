@@ -3,7 +3,7 @@ import type {WatchHandle} from 'vue'
 
 import {t} from '../composables'
 import {RObject, State} from '../utils'
-import type {Target, ITarget} from './target'
+import type {Panels, IPanels} from './panels'
 
 
 export interface IPanelInfo {
@@ -20,11 +20,11 @@ export interface IPanel {
     /** Panel name */
     name: string
     /**
-    * {@link Target} used to specify current view and value.
+    * {@link Panels} used to specify current view and value.
     *
     * This element may be shared among multiple panels.
     */
-    panels: Target
+    panels: Panels
     /**
      * Current unsaved changes. This can be updated by component in order
      * to prevent data loss when changing panels.
@@ -44,8 +44,8 @@ export interface IPanelProps extends IPanelInfo {
 }
 
 /** Component properties used by OxPanelNav */
-export type IPanelNavProps = IPanelInfo & ITarget & {
-    /** Target page **/
+export type IPanelNavProps = IPanelInfo & IPanels & {
+    /** Panels page **/
     href?: string
     /** Only display the navigation item when panel is active. */
     auto?: boolean
@@ -88,16 +88,14 @@ export default class Panel<O=IPanel> extends RObject<IPanel> {
     static reactive(options: IPanel) {
         const obj = super.reactive(options)
         obj.watcher = watch(() => obj.panels.panel, (val) => obj.onChange(val))
-        obj.title = computed(() => obj.getTitle())
-        obj.icon = computed(() => obj.getIcon())
         return obj
     }
 
     /** Return adequate icon based on props and model **/
-    getIcon(): string { return this.props?.icon || null }
+    get icon(): string { return this.props?.icon || null }
 
     /** Return panel's title based on props. */
-    getTitle(): string { return this.props?.title }
+    get title(): string { return this.props?.title }
 
     /** Set or remove an edition by name. */
     setEdition(name: string, edited: boolean) {

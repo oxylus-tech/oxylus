@@ -3,7 +3,7 @@ import {RObject} from '../utils'
 import type {Panel} from './panel'
 
 
-export interface ITarget {
+export interface IPanels {
     /** Current panel's name. **/
     panel: string
     /** Current panel's view **/
@@ -13,25 +13,25 @@ export interface ITarget {
 }
 
 
-export interface IPanelShow extends ITarget {
+export interface IPanelShow extends IPanels {
     force?: boolean
     href?: string
 }
 
 /**
- * This class is used to target a panel, providing extra information such
+ * This class is used to panels a panel, providing extra information such
  * as value and view. It is shared among panels.
  *
  * Use it as this provides utilities to avoid data loss and allow current
  * panel to have control over leaving it.
  */
-export default class Target extends RObject<ITarget> {
+export default class Panels extends RObject<IPanels> {
     panel: string = ""
     view: string = ""
     value?: any = null
     current?: Panel = null
 
-    static readPath(path) : ITarget {
+    static readPath(path) : IPanels {
         if(!path)
             return {panel: "", view: ""}
 
@@ -41,29 +41,29 @@ export default class Target extends RObject<ITarget> {
         return {panel: path.substring(0, idx), view: path.substring(idx+1)}
     }
 
-    show({force=false, href=null, ...target}: IPanelShow) {
-        const proceed = !this.current || this.current.onLeave({target, force})
+    show({force=false, href=null, ...panels}: IPanelShow) {
+        const proceed = !this.current || this.current.onLeave({panels, force})
         if(!proceed)
             return
 
         if(href && window.location.pathname != href) {
-            if(!target.panel)
+            if(!panels.panel)
                 throw Error("The attribute `href` requires`panel`.")
 
-            window.location.href = `${href}?panel=${target.panel}&view=${target.view}`
+            window.location.href = `${href}?panel=${panels.panel}&view=${panels.view}`
             return
         }
 
-        this.reset(target)
+        this.reset(panels)
     }
 
-    reset(options: ITargetOpts) {
-        this.panel = options.panel || this.panel
-        this.view = options.view || this.current?.index || ""
-        this.value = options.value
+    reset({panel, view=null, value=null}: IPanelsOpts) {
+        this.panel = panel || this.panel
+        this.view = view || ""
+        this.value = value
     }
 }
-export interface Target extends ITarget {
+export interface Panels extends IPanels {
     /** Current panel (set by panels) **/
     current: Panel
 }

@@ -44,7 +44,7 @@
 import { useSlots, withDefaults, onErrorCaptured } from 'vue'
 import { computed, defineProps, inject, provide, reactive, watch } from 'vue'
 
-import {useAppContext, useTarget} from 'ox'
+import {useAppContext, usePanels} from 'ox'
 import type {Model} from '../models'
 
 // we force ox_core locales to be loaded
@@ -67,7 +67,7 @@ const props = withDefaults(defineProps<Props>(), {
 const nav = reactive({drawer: true})
 
 const context = useAppContext(props)
-const panels = useTarget()
+const panels = usePanels()
 
 watch(() => [context.state.state, context.state.data], () => {
     context.showState = true

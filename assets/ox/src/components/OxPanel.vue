@@ -1,5 +1,5 @@
 <template>
-    <v-tabs-window-item :value="props.name" @group:selected="panels.reset({panel: props.name})">
+    <v-tabs-window-item :value="props.name">
         <ox-state-alert v-if="props.state" :state="props.state" delay/>
         <v-sheet class="ma-4">
             <Teleport to="#app-bar-sheet-title" :disabled="!mounted || panels.panel != props.name">
@@ -10,7 +10,7 @@
             <Teleport to="#app-bar-right" :disabled="!mounted || panels.panel != props.name">
                 <slot name="append-title"/>
                 <v-btn v-if="props.help" class="ml-3"
-                    :href="props.help" target="new"
+                    :href="props.help" panels="new"
                     icon="mdi-information-outline" />
             </Teleport>
 
@@ -36,12 +36,11 @@
 import { defineProps, inject, onMounted, ref, useSlots, watch } from 'vue'
 import {filterSlots} from 'ox'
 
-import type {IPanelProps} from '../layout'
+import type {IPanelProps} from '../controllers'
 
 const slots = useSlots()
 const props = defineProps<IPanelProps>()
 const views = filterSlots(slots, 'views.')
-console.log(views)
 
 // ensure teleport will be set after component has been mounted
 const mounted = ref(false)

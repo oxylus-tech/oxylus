@@ -1,0 +1,65 @@
+import {inject, provide, toRefs} from 'vue'
+
+import {injectOrProvide} from '../utils'
+import type {Repository} from 'pinia-orm'
+import type {Repos} from '../models'
+
+import {Panels, ModelPanel, Query, List} from '../controllers'
+import type {IPanels, IModelPanel, IRModelPanel} from '../controllers'
+
+
+/**
+ * Create a new reactive {@link Panels} and provide it as `panels`.
+ *
+ * @return the reactive Panels.
+ */
+export function usePanels(options: IPanels = {}) {
+    const obj = Panels.reactive(options)
+    provide('panels', obj)
+    return obj
+}
+
+/**
+ * Create a new {@link List} and provide it as `list`.
+ *
+ * If no `query` if provided, create one using `repo` and `repos`.
+ */
+export function useList<M extends Model>(options : ListOpts<M>) : IRList<M>
+{
+    const list = List.reactive<M>(options)
+    provide('list', list)
+    return list
+}
+
+
+export interface IUseModelPanel extends IModelPanel {
+    repos: Repos
+}
+
+/**
+ * Create a new reactive {@link ModelPanel} and provide it as `panel`.
+ *
+ * @return the reactive panel.
+ */
+export function useModelPanel({panels, query, list, repos, ...options}: IUseModelPanel = {}) : IRModelPanel<M> {
+    panels = panels ?? inject('panels')
+    repos = repos ?? inject('repos')
+    query = query ?? injectOrProvide('query', () => new Query(options.props.repo, repos))
+    list = list ?? injectOrProvide('list', () => {
+        const {value} = toRefs(panels)
+        return List.reactive({value, query})
+    }, true)
+
+    const panel = ModelPanel.reactive({panels, list, ...options})
+    provide('panel', panel)
+    return panel
+}
+
+/**
+ * This composable return a new query from provided arguments.
+ */
+export function useQuery(repo: Repository, repos: Repos|null=null) {
+    const query = new Query(repo, repos)
+    provide('query', query)
+    return query
+}

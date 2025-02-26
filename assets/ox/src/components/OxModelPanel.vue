@@ -126,11 +126,9 @@ import OxListFilters from './OxListFilters.vue'
 import OxListTable from './OxListTable.vue'
 import OxPanel from './OxPanel.vue'
 import OxModelEdit from './OxModelEdit.vue'
-import OxQuery from './OxQuery.vue'
 
-import {t, filterSlots, useModelPanel, injectOrProvide, Query, List} from 'ox'
-import type {IModelPanelProps} from '../layout'
-
+import {t, filterSlots, useModelPanel} from 'ox'
+import type {IModelPanelProps} from '../controllers'
 
 const slots = useSlots()
 const viewsListSlots = filterSlots(slots, 'views.list.')
@@ -141,13 +139,9 @@ const filters = useTemplateRef('filters')
 const props = withDefaults(defineProps<IModelPanelProps>(), {
     index: 'list.table'
 })
-const repos = inject('repos')
-const panels = inject('panels')
-const query = injectOrProvide('query', () => new Query({repos, repo: props.repo}))
-const list = injectOrProvide('list', () => new List(query), true)
-
-const panel = useModelPanel({list, query, panels, props})
-
+const panel = useModelPanel({props})
+const panels = panel.panels
+const list = panel.list
 
 const {showFilters} = toRefs(panel)
 const headers = computed(() => [

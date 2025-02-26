@@ -2,13 +2,13 @@ import {computed, provide, reactive, unref} from 'vue'
 import {Repository} from 'pinia-orm'
 import type {ComputedRef, Reactive, Ref} from 'vue'
 
-import {Query} from './api'
-import type {IQueryFetch} from './api'
 import {Model} from '../models'
 import type {Repos} from '../models'
 import {collectAttr, assignNonEmpty, State, RObject} from '../utils'
 import type {IObject} from '../utils'
 
+import Query from './query'
+import type {IQueryFetch} from './query'
 
 export type FilterValue = number | string
 export type Filters = IObject<FilterValue>
@@ -77,7 +77,7 @@ export interface IListFetch<M extends Model> extends IQueryFetch<M> {
  *
  * await list.fetch({url: '/users'})
  */
-export class List<M extends Model> extends RObject<IList> {
+export default class List<M extends Model> extends RObject<IList> {
     state = State.none()
     nextUrl = null
     prevUrl = null
@@ -93,7 +93,6 @@ export class List<M extends Model> extends RObject<IList> {
     static reactive<M extends Model>({value, ...options} : IRListOpts<M>): Reactive<this> {
         const obj = super.reactive(options) as IRList<M>
         obj.value = value
-        obj.items = computed(() => obj.getItems())
         obj.prev = computed(() => obj.getSibling(obj.value, -1))
         obj.next = computed(() => obj.getSibling(obj.value, 1))
         return obj
@@ -155,7 +154,7 @@ export class List<M extends Model> extends RObject<IList> {
      * Return list items (fetched from repository)
      * @return an array of items.
      */
-    getItems() : Array<M> {
+    get items() : Array<M> {
         let items = this.query.repo.whereId(this.ids)
         if(this.relations)
             for(const relation of this.relations)
@@ -205,17 +204,4 @@ export interface List<M extends Model> extends IList<M> {
 export type ListOpts<M extends Model> = IRListOpts<M> & {
     query?: Query<M>,
     value?: any
-}
-
-
-/**
- * Create a new {@link List} and provide it as `list`.
- *
- * If no `query` if provided, create one using `repo` and `repos`.
- */
-export function useList<M extends Model>(options : ListOpts<M>) : IRList<M>
-{
-    const list = List.reactive<M>(options)
-    provide('list', list)
-    return list
 }
