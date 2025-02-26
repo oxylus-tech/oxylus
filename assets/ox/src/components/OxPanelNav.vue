@@ -1,12 +1,12 @@
 <template>
-    <v-list-item v-if="visible"
+    <v-list-item
         :active="panels.panel == props.name"
         :prepend-icon="props.icon" :title="props.title"
         @click.stop="panels.show(props)"/>
 </template>
 <script setup lang="ts">
-import { computed, defineProps, inject, defineExpose } from 'vue'
-import type {IPanelNavProps} from '../panels'
+import { computed, defineProps, inject } from 'vue'
+import type {IPanelNavProps} from '../layout'
 
 const props = defineProps<IPanelNavProps>()
 const panels = inject('panels')

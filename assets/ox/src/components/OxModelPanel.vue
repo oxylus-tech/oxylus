@@ -1,10 +1,10 @@
 <template>
-    <ox-panel :name="props.name" :title="modelPanel.title" :icon="modelPanel.icon"
-            :state="list.state">
+    <ox-panel :name="props.name" :title="panel.title" :icon="panel.icon"
+            :state="list.state" :index="props.index">
         <template #append-title>
             <slot name="append-title" v-bind="bind"/>
 
-            <template v-if="target.view.startsWith('list.')">
+            <template v-if="panels.view.startsWith('list.')">
                 <v-btn-group class="ml-3" color="secondary"
                         density="compact" variant="tonal">
                     <slot name="nav.list" v-bind="bind"/>
@@ -16,11 +16,11 @@
                     </v-btn>
                 </v-btn-group>
             </template>
-            <template v-else-if="target.view.startsWith('detail.') && target.value?.id">
+            <template v-else-if="panels.view.startsWith('detail.') && panels.value?.id">
                 <v-btn-group class="ml-3" color="secondary" density="compact" variant="tonal">
                     <slot name="nav.detail" v-bind="bind"/>
 
-                    <template v-if="target.view == 'detail.edit' && target.value">
+                    <template v-if="panels.view == 'detail.edit' && panels.value">
                         <v-menu>
                             <template #activator="{props}">
                                 <v-btn prepend-icon="mdi-dots-vertical" v-bind="props">
@@ -28,25 +28,25 @@
                                 </v-btn>
                             </template>
                             <v-list>
-                                <slot name="item.actions" :value="target.value"/>
+                                <slot name="item.actions" :value="panels.value"/>
                             </v-list>
                         </v-menu>
                     </template>
 
                     <v-btn :disabled="!list.prev"
                             :title="t('prev')" :aria-label="t('prev')"
-                            @click.stop="target.value = list.prev">
+                            @click.stop="panels.value = list.prev">
                         <v-icon icon="mdi-chevron-left"/>
                     </v-btn>
                     <v-btn :disabled="!list.next"
                             :title="t('next')" :aria-label="t('next')"
-                            @click.stop="target.value = list.next">
+                            @click.stop="panels.value = list.next">
                         <v-icon icon="mdi-chevron-right"/>
                     </v-btn>
                 </v-btn-group>
             </template>
 
-            <v-btn-toggle class="ml-3" color="secondary" v-model="target.view" density="compact" variant="tonal">
+            <v-btn-toggle class="ml-3" color="secondary" v-model="panels.view" density="compact" variant="tonal">
                 <!-- TODO: permission check -->
                 <v-btn value="list.table"
                         :title="t('panels.nav.table')"
@@ -64,13 +64,13 @@
                     <v-icon>mdi-view-column</v-icon>
                 </v-btn>
                 <v-btn value="detail.add" v-if="slots['views.detail.add']"
-                        @click.stop="modelPanel.create()"
+                        @click.stop="panel.create()"
                         :title="t('panels.nav.add')"
                         :aria-label="t('panels.nav.add')">
                     <v-icon>mdi-plus-box</v-icon>
                 </v-btn>
                 <v-btn value="detail.edit" v-if="slots['views.detail.edit'] || editSlots"
-                        :disabled="!target.value?.id"
+                        :disabled="!panels.value?.id"
                         :title="t('panels.nav.edit')"
                         :aria-label="t('panels.nav.edit')">
                     <v-icon>mdi-pencil</v-icon>
@@ -81,7 +81,7 @@
 
         <template #top>
             <ox-list-filters ref="filters"
-                    v-show="target.view.startsWith('list.') && showFilters"
+                    v-show="panels.view.startsWith('list.') && showFilters"
                     :search="props.search"
                     teleport-to="#panel-list-actions">
                 <template #default="bind">
@@ -104,7 +104,7 @@
         </template>
 
         <template #views.detail.edit v-if="slots['views.detail.edit'] || editSlots">
-            <ox-model-edit v-model:value="target.value">
+            <ox-model-edit v-model:value="panels.value">
                 <template v-for="(name, slot) in editSlots" #[name]="bind">
                     <slot :name="slot" v-bind="bind"/>
                 </template>
@@ -113,12 +113,12 @@
 
         <template #views.detail.add v-if="slots['views.detail.add']">
             <slot name="views.detail.add" v-bind="bind"
-                :saved="(item) => modelPanel.created(item)"/>
+                :saved="(item) => panel.created(item)"/>
         </template>
     </ox-panel>
 </template>
 <script setup lang="ts">
-import { computed, defineProps, inject, useTemplateRef, useSlots, toRefs } from 'vue'
+import { computed, defineProps, inject, useTemplateRef, useSlots, toRefs, withDefaults } from 'vue'
 import { Teleport } from 'vue'
 
 import OxAction from './OxAction.vue'
@@ -126,9 +126,10 @@ import OxListFilters from './OxListFilters.vue'
 import OxListTable from './OxListTable.vue'
 import OxPanel from './OxPanel.vue'
 import OxModelEdit from './OxModelEdit.vue'
+import OxQuery from './OxQuery.vue'
 
-import {t, filterSlots, panels} from 'ox'
-import type {IModelPanelProps} from '../panels'
+import {t, filterSlots, useModelPanel, injectOrProvide, Query, List} from 'ox'
+import type {IModelPanelProps} from '../layout'
 
 
 const slots = useSlots()
@@ -137,18 +138,29 @@ const itemSlots = filterSlots(slots, 'item.')
 const editSlots = filterSlots(slots, 'views.detail.edit.')
 
 const filters = useTemplateRef('filters')
-const props = defineProps<IModelPanelProps>()
+const props = withDefaults(defineProps<IModelPanelProps>(), {
+    index: 'list.table'
+})
 const repos = inject('repos')
 const panels = inject('panels')
+const query = injectOrProvide('query', () => new Query({repos, repo: props.repo}))
+const list = injectOrProvide('list', () => new List(query), true)
 
-const modelPanel = panels.useModelPanel({repos, panels, props})
-const {list, showFilters} = toRefs(modelPanel)
+const panel = useModelPanel({list, query, panels, props})
+
+
+const {showFilters} = toRefs(panel)
+const headers = computed(() => [
+    ...props.headers,
+    {key: 'actions', title: t('actions')},
+])
 
 const bind = computed(() => {
     return ({
-        target,
+        panel,
+        panels,
         list,
-        value: panel.value
+        value: panels.value
     })
 })
 </script>

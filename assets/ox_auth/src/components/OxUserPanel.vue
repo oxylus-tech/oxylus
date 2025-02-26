@@ -41,11 +41,12 @@
         </template>
     </ox-model-panel>
 </template>
-<script setup>
-import { computed, defineProps, inject, useSlots } from 'vue'
+<script setup lang="ts">
+import { computed, defineProps, inject, useSlots, withDefaults } from 'vue'
 
-import { useModels, panels, api, query } from 'ox'
+import { useModels, api, query } from 'ox'
 import {OxModelPanel, OxListKanban} from 'ox/components'
+import type {IModelPanelProps} from '@ox/layout'
 
 import {useAuthModels} from '../composables'
 import OxUserEdit from './OxUserEdit.vue'
@@ -65,11 +66,9 @@ const kanbanHeaders = computed(() => {
     ]
 })
 
-const props = defineProps(
-    panels.useModelPanelProps({
-        name: 'user-panel',
-        relations: ['groups'],
-        headers: ['id', 'username', 'first_name', 'last_name', 'email', 'groups'],
-    })
-)
+const props = withDefaults(defineProps<IModelPanelProps>(), {
+    name: 'users',
+    relations: ['groups'],
+    headers: ['id', 'username', 'first_name', 'last_name', 'email', 'groups'],
+})
 </script>

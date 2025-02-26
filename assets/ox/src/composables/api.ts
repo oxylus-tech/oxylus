@@ -7,13 +7,9 @@ import {Meta, Model} from '../models'
 import type {Repos} from '../models'
 
 
-/**
- * Interface of {@link Query} class.
- */
+/** Interface of {@link Query} class. */
 export interface IQuery<M extends Model> {
-    /**
-     * Model repository used to store results.
-     */
+    /** Model repository used to store results. */
     repo: Repository<M>
     /**
      * Repositories used to store relations.
@@ -24,9 +20,14 @@ export interface IQuery<M extends Model> {
     repos: Repos
 }
 
-/**
- * {@link Query.fetch} parameters.
- */
+/** {@link OxQuery} properties */
+export interface IQueryProps<M extends Model> {
+    /** Model repository */
+    repo: Repository<M>
+}
+
+
+/** {@link Query.fetch} parameters. */
 export interface IQueryFetch<M extends Model> extends Partial<object> {
     /**
      * Fetch from this url
@@ -90,7 +91,7 @@ export interface IQueryAll<M extends Model> extends IQueryFetch<M> {
  * // this fetch User model objects from API, then the related groups.
  * const result = await query.fetch({url: '/users', relations: ['groups']})
  */
-export class Query<M extends Model> {
+export default class Query<M extends Model> {
     /**
     * @param {Repos} [repos] all models repositories
     * @param {Repository<M>} [repo] the main repository
@@ -237,6 +238,8 @@ export interface Query<M extends Model> extends IQuery<M> {}
 /**
  * This composable return a new query from provided arguments.
  */
-export function query(repo: Repository, repos: Repos|null=null) {
-    return new Query(repo, repos)
+export function useQuery(repo: Repository, repos: Repos|null=null) {
+    const query = new Query(repo, repos)
+    provide('query', query)
+    return query
 }

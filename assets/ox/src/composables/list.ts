@@ -6,7 +6,7 @@ import {Query} from './api'
 import type {IQueryFetch} from './api'
 import {Model} from '../models'
 import type {Repos} from '../models'
-import {collectAttr, assignNonEmpty, State} from '../utils'
+import {collectAttr, assignNonEmpty, State, RObject} from '../utils'
 import type {IObject} from '../utils'
 
 
@@ -14,51 +14,32 @@ export type FilterValue = number | string
 export type Filters = IObject<FilterValue>
 
 
-/**
- * Base interface of an List
- */
+/** Base interface of a List */
 export interface IList<M extends Model> {
-    /**
-     * {@link Query} used to fetch list items.
-     */
+    /** {@link Query} used to fetch list items. */
     query: Query<M>
-    /**
-     * Query's GET parameters used to filter the list.
-     */
+    /** Query's GET parameters used to filter the list. */
     filters?: Filters
+    /** Related fields to fetch when items are queried.  */
     relations?: string[]
+    /** Use this URL instead of model's defined one. */
     url?: string
+    /** Response's key used to return data */
     dataKey: string
+    /** Response's key used to return URL to previous paginated items. */
     prevKey: string
+    /** Response's key used to return URL to next paginated items.  */
     nextKey: string
+    /** Response's key used to return total items count. */
     countKey: string
 }
 
-/**
- * Component properties of an List.
- */
-export interface IListProps {
-    repo?: Object
-    url: string
-    relations?: string[]
-    dataKey?: string
-    prevKey?: string
-    nextKey?: string
-    countKey?: string
-    showFilters: boolean
-}
-
-
-/**
- * Reactive List interface options
- */
+/** Reactive List interface options */
 export interface IRListOpts<M extends Model> extends IList<M> {
     value?: any
 }
 
-/**
- * Interface of reactive List
- */
+/** Interface of reactive List */
 export interface IRList<M extends Model> extends Reactive<List<M>> {
     value?: Ref<M>|M
     items: ComputedRef<M[]>
@@ -96,17 +77,21 @@ export interface IListFetch<M extends Model> extends IQueryFetch<M> {
  *
  * await list.fetch({url: '/users'})
  */
-export class List<M extends Model> {
+export class List<M extends Model> extends RObject<IList> {
+    state = State.none()
+    nextUrl = null
+    prevUrl = null
+    count = null
+    ids = []
+    filters = {}
+
     dataKey = "results"
     nextKey = "next"
     prevKey = "previous"
     countKey = "count"
 
-    /**
-     * Return a reactive object version.
-     */
-    static reactive<M extends Model>({value, ...options} : IRListOpts<M>): this {
-        const obj = reactive(new this(options)) as IRList<M>
+    static reactive<M extends Model>({value, ...options} : IRListOpts<M>): Reactive<this> {
+        const obj = super.reactive(options) as IRList<M>
         obj.value = value
         obj.items = computed(() => obj.getItems())
         obj.prev = computed(() => obj.getSibling(obj.value, -1))
@@ -114,29 +99,13 @@ export class List<M extends Model> {
         return obj
     }
 
-    constructor(options: IList<M>) {
-        assignNonEmpty(this, options)
-        if(!this.filters)
-            this.filters = {}
-        this.state = State.none()
-        this.ids = []
-        this.nextUrl = this.nextUrl ?? null
-        this.prevUrl = this.prevUrl ?? null
-    }
-
-    /**
-     * Items' repository
-     */
+    /** Items' repository */
     get repo() { return this.query.repo }
 
-    /**
-     * Items' model.
-     */
+    /** Items' model. */
     get model() { return this.repo.use }
 
-    /**
-     * Fetch items from API (using self's {@link Query.fetch}).
-     */
+    /** Fetch items from API (using self's {@link Query.fetch}). */
     async fetch({append=false, ...opts}: IListFetch<M> ={}) {
         this.state.processing()
         opts = this.initOptions(opts)
@@ -164,7 +133,6 @@ export class List<M extends Model> {
         const idx = this.getSiblingIndex(unref(value), dir)
         return idx > -1 ? this.items[idx] : null
     }
-
 
     /**
      * Get index of an item's sibling on specified direction.
@@ -236,8 +204,6 @@ export interface List<M extends Model> extends IList<M> {
 
 export type ListOpts<M extends Model> = IRListOpts<M> & {
     query?: Query<M>,
-    repos?: Repos,
-    repo?: Repository<M>,
     value?: any
 }
 
@@ -247,10 +213,9 @@ export type ListOpts<M extends Model> = IRListOpts<M> & {
  *
  * If no `query` if provided, create one using `repo` and `repos`.
  */
-export function useList<M extends Model>({repo=null,  repos=null, query=null, ...opts} : ListOpts<M>) : IRList<M>
+export function useList<M extends Model>(options : ListOpts<M>) : IRList<M>
 {
-    query ??= new Query(repo, repos)
-    const list = List.reactive<M>({query, ...opts})
+    const list = List.reactive<M>(options)
     provide('list', list)
     return list
 }

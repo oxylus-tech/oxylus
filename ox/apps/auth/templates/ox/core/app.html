@@ -3,11 +3,11 @@
 
 {% block nav-list-settings %}
 {{ block.super }}
-<ox-panel-nav name="user-panel" href="{% url "ox_auth:index" %}"
+<ox-panel-nav panel="users" href="{% url "ox_auth:index" %}"
     title="{% trans "Users" %}" icon="mdi-account"
     v-if="context.user.can('auth.view_user')"
     ></ox-panel-nav>
-<ox-panel-nav name="group-panel" href="{% url "ox_auth:index" %}"
+<ox-panel-nav panel="groups" href="{% url "ox_auth:index" %}"
     title="{% trans "Groups" %}" icon="mdi-account-multiple"
     v-if="context.user.can('auth.view_group')"></ox-panel-nav>
 {% endblock %}

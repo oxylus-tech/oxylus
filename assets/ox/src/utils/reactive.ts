@@ -6,6 +6,8 @@ import {assignNonEmpty} from './functional'
 
 /**
  * Provide a base class for object that are designed to be reactive.
+ *
+ * `<O>` is the options provided to constructor.
  */
 export default class RObject<O> {
     /**

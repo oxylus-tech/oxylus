@@ -8,10 +8,10 @@ import type {IListProps} from '../composables/list'
 import {useList} from 'ox'
 
 const props = defineProps<IListProps>()
-const repos = inject('repos')
+const query = inject('query')
 const panels = inject('panels')
 const {value} = toRefs(panels)
-const list = useList({...props, value, repos})
+const list = useList({...props, query, value})
 
 defineExpose({list, value})
 </script>

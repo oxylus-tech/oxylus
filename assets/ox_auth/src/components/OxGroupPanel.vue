@@ -26,10 +26,12 @@
         </template>
     </ox-model-panel>
 </template>
-<script setup>
-import { defineProps, inject, useSlots } from 'vue'
+<script setup lang="ts">
+import { defineProps, inject, useSlots, withDefaults } from 'vue'
 
-import { useModels, panels} from 'ox'
+import { useModels} from 'ox'
+import type {IModelPanelProps} from '@ox/layout'
+
 import { OxModelPanel } from 'ox/components'
 import { useAuthModels } from '../composables'
 import OxGroupEdit from './OxGroupEdit.vue'
@@ -39,11 +41,8 @@ const context = inject('context')
 const slots = useSlots()
 
 const {repos, models} = useAuthModels()
-const props = defineProps(
-    panels.useModelPanelProps({
-        name: "group-panel",
-        relations: [],
-        headers: ["id", "name"],
-    })
-)
+const props = withDefaults(defineProps<IModelPanelProps>(), {
+    name: 'groups',
+    headers: ['id', 'name'],
+})
 </script>
