@@ -75,7 +75,7 @@ Blocks:
         {% if app_data %}{{ app_data|json_script:"app-data" }}{% endif %}
         <div id="app">
             {% block app-container %}
-            <ox-app api-url="{% url "api-index" %}">
+            <ox-app api-url="{% url "api-index" %}" logo="{% static "ox-logo.png" %}">
                 {% block app %}
                 <template #title="{context}">
                     {% block app-title %}
@@ -87,7 +87,9 @@ Blocks:
 
                 {% if not no_nav %}
                 <template #app-bar-right="{context}">{% block app-bar-right %}{% include './components/app_bar_right.html' %}{% endblock %}</template>
-                <template #nav-start="{context}">{% block nav-start %}{% endblock %}</template>
+                <template #nav-start="{context}">
+                    {% block nav-start %}{% endblock %}
+                </template>
                 <template #nav-list="{context}">
                     {% block nav-list %}
                     {% endblock %}

@@ -20,7 +20,10 @@
             <div id="app-bar-right" class="mr-3"></div>
             <slot name="app-bar-right" :context="context"></slot>
         </v-app-bar>
-        <v-navigation-drawer theme="dark" v-model="nav.drawer" v-if="slots['nav-list']">
+        <v-navigation-drawer theme="dark" v-model="nav.drawer">
+            <a class="nav-home">
+                <img v-if="logo" :src="logo" class="logo"/>
+            </a>
             <slot name="nav-start" :context="context"></slot>
             <slot name="nav-list" :context="context"></slot>
             <slot name="nav-end" :context="context"></slot>
@@ -40,6 +43,16 @@
         </v-main>
     </v-app>
 </template>
+<style>
+.nav-home {
+    display: block;
+    text-align: left;
+}
+.nav-home .logo {
+    max-height: 4em;
+    margin: 1em 1em 0.4em 1em;
+}
+</style>
 <script setup lang="ts">
 import { useSlots, withDefaults, onErrorCaptured } from 'vue'
 import { computed, defineProps, inject, provide, reactive, watch } from 'vue'
@@ -55,6 +68,7 @@ const slots = useSlots()
 
 interface Props {
     apiUrl?: string
+    logo?: string
     dataEl?: string
     models?: Model[]
     data?: object
