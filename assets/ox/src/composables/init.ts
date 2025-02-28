@@ -32,11 +32,11 @@ export interface ICreateAppOpts {
     /**
      * Vue's `createApp` `props` arguments
      */
-    props: IObject
+    props?: IObject
     /**
      *  Vuetify plugin's parameters (passed to {@link createVuetify})
      */
-    vuetify: ICreateVuetifyOpts
+    vuetify?: ICreateVuetifyOpts
     /**
      * Plugins to add to Vue application.
      */
@@ -44,19 +44,15 @@ export interface ICreateAppOpts {
 }
 
 export interface IInitOpts extends ICreateAppOpts {
-    /**
-     * Vue's App config.
-     */
-    App: IObject
-    /**
-     * Element selector to mount application on.
-     */
-    el: string
+    /** Vue's App config. */
+    App?: IObject
+    /** Element selector to mount application on. */
+    el?: string
     /**
      * If True (default), defer application creation after page has been
      * loaded (on `window.load` event)
      */
-    onLoad: boolean
+    onLoad?: boolean
 }
 
 

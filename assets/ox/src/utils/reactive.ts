@@ -14,11 +14,11 @@ export default class RObject<O> {
      * Create a new reactive instance of the object.
      * This where you can add watchers and computed properties.
      */
-    static reactive(options: O): Reactive<this> {
+    static reactive<O>(options: O): Reactive<any> {
         return reactive(new this(options))
     }
 
-    constructor(options: O = {}) {
+    constructor(options: O|null = null) {
         options && assignNonEmpty(this, options)
     }
 }

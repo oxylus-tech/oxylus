@@ -1,6 +1,6 @@
 import {provide} from 'vue'
 import {RObject} from '../utils'
-import type {Panel} from './panel'
+import type Panel from './panel'
 
 
 export interface IPanels {
@@ -31,7 +31,7 @@ export default class Panels extends RObject<IPanels> {
     value?: any = null
     current?: Panel = null
 
-    static readPath(path) : IPanels {
+    static readPath(path: string) : IPanels {
         if(!path)
             return {panel: "", view: ""}
 
@@ -42,7 +42,7 @@ export default class Panels extends RObject<IPanels> {
     }
 
     show({force=false, href=null, ...panels}: IPanelShow) {
-        const proceed = !this.current || this.current.onLeave({panels, force})
+        const proceed = force || !this.current || this.current.onLeave()
         if(!proceed)
             return
 
@@ -57,13 +57,13 @@ export default class Panels extends RObject<IPanels> {
         this.reset(panels)
     }
 
-    reset({panel, view=null, value=null}: IPanelsOpts) {
+    reset({panel, view=null, value=null}: IPanels) {
         this.panel = panel || this.panel
         this.view = view || ""
         this.value = value
     }
 }
-export interface Panels extends IPanels {
+export default interface Panels extends IPanels {
     /** Current panel (set by panels) **/
-    current: Panel
+    current?: Panel
 }

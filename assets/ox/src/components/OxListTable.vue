@@ -67,6 +67,6 @@ function updateOptions(event) {
 }
 
 function runEdit(user, item) {
-    panels.show({view: 'detail.edit', value: item})
+    panels.show({view: 'detail.edit', value: item.id})
 }
 </script>

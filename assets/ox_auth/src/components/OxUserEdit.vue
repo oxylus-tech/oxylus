@@ -64,7 +64,7 @@
 <script setup lang="ts">
 import {defineProps, defineEmits, inject, toRefs, reactive, useTemplateRef, watch} from 'vue'
 
-import { modelEditor } from "ox"
+import { useModelEditor } from "ox"
 import type {User, ModelEditor} from 'ox'
 import {OxFieldDetails, OxStateAlert, OxValidationBtn} from 'ox/components'
 
@@ -86,8 +86,8 @@ const {initial} = toRefs(props)
 const form = useTemplateRef('form')
 
 const panels = inject("panels")
-const editor = modelEditor({
-    name: "account-editor",
+const editor = useModelEditor({
+    name: "user-editor",
     panels, initial, emits,
     repo: repos.users,
 })

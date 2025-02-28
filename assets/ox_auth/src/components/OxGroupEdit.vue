@@ -33,7 +33,7 @@
 import {defineProps, defineEmits, inject, toRefs, reactive, useTemplateRef} from 'vue'
 
 import {OxFieldDetails, OxStateAlert, OxValidationBtn} from 'ox/components'
-import { modelEditor } from "ox"
+import { useModelEditor } from "ox"
 
 import OxPermissionsEdit from './OxPermissionsEdit.vue'
 
@@ -48,7 +48,7 @@ const {initial} = toRefs(props)
 const form = useTemplateRef('form')
 
 const panels = inject("panels")
-const editor = modelEditor({
+const editor = useModelEditor({
     name: "group-editor",
     panels, initial, emits,
     repo: repos.groups,

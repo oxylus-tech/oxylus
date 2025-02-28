@@ -27,7 +27,7 @@
         <template #views.list.kanban="{panel,items,list}">
             <ox-list-kanban field="groups_id" :headers="kanbanHeaders"
                 item-title="username"
-                @click="(item) => panel.show({path: '.detail.edit', value: item})"/>
+                @click="(item) => panels.show({view: 'detail.edit', value: item})"/>
         </template>
 
         <template #views.detail.add="{value,saved}"
@@ -52,6 +52,7 @@ import {useAuthModels} from '../composables'
 import OxUserEdit from './OxUserEdit.vue'
 
 const context = inject('context')
+const panels = inject('panels')
 const slots = useSlots()
 const forwardSlots = Object.keys(slots).filter(x => !(['list.filters', 'item.groups'].includes(x)))
 

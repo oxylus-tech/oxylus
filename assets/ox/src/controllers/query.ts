@@ -1,6 +1,6 @@
 import {Repository} from 'pinia-orm'
 import {Relation} from 'pinia-orm'
-import {Response} from '@pinia-orm/axios'
+import type {Response} from '@pinia-orm/axios'
 
 import {collectAttr} from '../utils'
 import {Meta, Model} from '../models'
@@ -22,29 +22,17 @@ export interface IQuery<M extends Model> {
 
 /** {@link Query.fetch} parameters. */
 export interface IQueryFetch<M extends Model> extends Partial<object> {
-    /**
-     * Fetch from this url
-     */
+    /** Fetch from this url. */
     url?: string
-    /**
-     * Fetch items with this id
-     */
+    /** Fetch items with this id. */
     ids?: number[] | Set<number>
-    /**
-     * Model repository (instead of `Query.repo`'s one)
-     */
+    /** Model repository (instead of `Query.repo`'s one). */
     repo?: Repository<Model>
-    /**
-     * Lookup field for ids (default: `id__in`)
-     */
+    /** Lookup field for ids (default: `id__in`). */
     lookup?: string
-    /**
-     * Extra GET parameters.
-     */
+    /** Extra GET parameters. */
     params?: object
-    /**
-     * Fetch items from thoses relations.
-     */
+    /** Fetch items from thoses relations. */
     relations?: string[]
 }
 
@@ -65,8 +53,7 @@ export interface IQueryAll<M extends Model> extends IQueryFetch<M> {
 
 
 /**
- * This class allows to fetch objects from api, and optionally their
- * relations.
+ * This class allows to fetch objects from api, and their relations.
  *
  * It is a utility class built around ``pinia-orm/axios``, using
  * repositories' ``api().get`` method.
@@ -159,7 +146,7 @@ export default class Query<M extends Model> {
      *
      * @param objs - the objects to get related ids from.
      * @param options.fields - list of field names.
-     * @param options.opts - options to pass down to 'relation'.
+     * @param options.opts - options to pass down to {@link Quey.relation}.
      * @return the resulting entities.
      */
     async relations(objs: M[], fields: string[], opts = {}) : Promise<{[s: string]: Response}>
@@ -225,7 +212,7 @@ export default class Query<M extends Model> {
     }
 }
 
-export interface Query<M extends Model> extends IQuery<M> {}
+export default interface Query<M extends Model> extends IQuery<M> {}
 
 
 export function query<M extends Model>(repo: string|Repository<M>, repos: Repos|null): Query<M> {

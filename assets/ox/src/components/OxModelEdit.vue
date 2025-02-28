@@ -37,7 +37,6 @@ import OxActions from './OxActions.vue'
 import {filterSlots} from '../utils/vue'
 
 const { t } = useI18n()
-const context = inject('context')
 
 const props = defineProps({
     subtitle: String,
@@ -51,17 +50,6 @@ const value = defineModel('value', {
 })
 const model = computed(() => value.value?.constructor)
 
-
-// ---- Panel
-const panels = inject('panels')
-function updatePanel(val) {
-    if(panels.value && val)
-        panels.value.title = `Edit ${val.$title}`
-}
-updatePanel(value.value)
-watch(value, updatePanel)
-
-
 // ---- Slots & tabs
 const tab = ref(null)
 const slots = useSlots()
@@ -72,7 +60,6 @@ const windows = filterSlots(slots, "window.", {exclude: "window.default"})
 
 const bind = computed(() => {
     return {
-        panels,
         value: value.value,
         model: model.value,
     }

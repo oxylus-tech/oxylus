@@ -1,9 +1,9 @@
 import {computed, watch} from 'vue'
-import type {WatchHandle} from 'vue'
+import type {WatchHandle, Reactive} from 'vue'
 
 import {t} from '../composables'
 import {RObject, State} from '../utils'
-import type {Panels, IPanels} from './panels'
+import type Panels from './panels'
 
 
 export interface IPanelInfo {
@@ -13,23 +13,6 @@ export interface IPanelInfo {
     title?: string
     /** The view's icon displayed to user. */
     icon?: string
-}
-
-
-export interface IPanel {
-    /** Panel name */
-    name: string
-    /**
-    * {@link Panels} used to specify current view and value.
-    *
-    * This element may be shared among multiple panels.
-    */
-    panels: Panels
-    /**
-     * Current unsaved changes. This can be updated by component in order
-     * to prevent data loss when changing panels.
-     */
-    editions: Set<string>
 }
 
 
@@ -44,24 +27,38 @@ export interface IPanelProps extends IPanelInfo {
 }
 
 /** Component properties used by OxPanelNav */
-export type IPanelNavProps = IPanelInfo & IPanels & {
+export type IPanelNavProps = IPanelInfo & {
     /** Panels page **/
     href?: string
     /** Only display the navigation item when panel is active. */
     auto?: boolean
 }
 
-export interface IRPanel<O=IPanel> extends Reactive<Panel<O>> {
+export interface IPanel<P> extends IPanelInfo {
+    /** Panel component properties. */
+    props: P
+    /**
+    * {@link Panels} used to specify current view and value.
+    *
+    * This element may be shared among multiple panels.
+    */
+    panels: Panels
+    /**
+     * Current unsaved changes. This can be updated by component in order
+     * to prevent data loss when changing panels.
+     */
+    editions: Set<string>
+}
+
+export interface IRPanel<P extends IPanelProps=IPanelProps, O=IPanel<P>> extends Reactive<Panel<P, O>> {
     watcher: WatchHandle
-    title: ComputedRef<string>,
-    icon: ComputedRef<string>,
 }
 
 
 /**
  * This is the base class used by panels.
  */
-export default class Panel<O=IPanel> extends RObject<IPanel> {
+export default class Panel<P extends IPanelProps=IPanelProps, O=IPanel<P>> extends RObject<IPanel<P>> {
     /**
      * Translation key for message displayed on `confirm()` to leave unsaved
      * changes.
@@ -69,13 +66,13 @@ export default class Panel<O=IPanel> extends RObject<IPanel> {
     confirmTKey = "panel.confirm"
 
     /** Panel name (based on props) **/
-    get name() { return this.props?.name }
+    get name(): string { return this.props?.name || '' }
 
     /** Current view. */
-    get view() { return this.panels.panel == this.name ? this.panels.view : null }
+    get view(): string|null { return this.panels.panel == this.name ? this.panels.view : null }
 
     /** Current value */
-    get value() { return this.panels.panel == this.name ? this.panels.value : null }
+    get value(): any { return this.panels.panel == this.name ? this.panels.value : null }
 
     /** Wether there are still edited items on current view. */
     get edited(): boolean { return !!this.editions?.size }
@@ -85,8 +82,8 @@ export default class Panel<O=IPanel> extends RObject<IPanel> {
      *
      * Add watcher over panels's panel ({@link Panel.onChange})
      */
-    static reactive(options: IPanel) {
-        const obj = super.reactive(options)
+    static reactive<P extends IPanelProps=IPanelProps, O=IPanel<P>>(options: IPanel<P>): IRPanel<P,O> {
+        const obj = super.reactive(options) as IRPanel<P,O>
         obj.watcher = watch(() => obj.panels.panel, (val) => obj.onChange(val))
         return obj
     }
@@ -110,8 +107,8 @@ export default class Panel<O=IPanel> extends RObject<IPanel> {
      *
      * @return true if we can proceed to view/panel change.
      */
-    onLeave({panels, force=false}) {
-        if(force || !this.edited)
+    onLeave() {
+        if(!this.edited)
             return true
 
         const msg = t(this.confirmTKey)
@@ -119,7 +116,7 @@ export default class Panel<O=IPanel> extends RObject<IPanel> {
     }
 
     /** Handle panels' panel change. */
-    onChange(panel) {
+    onChange(panel: string) {
         if(panel == this.name) {
             if(this.panels.current != this)
                 this.panels.current = this
@@ -128,3 +125,4 @@ export default class Panel<O=IPanel> extends RObject<IPanel> {
         }
     }
 }
+export default interface Panel<P extends IPanelProps=IPanelProps, O=IPanel<P>> extends IPanel<P> {}

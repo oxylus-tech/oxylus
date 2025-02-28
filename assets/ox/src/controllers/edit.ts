@@ -3,7 +3,7 @@ import type { ComputedRef, Reactive } from 'vue'
 import type { Field } from 'pinia-orm'
 import type { Repository } from '@pinia-orm/axios'
 
-import { reset, State } from '../utils'
+import { reset, State, RObject } from '../utils'
 import type { IObject } from '../utils'
 import type { Model } from '../models'
 
@@ -58,7 +58,7 @@ export interface IREditor<T> extends Reactive<Editor<T>> {
 }
 
 /**
- * An Editor handle data edition without changing original value.
+ * An Editor handles data edition without changing original value.
  * It provides utilities in order to:
  * - detect if changes have been made;
  * - reset edited values to initial state;
@@ -67,19 +67,21 @@ export interface IREditor<T> extends Reactive<Editor<T>> {
  * Default implementation handles raw Object edition, but not saving data to the server.
  * Note: this might lead to errors due to reactivity when returned from composable.
  */
-export class Editor<T extends IObject> {
-    static reactive<T>({initial, ...opts}: IEditor<T>) : IREditor<T> {
-        const obj = reactive(new this({initial: unref(initial), ...opts})) as IREditor<T>
-        obj.edited = computed(() => obj.isEdited())
-        // obj.valid = computed(() => obj.isValid())
-        isRef(initial) && watch(initial, (v: T) => obj.reset(v))
+export default class Editor<T extends IObject> extends RObject<IEditor<T>> {
+    state = State.none()
+    value: T = {} as T
+
+    static reactive<T extends IObject>({initial, ...opts}: IEditor<T>) : IREditor<T> {
+        console.log('reactive editor', initial)
+        const obj = super.reactive({initial: unref(initial), ...opts})
+        //if(isRef(initial))
+        //    obj.watch(initial, (v: T) => obj.reset(v))
         return obj
     }
 
     constructor(attrs: IEditor<T>, _attrs: IObject={})
     {
-        Object.assign(this, attrs)
-        Object.assign(this, _attrs)
+        super(attrs)
         if(!this.state)
             this.state = new State()
 
@@ -96,10 +98,10 @@ export class Editor<T extends IObject> {
     * When value is provided, reset initial to this value.
     */
     reset(initial: T|null = null): void {
-        if(initial !== null)
-            this.initial = initial
-        else
+        if(initial === null)
             initial = this.initial
+        else
+            this.initial = initial
         this._reset(initial)
         this.state.none()
     }
@@ -115,7 +117,7 @@ export class Editor<T extends IObject> {
     _isValid(): boolean { return true }
 
 
-    isEdited(): boolean {
+    get edited(): boolean {
         return Object.keys(this.value).some(k => this.value[k] != this.initial[k])
     }
 
@@ -130,11 +132,13 @@ export class Editor<T extends IObject> {
      */
     async save(value: T|null = null): Promise<State> {
         this.state.processing()
+
         if(!this.isValid())
             return this.state.error({
                 "_": "Some of the input values are invalid"
             })
         value = this.serialize(value ?? this.value)
+
         const state = await this.send(value)
         if(state.isOk) {
             this.reset(state.data as T)
@@ -145,14 +149,10 @@ export class Editor<T extends IObject> {
         return this.state
     }
 
-    /**
-     * Serialize value before sending
-     */
+    /** Serialize value before sending. */
     serialize<R>(value: T): any { return value }
 
-    /**
-     * Send value (not implemented, MUST BE in subclasses).
-     */
+    /** Send value (not implemented, MUST BE in subclasses). */
     send<D>(_: D): Promise<State> {
         throw "not implemented"
     }
@@ -177,14 +177,15 @@ export class ModelEditor<T extends Model> extends Editor<T> {
 
     constructor({repo, url, ...opts} : IModelEditor<T>) {
         url = url || repo.use?.meta?.url
-        super({url, ...opts}, {repo})
+        super({url, repo, ...opts})
+        window.repo = repo
     }
 
     get fields() : {[k: string]: Field} {
         // we need to use a getter since we can't initialize this.fields
         // before calling super.constructor (which imply this.reset)
         if(!this._fields)
-            this._fields = Object.keys((this.repo.use as typeof Model).fields())
+            this._fields = this.repo && Object.keys((this.repo.use as typeof Model).fields()) || []
         return this._fields
     }
 
@@ -193,7 +194,7 @@ export class ModelEditor<T extends Model> extends Editor<T> {
         this.fields.reduce((dst, k) => { dst[k] = val[k]; return dst}, this.value)
     }
 
-    isEdited(): boolean {
+    get edited(): boolean {
         return this.fields.some((k:string) => this.value[k] != this.initial[k])
     }
 
@@ -232,32 +233,4 @@ export class ModelEditor<T extends Model> extends Editor<T> {
 //         return this.value.length != this.initial.length ||
 //             this.value.some(v => this.initial.indexOf(v) == -1)
 //     }
-// }
-
-
-/**
- * This composable create an new Editor and returns it as reactive object.
- * It register the newly created editor when `editors` and `key` are provided.
- */
-export function editor({editorClass=Editor, emits=null, panel=null, ...opts}) {
-    // provide default saved method
-    if(emits)
-        opts.saved ??= ((item: IObject, editor) => emits('saved', item, editor))
-
-    const editor = editorClass.reactive(opts)
-    if(panel)
-        watch(() => editor.edited, (val) => panel.setEdition(editor.name, val))
-    return editor
-}
-
-export function modelEditor(opts) {
-    return editor({...opts, editorClass: ModelEditor})
-}
-
-// export function arrayEditor(opts) {
-//     return editor({...opts, editorClass: ArrayEditor})
-// }
-//
-// export function collectionEditor(opts) {
-//     return editor({...opts, editorClass: CollectionEditor})
 // }

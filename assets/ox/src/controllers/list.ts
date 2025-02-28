@@ -16,14 +16,6 @@ export type Filters = IObject<FilterValue>
 
 /** Base interface of a List */
 export interface IList<M extends Model> {
-    /** {@link Query} used to fetch list items. */
-    query: Query<M>
-    /** Query's GET parameters used to filter the list. */
-    filters?: Filters
-    /** Related fields to fetch when items are queried.  */
-    relations?: string[]
-    /** Use this URL instead of model's defined one. */
-    url?: string
     /** Response's key used to return data */
     dataKey: string
     /** Response's key used to return URL to previous paginated items. */
@@ -60,6 +52,7 @@ export interface IListFetch<M extends Model> extends IQueryFetch<M> {
 }
 
 
+
 /**
  * Handle a list of model instances fetched using Rest Api. It is
  * used in model's panels.
@@ -77,39 +70,36 @@ export interface IListFetch<M extends Model> extends IQueryFetch<M> {
  *
  * await list.fetch({url: '/users'})
  */
-export default class List<M extends Model> extends RObject<IList> {
-    state = State.none()
-    nextUrl = null
-    prevUrl = null
-    count = null
-    ids = []
-    filters = {}
+export default class List<M extends Model> extends RObject<IList<M>> {
+    nextUrl: string|null = null
+    prevUrl: string|null = null
+    count: number|null = null
+    ids: number[] = []
 
     dataKey = "results"
     nextKey = "next"
     prevKey = "previous"
     countKey = "count"
 
-    static reactive<M extends Model>({value, ...options} : IRListOpts<M>): Reactive<this> {
-        const obj = super.reactive(options) as IRList<M>
-        obj.value = value
-        obj.prev = computed(() => obj.getSibling(obj.value, -1))
-        obj.next = computed(() => obj.getSibling(obj.value, 1))
-        return obj
+    /** Get items count. */
+    get length() { return this.ids.length }
+
+    /**
+     * Return list items (fetched from repository)
+     * @return an array of items.
+     */
+    get items() : Array<M> {
+        return this.queryset(this.ids).get()
     }
 
-    /** Items' repository */
-    get repo() { return this.query.repo }
-
-    /** Items' model. */
-    get model() { return this.repo.use }
+    indexOf(id: number) { return this.ids.indexOf(id) }
 
     /** Fetch items from API (using self's {@link Query.fetch}). */
-    async fetch({append=false, ...opts}: IListFetch<M> ={}) {
-        this.state.processing()
-        opts = this.initOptions(opts)
+    async handleResponse({append=false, ...opts}: IListFetch<M>, response: Response): Promise<Response> {
+        response = await super.handleResponse(opts, response)
+        if(this.state.isError)
+            return response
 
-        const result = await this.query.fetch(opts)
         const ids = [...collectAttr(result.entities, 'id')]
         this.ids = append ? this.ids.concat(ids) : ids
 
@@ -119,63 +109,6 @@ export default class List<M extends Model> extends RObject<IList> {
 
         this.state.none()
         return result
-    }
-
-    /**
-     * Get siblings of a value for the provided IRList.
-     *
-     * Arguments are the same as {@link List.getSiblingIndex}.
-     *
-     * **Note**: this method is only available on the reactive object.
-     */
-    getSibling<M extends Model>(value: Ref<M>|M, dir: number): M {
-        const idx = this.getSiblingIndex(unref(value), dir)
-        return idx > -1 ? this.items[idx] : null
-    }
-
-    /**
-     * Get index of an item's sibling on specified direction.
-     *
-     * @param value - item to look sibling of.
-     * @param dir - direction (next: `1`, previous: `-1`)
-     * @return the index of the sibling or `-1` if none found.
-     */
-    getSiblingIndex(value: M, dir: number=1) : number {
-        // TODO: fetch next or prev
-        const idx: number = this.ids.indexOf(value.id)
-        if(idx == -1)
-            return -1
-
-        const idx2 = idx+dir
-        return (idx > -1 /*&& idx2 > -1*/ && idx2 < (this.count ?? this.ids.length)) ? idx2 : -1
-    }
-
-    /**
-     * Return list items (fetched from repository)
-     * @return an array of items.
-     */
-    get items() : Array<M> {
-        let items = this.query.repo.whereId(this.ids)
-        if(this.relations)
-            for(const relation of this.relations)
-                items = items.with(relation)
-        return items.get()
-    }
-
-    protected initOptions({filters=null, ...opts}) {
-        if(!opts.relations && this.relations)
-            opts.relations = this.relations
-        if(!opts.dataKey && this.dataKey)
-            opts.dataKey = this.dataKey
-        if(!opts.url && this.url)
-            opts.url = this.url
-
-        if(filters)
-            Object.assign(this.filters, filters)
-
-        if(this.filters)
-            opts.params = {...this.filters, ...(opts.params ?? [])}
-        return opts
     }
 
     /**
@@ -193,15 +126,42 @@ export default class List<M extends Model> extends RObject<IList> {
     }
 }
 
-export interface List<M extends Model> extends IList<M> {
+export default interface List<M extends Model> extends IList<M> {
     state: State
-    nextUrl?: string|null
-    prevUrl?: string|null
-    count?: number|null
+    nextUrl: string|null
+    prevUrl: string|null
+    count: number|null
     ids: number[]
 }
 
 export type ListOpts<M extends Model> = IRListOpts<M> & {
     query?: Query<M>,
     value?: any
+}
+
+
+export class Detail<M extends Model> extends RObject {
+    query : Query<M>
+    id : number|null = null
+    relations: string[] = []
+
+    select(id, fetch: boolean|null=null) {
+        if(index !== null && id !== null)
+            throw Error("Only one of `index` and `id` must be provided.")
+
+        if(id)
+            index = this.ids.indexOf(id)
+
+        if(isRef(this.index))
+            this.index.value = index
+        else
+            this.index = index
+    }
+
+    async fetch(options: IListFetch<M> ={}) {
+        const result = await super.fetch(options)
+        if(!options.append)
+            this.select({index: -1})
+        return result
+    }
 }

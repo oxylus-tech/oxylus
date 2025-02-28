@@ -30,7 +30,7 @@ export function filterSlots(slots: {[k: string]: Function}, prefix: string, {exc
  *
  * @return the injected value or the new provided one.
  */
-export function injectOrProvide<T>(key: string, factory: () => T): T {
+export function injectOrProvide<T>(key: string, factory: () => T): any {
     let value = inject(key)
     if(value === undefined) {
         value = factory()

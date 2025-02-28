@@ -5,34 +5,28 @@ import type {Repository} from 'pinia-orm'
 import {Model} from '../models'
 import {mapToObject} from '../utils'
 import {t, tKeys} from '../composables/i18n'
-import {useList} from './list'
 
-import type {List} from './list'
-import type {Query} from './query'
-import type {IPanel, IPanelProps} from './panel'
+import type List from './list'
+import type Query from './query'
 import type {Repos} from '../models'
 
-import type {Panels} from './panels'
+import type {IPanel, IPanelProps} from './panel'
+import type Panels from './panels'
 
 import Panel from './panel'
 
-import {OxList} from 'ox/components'
 
-
-/**
- * Model panel component properties.
- */
-export type IModelPanelProps<M extends Model> = IPanelProps & {
-    repo: string|Repository<M>
+/** Model panel component properties. */
+export interface IModelPanelProps<M extends Model> extends IPanelProps {
+    repo: Repository<M>
     search: string
     view: string
     headers?: string[]
+    showFilters?: boolean
 }
 
 /** Model panel interface. */
-export interface IModelPanel<M extends Model> {
-    panels: Panels
-    props: IModelPanelProps<M>
+export interface IModelPanel<M extends Model,P extends IModelPanelProps<M>=IModelPanelProps<M>> extends IPanel<P> {
     list: List<M>
 }
 
@@ -41,16 +35,10 @@ export interface IRModelPanel extends Reactive<IModelPanel> {}
 
 
 /** This class handles model panel (used by {@link OxModelPanel}. */
-export default class ModelPanel extends Panel {
+export default class ModelPanel<M extends Model,P extends IModelPanelProps<M>=IModelPanelProps<M>,O=IModelPanel<M>> extends Panel<P,O> {
     showFilters: boolean = false
 
-    static reactive(options: IModelPanel): Reactive<this> {
-        const obj = super.reactive(options)
-        obj.item = computed((val) => obj.getItem(val))
-        return obj
-    }
-
-    constructor({query, ...options}: IModelPanel) {
+    constructor(options: IModelPanel<M>) {
         super(options)
         this.showFilters = this.props?.showFilters || false
     }
@@ -92,25 +80,20 @@ export default class ModelPanel extends Panel {
     /**
      * Edit a new item.
      *
-     * @param path - path to edit view.
+     * @param view - edit view.
      */
     create(view: string='.detail.add') {
         this.panels.show({panel: this.name, view, value: new this.model()})
     }
 
     /** Called when an item has been created. By default, show edit view. */
-    created(value, view: string=".detail.edit") {
+    created(value: M, view: string=".detail.edit") {
         this.panels.show({panel: this.name, view, value, force: true})
         this.list.fetch()
-    }
-
-    /** Get item from id. */
-    getItem(id) {
-
     }
 }
 
 
-export interface ModelPanel extends IModelPanel {
+export default interface ModelPanel<M extends Model,P extends IModelPanelProps<M>=IModelPanelProps<M>,O=IModelPanel<M>> extends IModelPanel<M,P> {
     showFilters: boolean
 }

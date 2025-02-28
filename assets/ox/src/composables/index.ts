@@ -2,7 +2,6 @@ import { defineAsyncComponent as $defineAsyncComponent } from 'vue'
 
 export * from './app'
 export * from './actions'
-export * from './edit'
 export * from './init'
 export * from './i18n'
 export * from './models'

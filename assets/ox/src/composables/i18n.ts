@@ -129,6 +129,6 @@ function loadLocale(i18n: Composer, {path="./", fallback=true}={}): Promise<void
 
 
 export const tKeys = {
-    model: (model: Model) => `models.${model.entity}`,
+    model: (model: typeof Model) => `models.${model.entity}`,
     field: (field: string) => `fields.${field}`
 }
