@@ -1,9 +1,10 @@
-import {Repository} from 'pinia-orm'
-import {Relation} from 'pinia-orm'
+import {Repository, Relation} from 'pinia-orm'
+import type {Model} from 'pinia-orm'
 import type {Response} from '@pinia-orm/axios'
 
 import {collectAttr} from '../utils'
-import {Meta, Model} from '../models'
+import type {IObject} from '../utils'
+import {asRelation, getSourceKey} from '../models'
 import type {Repos} from '../models'
 
 
@@ -27,11 +28,11 @@ export interface IQueryFetch<M extends Model> extends Partial<object> {
     /** Fetch items with this id. */
     ids?: number[] | Set<number>
     /** Model repository (instead of `Query.repo`'s one). */
-    repo?: Repository<Model>
+    repo?: Repository<M>
     /** Lookup field for ids (default: `id__in`). */
     lookup?: string
     /** Extra GET parameters. */
-    params?: object
+    params?: IObject
     /** Fetch items from thoses relations. */
     relations?: string[]
 }
@@ -100,13 +101,8 @@ export default class Query<M extends Model> {
      * @param [options.params] extra GET parameters
      * @param [options.opts] options passed down to ``repo.api.get``
      */
-    async fetch({ids=null, repo=null, url=null, lookup="id__in", params=undefined, relations=null, ...opts}: IQueryFetch<M> = {}) : Promise<Response> {
+    async fetch({url, ids=null, repo=null, lookup="id__in", params=undefined, relations=null, ...opts}: IQueryFetch<M> = {}) : Promise<Response> {
         repo ??= this.repo
-        if(!url)
-            url = repo.use?.meta?.url
-        if(!url)
-            throw Error("URL must be provided or Model must provide a `meta: Meta` with `url`")
-
         if(ids && lookup !== undefined) {
             params = {...(params || {})}
             params[lookup] = [...ids]
@@ -176,40 +172,28 @@ export default class Query<M extends Model> {
      *
      * @param objs - the objects to get ids from.
      * @param relation - objects' field or field name.
-     * @param [options.thin] if True, only fetch objects not already present in repos.
-     * @param options.opts - extra options to pass down to `all()`.
+     * @param options - options to pass down to `all()`.
      */
-    async relation(objs: Array<Model>, relation: string | Relation, {thin=false, ...opts} : {thin?: boolean}={}) : Promise<Response> {
+    async relation(objs: Array<M>, relation: string | Relation, options: IQueryAll<M> ={}) : Promise<Response> {
         this._ensureRepos("relations")
 
-        if(typeof relation == "string") {
-            const fields = this.repo.use?.fields()
-            if(!fields || !(fields[relation]))
-                throw Error(`Field ${relation} is not a relation on ${this.repo.use} model`)
-            relation = fields[relation] as Relation
-        }
+        const rel = asRelation(this.repo, relation)
+        if(!rel)
+            throw Error(`No Relation found for field ${relation}.`)
 
-        const key = (<typeof Model>relation.related.constructor).entity
+        const key = (<typeof Model>rel.related.constructor).entity
         const repo2 = this.repos[key]
         if(!repo2)
             throw Error(`No repository "${key}" found.`)
 
-        let ids = collectAttr(objs, relation.foreignKey)
-        let dbIds = null
-        if(thin) {
-            dbIds = new Set(Object.keys(repo2.pinia.state[key]?.value.data).filter(i => i in ids))
-            const missingIds = ids.difference(dbIds)
-            if(missingIds)
-                ids = missingIds
-        }
-
-        const result = await this.all({ids, repo: repo2, ...opts})
-        if(thin && dbIds) {
-            const dbObjs = repo2.whereId(dbIds).get()
-            result.entities = [...(result.entities || []), ...dbObjs]
-        }
-        return result
+        const fk = getSourceKey(rel)
+        if(!fk)
+            throw Error(`No source ids attributes for ${relation}.`)
+        const ids = collectAttr(objs, fk)
+        const query = new Query(repo2, this.repos)
+        return query.all({...options, ids, repo: repo2})
     }
+
 }
 
 export default interface Query<M extends Model> extends IQuery<M> {}

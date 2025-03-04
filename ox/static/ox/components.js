@@ -1,10 +1,10 @@
-import { defineComponent as F, inject as D, unref as e, openBlock as p, createElementBlock as S, Fragment as P, createBlock as w, withModifiers as I, createCommentVNode as k, useSlots as R, renderSlot as b, normalizeProps as T, guardReactiveProps as L, ref as U, shallowRef as Q, watch as z, onMounted as be, computed as B, onScopeDispose as _e, createVNode as v, mergeProps as E, nextTick as Me, watchEffect as De, reactive as ee, onErrorCaptured as Ne, withCtx as o, createTextVNode as h, toDisplayString as N, createElementVNode as j, createSlots as K, h as Ee, renderList as _, normalizeClass as Ue, useTemplateRef as ye, withKeys as de, resolveComponent as je, Teleport as ce, mergeModels as Fe, useModel as Re, toRefs as Ge, withDirectives as We, vShow as Ke } from "vue";
+import { defineComponent as j, inject as D, unref as e, openBlock as p, createElementBlock as S, Fragment as P, createBlock as w, withModifiers as I, createCommentVNode as k, useSlots as R, renderSlot as b, normalizeProps as T, guardReactiveProps as L, ref as U, shallowRef as Q, watch as z, onMounted as be, computed as B, onScopeDispose as _e, createVNode as v, mergeProps as E, nextTick as Me, watchEffect as De, reactive as ee, onErrorCaptured as Ne, withCtx as o, createTextVNode as h, toDisplayString as N, createElementVNode as F, createSlots as K, h as Ee, renderList as _, normalizeClass as Ue, useTemplateRef as ye, withKeys as de, resolveComponent as Fe, Teleport as ce, mergeModels as je, useModel as Re, toRefs as Ge, withDirectives as We, vShow as Ke } from "vue";
 import { useAction as ze, useI18n as X, useAppContext as Ye, usePanels as qe, defineAsyncComponent as He, tKeys as Je, filterSlots as J, useModelPanel as Qe, t as x } from "ox";
 import { V as C, a as oe, m as Xe, b as Ze, c as et, d as tt, e as at, u as lt, f as st, g as nt, h as ot, i as it, j as rt, k as ut, l as pe, n as dt, o as ct, p as pt, q as mt, r as vt, s as ft, t as te, v as me, w as bt, x as yt, y as wt, z as we, A as M, B as gt, C as ae, D as kt, E as Vt, F as $t, G as ge, H as St, I as xt, J as Ot, K as ke, L as ht, M as Ct, N as H, O as Pt, P as le, Q as Tt, R as At, S as Lt, T as Bt, U as ve, W as It, X as _t } from "./VAlert-CTpFsU7b.js";
-import { j as Mt, y as se, c as Dt, v as Nt, S as Et, r as Ut, h as jt } from "./vue-i18n-DJtD-m_6.js";
-import { n as Ft, o as Rt, q as Gt, r as Ve, u as Wt, s as Kt, t as zt, v as Yt } from "./theme-CVupjJDc.js";
+import { m as Mt, A as se, e as Dt, x as Nt, S as Et, r as Ut, k as Ft } from "./vue-i18n-D10c6QHa.js";
+import { n as jt, o as Rt, q as Gt, r as Ve, u as Wt, s as Kt, t as zt, v as Yt } from "./theme-CVupjJDc.js";
 import { components as qt } from "ox/vendor";
-const ie = /* @__PURE__ */ F({
+const ie = /* @__PURE__ */ j({
   __name: "OxAction",
   props: {
     item: {},
@@ -40,7 +40,7 @@ const ie = /* @__PURE__ */ F({
       }, null, 8, ["title", "base-color", "prepend-icon"]))
     ], 64)) : k("", !0);
   }
-}), Ht = /* @__PURE__ */ F({
+}), Ht = /* @__PURE__ */ j({
   __name: "OxActionModelDelete",
   props: {
     item: {},
@@ -112,7 +112,7 @@ function Qt(a) {
     reset: s
   };
 }
-const Xt = Ft({
+const Xt = jt({
   multiLine: Boolean,
   text: String,
   timer: [Boolean, String],
@@ -257,7 +257,7 @@ const Xt = Ft({
   }
 }), ea = { class: "nav-home" }, ta = ["src"];
 var fe;
-const aa = /* @__PURE__ */ F({
+const aa = /* @__PURE__ */ j({
   __name: "OxApp",
   props: {
     apiUrl: {},
@@ -310,7 +310,7 @@ const aa = /* @__PURE__ */ F({
               _: 3
             }),
             v(bt),
-            i[5] || (i[5] = j("div", {
+            i[5] || (i[5] = F("div", {
               id: "app-bar-right",
               class: "mr-3"
             }, null, -1)),
@@ -324,7 +324,7 @@ const aa = /* @__PURE__ */ F({
           "onUpdate:modelValue": i[3] || (i[3] = (l) => s.drawer = l)
         }, K({
           default: o(() => [
-            j("a", ea, [
+            F("a", ea, [
               c.logo ? (p(), S("img", {
                 key: 0,
                 src: c.logo,
@@ -340,7 +340,7 @@ const aa = /* @__PURE__ */ F({
           e(t)["app-nav"] ? {
             name: "append",
             fn: o(() => [
-              i[6] || (i[6] = j("div", { class: "text-right pa-3" }, null, -1))
+              i[6] || (i[6] = F("div", { class: "text-right pa-3" }, null, -1))
             ]),
             key: "0"
           } : void 0
@@ -591,7 +591,7 @@ const aa = /* @__PURE__ */ F({
       _: 3
     }));
   }
-}, Se = /* @__PURE__ */ F({
+}, Se = /* @__PURE__ */ j({
   __name: "OxListTable",
   props: {
     // list: Object,
@@ -734,7 +734,7 @@ const aa = /* @__PURE__ */ F({
       }, {
         default: o(() => [
           b(u.$slots, "ok", { state: a.state }, () => [
-            c[2] || (c[2] = j("p", null, "Congrats! Data have been updated.", -1))
+            c[2] || (c[2] = F("p", null, "Congrats! Data have been updated.", -1))
           ]),
           r.value ? (p(), S(P, { key: 0 }, [
             v(Pt),
@@ -824,7 +824,7 @@ const aa = /* @__PURE__ */ F({
       try {
         const l = await fetch(n.url, {
           method: "POST",
-          headers: jt.axiosConfig.headers,
+          headers: Ft.axiosConfig.headers,
           body: JSON.stringify(s)
         });
         l.status == 200 ? (s.credentials = "", s.password = "", u.ok(await l.json()), n.next && (window.location.href = n.next)) : u.error(await l.json());
@@ -835,12 +835,12 @@ const aa = /* @__PURE__ */ F({
     return (l, m) => (p(), S(P, null, [
       v(e(xe), { state: u }, {
         none: o(({ state: f }) => m[7] || (m[7] = [
-          j("p", null, "Please enter your credentials in order too proceed...", -1)
+          F("p", null, "Please enter your credentials in order too proceed...", -1)
         ])),
         "ok-detail": o(({ state: f }) => [
           n.next ? (p(), S("p", ra, [
             m[8] || (m[8] = h("You soon will be redirected to ")),
-            j("i", null, N(n.next), 1)
+            F("i", null, N(n.next), 1)
           ])) : k("", !0)
         ]),
         error: o(({ state: f }) => {
@@ -875,7 +875,7 @@ const aa = /* @__PURE__ */ F({
           "onClick:append": m[3] || (m[3] = (f) => r.value = !r.value),
           onKeyup: m[4] || (m[4] = de(I((f) => i(), ["stop"]), ["enter"]))
         }, null, 8, ["modelValue", "type", "append-icon"]),
-        j("div", ua, [
+        F("div", ua, [
           b(l.$slots, "default", {
             value: s.password
           }, () => [
@@ -891,7 +891,7 @@ const aa = /* @__PURE__ */ F({
       ], 64))
     ], 64));
   }
-}, he = /* @__PURE__ */ F({
+}, he = /* @__PURE__ */ j({
   __name: "OxPanel",
   props: {
     index: {},
@@ -908,7 +908,7 @@ const aa = /* @__PURE__ */ F({
     });
     const r = D("panels");
     return (u, c) => {
-      const i = je("ox-state-alert");
+      const i = Fe("ox-state-alert");
       return p(), w(le, {
         value: t.name
       }, {
@@ -975,7 +975,7 @@ const aa = /* @__PURE__ */ F({
   }
 }), Ce = {
   __name: "OxModelEdit",
-  props: /* @__PURE__ */ Fe({
+  props: /* @__PURE__ */ je({
     subtitle: String
   }, {
     value: {
@@ -1035,7 +1035,7 @@ const aa = /* @__PURE__ */ F({
       h(" Nothing to edit ")
     ], 64));
   }
-}, ca = /* @__PURE__ */ F({
+}, ca = /* @__PURE__ */ j({
   __name: "OxModelPanel",
   props: {
     repo: {},
@@ -1318,7 +1318,7 @@ const aa = /* @__PURE__ */ F({
       } : void 0
     ]), 1032, ["name", "title", "icon", "state", "index"]));
   }
-}), pa = /* @__PURE__ */ F({
+}), pa = /* @__PURE__ */ j({
   __name: "OxPanelNav",
   props: {
     name: {},

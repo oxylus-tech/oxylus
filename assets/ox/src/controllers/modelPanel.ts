@@ -88,8 +88,8 @@ export default class ModelPanel<M extends Model,P extends IModelPanelProps<M>=IM
 
     /** Called when an item has been created. By default, show edit view. */
     created(value: M, view: string=".detail.edit") {
+        this.list.load()
         this.panels.show({panel: this.name, view, value, force: true})
-        this.list.fetch()
     }
 }
 

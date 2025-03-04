@@ -1,16 +1,15 @@
+import type {Response} from '@pinia-orm/axios'
+
 import type {Model} from '../models'
 import {collectAttr} from '../utils'
 
 import Query from './query'
 import ModelController from './modelController'
-import type {IQueryFetch} from './query'
-import type {IModelController} from './modelController'
+import type {IModelController, IModelFetch} from './modelController'
 
 
 /** Base interface of a ModelList */
 export interface IModelList<M extends Model> extends ModelController<M> {
-    /** Response's key used to return data */
-    dataKey: string
     /** Response's key used to return URL to previous paginated items. */
     prevKey: string
     /** Response's key used to return URL to next paginated items.  */
@@ -27,7 +26,7 @@ export interface IRModelListOpts<M extends Model> extends IModelList<M> {
 /**
  * Arguments of {@link ModelList.fetch}. It is passed down to {@link Query.fetch}.
  */
-export interface IModelListFetch<M extends Model> extends IQueryFetch<M> {
+export interface IModelListFetch<M extends Model> extends IModelFetch<M> {
     /**
      * Append items to list. If `false` (default), fetch results will replace
      * current list items.
@@ -66,7 +65,7 @@ export default class ModelList<M extends Model> extends ModelController<M, IMode
     countKey = "count"
 
     /** Get items count. */
-    get length(): number { return this.ids.length }
+    get length(): number { return this.items.length }
 
     get(index: number): M { return index < this.items.length ? this.items[index] : null }
 
@@ -84,7 +83,7 @@ export default class ModelList<M extends Model> extends ModelController<M, IMode
      * @return the target item or null if not found.
      */
     getSibling(item: M, step: number): M|null {
-        const index = this.find(item.id)
+        const index = this.findIndex(item.id)
         const sibling = index > 0 ? index+step : -1
         return sibling > 0 ? this.get(sibling) : null
     }
@@ -107,12 +106,12 @@ export default class ModelList<M extends Model> extends ModelController<M, IMode
     async handleResponse({append=false, ...options}: IModelListFetch<M>, response: Response): Promise<Response> {
         response = await super.handleResponse(options, response)
         if(!this.state.isError) {
-            const ids = [...collectAttr(result.entities, 'id')]
+            const ids = [...collectAttr(response.entities, 'id')]
             const items = this.queryset(ids).get()
             this.items = append ? this.items.concat(items) : items
             this.nextUrl = response.response.data[this.nextKey] || null
             this.prevUrl = response.response.data[this.prevKey] || null
-            this.count = response.response.data[this.countKey] || this.ids.length
+            this.count = response.response.data[this.countKey] || this.items.length
         }
         return response
     }

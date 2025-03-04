@@ -8,7 +8,6 @@ export * from './panels'
 
 export {default as Query} from './query'
 export {default as Editor} from './edit'
-export {default as List} from './list'
 export {default as Panel} from './panel'
 export {default as ModelController} from './modelController'
 export {default as ModelList} from './modelList'

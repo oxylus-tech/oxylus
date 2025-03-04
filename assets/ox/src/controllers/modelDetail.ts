@@ -1,22 +1,18 @@
+import type {Response} from '@pinia-orm/axios'
+
 import type {Model} from '../models'
 import {collectAttr} from '../utils'
 
 import Query from './query'
 import ModelController from './modelController'
-import type {IQueryFetch} from './query'
-import type {IModelController} from './modelController'
+import type {IModelController, IModelFetch} from './modelController'
+import type ModelList from './modelList'
 
 
 /** Base interface of a ModelDetail */
-export interface IModelDetail<M extends Model> extends ModelController<M> {
-    /** Response's key used to return data */
-    dataKey: string
-    /** Response's key used to return URL to previous paginated items. */
-    prevKey: string
-    /** Response's key used to return URL to next paginated items.  */
-    nextKey: string
-    /** Response's key used to return total items count. */
-    countKey: string
+export interface IModelDetail<M extends Model> extends IModelController<M> {
+    /** Current item. */
+    item: M|null
 }
 
 /** Reactive ModelDetail interface options */
@@ -41,20 +37,19 @@ export interface IRModelDetailOpts<M extends Model> extends IModelDetail<M> {
  *
  * await detail.load({url: '/users'})
  */
-export default class ModelDetail<M extends Model> extends ModelController<M, IModelDetail<M>> {
-    item: M = []
+export default class ModelDetail<M extends Model, O=IModelDetail<M>> extends ModelController<M, O> {
+    item: M|null = null
 
     /** Fetch items from API (using self's {@link Query.fetch}). */
-    async handleResponse(options: IQueryFetch<M>, response: Response): Promise<Response> {
+    async handleResponse(options: IModelFetch<M>, response: Response): Promise<Response> {
         response = await super.handleResponse(options, response)
         if(!this.state.isError)
-            this.item = this.queryset(result.entities[0].id, true)
+            this.item = this.queryset(response.entities[0].id).first()
         return response
     }
 }
 
-export default interface ModelDetail<M extends Model> extends IModelDetail<M> {
-    item: M|null = null
+export default interface ModelDetail<M extends Model, O=IModelDetail<M>> extends IModelDetail<M> {
 }
 
 export type ModelDetailOpts<M extends Model> = IRModelDetailOpts<M> & {
@@ -72,7 +67,7 @@ export interface IModelListDetail<M extends Model> extends IModelDetail<M> {
 /**
  * A model detail related to a list.
  */
-export class ModelListDetail<M extends Model> extends ModelDetail<M, IModelListDetail<M>> {
+export class ModelListDetail<M extends Model, O=IModelListDetail<M>> extends ModelDetail<M, O> {
     /** The next item in the list if applicable. */
     get next(): M|null {
         return this.item ? this.list.getSibling(this.item, 1) : null
@@ -84,4 +79,4 @@ export class ModelListDetail<M extends Model> extends ModelDetail<M, IModelListD
     }
 }
 
-export interface ModelListDetail<M extends Model> extends IModelListDetail<M> {}
+export interface ModelListDetail<M extends Model, O=IModelListDetail<M>> extends IModelListDetail<M> {}
