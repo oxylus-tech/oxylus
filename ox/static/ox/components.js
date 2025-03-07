@@ -1,7 +1,7 @@
-import { defineComponent as j, inject as D, unref as e, openBlock as p, createElementBlock as S, Fragment as P, createBlock as w, withModifiers as I, createCommentVNode as k, useSlots as R, renderSlot as b, normalizeProps as T, guardReactiveProps as L, ref as U, shallowRef as Q, watch as z, onMounted as be, computed as B, onScopeDispose as _e, createVNode as v, mergeProps as E, nextTick as Me, watchEffect as De, reactive as ee, onErrorCaptured as Ne, withCtx as o, createTextVNode as h, toDisplayString as N, createElementVNode as F, createSlots as K, h as Ee, renderList as _, normalizeClass as Ue, useTemplateRef as ye, withKeys as de, resolveComponent as Fe, Teleport as ce, mergeModels as je, useModel as Re, toRefs as Ge, withDirectives as We, vShow as Ke } from "vue";
+import { defineComponent as j, inject as M, unref as e, openBlock as p, createElementBlock as S, Fragment as P, createBlock as w, withModifiers as I, createCommentVNode as k, useSlots as R, renderSlot as b, normalizeProps as T, guardReactiveProps as L, ref as U, shallowRef as Q, watch as z, onMounted as be, computed as B, onScopeDispose as _e, createVNode as v, mergeProps as E, nextTick as Me, watchEffect as De, reactive as ee, onErrorCaptured as Ne, withCtx as o, createTextVNode as h, toDisplayString as N, createElementVNode as F, createSlots as K, h as Ee, renderList as _, normalizeClass as Ue, useTemplateRef as ye, withKeys as de, resolveComponent as Fe, Teleport as ce, mergeModels as je, useModel as Re, toRefs as Ge, withDirectives as We, vShow as Ke } from "vue";
 import { useAction as ze, useI18n as X, useAppContext as Ye, usePanels as qe, defineAsyncComponent as He, tKeys as Je, filterSlots as J, useModelPanel as Qe, t as x } from "ox";
-import { V as C, a as oe, m as Xe, b as Ze, c as et, d as tt, e as at, u as lt, f as st, g as nt, h as ot, i as it, j as rt, k as ut, l as pe, n as dt, o as ct, p as pt, q as mt, r as vt, s as ft, t as te, v as me, w as bt, x as yt, y as wt, z as we, A as M, B as gt, C as ae, D as kt, E as Vt, F as $t, G as ge, H as St, I as xt, J as Ot, K as ke, L as ht, M as Ct, N as H, O as Pt, P as le, Q as Tt, R as At, S as Lt, T as Bt, U as ve, W as It, X as _t } from "./VAlert-CTpFsU7b.js";
-import { m as Mt, A as se, e as Dt, x as Nt, S as Et, r as Ut, k as Ft } from "./vue-i18n-D10c6QHa.js";
+import { V as C, a as oe, m as Xe, b as Ze, c as et, d as tt, e as at, u as lt, f as st, g as nt, h as ot, i as it, j as rt, k as ut, l as pe, n as dt, o as ct, p as pt, q as mt, r as vt, s as ft, t as te, v as me, w as bt, x as yt, y as wt, z as we, A as D, B as gt, C as ae, D as kt, E as Vt, F as $t, G as ge, H as St, I as xt, J as Ot, K as ke, L as ht, M as Ct, N as H, O as Pt, P as le, Q as Tt, R as At, S as Lt, T as Bt, U as ve, W as It, X as _t } from "./VAlert-CTpFsU7b.js";
+import { m as Mt, z as se, e as Dt, w as Nt, S as Et, r as Ut, k as Ft } from "./vue-i18n-BZtUhnvp.js";
 import { n as jt, o as Rt, q as Gt, r as Ve, u as Wt, s as Kt, t as zt, v as Yt } from "./theme-CVupjJDc.js";
 import { components as qt } from "ox/vendor";
 const ie = /* @__PURE__ */ j({
@@ -18,7 +18,7 @@ const ie = /* @__PURE__ */ j({
   },
   emits: ["completed"],
   setup(a, { emit: d }) {
-    const t = a, n = d, s = D("context"), r = ze({ user: s.user, emits: n }, t);
+    const t = a, n = d, s = M("context"), r = ze({ user: s.user, emits: n }, t);
     async function u(...c) {
       await r.run(...c);
     }
@@ -47,7 +47,7 @@ const ie = /* @__PURE__ */ j({
     button: { type: Boolean }
   },
   setup(a) {
-    const { t: d } = Mt(), t = D("panels"), n = D("repos"), s = a;
+    const { t: d } = Mt(), t = M("panels"), n = M("repos"), s = a;
     async function r(u, c) {
       return await n[c.constructor.entity].api().delete(c.$url(), { delete: s.item.id });
     }
@@ -153,7 +153,7 @@ const Xt = jt({
       variantClasses: l
     } = nt(a), {
       roundedClasses: m
-    } = ot(a), f = Qt(() => Number(a.timeout)), g = U(), V = U(), y = Q(!1), O = Q(0), $ = U(), G = D(it, void 0);
+    } = ot(a), f = Qt(() => Number(a.timeout)), g = U(), V = U(), y = Q(!1), O = Q(0), $ = U(), G = M(it, void 0);
     zt(() => !!G, () => {
       const A = mt();
       De(() => {
@@ -395,7 +395,7 @@ const aa = /* @__PURE__ */ j({
   setup(a) {
     const d = a;
     return (t, n) => d.errors ? (p(!0), S(P, { key: 0 }, _(d.errors, (s) => (p(), S("div", sa, [
-      v(M, { icon: "mdi-alert-circle-outline" }),
+      v(D, { icon: "mdi-alert-circle-outline" }),
       h(" " + N(s), 1)
     ]))), 256)) : k("", !0);
   }
@@ -405,7 +405,7 @@ const aa = /* @__PURE__ */ j({
     search: String
   },
   setup(a, { expose: d }) {
-    const { t } = X(), n = D("list"), s = a, r = B(() => {
+    const { t } = X(), n = M("list"), s = a, r = B(() => {
       const i = n.filters;
       return i && Object.entries(i).some(
         ([l, m]) => !l.startsWith("page") && !l.startsWith("ordering") && !!m
@@ -511,7 +511,7 @@ const aa = /* @__PURE__ */ j({
   },
   emits: ["click"],
   setup(a, { emit: d }) {
-    const t = d, n = D("list"), s = a, r = B(() => n.items);
+    const t = d, n = M("list"), s = a, r = B(() => n.items);
     function u(l) {
       return l = l % s.colors.length, s.colorVariant ? s.colors[l] + "-" + s.colorVariant : s.colors[l];
     }
@@ -599,7 +599,7 @@ const aa = /* @__PURE__ */ j({
     edit: Boolean
   },
   setup(a) {
-    const { t: d } = X(), t = R(), n = se(t, "item.", { exclude: ["item.actions"] }), s = D("panels"), r = D("list"), u = new Dt("change"), c = a, i = B(() => c.headers.reduce((f, g) => (f.push(
+    const { t: d } = X(), t = R(), n = se(t, "item.", { exclude: ["item.actions"] }), s = M("panels"), r = M("list"), u = new Dt("change"), c = a, i = B(() => c.headers.reduce((f, g) => (f.push(
       typeof g == "string" ? { key: g, title: d(Je.field(g)) } : g
     ), f), []));
     function l(f) {
@@ -894,10 +894,10 @@ const aa = /* @__PURE__ */ j({
 }, he = /* @__PURE__ */ j({
   __name: "OxPanel",
   props: {
+    name: {},
     index: {},
     state: {},
     help: {},
-    name: {},
     title: {},
     icon: {}
   },
@@ -906,7 +906,7 @@ const aa = /* @__PURE__ */ j({
     be(() => {
       s.value = !0;
     });
-    const r = D("panels");
+    const r = M("panels");
     return (u, c) => {
       const i = Fe("ox-state-alert");
       return p(), w(le, {
@@ -924,7 +924,7 @@ const aa = /* @__PURE__ */ j({
                 to: "#app-bar-sheet-title",
                 disabled: !s.value || e(r).panel != t.name
               }, [
-                t.icon ? (p(), w(M, {
+                t.icon ? (p(), w(D, {
                   key: 0,
                   icon: t.icon
                 }, null, 8, ["icon"])) : k("", !0),
@@ -1043,15 +1043,15 @@ const aa = /* @__PURE__ */ j({
     view: {},
     headers: {},
     showFilters: { type: Boolean },
+    name: {},
     index: { default: "list.table" },
     state: {},
     help: {},
-    name: {},
     title: {},
     icon: {}
   },
   setup(a) {
-    const d = R(), t = J(d, "views.list."), n = J(d, "item."), s = J(d, "views.detail.edit."), r = ye("filters"), u = a, c = Qe({ props: u }), i = c.panels, l = c.list, { showFilters: m } = Ge(c), f = B(() => [
+    const d = R(), t = J(d, "views.list."), n = J(d, "item."), s = J(d, "views.detail.edit."), r = ye("filters"), u = a, c = M("panel") ?? Qe({ props: u }), i = c.panels, l = c.list, { showFilters: m } = Ge(c), f = B(() => [
       ...u.headers,
       { key: "actions", title: x("actions") }
     ]), g = B(() => ({
@@ -1088,7 +1088,7 @@ const aa = /* @__PURE__ */ j({
                 active: e(m)
               }, {
                 default: o(() => [
-                  v(M, {
+                  v(D, {
                     icon: e(r).icon
                   }, null, 8, ["icon"])
                 ]),
@@ -1133,7 +1133,7 @@ const aa = /* @__PURE__ */ j({
                 onClick: y[1] || (y[1] = I(($) => e(i).value = e(l).prev, ["stop"]))
               }, {
                 default: o(() => [
-                  v(M, { icon: "mdi-chevron-left" })
+                  v(D, { icon: "mdi-chevron-left" })
                 ]),
                 _: 1
               }, 8, ["disabled", "title", "aria-label"]),
@@ -1144,7 +1144,7 @@ const aa = /* @__PURE__ */ j({
                 onClick: y[2] || (y[2] = I(($) => e(i).value = e(l).next, ["stop"]))
               }, {
                 default: o(() => [
-                  v(M, { icon: "mdi-chevron-right" })
+                  v(D, { icon: "mdi-chevron-right" })
                 ]),
                 _: 1
               }, 8, ["disabled", "title", "aria-label"])
@@ -1168,7 +1168,7 @@ const aa = /* @__PURE__ */ j({
                   "aria-label": e(x)("panels.nav.table")
                 }, {
                   default: o(() => [
-                    v(M, null, {
+                    v(D, null, {
                       default: o(() => y[6] || (y[6] = [
                         h("mdi-table")
                       ])),
@@ -1184,7 +1184,7 @@ const aa = /* @__PURE__ */ j({
                   "aria-label": e(x)("panels.nav.cards")
                 }, {
                   default: o(() => [
-                    v(M, null, {
+                    v(D, null, {
                       default: o(() => y[7] || (y[7] = [
                         h("mdi-card-account-details")
                       ])),
@@ -1200,7 +1200,7 @@ const aa = /* @__PURE__ */ j({
                   "aria-label": e(x)("panels.nav.kanban")
                 }, {
                   default: o(() => [
-                    v(M, null, {
+                    v(D, null, {
                       default: o(() => y[8] || (y[8] = [
                         h("mdi-view-column")
                       ])),
@@ -1217,7 +1217,7 @@ const aa = /* @__PURE__ */ j({
                   "aria-label": e(x)("panels.nav.add")
                 }, {
                   default: o(() => [
-                    v(M, null, {
+                    v(D, null, {
                       default: o(() => y[9] || (y[9] = [
                         h("mdi-plus-box")
                       ])),
@@ -1234,7 +1234,7 @@ const aa = /* @__PURE__ */ j({
                   "aria-label": e(x)("panels.nav.edit")
                 }, {
                   default: o(() => [
-                    v(M, null, {
+                    v(D, null, {
                       default: o(() => y[10] || (y[10] = [
                         h("mdi-pencil")
                       ])),
@@ -1321,14 +1321,13 @@ const aa = /* @__PURE__ */ j({
 }), pa = /* @__PURE__ */ j({
   __name: "OxPanelNav",
   props: {
-    name: {},
     title: {},
     icon: {},
     href: {},
     auto: { type: Boolean }
   },
   setup(a) {
-    const d = a, t = D("panels");
+    const d = a, t = M("panels");
     return B(() => !d.auto || panel.name == d.name), (n, s) => (p(), w(oe, {
       active: e(t).panel == d.name,
       "prepend-icon": d.icon,

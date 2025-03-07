@@ -6,7 +6,8 @@ import {Model} from '../models'
 import {mapToObject} from '../utils'
 import {t, tKeys} from '../composables/i18n'
 
-import type List from './list'
+import type ModelList from './modelList'
+import type {ModelListDetail} from './modelDetail'
 import type Query from './query'
 import type {Repos} from '../models'
 
@@ -26,31 +27,39 @@ export interface IModelPanelProps<M extends Model> extends IPanelProps {
 }
 
 /** Model panel interface. */
-export interface IModelPanel<M extends Model,P extends IModelPanelProps<M>=IModelPanelProps<M>> extends IPanel<P> {
-    list: List<M>
+export interface IModelPanel<
+    M extends Model,
+    P extends IModelPanelProps<M> = IModelPanelProps<M>
+> extends IPanel<P>
+{
+    /** List controller used to load and handle multiple items from the server. */
+    list: ModelList<M>
+    /** Detail controller used to load and handle a single item from the server. */
+    detail: ModelListDetail<M>
 }
-
-/** Reactive model panel interface. */
-export interface IRModelPanel extends Reactive<IModelPanel> {}
 
 
 /** This class handles model panel (used by {@link OxModelPanel}. */
-export default class ModelPanel<M extends Model,P extends IModelPanelProps<M>=IModelPanelProps<M>,O=IModelPanel<M>> extends Panel<P,O> {
+export default class ModelPanel<
+    M extends Model,
+    P extends IModelPanelProps<M> = IModelPanelProps<M>,
+> extends Panel<P>
+{
     showFilters: boolean = false
 
-    constructor(options: IModelPanel<M>) {
+    constructor(options: IModelPanel<M,P>) {
         super(options)
         this.showFilters = this.props?.showFilters || false
     }
 
     /** Current model's repository. */
-    get repo() { return this.props.repo }
+    get repo(): Repository<M> { return this.props.repo }
 
     /** Current model. */
-    get model() { return this.repo.use }
+    get model(): typeof Model { return (this.repo.use as typeof Model) }
 
     /** Query (shortcut to `this.list.query`). **/
-    get query() { return this.list.query }
+    get query(): Query<M> { return this.list.query }
 
     /** Return icon based on props and model **/
     get icon(): string { return super.icon || this.model.meta?.icon }

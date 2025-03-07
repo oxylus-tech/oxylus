@@ -29,6 +29,16 @@ export class Meta {
             return this.title(obj)
         return `${obj[this.title]}`
     }
+
+    /** Return API url based on id and path. **/
+    getUrl({path=null, id=null}: {path?: string, id?: number}): string {
+        let url = this.url
+        if(id)
+            url += `/${id}/`
+        if(path)
+            url += path
+        return `${url}/`.replaceAll('//', '/')
+    }
 }
 export interface Meta extends IMeta {}
 
@@ -63,14 +73,7 @@ export class Model extends PModel {
     get $title(): string|null { return this.$meta.getTitle(this) }
 
     /** Get API's model instance url */
-    $url(path?: string): string {
-        let url = this.$meta.url
-        if(this.id)
-            url += `/${this.id}/`
-        if(path)
-            url += path
-        return `${url}/`.replaceAll('//', '/')
-    }
+    $url(path?: string): string { return this.$meta.getUrl({path, id: this.id}) }
 }
 export interface Model extends IModel {
     meta: Meta

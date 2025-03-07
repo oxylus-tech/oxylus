@@ -76,12 +76,12 @@ export default class Editor<T extends IObject> extends RObject<IREditor<T>> {
 
     static reactive<T extends IObject>({initial, ...opts}: IREditor<T>) : Reactive<Editor<T>> {
         const obj = super.reactive({initial: unref(initial), ...opts})
-        //if(isRef(initial))
-        //    obj.watch(initial, (v: T) => obj.reset(v))
+        if(isRef(initial))
+            obj.watch(initial, (v: T) => obj.reset(v))
         return obj
     }
 
-    constructor(attrs: IEditor<T>, _attrs: IObject={})
+    constructor(attrs: IEditor<T>)
     {
         super(attrs)
         if(!this.state)
@@ -96,7 +96,7 @@ export default class Editor<T extends IObject> extends RObject<IREditor<T>> {
     }
 
     /**
-    * Reset editor editor data to initial.
+    * Reset editor data to provided value.
     * When value is provided, reset initial to this value.
     */
     reset(initial: T|null = null): void {
@@ -108,6 +108,7 @@ export default class Editor<T extends IObject> extends RObject<IREditor<T>> {
         this.state.none()
     }
 
+    /** Reset value's data, implemented by editor subclasses */
     _reset(value: T) {
         reset(this.value, value)
     }
@@ -166,7 +167,7 @@ export default interface Editor<T> extends IEditor<T> {}
  * ModelEditor interface.
  */
 interface IModelEditor<T extends Model> extends IEditor<T> {
-    repo: Repository
+    repo: Repository<T>
     initial: T & {[k: string]: any}
     value: T & {[k:string]: any}
 }
@@ -184,7 +185,7 @@ export class ModelEditor<T extends Model> extends Editor<T> {
 
     constructor({repo, url, ...opts} : IModelEditor<T>) {
         if(url || "meta" in repo.use)
-            url = url || repo.use.meta.url
+            url = url || (repo.use as typeof Model).meta.url
         else
             throw Error("No url specified as parameter or in Model.meta.")
         super({url, repo, ...opts})
@@ -193,7 +194,7 @@ export class ModelEditor<T extends Model> extends Editor<T> {
 
     _reset(val: T): void {
         const cls = this.initial.constructor as new(p: IObject) => T
-        const params = cloneDeep(pick(val, this.fields))
+        const params = val && cloneDeep(pick(val, this.fields)) || {}
         this.value = new cls(params)
     }
 

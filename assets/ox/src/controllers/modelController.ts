@@ -1,16 +1,11 @@
 import type {Repository, Query as $Query} from 'pinia-orm'
 import type {Response} from '@pinia-orm/axios'
 
-import {RObject, State} from '../utils'
+import {State, assignNonEmpty} from '../utils'
 import type {Model} from '../models'
-import type {IObject} from '../utils'
 
 import Query from './query'
 import type {IQueryFetch} from './query'
-
-
-export type FilterValue = number | string
-export type Filters = IObject<FilterValue>
 
 
 export interface IModelController<M extends Model> {
@@ -18,8 +13,6 @@ export interface IModelController<M extends Model> {
     dataKey: string
     /** {@link Query} used to fetch list items. */
     query: Query<M>
-    /** Query's GET parameters used to filter the list. */
-    filters?: Filters
     /** Related fields to fetch when items are queried.  */
     relations?: string[]
     /** Use this URL instead of model's defined one. */
@@ -27,10 +20,8 @@ export interface IModelController<M extends Model> {
 }
 
 export interface IModelFetch<M extends Model> extends IQueryFetch<M> {
-    /** Provide extra GET parameters. */
-    filters?: Filters
     /** Response's key used to return data */
-    dataKey: string
+    dataKey?: string
 }
 
 
@@ -40,7 +31,6 @@ export interface IModelFetch<M extends Model> extends IQueryFetch<M> {
  *
  * This provides:
  * - load items from the server and manage state accordingly (using {@link Query});
- * - fetch filters;
  * - items are retrieved from ORM store with specified relations;
  *
  * It does not:
@@ -48,15 +38,18 @@ export interface IModelFetch<M extends Model> extends IQueryFetch<M> {
  *
  * This is used for {@link ModelDetail} and {@link ModelList}.
  */
-export default class ModelController<M extends Model, O=IModelController<M>> extends RObject<O> {
+export default class ModelController<M extends Model, O=IModelController<M>> {
     state = State.none()
-    filters?: Filters = null
 
     /** The repository of contained items. */
     get repo(): Repository<M> { return this.query.repo }
 
-    /** The model of contained items. */
-    get model(): typeof Model  { return this.repo.use }
+    /** Current model. */
+    get model(): typeof Model { return (this.repo.use as typeof Model) }
+
+    constructor(options: IModelController<M>|null = null) {
+        options && assignNonEmpty(this, options)
+    }
 
     /** Return orm's query to object. This will includes declared {@link List.relations}.
      *
@@ -118,20 +111,18 @@ export default class ModelController<M extends Model, O=IModelController<M>> ext
     }
 
     /** Get {@link Query.fetch} options. */
-    protected getQueryOptions({filters=null, ...options}: IModelFetch<M>): IQueryFetch<M> {
+    protected getQueryOptions(options: IModelFetch<M>): IQueryFetch<M> {
         if(!options.relations && this.relations)
             options.relations = this.relations
-        if(!options.dataKey && this.dataKey)
+        if(!("dataKey" in options))
             options.dataKey = this.dataKey
-        if(!options.url && this.url)
-            options.url = this.url || this.model.meta?.url
-
-        if(filters)
-            Object.assign(this.filters, filters)
-
-        if(this.filters)
-            options.params = {...this.filters, ...(options.params ?? [])}
+        if(!options.url)
+            options.url = this.getQueryUrl(options)
         return options
+    }
+
+    protected getQueryUrl(options: IModelFetch<M>) {
+        return this.url || this.model.meta?.url
     }
 }
 export default interface ModelController<M extends Model, O> extends IModelController<M> {

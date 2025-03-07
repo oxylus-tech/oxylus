@@ -1,15 +1,23 @@
 import type {Response} from '@pinia-orm/axios'
 
-import type {Model} from '../models'
 import {collectAttr} from '../utils'
+import type {Model} from '../models'
+import type {IObject} from '../utils'
 
 import Query from './query'
 import ModelController from './modelController'
+import type {IQueryFetch} from './query'
 import type {IModelController, IModelFetch} from './modelController'
+
+
+export type FilterValue = number | string
+export type Filters = IObject<FilterValue>
 
 
 /** Base interface of a ModelList */
 export interface IModelList<M extends Model> extends ModelController<M> {
+    /** Provide extra GET parameters. */
+    filters?: Filters
     /** Response's key used to return URL to previous paginated items. */
     prevKey: string
     /** Response's key used to return URL to next paginated items.  */
@@ -18,15 +26,12 @@ export interface IModelList<M extends Model> extends ModelController<M> {
     countKey: string
 }
 
-/** Reactive ModelList interface options */
-export interface IRModelListOpts<M extends Model> extends IModelList<M> {
-    value?: any
-}
-
 /**
  * Arguments of {@link ModelList.fetch}. It is passed down to {@link Query.fetch}.
  */
 export interface IModelListFetch<M extends Model> extends IModelFetch<M> {
+    /** Query's GET parameters used to filter the list. */
+    filters?: Filters
     /**
      * Append items to list. If `false` (default), fetch results will replace
      * current list items.
@@ -55,6 +60,7 @@ export interface IModelListFetch<M extends Model> extends IModelFetch<M> {
  */
 export default class ModelList<M extends Model> extends ModelController<M, IModelList<M>> {
     items: M[] = []
+    filters?: Filters = null
     nextUrl: string|null = null
     prevUrl: string|null = null
     count: number|null = null
@@ -67,6 +73,7 @@ export default class ModelList<M extends Model> extends ModelController<M, IMode
     /** Get items count. */
     get length(): number { return this.items.length }
 
+    /** Get item by list index */
     get(index: number): M { return index < this.items.length ? this.items[index] : null }
 
     /** Get item by id */
@@ -102,6 +109,12 @@ export default class ModelList<M extends Model> extends ModelController<M, IMode
         return await this.load({...options, url: this.prevUrl})
     }
 
+    protected getQueryOptions(options: IModelFetch<M>): IQueryFetch<M> {
+        if(this.filters)
+            options.params = {...this.filters, ...(options.params ?? [])}
+        return super.getQueryOptions(options)
+    }
+
     /** Fetch items from API (using self's {@link Query.fetch}). */
     async handleResponse({append=false, ...options}: IModelListFetch<M>, response: Response): Promise<Response> {
         response = await super.handleResponse(options, response)
@@ -122,9 +135,4 @@ export default interface ModelList<M extends Model> extends IModelList<M> {
     nextUrl: string|null
     prevUrl: string|null
     count: number|null
-}
-
-export type ModelListOpts<M extends Model> = IRModelListOpts<M> & {
-    query?: Query<M>,
-    value?: any
 }

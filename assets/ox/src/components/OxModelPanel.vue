@@ -139,7 +139,7 @@ const filters = useTemplateRef('filters')
 const props = withDefaults(defineProps<IModelPanelProps>(), {
     index: 'list.table'
 })
-const panel = useModelPanel({props})
+const panel = inject('panel') ?? useModelPanel({props})
 const panels = panel.panels
 const list = panel.list
 

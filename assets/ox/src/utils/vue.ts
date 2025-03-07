@@ -1,4 +1,4 @@
-import {inject, provide} from 'vue'
+import {inject, provide, reactive as $reactive} from 'vue'
 
 
 export interface IFilterSlotOpts {

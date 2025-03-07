@@ -35,7 +35,7 @@ export function useModels(models: Models, defaults: boolean = true) {
             // there might be a bug here, without useRepo, axios is
             // null on repositories
             useRepo(model)
-            repos[model.entity] = useAxiosRepo(model) as Repository
+            repos[model.entity] = useAxiosRepo(model) as Repository<M>
         }
 
     provide("models", models)

@@ -20,7 +20,7 @@ export type IObject<V=any> = {[k: IObjectKey]: V}
  * @param attr - attribute name to look for.
  * @return a `Set` of collected values.
  */
-export function collectAttr(objs: Array<IObject>, attr: string): Set<any> {
+export function collectAttr(objs: Array<IObject>, attr: string|string[]): Set<any> {
     let dest : Set<any> = new Set()
     for(const obj of objs) {
         const vals = obj[attr]

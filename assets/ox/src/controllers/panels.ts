@@ -1,5 +1,5 @@
 import {provide} from 'vue'
-import {RObject} from '../utils'
+import {assignNonEmpty} from '../utils'
 import type Panel from './panel'
 
 
@@ -25,11 +25,15 @@ export interface IPanelShow extends IPanels {
  * Use it as this provides utilities to avoid data loss and allow current
  * panel to have control over leaving it.
  */
-export default class Panels extends RObject<IPanels> {
+export default class Panels {
     panel: string = ""
     view: string = ""
     value?: any = null
     current?: Panel = null
+
+    constructor(options: IPanels|null = null) {
+        options && assignNonEmpty(this, options)
+    }
 
     static readPath(path: string) : IPanels {
         if(!path)

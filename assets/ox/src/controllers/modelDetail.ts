@@ -12,12 +12,13 @@ import type ModelList from './modelList'
 /** Base interface of a ModelDetail */
 export interface IModelDetail<M extends Model> extends IModelController<M> {
     /** Current item. */
-    item: M|null
+    item?: M
 }
 
-/** Reactive ModelDetail interface options */
-export interface IRModelDetailOpts<M extends Model> extends IModelDetail<M> {
-    value?: any
+/** Parameters of {@link ModelDetail.fetch}. */
+export interface IModelDetailFetch<M extends Model> extends IModelFetch<M> {
+    /** Id of the object to load. */
+    id: number
 }
 
 /**
@@ -38,23 +39,22 @@ export interface IRModelDetailOpts<M extends Model> extends IModelDetail<M> {
  * await detail.load({url: '/users'})
  */
 export default class ModelDetail<M extends Model, O=IModelDetail<M>> extends ModelController<M, O> {
-    item: M|null = null
+    item?: M = null
 
     /** Fetch items from API (using self's {@link Query.fetch}). */
-    async handleResponse(options: IModelFetch<M>, response: Response): Promise<Response> {
+    async handleResponse(options: IModelDetailFetch<M>, response: Response): Promise<Response> {
         response = await super.handleResponse(options, response)
         if(!this.state.isError)
             this.item = this.queryset(response.entities[0].id).first()
         return response
     }
+
+    protected getQueryUrl({id, ...options}: IModelDetailFetch<M>) {
+        return this.url || this.model.meta.getUrl({id})
+    }
 }
 
 export default interface ModelDetail<M extends Model, O=IModelDetail<M>> extends IModelDetail<M> {
-}
-
-export type ModelDetailOpts<M extends Model> = IRModelDetailOpts<M> & {
-    query?: Query<M>,
-    value?: any
 }
 
 
@@ -66,6 +66,9 @@ export interface IModelListDetail<M extends Model> extends IModelDetail<M> {
 
 /**
  * A model detail related to a list.
+ *
+ * This allows to provide properties such as next or prev item related
+ * to current one.
  */
 export class ModelListDetail<M extends Model, O=IModelListDetail<M>> extends ModelDetail<M, O> {
     /** The next item in the list if applicable. */

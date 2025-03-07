@@ -2,13 +2,11 @@ import {computed, watch} from 'vue'
 import type {WatchHandle, Reactive} from 'vue'
 
 import {t} from '../composables'
-import {RObject, State} from '../utils'
+import {assignNonEmpty, State} from '../utils'
 import type Panels from './panels'
 
 
 export interface IPanelInfo {
-    /** Panel's name */
-    name: string
     /** The view title displayed to user. */
     title?: string
     /** The view's icon displayed to user. */
@@ -18,6 +16,8 @@ export interface IPanelInfo {
 
 /** Properties of OxPanel **/
 export interface IPanelProps extends IPanelInfo {
+    /** Panel's name */
+    name: string
     /** Index view name **/
     index?: string
     /** Optional state (used with `ox-state-alert`). */
@@ -35,6 +35,8 @@ export type IPanelNavProps = IPanelInfo & {
 }
 
 export interface IPanel<P> extends IPanelInfo {
+    /** Panel's name */
+    readonly name: string
     /** Panel component properties. */
     props: P
     /**
@@ -50,15 +52,12 @@ export interface IPanel<P> extends IPanelInfo {
     editions: Set<string>
 }
 
-export interface IRPanel<P extends IPanelProps=IPanelProps, O=IPanel<P>> extends Reactive<Panel<P, O>> {
-    watcher: WatchHandle
-}
-
 
 /**
  * This is the base class used by panels.
  */
-export default class Panel<P extends IPanelProps=IPanelProps, O=IPanel<P>> extends RObject<IPanel<P>> {
+export default class Panel<P extends IPanelProps = IPanelProps>
+{
     /**
      * Translation key for message displayed on `confirm()` to leave unsaved
      * changes.
@@ -77,22 +76,15 @@ export default class Panel<P extends IPanelProps=IPanelProps, O=IPanel<P>> exten
     /** Wether there are still edited items on current view. */
     get edited(): boolean { return !!this.editions?.size }
 
-    /**
-     * Return reactive version of panel.
-     *
-     * Add watcher over panels's panel ({@link Panel.onChange})
-     */
-    static reactive<P extends IPanelProps=IPanelProps, O=IPanel<P>>(options: IPanel<P>): IRPanel<P,O> {
-        const obj = super.reactive(options) as IRPanel<P,O>
-        obj.watcher = watch(() => obj.panels.panel, (val) => obj.onChange(val))
-        return obj
-    }
-
     /** Return adequate icon based on props and model **/
     get icon(): string { return this.props?.icon || null }
 
     /** Return panel's title based on props. */
     get title(): string { return this.props?.title }
+
+    constructor(options: IPanel<P>|null = null) {
+        options && assignNonEmpty(this, options)
+    }
 
     /** Set or remove an edition by name. */
     setEdition(name: string, edited: boolean) {
@@ -125,4 +117,7 @@ export default class Panel<P extends IPanelProps=IPanelProps, O=IPanel<P>> exten
         }
     }
 }
-export default interface Panel<P extends IPanelProps=IPanelProps, O=IPanel<P>> extends IPanel<P> {}
+export default interface Panel<P extends IPanelProps=IPanelProps> extends IPanel<P> {
+    // set by composable
+    watcher?: WatchHandle
+}

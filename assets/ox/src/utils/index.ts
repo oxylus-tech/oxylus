@@ -1,6 +1,5 @@
 export {default as State, States}  from './state'
 export * from './functional'
-export {default as RObject} from './reactive'
 export * from './vue'
 
 
