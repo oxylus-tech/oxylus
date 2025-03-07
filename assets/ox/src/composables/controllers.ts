@@ -1,5 +1,5 @@
-import {computed, inject, provide, reactive, toRefs, watch} from 'vue'
-import type {Reactive, WatchHandle} from 'vue'
+import {computed, inject, isRef, provide, reactive, toRefs, unref, watch} from 'vue'
+import type {Reactive, Ref, WatchHandle} from 'vue'
 import type {Repository} from 'pinia-orm'
 
 import {injectOrProvide} from '../utils'
@@ -14,7 +14,8 @@ import {
 import type {
     IPanels, IPanel, IPanelProps,
     IModelPanel, IModelPanelProps,
-    IModelList, IModelDetail
+    IModelList, IModelDetail,
+    IEditor, IModelEditor,
 } from '../controllers'
 
 
@@ -30,6 +31,7 @@ export function usePanels(options: IPanels) {
     return obj
 }
 
+
 /** Create a new {@link Panel}. */
 export function usePanel<P extends IPanelProps>(options: IPanel<P>): Reactive<Panel<P>> {
     const obj = reactive(new Panel(options))
@@ -37,9 +39,23 @@ export function usePanel<P extends IPanelProps>(options: IPanel<P>): Reactive<Pa
     return obj
 }
 
+export interface IUseModelPanel<M extends Model> {
+    query?: Query<M>
+    repos?: Repos
+}
+
 /** Create a new {@link ModelPanel}. */
-export function useModelPanel<M extends Model, P extends IModelPanelProps<M>>(options: IModelPanel<M,P>): Reactive<ModelPanel<M,P>> {
-    const obj = reactive(new ModelPanel(options))
+export function useModelPanel<M extends Model, P extends IModelPanelProps<M>>(
+    {query, repos, props, ...options}: IModelPanel<M,P>
+): Reactive<ModelPanel<M,P>>
+{
+    repos ??= inject('repos')
+    query ??= useQuery(props.repo, inject('repos'))
+    options.panels ??= inject('panels')
+    options.list ??= useModelList({query})
+    options.detail ??= useModelDetail({query})
+
+    const obj = reactive(new ModelPanel({props, ...options}))
     initPanel(obj)
     return obj
 }
@@ -72,40 +88,54 @@ export function useModelDetail<M extends Model>(options : IModelDetail<M>) : Rea
     return obj
 }
 
-/**
- * This composable return a new query from provided arguments.
- */
+/** This composable return a new query from provided arguments. */
 export function useQuery(repo: Repository, repos: Repos|null=null) {
     const query = new Query(repo, repos)
     provide('query', query)
     return query
 }
 
+
+export interface IUseEditor<T extends IObject> {
+    emits?: (k: string, ...args: any) => void
+    panel: Panel
+}
+
 /**
  * This composable create an new Editor and returns it as reactive object.
  * It register the newly created editor when `editors` and `key` are provided.
  */
-export function useEditor({editorClass=Editor, emits=null, panel=null, ...opts}) {
+export function useEditor<T extends IObject>({emits=null, panel=null, ...options}: IEditor<T> & IUseEditor<T>): Reactive<Editor<T>> {
+    const initial = options.initial || unref
+    const obj = reactive(new Editor(options))
+    initEditor(obj, {emits, panel})
+    return obj
+}
+
+/** Return a new reactive {@link ModelEditor} */
+export function useModelEditor<T extends Model>({emits=null, panel=null, ...options}: IModelEditor<T> & IUseEditor<T>): Reactive<ModelEditor<T>> {
+    const obj = reactive(new ModelEditor(options))
+    initEditor(obj, {emits, panel})
+    return obj
+}
+
+/**
+ * Initialize reactive {@link Editor}:
+ *
+ * - provide `editor`
+ * - set default `saved` method if emits is provided
+ * - watch on edition to update panel's editions
+ */
+export function initEditor<T extends IObject>(obj: Reactive<Editor<T>>, {emits=null, panel=null}: IUseEditor<T>) {
+    provide('editor', obj)
+
     // default saved method
     if(emits)
-        opts.saved ??= ((item: IObject, editor) => emits('saved', item, editor))
+        obj.saved ??= ((item: IObject, editor) => emits('saved', item, editor))
 
-    const editor = editorClass.reactive(opts)
-    if(panel) {
-        watch(() => editor.edited, (val: boolean) => panel.setEdition(editor.name, val))
-    }
-    return editor
+    // if(isRef(initial))
+    //    obj.watch(initial, (v: T) => obj.reset(v))
+
+    if(panel)
+        watch(() => obj.edited, (val: boolean) => panel.setEdition(obj.name, val))
 }
-
-/** Return a new reactive ModelEditor */
-export function useModelEditor(opts) {
-    return useEditor({...opts, editorClass: ModelEditor})
-}
-
-// export function arrayEditor(opts) {
-//     return editor({...opts, editorClass: ArrayEditor})
-// }
-//
-// export function collectionEditor(opts) {
-//     return editor({...opts, editorClass: CollectionEditor})
-// }

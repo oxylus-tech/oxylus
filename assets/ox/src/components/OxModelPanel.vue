@@ -127,7 +127,7 @@ import OxListTable from './OxListTable.vue'
 import OxPanel from './OxPanel.vue'
 import OxModelEdit from './OxModelEdit.vue'
 
-import {t, filterSlots, useModelPanel} from 'ox'
+import {t, filterSlots, useModelPanel, useModelDetail, useModelList} from 'ox'
 import type {IModelPanelProps} from '../controllers'
 
 const slots = useSlots()
@@ -139,6 +139,7 @@ const filters = useTemplateRef('filters')
 const props = withDefaults(defineProps<IModelPanelProps>(), {
     index: 'list.table'
 })
+
 const panel = inject('panel') ?? useModelPanel({props})
 const panels = panel.panels
 const list = panel.list

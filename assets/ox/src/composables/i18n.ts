@@ -34,7 +34,7 @@ export const i18n = createI18n()
 /**
  * Shortcut to {@link i18n} `t()` function.
  */
-export function t(...args): string {
+export function t(...args: any): string {
     return i18n.global.t(...args)
 }
 

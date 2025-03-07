@@ -77,16 +77,8 @@ export default class Query<M extends Model> {
     * @param {Repos} [repos] all models repositories
     * @param {Repository<M>} [repo] the main repository
     */
-    constructor(repo: string|Repository<M>, repos: Repos|null=null) {
-        if(typeof(repo) == "string") {
-            if(!repos)
-                throw Error(`Repository "${repo}" is provided as string, but no "repos" argument is provided.`)
-            if(!(repo in repos))
-                throw Error(`Repository "${repo}" is not present in provided repositories.`)
-            this.repo = repos[repo]
-        }
-        else
-            this.repo = repo
+    constructor(repo: Repository<M>, repos: Repos|null=null) {
+        this.repo = repo
         this.repos = repos
     }
 
@@ -195,10 +187,15 @@ export default class Query<M extends Model> {
     }
 
 }
-
 export default interface Query<M extends Model> extends IQuery<M> {}
 
 
-export function query<M extends Model>(repo: string|Repository<M>, repos: Repos|null): Query<M> {
+/** Return a new {@link Query} based on repo's entity. */
+export function query<M extends Model>(repo: string|Repository<M>, repos?: Repos): Query<M> {
+    if(typeof repo == "string") {
+        if(!(repo in repos))
+            throw Error(`Repository "${repo}" is not present in provided repositories.`)
+        return new Query(repos[repo], repos)
+    }
     return new Query(repo, repos)
 }

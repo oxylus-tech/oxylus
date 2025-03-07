@@ -1,10 +1,8 @@
 import { cloneDeep, isEqual, pick } from 'lodash'
-import { computed, isRef, ref, reactive, toRaw, watch, unref } from 'vue'
-import type { ComputedRef, Reactive } from 'vue'
 import type { Attribute, Repository } from 'pinia-orm'
 import type { Response } from '@pinia-orm/axios'
 
-import { reset, State, RObject } from '../utils'
+import { assignNonEmpty, reset, State } from '../utils'
 import type { IObject } from '../utils'
 import type { Model } from '../models'
 
@@ -16,13 +14,13 @@ export interface IEditor<T> {
     [index: string]: any
 
     /**
-     * @property initial - initial value provided to the editor
-     */
-    initial: T
-    /**
      * @property value - current edited value
      */
-    value: T
+    value: T & {[k:string]: any}
+    /**
+     * @property initial - initial value provided to the editor
+     */
+    initial: T & {[k: string]: any}
     /**
      * @property name - editor name
      */
@@ -44,20 +42,6 @@ export interface IEditor<T> {
 }
 
 
-/**
- * Reactive Editor class interface.
- */
-export interface IREditor<T> extends Reactive<Editor<T>> {
-    /**
-     * Value has been edited.
-     */
-    edited: ComputedRef<boolean>
-    /**
-     * Input data are valid.
-     */
-    valid: ComputedRef<boolean>
-}
-
 export interface IEditorSend extends IObject {}
 
 /**
@@ -70,20 +54,13 @@ export interface IEditorSend extends IObject {}
  * Default implementation handles raw Object edition, but not saving data to the server.
  * Note: this might lead to errors due to reactivity when returned from composable.
  */
-export default class Editor<T extends IObject> extends RObject<IREditor<T>> {
+export default class Editor<T extends IObject> {
     state = State.none()
-    value: T = {} as T
+    value: T & {[k:string]: any} = {} as T
 
-    static reactive<T extends IObject>({initial, ...opts}: IREditor<T>) : Reactive<Editor<T>> {
-        const obj = super.reactive({initial: unref(initial), ...opts})
-        if(isRef(initial))
-            obj.watch(initial, (v: T) => obj.reset(v))
-        return obj
-    }
-
-    constructor(attrs: IEditor<T>)
+    constructor(options: IEditor<T>)
     {
-        super(attrs)
+        options && assignNonEmpty(this, options)
         if(!this.state)
             this.state = new State()
 
@@ -160,65 +137,8 @@ export default class Editor<T extends IObject> extends RObject<IREditor<T>> {
         throw "not implemented"
     }
 }
-export default interface Editor<T> extends IEditor<T> {}
-
-
-/**
- * ModelEditor interface.
- */
-interface IModelEditor<T extends Model> extends IEditor<T> {
-    repo: Repository<T>
-    initial: T & {[k: string]: any}
-    value: T & {[k:string]: any}
+export default interface Editor<T> extends IEditor<T> {
 }
-
-interface IModelEditorSend extends IEditorSend {
-    id: number
-}
-
-
-/**
- * Editor sub-class used to edit model instances.
- */
-export class ModelEditor<T extends Model> extends Editor<T> {
-    fields: string[] = []
-
-    constructor({repo, url, ...opts} : IModelEditor<T>) {
-        if(url || "meta" in repo.use)
-            url = url || (repo.use as typeof Model).meta.url
-        else
-            throw Error("No url specified as parameter or in Model.meta.")
-        super({url, repo, ...opts})
-        this.fields = Object.keys((this.repo.use as typeof Model).fields())
-    }
-
-    _reset(val: T): void {
-        const cls = this.initial.constructor as new(p: IObject) => T
-        const params = val && cloneDeep(pick(val, this.fields)) || {}
-        this.value = new cls(params)
-    }
-
-    get edited(): boolean {
-        return !isEqual(pick(this.value, this.fields), pick(this.initial, this.fields))
-    }
-
-    serialize(value: T): {[k: string]: any} {
-        return value.$toJson(null, {relations: false})
-    }
-
-    send(value: IModelEditorSend) : Promise<State> {
-        let [func, url] = ["post", this.url]
-        if(value.id) {
-            url = `${url}${value.id}/`
-            func = "put"
-        }
-        return this.repo.api()[func](url, value).then(
-            (result: Response) => State.ok(result.entities[0]),
-            (error: Response) => State.error(error.response.data)
-        )
-    }
-}
-export interface ModelEditor<T extends Model> extends IModelEditor<T> {}
 
 // /**
 //  * Editor subclass used to edit ordered arrays.
