@@ -46,7 +46,7 @@
                 </v-btn-group>
             </template>
 
-            <v-btn-toggle class="ml-3" color="secondary" v-model="panel.view" density="compact" variant="tonal">
+            <v-btn-toggle class="ml-3" color="secondary" v-model="panel.view" density="compact" variant="tonal" mandatory>
                 <!-- TODO: permission check -->
                 <v-btn value="list.table"
                         :title="t('panels.nav.table')"

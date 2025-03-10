@@ -19,6 +19,7 @@ export function createI18n() {
     const locale = candidates.find(x => x in config.locales)
     return $createI18n({
         legacy: false,
+        globalInjection: true,
         fallbackLocale: 'en',
         locale
     })
@@ -39,8 +40,31 @@ export function t(...args: any): string {
 }
 
 
+export interface IUseI18n {
+    composer?: Composer,
+    path?: string,
+    fallback?: boolean,
+}
+
+/**
+ * This composable return vue-i18n's `t()` function and watch for
+ * locale change in order to dynamically load corresponding message file.
+ *
+ * @param {String} [options.path] parent path of locales' dir.
+ * @param {Boolean} [options.fallback] if true, use fallback locale
+ * @return ``t()`` function.
+ */
+export function useI18n({path="./", fallback=true, composer=null}: IUseI18n={}) {
+    composer ??= i18n.global
+    loadLocale({composer, path, fallback})
+    watch(() => composer.locale, () => loadLocale(composer, {path, fallback}))
+    return composer
+}
+
+
 /**
  * Set locale (load it if required).
+ * FIXME
  */
 export function setLocale(i18n: Composer, path: string, locale: string) {
     if(!(locale in config.locales))
@@ -60,25 +84,29 @@ export function setLocale(i18n: Composer, path: string, locale: string) {
 export const loadedLocalePaths = new Set()
 
 
-export interface IUseI18n {
-    path?: string,
-    fallback?: boolean,
-}
-
 /**
- * This composable return vue-i18n's `t()` function and watch for
- * locale change in order to dynamically load corresponding message file.
+ * Load locale using provided path and i18n locale composer.
  *
- * @param {String} [options.path] parent path of locales' dir.
- * @param {Boolean} [options.fallback] if true, use fallback locale
- * @param [options.opts] passed down to vue-i18n's ``useI18n``.
- * @return ``t()`` function.
+ * @param i18n - vue-i18n locale Composer;
+ * @param [options.path] path to parent directory of locale dir;
+ * @param [options.fallback] if True, use fallback locale whenever required.
  */
-export function useI18n({path="./", fallback=true, ...opts}: IUseI18n={}) {
-    const i18n = $useI18n(opts)
-    loadLocale(i18n, {path, fallback})
-    watch(() => i18n.locale, () => loadLocale(i18n, {path, fallback}))
-    return i18n
+function loadLocale({path="./", fallback=true, composer=null}: IUseI18n ={}): Promise<void> {
+    composer ??= i18n.global
+    if(!path.startsWith('/'))
+        path = import.meta.resolve(path)
+    if(!path.endsWith('/'))
+        path += '/'
+
+    let promise = loadLocaleFrom(composer, path, unref(composer.locale))
+    if(fallback && composer.fallbackLocale.value)
+        promise = promise.catch((error) => loadLocaleFrom(composer, path, unref(composer.fallbackLocale) as string))
+            .catch((error) => {
+                throw Error(
+                    `Could not load locale ${composer.locale.value} nor its fallback ${composer.fallbackLocale.value} (path: ${path}). Error: ${error}`
+                )
+            })
+    return promise
 }
 
 
@@ -100,31 +128,6 @@ async function loadLocaleFrom(i18n: Composer, path: string, locale: string) {
         ...i18n.messages.value[locale],
         ...messages
     }
-}
-
-
-/**
- * Load locale using provided path and i18n locale composer.
- *
- * @param i18n - vue-i18n locale Composer;
- * @param [options.path] path to parent directory of locale dir;
- * @param [options.fallback] if True, use fallback locale whenever required.
- */
-function loadLocale(i18n: Composer, {path="./", fallback=true}={}): Promise<void> {
-    if(!path.startsWith('/'))
-        path = import.meta.resolve(path)
-    if(!path.endsWith('/'))
-        path += '/'
-
-    let promise = loadLocaleFrom(i18n, path, unref(i18n.locale))
-    if(fallback && i18n.fallbackLocale.value)
-        promise = promise.catch((error) => loadLocaleFrom(i18n, path, unref(i18n.fallbackLocale) as string))
-            .catch((error) => {
-                throw Error(
-                    `Could not load locale ${i18n.locale.value} nor its fallback ${i18n.fallbackLocale.value} (path: ${path}). Error: ${error}`
-                )
-            })
-    return promise
 }
 
 

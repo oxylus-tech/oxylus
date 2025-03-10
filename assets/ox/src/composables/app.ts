@@ -15,10 +15,6 @@ import type {IObject} from '../utils'
  * Django generated page.
  */
 export interface IAppData extends IObject {
-    //! Current panel name
-    panel?: string
-    //! Current panel's view name
-    view?: string
     //! User's data.
     user?: IObject
 }
@@ -52,7 +48,6 @@ export interface IApp {
  * Which is:
  * - initial data: this is loaded from `<script>` HTML object.
  * - models: it will create adequate `pinia-orm/axios` repositories for them.
- * - panel: current Panel information.
  *
  * The context is provided to Vue components in order to allow them
  * to access global information, such as current user or Panel.
@@ -80,8 +75,6 @@ export class AppContext {
                 value = this.readData(this.dataEl)
             value.dataEl = this.dataEl
             this.data = value
-            if(this.panel && this.data.panel)
-                this.panel.value = value
         }
 
         if(this.models !== undefined) {
@@ -125,7 +118,6 @@ export interface IRAppContext extends Reactive<AppContext> {
  * Create a new {@link AppContext} and provide the following values:
  * - `context`: {@link AppContext} object;
  * - `user`: current {@link models.User};
- * - `panel`: application {@link Panel};
  */
 export function useAppContext(opts: IApp, load: boolean = true): AppContext {
     const obj = AppContext.reactive(opts)

@@ -11,7 +11,7 @@ import axios from 'axios'
 import '../styles/index.scss'
 import * as vendorComponents from 'ox/vendor'
 import config from '../config'
-import {i18n} from './i18n'
+import {i18n, useI18n} from './i18n'
 
 import type {IObject} from '../utils'
 
@@ -90,6 +90,8 @@ export function createApp(app: IObject, {props={}, vuetify={}, plugins=null}: IC
 
     app.use(createVuetify(vuetify))
     app.use(i18n)
+    useI18n({i18n})
+
     plugins && plugins.forEach(plugin => app.use(plugin))
     return app
 }

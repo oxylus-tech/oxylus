@@ -26,12 +26,11 @@
 <script setup lang="ts">
 import { computed, defineProps, inject, useSlots } from 'vue'
 
-import { useI18n, tKeys } from 'ox'
+import { t, tKeys } from 'ox'
 import { Permissions } from '../models'
 import { filterSlots } from '../utils'
 import OxAction from './OxAction.vue'
 
-const { t } = useI18n()
 const slots = useSlots()
 const itemSlots = filterSlots(slots, 'item.', {exclude: ['item.actions']})
 

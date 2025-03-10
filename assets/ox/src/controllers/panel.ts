@@ -64,7 +64,7 @@ export interface IPanel<P> extends IPanelInfo {
  */
 export default class Panel<P extends IPanelProps = IPanelProps>
 {
-    index: string = ''
+    index: string = 'list.table'
     view: string = ''
     value: any = null
     item: any = null
@@ -106,10 +106,6 @@ export default class Panel<P extends IPanelProps = IPanelProps>
                 this.view = view || this.index
             this.value = value
         }
-    }
-
-    select(value) {
-        this.value = value
     }
 
     /**

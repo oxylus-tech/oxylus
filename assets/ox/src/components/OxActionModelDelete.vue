@@ -9,11 +9,10 @@
 </template>
 <script setup lang="ts">
 import { defineProps, inject } from 'vue'
-import { useI18n } from 'vue-i18n'
+import { t } from 'ox'
 
 import OxAction from './OxAction.vue'
 
-const { t } = useI18n()
 const panel = inject('panel')
 const repos = inject('repos')
 

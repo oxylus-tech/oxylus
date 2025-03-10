@@ -58,9 +58,7 @@ import { computed, defineProps, inject, provide, reactive, watch } from 'vue'
 import {useAppContext, usePanels} from 'ox'
 import type {Model} from '../models'
 
-// we force ox_core locales to be loaded
-import { useI18n } from 'ox'
-const { t } = useI18n()
+import { t } from 'ox'
 
 const slots = useSlots()
 

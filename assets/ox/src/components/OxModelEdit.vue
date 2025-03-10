@@ -30,18 +30,16 @@
 </template>
 <script setup lang="ts">
 import { computed, ref, defineProps, inject, toRefs, useSlots, watch } from 'vue'
-import { useI18n, filterSlots, useModelEditor } from 'ox'
+import { t, tKeys, filterSlots, useModelEditor } from 'ox'
 
 import OxStateAlert from './OxStateAlert.vue'
 import OxValidationBtn from './OxValidationBtn.vue'
 
 import type {IModelEditorProps} from '../controllers/modelEditor'
 
-const { t } = useI18n()
-
 const props = defineProps<IModelEditorProps>()
 const editor = useModelEditor({props})
-const model = computed(() => editor.repo.model)
+const model = computed(() => editor.repo.use)
 const {value, edited} = toRefs(editor)
 
 // ---- Slots & tabs

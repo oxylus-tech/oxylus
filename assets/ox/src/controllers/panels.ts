@@ -65,7 +65,10 @@ export default class Panels {
             if(!panels.panel)
                 throw Error("The attribute `href` requires`panel`.")
 
-            window.location.href = `${href}?panel=${panels.panel}&view=${panels.view}`
+            href = `${href}?panel=${panels.panel}`
+            if(options.view)
+                href = `${href}&view=${options.view || ''}`
+            window.location.href = href
             return
         }
 

@@ -48,9 +48,5 @@ const {initial} = toRefs(props)
 const form = useTemplateRef('form')
 
 const panels = inject("panels")
-const editor = useModelEditor({
-    name: "group-editor",
-    panels, initial, emits,
-    repo: repos.groups,
-})
+const editor = inject("editor")
 </script>

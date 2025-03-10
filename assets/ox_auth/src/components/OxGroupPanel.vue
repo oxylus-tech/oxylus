@@ -18,12 +18,13 @@
             <ox-group-edit :initial="value"/>
         </template>
 
+        <!--
         <template #views.detail.edit.tab.users="{value}">
             <v-tab v-if="value?.id" text="Members" value="users"/>
         </template>
         <template #views.detail.edit.window.users="{value}">
             <ox-group-users :group="value"/>
-        </template>
+        </template> -->
     </ox-model-panel>
 </template>
 <script setup lang="ts">
@@ -35,7 +36,7 @@ import type {IModelPanelProps} from '@ox/controllers'
 import { OxModelPanel } from 'ox/components'
 import { useAuthModels } from '../composables'
 import OxGroupEdit from './OxGroupEdit.vue'
-import OxGroupUsers from './OxGroupUsers.vue'
+// import OxGroupUsers from './OxGroupUsers.vue'
 
 const context = inject('context')
 const slots = useSlots()

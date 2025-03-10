@@ -2,10 +2,10 @@
     <v-table>
         <thead>
             <tr>
-                <th>Username</th>
-                <th>First Name</th>
-                <th>Last Name</th>
-                <th>Actions</th>
+                <th>{{ t('fields.username') }}</th>
+                <th>{{ t('fields.first_name') }}</th>
+                <th>{{ t('fields.last_name') }}</th>
+                <th>{{ t('fields.actions') }}</th>
             </tr>
         </thead>
         <tbody>
@@ -26,6 +26,7 @@
 <script setup>
 import {computed, inject, defineProps} from 'vue'
 
+import {t, query} from 'ox'
 import {OxAction} from 'ox/components'
 
 const repos = inject('repos')

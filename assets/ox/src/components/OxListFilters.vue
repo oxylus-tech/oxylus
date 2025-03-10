@@ -20,8 +20,7 @@
 </template>
 <script setup>
 import { computed, defineProps, defineExpose, inject } from 'vue'
-import { useI18n } from 'ox'
-const { t } = useI18n()
+import { t } from 'ox'
 
 const list = inject('list')
 const props = defineProps({
