@@ -29,8 +29,9 @@ export default class Panels {
     panel: string = ""
     view: string = ""
     value?: any = null
-    current?: Panel = null
+    children: {[k: string]: Panel} = {}
 
+    get current() : Panel|null { return this.children[this.panel] || null }
     constructor(options: IPanels|null = null) {
         options && assignNonEmpty(this, options)
     }
@@ -43,6 +44,16 @@ export default class Panels {
         if(idx < 0)
             return {panel: path, view: ''}
         return {panel: path.substring(0, idx), view: path.substring(idx+1)}
+    }
+
+    register(name, child) {
+        if(name in this.children)
+            throw Error(`Child panel is already registered ${name}.`)
+        this.children[name] = child
+    }
+
+    unregister(name) {
+        delete this.children[name]
     }
 
     show({force=false, href=null, ...panels}: IPanelShow) {
@@ -62,9 +73,17 @@ export default class Panels {
     }
 
     reset({panel, view=null, value=null}: IPanels) {
+        const panelChanged = (panel && panel != this.panel)
+        if(panelChanged && this.current) {
+            if(!this.current.onLeave())
+                return
+        }
+
         this.panel = panel || this.panel
-        this.view = view || ""
-        this.value = value
+        if(this.current) {
+            this.current.view = view || this.current.view.index || ''
+            this.current.value = value
+        }
     }
 }
 export default interface Panels extends IPanels {

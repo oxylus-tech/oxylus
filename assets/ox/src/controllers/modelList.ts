@@ -1,3 +1,5 @@
+import {unref} from 'vue'
+import type {Ref} from 'vue'
 import type {Response} from '@pinia-orm/axios'
 
 import {collectAttr} from '../utils'
@@ -59,8 +61,8 @@ export interface IModelListFetch<M extends Model> extends IModelFetch<M> {
  * await list.load({url: '/users'})
  */
 export default class ModelList<M extends Model> extends ModelController<M, IModelList<M>> {
-    items: M[] = []
-    filters?: Filters = null
+    ids: number[] = []
+    filters: Filters = {}
     nextUrl: string|null = null
     prevUrl: string|null = null
     count: number|null = null
@@ -91,8 +93,8 @@ export default class ModelList<M extends Model> extends ModelController<M, IMode
      */
     getSibling(item: M, step: number): M|null {
         const index = this.findIndex(item.id)
-        const sibling = index > 0 ? index+step : -1
-        return sibling > 0 ? this.get(sibling) : null
+        const sibling = index >= 0 ? index+step : -1
+        return sibling >= 0 ? this.get(sibling) : null
     }
 
     /**
@@ -120,8 +122,7 @@ export default class ModelList<M extends Model> extends ModelController<M, IMode
         response = await super.handleResponse(options, response)
         if(!this.state.isError) {
             const ids = [...collectAttr(response.entities, 'id')]
-            const items = this.queryset(ids).get()
-            this.items = append ? this.items.concat(items) : items
+            this.ids = append ? this.ids.concat(ids) : ids
             this.nextUrl = response.response.data[this.nextKey] || null
             this.prevUrl = response.response.data[this.prevKey] || null
             this.count = response.response.data[this.countKey] || this.items.length

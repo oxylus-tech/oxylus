@@ -35,7 +35,7 @@ const { t } = useI18n()
 const slots = useSlots()
 const itemSlots = filterSlots(slots, 'item.', {exclude: ['item.actions']})
 
-const panels = inject('panels')
+const panel = inject('panel')
 const list = inject('list')
 const permissions = new Permissions('change')
 const props = defineProps({
@@ -67,6 +67,6 @@ function updateOptions(event) {
 }
 
 function runEdit(user, item) {
-    panels.show({view: 'detail.edit', value: item.id})
+    panel.show({view: 'detail.edit', value: item})
 }
 </script>

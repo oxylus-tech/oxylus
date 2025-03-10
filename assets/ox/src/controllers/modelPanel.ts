@@ -23,6 +23,7 @@ export interface IModelPanelProps<M extends Model> extends IPanelProps {
     search: string
     view: string
     headers?: string[]
+    relations?: string[]
     showFilters?: boolean
 }
 
@@ -35,7 +36,7 @@ export interface IModelPanel<
     /** List controller used to load and handle multiple items from the server. */
     list: ModelList<M>
     /** Detail controller used to load and handle a single item from the server. */
-    detail: ModelListDetail<M>
+    //detail: ModelListDetail<M>
 }
 
 
@@ -73,13 +74,13 @@ export default class ModelPanel<
             if(this.view?.startsWith('list.'))
                 return t(tKeys.model(model), 3)
 
-            if(this.view?.startsWith('detail.') && panels.value) {
-                if(panels.value.$title)
-                    return panels.value.$title
+            if(this.view?.startsWith('detail.') && this.value) {
+                if(this.value.$title)
+                    return this.value.$title
 
                 const name = t(tKeys.model(model))
-                return panels.value.id
-                    ? t(`models._.title`, {model: name, id: panels.value.id})
+                return this.value.id
+                    ? t(`models._.title`, {model: name, id: this.value.id})
                     : t(`models._.title.new`, {model: name})
             }
         }
@@ -91,14 +92,25 @@ export default class ModelPanel<
      *
      * @param view - edit view.
      */
-    create(view: string='.detail.add') {
-        this.panels.show({panel: this.name, view, value: new this.model()})
+    create(view: string='detail.edit') {
+        this.show({view, value: null})
     }
 
     /** Called when an item has been created. By default, show edit view. */
-    created(value: M, view: string=".detail.edit") {
-        this.list.load()
-        this.panels.show({panel: this.name, view, value, force: true})
+    created(value: M, view: string="detail.edit") {
+        // this.list.load()
+        this.show({view, value})
+    }
+
+    onViewChange(val) {
+        super.onViewChange(val)
+        if(val.startsWith('list.'))
+            this.list.load()
+        //if(val.startsWith('detail.'))
+        //    this.detail.load()
+    }
+    onValueChange(val) {
+        //val && this.detail.load({id: val})
     }
 }
 

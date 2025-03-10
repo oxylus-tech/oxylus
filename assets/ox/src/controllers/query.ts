@@ -95,6 +95,9 @@ export default class Query<M extends Model> {
      */
     async fetch({url, ids=null, repo=null, lookup="id__in", params=undefined, relations=null, ...opts}: IQueryFetch<M> = {}) : Promise<Response> {
         repo ??= this.repo
+        if(!url)
+            url = repo.use?.meta?.url
+
         if(ids && lookup !== undefined) {
             params = {...(params || {})}
             params[lookup] = [...ids]

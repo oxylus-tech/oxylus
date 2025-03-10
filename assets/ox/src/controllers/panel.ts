@@ -19,7 +19,11 @@ export interface IPanelProps extends IPanelInfo {
     /** Panel's name */
     name: string
     /** Index view name **/
-    index?: string
+    index: string
+    /** Panel's view */
+    view: string
+    /** Current value */
+    value?: any
     /** Optional state (used with `ox-state-alert`). */
     state?: State
     /** Url to related help page */
@@ -28,6 +32,8 @@ export interface IPanelProps extends IPanelInfo {
 
 /** Component properties used by OxPanelNav */
 export type IPanelNavProps = IPanelInfo & {
+    /** Panel's name */
+    panel: string
     /** Panels page **/
     href?: string
     /** Only display the navigation item when panel is active. */
@@ -58,6 +64,12 @@ export interface IPanel<P> extends IPanelInfo {
  */
 export default class Panel<P extends IPanelProps = IPanelProps>
 {
+    index: string = ''
+    view: string = ''
+    value: any = null
+    item: any = null
+    editions: Set = new Set()
+
     /**
      * Translation key for message displayed on `confirm()` to leave unsaved
      * changes.
@@ -66,12 +78,6 @@ export default class Panel<P extends IPanelProps = IPanelProps>
 
     /** Panel name (based on props) **/
     get name(): string { return this.props?.name || '' }
-
-    /** Current view. */
-    get view(): string|null { return this.panels.panel == this.name ? this.panels.view : null }
-
-    /** Current value */
-    get value(): any { return this.panels.panel == this.name ? this.panels.value : null }
 
     /** Wether there are still edited items on current view. */
     get edited(): boolean { return !!this.editions?.size }
@@ -84,12 +90,26 @@ export default class Panel<P extends IPanelProps = IPanelProps>
 
     constructor(options: IPanel<P>|null = null) {
         options && assignNonEmpty(this, options)
+        this.view ??= this.index || ''
     }
 
     /** Set or remove an edition by name. */
     setEdition(name: string, edited: boolean) {
         if(edited) this.editions.add(name)
         else this.editions.delete(name)
+    }
+
+    /** Show a view, providing optional value */
+    show({view=null, value=null}) {
+        if(this.onLeave()) {
+            if(view !== null)
+                this.view = view || this.index
+            this.value = value
+        }
+    }
+
+    select(value) {
+        this.value = value
     }
 
     /**
@@ -107,17 +127,10 @@ export default class Panel<P extends IPanelProps = IPanelProps>
         return confirm(msg)
     }
 
-    /** Handle panels' panel change. */
-    onChange(panel: string) {
-        if(panel == this.name) {
-            if(this.panels.current != this)
-                this.panels.current = this
-            if(!this.panels.view)
-                this.panels.view = this.props?.index
-        }
+    onViewChange(val) {
+        if(!val)
+            this.view = this.index
     }
+    onValueChange(val) {}
 }
-export default interface Panel<P extends IPanelProps=IPanelProps> extends IPanel<P> {
-    // set by composable
-    watcher?: WatchHandle
-}
+export default interface Panel<P extends IPanelProps=IPanelProps> extends IPanel<P> {}

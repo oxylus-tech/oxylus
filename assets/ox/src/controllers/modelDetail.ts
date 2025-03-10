@@ -33,10 +33,9 @@ export interface IModelDetailFetch<M extends Model> extends IModelFetch<M> {
  * const detail = new ModelDetail.reactive({
  *     query: new Query(repos.users, repos),
  *     relations: ['groups'],
- *     value,
  * })
  *
- * await detail.load({url: '/users'})
+ * await detail.load({id: 32})
  */
 export default class ModelDetail<M extends Model, O=IModelDetail<M>> extends ModelController<M, O> {
     item?: M = null

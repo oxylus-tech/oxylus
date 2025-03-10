@@ -4,7 +4,7 @@
         <template #append-title>
             <slot name="append-title" v-bind="bind"/>
 
-            <template v-if="panels.view.startsWith('list.')">
+            <template v-if="panel.view.startsWith('list.')">
                 <v-btn-group class="ml-3" color="secondary"
                         density="compact" variant="tonal">
                     <slot name="nav.list" v-bind="bind"/>
@@ -16,11 +16,11 @@
                     </v-btn>
                 </v-btn-group>
             </template>
-            <template v-else-if="panels.view.startsWith('detail.') && panels.value?.id">
+            <template v-else-if="panel.view.startsWith('detail.') && panel.value">
                 <v-btn-group class="ml-3" color="secondary" density="compact" variant="tonal">
                     <slot name="nav.detail" v-bind="bind"/>
 
-                    <template v-if="panels.view == 'detail.edit' && panels.value">
+                    <template v-if="panel.view == 'detail.edit' && panel.value">
                         <v-menu>
                             <template #activator="{props}">
                                 <v-btn prepend-icon="mdi-dots-vertical" v-bind="props">
@@ -28,25 +28,25 @@
                                 </v-btn>
                             </template>
                             <v-list>
-                                <slot name="item.actions" :value="panels.value"/>
+                                <slot name="item.actions" :value="panel.value"/>
                             </v-list>
                         </v-menu>
                     </template>
 
-                    <v-btn :disabled="!list.prev"
+                    <v-btn :disabled="!panel.prev"
                             :title="t('prev')" :aria-label="t('prev')"
-                            @click.stop="panels.value = list.prev">
+                            @click.stop="panel.show({value: panel.prev})">
                         <v-icon icon="mdi-chevron-left"/>
                     </v-btn>
-                    <v-btn :disabled="!list.next"
+                    <v-btn :disabled="!panel.next"
                             :title="t('next')" :aria-label="t('next')"
-                            @click.stop="panels.value = list.next">
+                            @click.stop="panel.show({value: panel.next})">
                         <v-icon icon="mdi-chevron-right"/>
                     </v-btn>
                 </v-btn-group>
             </template>
 
-            <v-btn-toggle class="ml-3" color="secondary" v-model="panels.view" density="compact" variant="tonal">
+            <v-btn-toggle class="ml-3" color="secondary" v-model="panel.view" density="compact" variant="tonal">
                 <!-- TODO: permission check -->
                 <v-btn value="list.table"
                         :title="t('panels.nav.table')"
@@ -63,14 +63,14 @@
                         :aria-label="t('panels.nav.kanban')">
                     <v-icon>mdi-view-column</v-icon>
                 </v-btn>
-                <v-btn value="detail.add" v-if="slots['views.detail.add']"
+                <v-btn value="detail.add" v-if="editSlots"
                         @click.stop="panel.create()"
                         :title="t('panels.nav.add')"
                         :aria-label="t('panels.nav.add')">
                     <v-icon>mdi-plus-box</v-icon>
                 </v-btn>
                 <v-btn value="detail.edit" v-if="slots['views.detail.edit'] || editSlots"
-                        :disabled="!panels.value?.id"
+                        :disabled="!panel.value?.id"
                         :title="t('panels.nav.edit')"
                         :aria-label="t('panels.nav.edit')">
                     <v-icon>mdi-pencil</v-icon>
@@ -81,7 +81,7 @@
 
         <template #top>
             <ox-list-filters ref="filters"
-                    v-show="panels.view.startsWith('list.') && showFilters"
+                    v-show="panel.view.startsWith('list.') && showFilters"
                     :search="props.search"
                     teleport-to="#panel-list-actions">
                 <template #default="bind">
@@ -104,16 +104,14 @@
         </template>
 
         <template #views.detail.edit v-if="slots['views.detail.edit'] || editSlots">
-            <ox-model-edit v-model:value="panels.value">
+            <ox-model-edit
+                :repo="panel.repo" :initial="panel.value"
+                :name="`${panel.model.entity}-edit`"
+                :saved="(item) => panel.value = item">
                 <template v-for="(name, slot) in editSlots" #[name]="bind">
                     <slot :name="slot" v-bind="bind"/>
                 </template>
             </ox-model-edit>
-        </template>
-
-        <template #views.detail.add v-if="slots['views.detail.add']">
-            <slot name="views.detail.add" v-bind="bind"
-                :saved="(item) => panel.created(item)"/>
         </template>
     </ox-panel>
 </template>
@@ -155,7 +153,7 @@ const bind = computed(() => {
         panel,
         panels,
         list,
-        value: panels.value
+        value: panel.value
     })
 })
 </script>

@@ -1,4 +1,8 @@
-import {computed, inject, isRef, provide, reactive, toRefs, unref, watch} from 'vue'
+import {
+    computed, inject, isRef, toRefs, unref, watch,
+    onMounted, onUnmounted, provide, reactive,
+} from 'vue'
+
 import type {Reactive, Ref, WatchHandle} from 'vue'
 import type {Repository} from 'pinia-orm'
 
@@ -8,14 +12,14 @@ import type {Repos, Model} from '../models'
 
 import {
     Panels, Panel, ModelPanel,
-    Query, ModelList, ModelDetail,
+    Query, ModelList,
     Editor, ModelEditor
 } from '../controllers'
+
 import type {
     IPanels, IPanel, IPanelProps,
     IModelPanel, IModelPanelProps,
-    IModelList, IModelDetail,
-    IEditor, IModelEditor,
+    IModelList, IEditor, IModelEditor,
 } from '../controllers'
 
 
@@ -52,11 +56,14 @@ export function useModelPanel<M extends Model, P extends IModelPanelProps<M>>(
     repos ??= inject('repos')
     query ??= useQuery(props.repo, inject('repos'))
     options.panels ??= inject('panels')
-    options.list ??= useModelList({query})
-    options.detail ??= useModelDetail({query})
 
+    options.list ??= useModelList({query, relations: props.relations})
     const obj = reactive(new ModelPanel({props, ...options}))
     initPanel(obj)
+
+    // obj.item = computed(() => obj.value ? obj.list.queryset(obj.value).first() : null)
+    obj.next = computed(() => obj.value ? obj.list.getSibling(unref(obj.value), 1) : null)
+    obj.prev = computed(() => obj.value ? obj.list.getSibling(unref(obj.value), -1) : null)
     return obj
 }
 
@@ -67,24 +74,23 @@ export function useModelPanel<M extends Model, P extends IModelPanelProps<M>>(
 */
 export function initPanel<P extends IPanelProps>(obj: Reactive<Panel<P>>) {
     provide('panel', obj)
-    obj.watcher = watch(() => obj.panels.panel, (val) => obj.onChange(val))
+    onMounted(() => obj.panels.register(obj.name, obj))
+    onUnmounted(() => obj.panels.unregister(obj.name))
+
+    if(obj.onViewChange)
+        watch(() => obj.view, (val) => obj.onViewChange(val))
+    //if(obj.onValueChange)
+    //    watch(() => obj.value, (val) => obj.onValueChange(val))
 }
 
 
 //---- Controllers
 /** Create a new {@link List} and provide it as `list`. */
-export function useModelList<M extends Model>(options : IModelList<M>) : Reactive<ModelList<M>>
+export function useModelList<M extends Model>(options : IModelList<M>, cls: typeof ModelList = ModelList) : Reactive<ModelList<M>>
 {
-    const obj = reactive(new ModelList(options))
+    const obj = reactive(new cls(options))
     provide('list', obj)
-    return obj
-}
-
-/** Create a new {@link ModelDetail} and provide it as `detail`. */
-export function useModelDetail<M extends Model>(options : IModelDetail<M>) : Reactive<ModelDetail<M>>
-{
-    const obj = reactive(new ModelDetail(options))
-    provide('detail', obj)
+    obj.items = computed(() => obj.ids ? obj.queryset(obj.ids).get() : [])
     return obj
 }
 
@@ -126,16 +132,13 @@ export function useModelEditor<T extends Model>({emits=null, panel=null, ...opti
  * - set default `saved` method if emits is provided
  * - watch on edition to update panel's editions
  */
-export function initEditor<T extends IObject>(obj: Reactive<Editor<T>>, {emits=null, panel=null}: IUseEditor<T>) {
+export function initEditor<T extends IObject>(obj: Reactive<Editor<T>>) {
     provide('editor', obj)
 
-    // default saved method
-    if(emits)
-        obj.saved ??= ((item: IObject, editor) => emits('saved', item, editor))
+    obj.edited = computed(() => obj.isEdited())
+    watch(() => obj.initial, (val) => obj.reset(val || {}))
 
-    // if(isRef(initial))
-    //    obj.watch(initial, (v: T) => obj.reset(v))
-
+    const panel = inject('panel')
     if(panel)
         watch(() => obj.edited, (val: boolean) => panel.setEdition(obj.name, val))
 }

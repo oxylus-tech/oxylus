@@ -18,7 +18,7 @@
 
             <slot name="default">
                 <template v-if="views">
-                    <v-window v-model="panels.view">
+                    <v-window v-model="panel.view">
                         <template v-for="(name, slot) in views" :key="name">
                             <v-window-item :value="name">
                                 <slot :name="slot"></slot>
@@ -33,9 +33,10 @@
     </v-tabs-window-item>
 </template>
 <script setup lang="ts">
-import { defineProps, inject, onMounted, ref, useSlots, watch } from 'vue'
+import { defineProps, inject, onMounted, onUnmounted, ref, useSlots, watch } from 'vue'
 import {filterSlots} from 'ox'
 
+import OxStateAlert from './OxStateAlert.vue'
 import type {IPanelProps} from '../controllers'
 
 const slots = useSlots()
@@ -45,6 +46,8 @@ const views = filterSlots(slots, 'views.')
 // ensure teleport will be set after component has been mounted
 const mounted = ref(false)
 onMounted(() => { mounted.value = true })
+onUnmounted(() => { mounted.value = false })
 
 const panels = inject('panels')
+const panel = inject('panel')
 </script>

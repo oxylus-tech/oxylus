@@ -1,10 +1,5 @@
 <template>
     <v-container>
-        <ox-state-alert :state="editor.state"/>
-        <div class="mb-3">
-            <ox-validation-btn v-if="editor.edited"
-                @validate="editor.save()" @reset="editor.reset()" :state="editor.state" :validate-disabled="!form.isValid"/>
-        </div>
         <v-expansion-panels mandatory multiple :model-value="['info']">
             <v-expansion-panel title="Information" value="info">
                 <template #text>
@@ -54,7 +49,7 @@
             <v-expansion-panel title="Password reset" v-if="editor.value.id">
                 <template #text>
                     <v-expansion-panel-text>
-                        <ox-password-edit :user="props.initial" @saved=""/>
+                        <ox-password-edit :user="editor.initial" @saved=""/>
                     </v-expansion-panel-text>
                 </template>
             </v-expansion-panel>
@@ -71,26 +66,12 @@ import {OxFieldDetails, OxStateAlert, OxValidationBtn} from 'ox/components'
 import OxPermissionsEdit from './OxPermissionsEdit.vue'
 import OxPasswordEdit from './OxPasswordEdit.vue'
 
-
-const emits = defineEmits<{
-    saved: [item: User, editor: ModelEditor]
-}>()
 const repos = inject('repos')
 const groups = repos.groups.all()
 
-const props = defineProps({
-    initial: Object,
-    saved: Function,
-})
-const {initial} = toRefs(props)
 const form = useTemplateRef('form')
-
 const panels = inject("panels")
-const editor = useModelEditor({
-    name: "user-editor",
-    panels, initial, emits,
-    repo: repos.users,
-})
+const editor = inject('editor')
 
 function usernameRule(value) {
     const allowed = /^[A-Za-z0-9@.+\-_]+$/

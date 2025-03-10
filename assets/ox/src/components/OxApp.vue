@@ -26,10 +26,8 @@
             </a>
             <slot name="nav-start" :context="context"></slot>
             <slot name="nav-list" :context="context"></slot>
-            <slot name="nav-end" :context="context"></slot>
-            <template #append v-if="slots['app-nav']">
-                <div class="text-right pa-3">
-                </div>
+            <template #append v-if="slots['nav-end']">
+                <slot name="nav-end" :context="context"></slot>
             </template>
         </v-navigation-drawer>
         <v-main>

@@ -86,7 +86,7 @@ Blocks:
                 </template>
 
                 {% if not no_nav %}
-                <template #app-bar-right="{context}">{% block app-bar-right %}{% include './components/app_bar_right.html' %}{% endblock %}</template>
+                <template #app-bar-right="{context}">{% block app-bar-right %}{% endblock %}</template>
                 <template #nav-start="{context}">
                     {% block nav-start %}{% endblock %}
                 </template>
@@ -96,8 +96,13 @@ Blocks:
                     {% block nav-list-settings %}
                     <v-list-subheader class="ml-2">{% trans "Settings" %}</v-list-subheader>
                     {% endblock %}
+
                 </template>
-                <template #nav-end="{context}">{% block nav-end %}{% endblock %}</template>
+                <template #nav-end="{context}">
+                    {% block nav-end %}
+                    {% include './components/nav_user.html' %}
+                    {% endblock %}
+                </template>
                 {% endif %}
 
                 <template #default="{context}">{% block app-main %}{% endblock %}</template>

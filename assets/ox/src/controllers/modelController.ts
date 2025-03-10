@@ -78,7 +78,7 @@ export default class ModelController<M extends Model, O=IModelController<M>> {
      * - {@link ModelController.fetch}
      * - {@link ModelController.handleResponse}
      */
-    async load(options: IModelFetch<M>): Promise<Response|null> {
+    async load(options: IModelFetch<M> = {}): Promise<Response|null> {
         this.state.processing()
         let response = null
         try {
@@ -99,7 +99,7 @@ export default class ModelController<M extends Model, O=IModelController<M>> {
      * - {@link ModelController.getQueryParams}
      * - {@link Query.fetch}
      */
-    async fetch(options: IModelFetch<M>) : Promise<Response> {
+    async fetch(options: IModelFetch<M> = {}) : Promise<Response> {
         const opts = this.getQueryOptions(options)
         return await this.query.fetch(opts)
     }

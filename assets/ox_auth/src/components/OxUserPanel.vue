@@ -27,12 +27,7 @@
         <template #views.list.kanban="{panel,items,list}">
             <ox-list-kanban field="groups_id" :headers="kanbanHeaders"
                 item-title="username"
-                @click="(item) => panels.show({view: 'detail.edit', value: item})"/>
-        </template>
-
-        <template #views.detail.add="{value,saved}"
-                v-if="!slots['views.detail.add'] && context.user.can('auth.add_user')">
-            <ox-user-edit :initial="value" @saved="saved"/>
+                @click="(item) => panel.show({view: 'detail.edit', value: item})"/>
         </template>
 
         <template #views.detail.edit.window.default="{value}"

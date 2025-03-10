@@ -7,16 +7,7 @@ import type { IObject } from '../utils'
 import type { Model } from '../models'
 
 
-/**
- * Editor class interface.
- */
-export interface IEditor<T> {
-    [index: string]: any
-
-    /**
-     * @property value - current edited value
-     */
-    value: T & {[k:string]: any}
+export interface IEditorProps<T> {
     /**
      * @property initial - initial value provided to the editor
      */
@@ -30,15 +21,28 @@ export interface IEditor<T> {
      */
     url?: string
     /**
+     * @property saved - callback to run after object has been saved
+     */
+    saved?: (item: T, editor: IEditor<T>) => void
+}
+
+
+/**
+ * Editor class interface.
+ */
+export interface IEditor<T,P extends IEditorProps> extends IEditorProps<T> {
+    [index: string]: any
+
+    props: P
+    /**
+     * @property value - current edited value
+     */
+    value: T & {[k:string]: any}
+    /**
     * @property state - current editor state. Set to `State.PROCESSING` when
     * saving instance.
     */
     state: State,
-
-    /**
-     * @property saved - callback to run after object has been saved
-     */
-    saved?: (item: T, editor: IEditor<T>) => void
 }
 
 
@@ -65,39 +69,33 @@ export default class Editor<T extends IObject> {
             this.state = new State()
 
         this.value = {} as T
+        this.valid = true
         this.reset(this.initial)
     }
+
+    get initial(): T { return this.props.initial || {} }
+    get name(): string { return this.props.name }
+    get url(): string|null { return this.props.url }
 
     get errors() : any {
         return this.state.isError && this.state.data || null
     }
 
+    /** Discard changes, resetting to initial value. */
+    discard() {
+        this.reset(this.initial)
+    }
+
     /**
-    * Reset editor data to provided value.
-    * When value is provided, reset initial to this value.
-    */
-    reset(initial: T|null = null): void {
-        if(initial === null)
-            initial = this.initial
-        else
-            this.initial = initial
-        this._reset(initial)
+     * Reset editor data to provided value.
+     * When value is provided, reset initial to this value.
+     */
+    reset(initial: T|null = null) {
+        reset(this.value, value)
         this.state.none()
     }
 
-    /** Reset value's data, implemented by editor subclasses */
-    _reset(value: T) {
-        reset(this.value, value)
-    }
-
-    isValid(): boolean {
-        return this._isValid()
-    }
-
-    _isValid(): boolean { return true }
-
-
-    get edited(): boolean {
+    isEdited(): boolean {
         return !isEqual(this.value, this.initial)
     }
 
@@ -113,7 +111,7 @@ export default class Editor<T extends IObject> {
     async save(value: T|null = null): Promise<State> {
         this.state.processing()
 
-        if(!this.isValid())
+        if(!this.valid)
             return this.state.error({
                 "_": "Some of the input values are invalid"
             })
@@ -122,11 +120,21 @@ export default class Editor<T extends IObject> {
         const state = await this.send(value)
         if(state.isOk) {
             this.reset(state.data as T)
-            this.saved?.(this.value, this)
+            this.saved?.(this.value)
         }
         else
             this.state = state
         return this.state
+    }
+
+    /**
+     * This method is called when editor successfully saved the
+     * edited item to the server.
+     *
+     * By default, it will call {@link Editor.props.saved} if provided.
+     */
+    saved(item: T) {
+        this.props.saved?.(item, this)
     }
 
     /** Serialize value before sending. */
@@ -138,6 +146,8 @@ export default class Editor<T extends IObject> {
     }
 }
 export default interface Editor<T> extends IEditor<T> {
+    // Whether edited data are valid. Default to `true`.
+    valid: boolean
 }
 
 // /**
