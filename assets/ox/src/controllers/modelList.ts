@@ -73,28 +73,28 @@ export default class ModelList<M extends Model> extends ModelController<M, IMode
     countKey = "count"
 
     /** Get items count. */
-    get length(): number { return this.items.length }
+    get length(): number { return this.ids.length }
 
     /** Get item by list index */
-    get(index: number): M { return index < this.items.length ? this.items[index] : null }
-
-    /** Get item by id */
-    find(id: number): M { return this.items.find(i => i.id == id) }
+    get(index: number): number { return index < this.ids.length ? this.ids[index] : null }
 
     /** Get item index by id */
-    findIndex(id: number): number { return this.items.findIndex(i => i.id == id) }
+    findIndex(id: number): number { return this.ids.indexOf(id) }
 
     /**
-     * Get item next to provided one at the specified direction.
+     * Get item id next to provided one at the specified direction.
      *
      * @param item - reference item
      * @param step - increment or decrement item index by this value.
-     * @return the target item or null if not found.
+     * @return the target item id or null if not found.
      */
-    getSibling(item: M, step: number): M|null {
+    getSiblingIndex(item: M|null, step: number): number {
+        if(item === null)
+            return -1
+
         const index = this.findIndex(item.id)
         const sibling = index >= 0 ? index+step : -1
-        return sibling >= 0 ? this.get(sibling) : null
+        return sibling >= 0 && sibling < this.ids.length ? sibling : -1
     }
 
     /**
@@ -125,14 +125,14 @@ export default class ModelList<M extends Model> extends ModelController<M, IMode
             this.ids = append ? this.ids.concat(ids) : ids
             this.nextUrl = response.response.data[this.nextKey] || null
             this.prevUrl = response.response.data[this.prevKey] || null
-            this.count = response.response.data[this.countKey] || this.items.length
+            this.count = response.response.data[this.countKey] || this.ids.length
         }
         return response
     }
 }
 
 export default interface ModelList<M extends Model> extends IModelList<M> {
-    items: M[]
+    ids: number[]
     nextUrl: string|null
     prevUrl: string|null
     count: number|null

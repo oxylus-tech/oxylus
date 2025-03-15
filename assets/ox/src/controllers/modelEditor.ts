@@ -25,8 +25,8 @@ export interface IModelEditorSend extends IEditorSend {
 /**
  * Editor sub-class used to edit model instances.
  */
-export default class ModelEditor<T extends Model> extends Editor<T> {
-    constructor(options : IModelEditor<T>) {
+export default class ModelEditor<T extends Model, P extends IModelEditorProps<T>> extends Editor<T,P> {
+    constructor(options : IEditor<T,P>) {
         options.fields = Object.keys((options.props.repo.use as typeof Model).fields())
         super(options)
     }
@@ -70,6 +70,6 @@ export default class ModelEditor<T extends Model> extends Editor<T> {
         )
     }
 }
-export default interface ModelEditor<T extends Model> extends IEditor<T> {
+export default interface ModelEditor<T extends Model, P extends IModelEditorProps<T>> extends Editor<T,P> {
     fields: string[]
 }

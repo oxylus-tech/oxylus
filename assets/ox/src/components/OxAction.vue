@@ -1,12 +1,14 @@
 <template>
-    <template v-if="action.allowed">
+    <template v-if="allowed">
         <v-btn v-if="props.button" variant="text"
+            :disabled="processing"
             :color="props.color" :icon="props.icon"
             :title="props.title" :aria-label="props.title"
             @click.stop="run">
         </v-btn>
         <v-list-item v-else
             :title="props.title" :base-color="props.color" :prepend-icon="props.icon"
+            :disabled="processing"
             @click.stop="run"/>
     </template>
 </template>
@@ -24,9 +26,5 @@ const emits = defineEmits<{
     completed: ActionCompleted
 }>()
 const context = inject('context')
-const action = useAction({user: context.user, emits}, props)
-
-async function run(...args) {
-    await action.run(...args)
-}
+const {run, processing, allowed} = useAction({user: context.user, emits, props})
 </script>

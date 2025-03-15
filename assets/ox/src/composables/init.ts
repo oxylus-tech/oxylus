@@ -21,7 +21,7 @@ import type {IObject} from '../utils'
  * plugin initialization.
  */
 export interface ICreateVuetifyOpts extends IObject {
-    components?: IObject[]
+    components?: Record<string,any>
 }
 
 
@@ -90,7 +90,7 @@ export function createApp(app: IObject, {props={}, vuetify={}, plugins=null}: IC
 
     app.use(createVuetify(vuetify))
     app.use(i18n)
-    useI18n({i18n})
+    useI18n()
 
     plugins && plugins.forEach(plugin => app.use(plugin))
     return app

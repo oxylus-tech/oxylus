@@ -68,7 +68,7 @@ export default class Panel<P extends IPanelProps = IPanelProps>
     view: string = ''
     value: any = null
     item: any = null
-    editions: Set = new Set()
+    editions: Set<string> = new Set()
 
     /**
      * Translation key for message displayed on `confirm()` to leave unsaved
@@ -100,7 +100,7 @@ export default class Panel<P extends IPanelProps = IPanelProps>
     }
 
     /** Show a view, providing optional value */
-    show({view=null, value=null}) {
+    show({view=null, value=null}: {view?: string, value?: any}={}) {
         if(this.onLeave()) {
             if(view !== null)
                 this.view = view || this.index
@@ -123,10 +123,10 @@ export default class Panel<P extends IPanelProps = IPanelProps>
         return confirm(msg)
     }
 
-    onViewChange(val) {
+    onViewChange(val: string) {
         if(!val)
             this.view = this.index
     }
-    onValueChange(val) {}
+    onValueChange(val: string) {}
 }
 export default interface Panel<P extends IPanelProps=IPanelProps> extends IPanel<P> {}

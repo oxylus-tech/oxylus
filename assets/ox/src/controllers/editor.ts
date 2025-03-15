@@ -23,21 +23,23 @@ export interface IEditorProps<T> {
     /**
      * @property saved - callback to run after object has been saved
      */
-    saved?: (item: T, editor: IEditor<T>) => void
+    saved?: (item: T, editor: IEditor<T,IEditorProps<T>>) => void
 }
 
 
 /**
  * Editor class interface.
  */
-export interface IEditor<T,P extends IEditorProps> extends IEditorProps<T> {
+export interface IEditor<T,P extends IEditorProps<T>> extends IEditorProps<T> {
     [index: string]: any
 
     props: P
+    /** Value to use as initial for creating object */
+    default: T & Record<string, any>
     /**
      * @property value - current edited value
      */
-    value: T & {[k:string]: any}
+    value: T & Record<string, any>
     /**
     * @property state - current editor state. Set to `State.PROCESSING` when
     * saving instance.
@@ -58,11 +60,12 @@ export interface IEditorSend extends IObject {}
  * Default implementation handles raw Object edition, but not saving data to the server.
  * Note: this might lead to errors due to reactivity when returned from composable.
  */
-export default class Editor<T extends IObject> {
+export default class Editor<T extends IObject, P extends IEditorProps<T>> {
     state = State.none()
-    value: T & {[k:string]: any} = {} as T
+    value: T & Record<string, any> = {} as T
+    default: T & Record<string, any> = {} as T
 
-    constructor(options: IEditor<T>)
+    constructor(options: IEditor<T,P>)
     {
         options && assignNonEmpty(this, options)
         if(!this.state)
@@ -91,7 +94,7 @@ export default class Editor<T extends IObject> {
      * When value is provided, reset initial to this value.
      */
     reset(initial: T|null = null) {
-        reset(this.value, value)
+        reset(this.value, initial || {})
         this.state.none()
     }
 
@@ -145,7 +148,7 @@ export default class Editor<T extends IObject> {
         throw "not implemented"
     }
 }
-export default interface Editor<T> extends IEditor<T> {
+export default interface Editor<T,P extends IEditorProps<T>> extends IEditor<T,P> {
     // Whether edited data are valid. Default to `true`.
     valid: boolean
 }

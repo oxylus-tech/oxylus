@@ -35,10 +35,7 @@ export const i18n = createI18n()
 /**
  * Shortcut to {@link i18n} `t()` function.
  */
-export function t(...args: any): string {
-    return i18n.global.t(...args)
-}
-
+export const t = i18n.global.t
 
 export interface IUseI18n {
     composer?: Composer,
@@ -57,7 +54,7 @@ export interface IUseI18n {
 export function useI18n({path="./", fallback=true, composer=null}: IUseI18n={}) {
     composer ??= i18n.global
     loadLocale({composer, path, fallback})
-    watch(() => composer.locale, () => loadLocale(composer, {path, fallback}))
+    watch(() => composer.locale, () => loadLocale({composer, path, fallback}))
     return composer
 }
 
@@ -125,7 +122,7 @@ async function loadLocaleFrom(i18n: Composer, path: string, locale: string) {
     // we don't use setLocaleMessage, because we merge locales
     // from different apps
     i18n.messages.value[locale] = {
-        ...i18n.messages.value[locale],
+        ...(i18n.messages.value as Record<string, any>)[locale],
         ...messages
     }
 }

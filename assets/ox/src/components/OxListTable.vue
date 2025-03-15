@@ -1,6 +1,6 @@
 <template>
     <v-data-table-server
-            :items="list.items" item-index="id" :items-length="list.count || list.items.length"
+            :items="items" item-index="id" :items-length="list.count || items.length"
             :loading="list.state?.isProcessing"
             :headers="headers"
             @update:options="updateOptions">
@@ -36,6 +36,8 @@ const itemSlots = filterSlots(slots, 'item.', {exclude: ['item.actions']})
 
 const panel = inject('panel')
 const list = inject('list')
+const items = inject('items')
+
 const permissions = new Permissions('change')
 const props = defineProps({
     // list: Object,

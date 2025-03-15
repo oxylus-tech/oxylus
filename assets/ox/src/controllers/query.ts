@@ -198,7 +198,7 @@ export function query<M extends Model>(repo: string|Repository<M>, repos?: Repos
     if(typeof repo == "string") {
         if(!(repo in repos))
             throw Error(`Repository "${repo}" is not present in provided repositories.`)
-        return new Query(repos[repo], repos)
+        return new Query(repos[repo] as unknown as Repository<M>, repos)
     }
     return new Query(repo, repos)
 }

@@ -3,7 +3,7 @@ import {
     onMounted, onUnmounted, provide, reactive,
 } from 'vue'
 
-import type {Reactive, Ref, WatchHandle} from 'vue'
+import type {ComputedRef, Reactive, Ref, WatchHandle} from 'vue'
 import type {Repository} from 'pinia-orm'
 
 import {injectOrProvide} from '../utils'
@@ -19,7 +19,8 @@ import {
 import type {
     IPanels, IPanel, IPanelProps,
     IModelPanel, IModelPanelProps,
-    IModelList, IEditor, IModelEditor,
+    IModelList,
+    IEditor, IEditorProps, IModelEditorProps,
 } from '../controllers'
 
 
@@ -30,115 +31,112 @@ import type {
  * @return the reactive Panels.
  */
 export function usePanels(options: IPanels) {
-    const obj = reactive(new Panels(options))
-    provide('panels', obj)
-    return obj
+    const panels = reactive(new Panels(options))
+    provide('panels', panels)
+    return panels
 }
 
+/** Create a new {@link Panel}.
+*
+* - (un)register the panel to object's `panels` on (un)mount.
+* - provide `panel`;
+* - watch on {@link Panel.view} calling {@link Panel.onViewChange}
+*/
+export function usePanel<P extends IPanelProps>(options: IPanel<P>, cls: typeof Panel<P>) {
+    const panel = reactive(new cls(options))
 
-/** Create a new {@link Panel}. */
-export function usePanel<P extends IPanelProps>(options: IPanel<P>): Reactive<Panel<P>> {
-    const obj = reactive(new Panel(options))
-    initPanel(obj)
-    return obj
-}
+    provide('panel', panel)
+    onMounted(() => panel.panels.register(panel.name, panel))
+    onUnmounted(() => panel.panels.unregister(panel.name))
 
-export interface IUseModelPanel<M extends Model> {
-    query?: Query<M>
-    repos?: Repos
+    if(panel.onViewChange)
+        watch(() => panel.view, (val) => panel.onViewChange(val))
+    return {panel}
 }
 
 /** Create a new {@link ModelPanel}. */
+// TODO: allow to pass list down
 export function useModelPanel<M extends Model, P extends IModelPanelProps<M>>(
-    {query, repos, props, ...options}: IModelPanel<M,P>
-): Reactive<ModelPanel<M,P>>
+    {query, repos, ...options}: IModelPanel<M,P>
+)
 {
     repos ??= inject('repos')
-    query ??= useQuery(props.repo, inject('repos'))
+    query ??= useQuery(options.props.repo, inject('repos'))
     options.panels ??= inject('panels')
 
-    options.list ??= useModelList({query, relations: props.relations})
-    const obj = reactive(new ModelPanel({props, ...options}))
-    initPanel(obj)
+    const {list, items} = useModelList({query, relations: options.props.relations})
+    const {panel} = usePanel({list, ...options}, ModelPanel)
 
-    // obj.item = computed(() => obj.value ? obj.list.queryset(obj.value).first() : null)
-    obj.next = computed(() => obj.value ? obj.list.getSibling(unref(obj.value), 1) : null)
-    obj.prev = computed(() => obj.value ? obj.list.getSibling(unref(obj.value), -1) : null)
-    return obj
-}
-
-/** Initialize the reactive {@link Panel}:
-*
-* - add panels' watcher;
-* - provide `panel`;
-*/
-export function initPanel<P extends IPanelProps>(obj: Reactive<Panel<P>>) {
-    provide('panel', obj)
-    onMounted(() => obj.panels.register(obj.name, obj))
-    onUnmounted(() => obj.panels.unregister(obj.name))
-
-    if(obj.onViewChange)
-        watch(() => obj.view, (val) => obj.onViewChange(val))
-    //if(obj.onValueChange)
-    //    watch(() => obj.value, (val) => obj.onValueChange(val))
+    const next = computed(() => {
+        const index = list.getSiblingIndex(unref(panel.value), 1)
+        return items.value[index] ?? null
+    })
+    const prev = computed(() => {
+        const index = list.getSiblingIndex(unref(panel.value), -1)
+        return items.value[index] ?? null
+    })
+    return {panels: panel.panels, panel, list, items, next, prev}
 }
 
 
 //---- Controllers
 /** Create a new {@link List} and provide it as `list`. */
-export function useModelList<M extends Model>(options : IModelList<M>, cls: typeof ModelList = ModelList) : Reactive<ModelList<M>>
+export function useModelList<M extends Model>(options : IModelList<M>, cls: typeof ModelList = ModelList)
 {
-    const obj = reactive(new cls(options))
-    provide('list', obj)
-    obj.items = computed(() => obj.ids ? obj.queryset(obj.ids).get() : [])
-    return obj
+    const list = reactive(new cls(options))
+    const items = computed(() => list.ids ? list.queryset(list.ids).get() : [])
+
+    provide('list', list)
+    provide('items', items)
+    return {list, items}
 }
 
 /** This composable return a new query from provided arguments. */
-export function useQuery(repo: Repository, repos: Repos|null=null) {
+export function useQuery<M extends Model>(repo: Repository<M>, repos: Repos|null=null): Query<M> {
     const query = new Query(repo, repos)
     provide('query', query)
     return query
 }
 
 
-export interface IUseEditor<T extends IObject> {
-    emits?: (k: string, ...args: any) => void
-    panel: Panel
-}
-
 /**
  * This composable create an new Editor and returns it as reactive object.
- * It register the newly created editor when `editors` and `key` are provided.
- */
-export function useEditor<T extends IObject>({emits=null, panel=null, ...options}: IEditor<T> & IUseEditor<T>): Reactive<Editor<T>> {
-    const initial = options.initial || unref
-    const obj = reactive(new Editor(options))
-    initEditor(obj, {emits, panel})
-    return obj
-}
-
-/** Return a new reactive {@link ModelEditor} */
-export function useModelEditor<T extends Model>({emits=null, panel=null, ...options}: IModelEditor<T> & IUseEditor<T>): Reactive<ModelEditor<T>> {
-    const obj = reactive(new ModelEditor(options))
-    initEditor(obj, {emits, panel})
-    return obj
-}
-
-/**
- * Initialize reactive {@link Editor}:
  *
  * - provide `editor`
  * - set default `saved` method if emits is provided
  * - watch on edition to update panel's editions
  */
-export function initEditor<T extends IObject>(obj: Reactive<Editor<T>>) {
-    provide('editor', obj)
+export function useEditor<
+    T extends Record<string,any>,
+    P extends IEditorProps<T>,
+>(
+    options: IEditor<T,P>,
+    cls: typeof Editor<T,P>=Editor<T,P>
+)
+{
+    const initial = options.initial || unref
+    const editor = reactive(new cls(options))
 
-    obj.edited = computed(() => obj.isEdited())
-    watch(() => obj.initial, (val) => obj.reset(val || {}))
+    provide('editor', editor)
 
-    const panel = inject('panel')
+    const edited = computed(() => editor.isEdited())
+    watch(() => editor.initial, (val) => editor.reset(val || editor.default))
+
+    const panel = inject('panel') as Panel
     if(panel)
-        watch(() => obj.edited, (val: boolean) => panel.setEdition(obj.name, val))
+        watch(() => editor.edited, (val: boolean) => panel.setEdition(editor.name, val))
+
+    return {editor, edited}
+}
+
+/** Return a new reactive {@link ModelEditor} */
+export function useModelEditor<
+    T extends Model,
+    P extends IModelEditorProps<T>
+>(
+    options: IEditor<T,P>,
+    cls: typeof ModelEditor<T,P> = ModelEditor<T,P>
+)
+{
+    return useEditor(options, cls)
 }

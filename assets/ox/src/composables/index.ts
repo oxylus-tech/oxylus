@@ -17,7 +17,7 @@ export function defineAsyncComponent(url: string, name: string) {
         return import(url).then(module => {
             if(!name)
                 return module
-            const obj = Object.values(module).filter(y => y.__name == name)[0]
+            const obj = Object.values(module).filter((y: {[k: string]: any}) => y.__name == name)[0]
             return obj
         })
     })

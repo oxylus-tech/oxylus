@@ -33,14 +33,14 @@
                         </v-menu>
                     </template>
 
-                    <v-btn :disabled="!panel.prev"
+                    <v-btn :disabled="!prev"
                             :title="t('prev')" :aria-label="t('prev')"
-                            @click.stop="panel.show({value: panel.prev})">
+                            @click.stop="panel.show({value: prev})">
                         <v-icon icon="mdi-chevron-left"/>
                     </v-btn>
-                    <v-btn :disabled="!panel.next"
+                    <v-btn :disabled="!next"
                             :title="t('next')" :aria-label="t('next')"
-                            @click.stop="panel.show({value: panel.next})">
+                            @click.stop="panel.show({value: next})">
                         <v-icon icon="mdi-chevron-right"/>
                     </v-btn>
                 </v-btn-group>
@@ -125,7 +125,7 @@ import OxListTable from './OxListTable.vue'
 import OxPanel from './OxPanel.vue'
 import OxModelEdit from './OxModelEdit.vue'
 
-import {t, filterSlots, useModelPanel, useModelDetail, useModelList} from 'ox'
+import {t, filterSlots, useModelPanel, useModelList} from 'ox'
 import type {IModelPanelProps} from '../controllers'
 
 const slots = useSlots()
@@ -138,9 +138,8 @@ const props = withDefaults(defineProps<IModelPanelProps>(), {
     index: 'list.table'
 })
 
-const panel = inject('panel') ?? useModelPanel({props})
+const {panel, list, items, next, prev} = inject('panel') ?? useModelPanel({props})
 const panels = panel.panels
-const list = panel.list
 
 const {showFilters} = toRefs(panel)
 const headers = computed(() => [
@@ -150,9 +149,7 @@ const headers = computed(() => [
 
 const bind = computed(() => {
     return ({
-        panel,
-        panels,
-        list,
+        panel, panels, list, items,
         value: panel.value
     })
 })

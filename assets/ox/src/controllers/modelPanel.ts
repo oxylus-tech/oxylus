@@ -7,7 +7,6 @@ import {mapToObject} from '../utils'
 import {t, tKeys} from '../composables/i18n'
 
 import type ModelList from './modelList'
-import type {ModelListDetail} from './modelDetail'
 import type Query from './query'
 import type {Repos} from '../models'
 
@@ -102,14 +101,14 @@ export default class ModelPanel<
         this.show({view, value})
     }
 
-    onViewChange(val) {
+    onViewChange(val: string) {
         super.onViewChange(val)
         if(val.startsWith('list.'))
             this.list.load()
         //if(val.startsWith('detail.'))
         //    this.detail.load()
     }
-    onValueChange(val) {
+    onValueChange(val: string) {
         //val && this.detail.load({id: val})
     }
 }

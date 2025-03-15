@@ -1,5 +1,5 @@
 <template>
-    <form @submit.prevent="list.fetch()" class="width-full">
+    <form @submit.prevent="list.load()" class="width-full">
         <v-toolbar dense color="transparent">
             <v-app-bar-nav-icon :icon="icon" readonly/>
             <v-text-field v-if="props.search && list.filters"

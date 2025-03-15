@@ -38,9 +38,9 @@ import OxValidationBtn from './OxValidationBtn.vue'
 import type {IModelEditorProps} from '../controllers/modelEditor'
 
 const props = defineProps<IModelEditorProps>()
-const editor = useModelEditor({props})
+const {editor, edited} = useModelEditor({props})
 const model = computed(() => editor.repo.use)
-const {value, edited} = toRefs(editor)
+const {value} = toRefs(editor)
 
 // ---- Slots & tabs
 const tab = ref(null)

@@ -4,7 +4,7 @@
         icon="mdi-delete" color="error"
         :title="t('actions.delete')" :confirm="t('actions.delete.confirm')"
         :permissions="['delete', (u, o) => o.id]"
-        :run="run" @completed="panel?.show()"
+        :run="run" @completed="panel?.show({view:panel.index})"
     />
 </template>
 <script setup lang="ts">

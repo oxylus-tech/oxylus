@@ -46,33 +46,33 @@ export default class Panels {
         return {panel: path.substring(0, idx), view: path.substring(idx+1)}
     }
 
-    register(name, child) {
+    register(name: string, child: Panel) {
         if(name in this.children)
             throw Error(`Child panel is already registered ${name}.`)
         this.children[name] = child
     }
 
-    unregister(name) {
+    unregister(name: string) {
         delete this.children[name]
     }
 
-    show({force=false, href=null, ...panels}: IPanelShow) {
+    show({force=false, href=null, ...options}: IPanelShow) {
         const proceed = force || !this.current || this.current.onLeave()
         if(!proceed)
             return
 
         if(href && window.location.pathname != href) {
-            if(!panels.panel)
+            if(!options.panel)
                 throw Error("The attribute `href` requires`panel`.")
 
-            href = `${href}?panel=${panels.panel}`
+            href = `${href}?panel=${options.panel}`
             if(options.view)
                 href = `${href}&view=${options.view || ''}`
             window.location.href = href
             return
         }
 
-        this.reset(panels)
+        this.reset(options)
     }
 
     reset({panel, view=null, value=null}: IPanels) {
@@ -84,12 +84,12 @@ export default class Panels {
 
         this.panel = panel || this.panel
         if(this.current) {
-            this.current.view = view || this.current.view.index || ''
+            this.current.view = view || this.current.index || ''
             this.current.value = value
         }
     }
 }
 export default interface Panels extends IPanels {
     /** Current panel (set by panels) **/
-    current?: Panel
+    current: Panel|null
 }
