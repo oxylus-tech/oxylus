@@ -34,11 +34,10 @@ class Model(models.Model):
     """
 
     uuid = models.UUIDField(
-        _("Id"),
+        _("Reference"),
         db_index=True,
         default=uuid.uuid4,
         editable=False,
-        help_text=_("Object reference"),
     )
 
     objects = QuerySet.as_manager()

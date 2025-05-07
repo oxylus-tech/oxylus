@@ -1,10 +1,5 @@
 <template>
     <v-container>
-        <ox-state-alert :state="editor.state"/>
-        <div class="mb-3">
-            <ox-validation-btn v-if="editor.edited"
-                @validate="editor.save()" @reset="editor.reset()" :state="editor.state" :validate-disabled="!form.isValid"/>
-        </div>
         <v-expansion-panels mandatory multiple :model-value="['info']">
             <v-expansion-panel title="Information" value="info">
                 <template #text>
@@ -32,9 +27,7 @@
 <script setup>
 import {defineProps, defineEmits, inject, toRefs, reactive, useTemplateRef} from 'vue'
 
-import {OxFieldDetails, OxStateAlert, OxValidationBtn} from 'ox/components'
-import { useModelEditor } from "ox"
-
+import {OxFieldDetails} from 'ox/components'
 import OxPermissionsEdit from './OxPermissionsEdit.vue'
 
 

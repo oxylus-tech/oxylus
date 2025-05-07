@@ -9,20 +9,20 @@ import commonjs from '@rollup/plugin-commonjs';
 
 // https://vitejs.dev/config/
 export default defineConfig({
-    base: 'static/ox_contact',
+    base: 'static/ox_contacts',
     plugins: [
         vue(),
         vuetify(),
     ],
     build: {
-        outDir: "../../ox/static/ox_contact/",
+        outDir: "../../static/ox_auth/",
         sourcemap: true,
 
         rollupOptions: {
-            external: ['vue', 'vuex', 'axios', 'ox', 'ox/app', 'ox/components'],
+            external: ['vue', 'vuex', 'axios', 'ox', 'ox/app', 'ox/components', 'ox/vendor'],
             input: {
-                index: "src/index.js",
-                sfc: "src/sfc.js",
+                index: "src/index.ts",
+                sfc: "src/sfc.ts",
             },
             output: {
                 globals: {
@@ -47,6 +47,7 @@ export default defineConfig({
         extensions: ['.js', '.ts', '.json', '.vue', '.scss'],
         alias: {
             '@': fileURLToPath(new URL('./src', import.meta.url)),
+            '@ox': fileURLToPath(new URL('../ox/src/', import.meta.url))
         }
     }
 })

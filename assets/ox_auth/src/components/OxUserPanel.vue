@@ -30,8 +30,7 @@
                 @click="(item) => panel.show({view: 'detail.edit', value: item})"/>
         </template>
 
-        <template #views.detail.edit.window.default="{value}"
-                v-if="context.user.can('auth.change_user')">
+        <template #views.detail.edit.window.default="{value}">
             <ox-user-edit :initial="value"/>
         </template>
     </ox-model-panel>
@@ -39,7 +38,7 @@
 <script setup lang="ts">
 import { computed, defineProps, inject, useSlots, withDefaults } from 'vue'
 
-import { useModels, api, query } from 'ox'
+import { useModels, query } from 'ox'
 import {OxModelPanel, OxListKanban} from 'ox/components'
 import type {IModelPanelProps} from '@ox/controllers'
 
@@ -47,7 +46,6 @@ import {useAuthModels} from '../composables'
 import OxUserEdit from './OxUserEdit.vue'
 
 const context = inject('context')
-const panels = inject('panels')
 const slots = useSlots()
 const forwardSlots = Object.keys(slots).filter(x => !(['list.filters', 'item.groups'].includes(x)))
 

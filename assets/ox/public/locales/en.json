@@ -3,9 +3,12 @@
     "prev": "Previous",
 
     "actions": "Actions",
+    "actions.add": "Add",
+    "actions.add_item": "Add an item",
     "actions.edit": "Edit",
     "actions.delete": "Delete",
     "actions.delete.confirm": "Are you sure that you want to delete this item?",
+    "actions.discard": "Discard",
 
     "nav.panels": "Applications",
 
@@ -28,13 +31,34 @@
     "models.users": "User | Users",
 
     "fields.id": "Id",
-    "fields.name": "Name",
-    "fields.username": "Username",
-    "fields.last_name": "Last Name",
-    "fields.first_name": "First Name",
-    "fields.email": "Email",
+    "fields.name": "Name | Names",
+    "fields.color": "Color",
+
+    "fields.username": "Username | Usernames",
+    "fields.last_name": "Last Name | Last Names",
+    "fields.first_name": "First Name | First Names",
+    "fields.email": "Email | Emails",
+    "fields.email.rule": "Please provide a valid email.",
     "fields.is_superuser": "Is Superuser",
     "fields.all_permissions": "All Permissions",
     "fields.permissions": "Permissions",
-    "fields.groups": "Groups"
+    "fields.group": "Group",
+    "fields.groups": "Groups",
+
+
+    "models.persons": "Person | Persons",
+    "models.organisations": "Organisation | Organisations",
+    "fields.organisations": "Organisations",
+    "fields.phone": "Phone | Phones",
+    "labels.phone.call": "Call this number",
+    "fields.address": "Address | Addresses",
+    "fields.street": "Street",
+    "fields.street_2": "Street 2",
+    "fields.number": "Number",
+    "fields.box": "Box",
+    "fields.postcode": "Postcode",
+    "fields.city": "City",
+    "fields.country": "Country",
+    "fields.vat": "VAT",
+    "fields.vat.rule": "Please provide a valid VAT number"
 }

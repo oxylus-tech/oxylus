@@ -44,6 +44,10 @@ django-cities = "^0.6.2"
 ipython = "^8.29.0"
 pyyaml = "^6.0.2"
 sphinx-js = "^4.0.0"
+drf-spectacular = "^0.28.0"
+pycountry = "^24.6.1"
+phonenumbers = "^9.0.4"
+python-stdnum = "^2.0"
 
 
 [tool.poetry.group.dev.dependencies]

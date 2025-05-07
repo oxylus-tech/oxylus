@@ -52,7 +52,7 @@
 }
 </style>
 <script setup lang="ts">
-import { useSlots, withDefaults, onErrorCaptured } from 'vue'
+import { useSlots, withDefaults, onErrorCaptured, onMounted } from 'vue'
 import { computed, defineProps, inject, provide, reactive, watch } from 'vue'
 
 import {useAppContext, usePanels} from 'ox'
@@ -78,6 +78,8 @@ const nav = reactive({drawer: true})
 
 const context = useAppContext(props)
 const panels = usePanels()
+
+onMounted(() => { panels.panel = context.data.panel })
 
 watch(() => [context.state.state, context.state.data], () => {
     context.showState = true

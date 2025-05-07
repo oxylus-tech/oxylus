@@ -103,7 +103,7 @@
             <slot :name="slot" v-bind="bind"/>
         </template>
 
-        <template #views.detail.edit v-if="slots['views.detail.edit'] || editSlots">
+        <template #views.detail.edit v-if="(slots['views.detail.edit'] || editSlots) && canEdit">
             <ox-model-edit
                 :repo="panel.repo" :initial="panel.value"
                 :name="`${panel.model.entity}-edit`"
@@ -125,7 +125,7 @@ import OxListTable from './OxListTable.vue'
 import OxPanel from './OxPanel.vue'
 import OxModelEdit from './OxModelEdit.vue'
 
-import {t, filterSlots, useModelPanel, useModelList} from 'ox'
+import {t, filterSlots, useModelPanel} from 'ox'
 import type {IModelPanelProps} from '../controllers'
 
 const slots = useSlots()
@@ -138,8 +138,11 @@ const props = withDefaults(defineProps<IModelPanelProps>(), {
     index: 'list.table'
 })
 
+const context = inject('context')
 const {panel, list, items, next, prev} = inject('panel') ?? useModelPanel({props})
 const panels = panel.panels
+
+const canEdit = computed(() =>  context.user.can([panel.model, panel.value?.id ? "change": "add"]))
 
 const {showFilters} = toRefs(panel)
 const headers = computed(() => [

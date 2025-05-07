@@ -1,6 +1,6 @@
-# {{ cookiecutter.project_label }}: assets
+# ox-core
 
-Assets for {{ cookiecutter.project_label }}.
+Assets for Oxylus core application.
 
 ## Customize configuration
 

@@ -13,7 +13,6 @@ class ModelViewSet(viewsets.ModelViewSet):
     """
 
     lookup_field = "uuid"
-    lookup_value_regex = "[0-9a-f]{32}"
 
 
 class AutocompleteMixin:

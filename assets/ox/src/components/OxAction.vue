@@ -18,9 +18,9 @@ import {useAction} from 'ox'
 
 import type {IPermission, Model} from 'ox'
 import type {ActionRun, ActionCompleted} from 'ox'
-import type {ActionProps} from '../composables/actions'
+import type {IActionProps} from '../composables/actions'
 
-const props = defineProps<ActionProps>()
+const props = defineProps<IActionProps>()
 
 const emits = defineEmits<{
     completed: ActionCompleted

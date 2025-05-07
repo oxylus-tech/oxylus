@@ -4,6 +4,12 @@ export * from './vue'
 
 
 /**
+ * Generic type for typing classes.
+ */
+export type ClassType<T = any> = new (...args: any[]) => T;
+
+
+/**
  * Return cookie with provided key
  *
  * @param {String} key: cookie name

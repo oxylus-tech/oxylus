@@ -6,6 +6,7 @@ export * from './init'
 export * from './i18n'
 export * from './models'
 export * from './controllers'
+export * from './rules'
 
 
 /**

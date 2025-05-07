@@ -11,4 +11,4 @@ class AppView(PermissionRequiredMixin, LoginRequiredMixin, AppView):
 
     template_name = "ox/auth/app.html"
     permission_required = ["auth.view_user", "auth.view_group"]
-    default_panel = "user-list"
+    default_panel = "users"

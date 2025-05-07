@@ -3,6 +3,7 @@
             :items="items" item-index="id" :items-length="list.count || items.length"
             :loading="list.state?.isProcessing"
             :headers="headers"
+            class="align-top-table"
             @update:options="updateOptions">
         <template v-slot:loading>
             <v-skeleton-loader type="table-row@10"></v-skeleton-loader>
@@ -23,6 +24,11 @@
         </template>
     </v-data-table-server>
 </template>
+<style>
+.align-top-table td {
+  vertical-align: top;
+}
+</style>
 <script setup lang="ts">
 import { computed, defineProps, inject, useSlots } from 'vue'
 
@@ -38,7 +44,7 @@ const panel = inject('panel')
 const list = inject('list')
 const items = inject('items')
 
-const permissions = new Permissions('change')
+const permissions = new Permissions(['change'])
 const props = defineProps({
     // list: Object,
     headers: Array,

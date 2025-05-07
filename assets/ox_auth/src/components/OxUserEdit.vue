@@ -59,9 +59,8 @@
 <script setup lang="ts">
 import {defineProps, defineEmits, inject, toRefs, reactive, useTemplateRef, watch} from 'vue'
 
-import { useModelEditor } from "ox"
-import type {User, ModelEditor} from 'ox'
-import {OxFieldDetails, OxStateAlert, OxValidationBtn} from 'ox/components'
+import {usernameRule} from 'ox'
+import {OxFieldDetails} from 'ox/components'
 
 import OxPermissionsEdit from './OxPermissionsEdit.vue'
 import OxPasswordEdit from './OxPasswordEdit.vue'
@@ -70,11 +69,6 @@ const repos = inject('repos')
 const groups = repos.groups.all()
 
 const form = useTemplateRef('form')
-const panels = inject("panels")
 const editor = inject('editor')
 
-function usernameRule(value) {
-    const allowed = /^[A-Za-z0-9@.+\-_]+$/
-    return allowed.test(value) || "Username must not be empty. It only can contain letters, numbers and @/+/./- special characters"
-}
 </script>

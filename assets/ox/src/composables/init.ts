@@ -102,7 +102,7 @@ export function createApp(app: IObject, {props={}, vuetify={}, plugins=null}: IC
  * Create and return vuetify plugin with default components set.
  * This is called by `createApp`.
  */
-export function createVuetify({components={}, ...opts}: ICreateVuetifyOpts) {
+export function createVuetify({components={}, defaults={}, ...opts}: ICreateVuetifyOpts) {
     opts.components = {
         ...vendorComponents,
         ...components
@@ -120,6 +120,14 @@ export function createVuetify({components={}, ...opts}: ICreateVuetifyOpts) {
                 }
             }
         },
+        defaults: {
+            ...defaults,
+            VTextField: { variant: 'underlined', },
+            VSelect: { variant: 'underlined', },
+            VTextarea: { variant: 'underlined', },
+            VCombobox: { variant: 'underlined', },
+            VAutocomplete: { variant: 'underlined', },
+        },
         ...opts
     })
 }
@@ -135,16 +143,15 @@ export function createPinia({axiosConfig=null, baseURL=null}: IObject={}) {
         baseURL = document.body.dataset.apiUrl
 
     const pinia = $createPinia()
-    const piniaOrm = createORM({})
-    // temp workaround: createORM does not keep provided plugins
-    // using {plugins: ...} later
-    piniaOrm().use(
-        createPiniaOrmAxios({
-            axios,
-            ...(axiosConfig || config.axiosConfig),
-            baseURL,
-        })
-    )
+    const piniaOrm = createORM({
+        plugins: [
+            createPiniaOrmAxios({
+                axios,
+                ...(axiosConfig || config.axiosConfig),
+                baseURL,
+            })
+        ]
+    })
     setActivePinia(pinia)
     return pinia.use(piniaOrm)
 }

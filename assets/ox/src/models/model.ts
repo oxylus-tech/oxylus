@@ -39,6 +39,11 @@ export class Meta {
             url += path
         return `${url}/`.replaceAll('//', '/')
     }
+
+    /** Return permission codename */
+    getPermission(action: string): string {
+        return `${this.app}.${action}_${this.model}`
+    }
 }
 export interface Meta extends IMeta {}
 

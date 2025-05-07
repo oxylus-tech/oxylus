@@ -8,13 +8,7 @@
             <slot :name="name" v-bind="bind"></slot>
         </template>
 
-        <template #views.detail.add="{panel,value,saved}"
-                v-if="!slots['views.detail.add'] && context.user.can('auth.add_group')">
-            <ox-group-edit :initial="value" @saved="saved"/>
-        </template>
-
-        <template #views.detail.edit.window.default="{value}"
-                v-if="context.user.can('auth.change_group')">
+        <template #views.detail.edit.window.default="{value}">
             <ox-group-edit :initial="value"/>
         </template>
 
@@ -30,7 +24,6 @@
 <script setup lang="ts">
 import { defineProps, inject, useSlots, withDefaults } from 'vue'
 
-import { useModels} from 'ox'
 import type {IModelPanelProps} from '@ox/controllers'
 
 import { OxModelPanel } from 'ox/components'

@@ -1,4 +1,4 @@
-import {init, createPinia} from 'ox/composables'
+import {init, createPinia} from 'ox'
 import App from './app'
 
 const pinia = createPinia()

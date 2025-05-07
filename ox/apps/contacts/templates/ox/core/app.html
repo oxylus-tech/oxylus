@@ -2,9 +2,13 @@
 {% load i18n %}
 
 {% block nav-list %}
-<v-list-item link prepend-icon="mdi-account-multiple"
-    title="{% trans "Users & Groups" %}"
-    {% if app_config.label == "ox_auth" %}active
-    {% else %}href="{% url "ox_auth:index" %}" link{% endif %}
-></v-list-item>
+{{ block.super }}
+<ox-panel-nav panel="persons" href="{% url "ox_contacts:index" %}"
+    title="{% trans "Persons" %}" icon="mdi-card-account-mail"
+    v-if="context.user.can('ox_contacts.view_person')"
+    ></ox-panel-nav>
+<ox-panel-nav panel="organisations" href="{% url "ox_contacts:index" %}"
+    title="{% trans "Organisations" %}" icon="mdi-domain"
+    v-if="context.user.can('ox_contacts.view_organisation')"
+    ></ox-panel-nav>
 {% endblock %}
