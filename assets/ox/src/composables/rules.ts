@@ -1,5 +1,10 @@
 import {t} from '../composables'
 
+export function mandatoryRule(value) {
+    return value ? true : t('fields._.mandatory')
+}
+
+
 /** Return rule whose validating value is optional.
  *
  * By default rules require value to be provided. This returns a new

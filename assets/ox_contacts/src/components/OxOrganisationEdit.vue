@@ -16,6 +16,7 @@
                                 </v-col>
                                 <v-col>
                                     <v-text-field :label="t('fields.name')"
+                                        :rules="[mandatoryRule]"
                                         v-model="editor.value.name" >
                                         <template #details>
                                             <ox-field-details :errors="editor.errors?.name"/>
@@ -30,6 +31,18 @@
                                 </v-col>
                             </v-row>
                         </v-layout>
+                        <v-text-field :label="t('fields.reference')"
+                            v-model="editor.value.reference" >
+                            <template #details>
+                                <ox-field-details :errors="editor.errors?.reference"/>
+                            </template>
+                        </v-text-field>
+                        <ox-country-input v-model="editor.value.country"
+                            :label="t('fields.country')">
+                            <template #details>
+                                <ox-field-details :errors="editor.errors?.country"/>
+                            </template>
+                        </ox-country-input>
                         <v-text-field :label="t('fields.vat')"
                             v-model="editor.value.vat"
                             :disabled="!editor.value.country"
@@ -38,26 +51,15 @@
                                 <ox-field-details :errors="editor.errors?.vat"/>
                             </template>
                         </v-text-field>
-                        <v-text-field :label="t('fields.reference')"
-                            v-model="editor.value.reference" >
-                            <template #details>
-                                <ox-field-details :errors="editor.errors?.reference"/>
-                            </template>
-                        </v-text-field>
                         <v-select
                             v-model="editor.value.type" :items="types"
+                            :disabled="!editor.value.country"
                             :label="t('fields.company_form')"
                             item-title="name" item-value="id">
                             <template #details>
                                 <ox-field-details :errors="editor.errors?.type"/>
                             </template>
                         </v-select>
-                        <ox-country-input v-model="editor.value.country"
-                            :label="t('fields.country')">
-                            <template #details>
-                                <ox-field-details :errors="editor.errors?.country"/>
-                            </template>
-                        </ox-country-input>
                     </v-form>
                 </template>
             </v-expansion-panel>
@@ -88,7 +90,7 @@
 <script setup lang="ts">
 import {computed, defineProps, defineEmits, inject, toRefs, reactive, useTemplateRef, watch} from 'vue'
 
-import { t, query, optionalRule } from "ox"
+import { t, query, mandatoryRule, optionalRule } from "ox"
 import type {User, ModelEditor} from 'ox'
 import {OxFieldDetails} from 'ox/components'
 import OxCountryInput from '@ox_locations/components/OxCountryInput'
@@ -123,8 +125,4 @@ watch(() => editor.value.country, (val) => {
     if(type.value && type.value.country != editor.value.country)
         editor.value.type = null
 })
-
-// function vatCountryRule(value) {
-//    if(value && editor.value.country)
-// }
 </script>

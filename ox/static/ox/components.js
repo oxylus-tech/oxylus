@@ -1462,7 +1462,7 @@ const la = /* @__PURE__ */ W({
   setup(s) {
     const u = s, t = L("panels");
     return M(() => !u.auto || panel.name == u.name), (n, a) => (r(), y(J, {
-      active: e(t).panel == u.name,
+      active: e(t).panel == u.panel,
       "prepend-icon": u.icon,
       title: u.title,
       onClick: a[0] || (a[0] = _((f) => e(t).show(u), ["stop"]))

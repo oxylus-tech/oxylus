@@ -26,7 +26,7 @@
 </template>
 <style>
 .align-top-table td {
-  vertical-align: top;
+  /*vertical-align: top;*/
 }
 </style>
 <script setup lang="ts">

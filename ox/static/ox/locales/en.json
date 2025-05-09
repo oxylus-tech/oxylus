@@ -30,6 +30,7 @@
     "models.groups": "Group | Groups",
     "models.users": "User | Users",
 
+    "fields._.mandatory": "This field is required",
     "fields.id": "Id",
     "fields.name": "Name | Names",
     "fields.color": "Color",

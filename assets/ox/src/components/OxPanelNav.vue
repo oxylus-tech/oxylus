@@ -1,6 +1,6 @@
 <template>
     <v-list-item
-        :active="panels.panel == props.name"
+        :active="panels.panel == props.panel"
         :prepend-icon="props.icon" :title="props.title"
         @click.stop="panels.show(props)"/>
 </template>
