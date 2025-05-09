@@ -6,10 +6,8 @@ import type Panel from './panel'
 export interface IPanels {
     /** Current panel's name. **/
     panel: string
-    /** Current panel's view **/
-    view?: string
-    /** Current value **/
-    value?: any
+    /** Display/GET parameters for the current panel. */
+    params: {}
 }
 
 
@@ -27,13 +25,26 @@ export interface IPanelShow extends IPanels {
  */
 export default class Panels {
     panel: string = ""
-    view: string = ""
-    value?: any = null
+    params: Record<string, any> = {}
+    paramsString: string = ''
     children: {[k: string]: Panel} = {}
 
-    get current() : Panel|null { return this.children[this.panel] || null }
+    get current() : Panel|null {
+        return this.children[this.panel] || null
+    }
+
     constructor(options: IPanels|null = null) {
         options && assignNonEmpty(this, options)
+        this.readDocumentLocation()
+    }
+
+    /**
+     * Set {@link Panels.params
+     */
+    readDocumentLocation() {
+        this.paramsString = document.location.search
+        const params = new URLSearchParams(this.paramsString)
+        this.params = Object.fromEntries(params.entries())
     }
 
     static readPath(path: string) : IPanels {
@@ -75,7 +86,7 @@ export default class Panels {
         this.reset(options)
     }
 
-    reset({panel, view=null, value=null}: IPanels) {
+    reset({panel, view=null, value=null, id=null}: IPanels) {
         const panelChanged = (panel && panel != this.panel)
         if(panelChanged && this.current) {
             if(!this.current.onLeave())
@@ -83,10 +94,7 @@ export default class Panels {
         }
 
         this.panel = panel || this.panel
-        if(this.current) {
-            this.current.view = view || this.current.index || ''
-            this.current.value = value
-        }
+        this.params = {view, value, id}
     }
 }
 export default interface Panels extends IPanels {

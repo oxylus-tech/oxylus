@@ -32,30 +32,18 @@
                      :label="t('fields.city')"/>
             </v-col>
             <v-col>
-                <v-select v-model="props.item.country_id"
-                    :items="countries"
-                    item-value="id"
-                    item-title="name"
-                    :label="t('fields.country')">
-                    <template v-slot:item="{ props: itemProps, item }">
-                        <v-list-item v-bind="itemProps">
-                            <template #prepend>
-                                <span class="mr-2">{{ item.raw.flag }} </span>
-                            </template>
-                        </v-list-item>
-                    </template>
-                </v-select>
+                <ox-country-input v-model="props.item.country"
+                    :label="t('fields.country')"/>
             </v-col>
         </v-row>
     </v-container>
 </template>
 <script setup lang="ts">
 import {defineProps, inject} from 'vue'
-import {t, emailRule} from 'ox'
+import {t} from 'ox'
+import OxCountryInput from '@ox_locations/components/OxCountryInput'
 
 const props = defineProps({
     item: Object,
 })
-const repos = inject('repos')
-const countries = repos.countries.all()
 </script>

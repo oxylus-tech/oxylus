@@ -30,7 +30,7 @@
 }
 </style>
 <script setup lang="ts">
-import { computed, defineProps, inject, useSlots } from 'vue'
+import { computed, defineProps, inject, ref, useSlots } from 'vue'
 
 import { t, tKeys } from 'ox'
 import { Permissions } from '../models'
@@ -64,13 +64,9 @@ const headers = computed(() => {
 
 
 function updateOptions(event) {
-    return list.fetch({
-        filters: {
-            "page": event.page,
-            "page_size": event.itemsPerPage,
-            "ordering": event.sortBy.map(({key, order}) => order == 'asc' ? key : `-${key}`)
-        }
-    })
+    list.filters.page = event.page,
+    list.filters.page_size = event.itemsPerPage,
+    list.filters.ordering = event.sortBy.map(({key, order}) => order == 'asc' ? key : `-${key}`)
 }
 
 function runEdit(user, item) {

@@ -23,10 +23,20 @@ export interface IQuery<M extends Model> {
 
 /** {@link Query.fetch} parameters. */
 export interface IQueryFetch<M extends Model> extends Partial<object> {
-    /** Fetch from this url. */
+    /**
+     * Fetch from this url.
+     * Usage of this argument is exclusive from {@link IQueryFetch.id} and {@link IQueryFetch.path}.
+     */
     url?: string
+    /**
+     * Fetch item of this id.
+     * Usage of this argument is exclusive from {@link IQueryFetch.ids}
+     */
+    id?: number,
     /** Fetch items with this id. */
     ids?: number[] | Set<number>
+    /** Extra path to append on url. */
+    path?: string,
     /** Model repository (instead of `Query.repo`'s one). */
     repo?: Repository<M>
     /** Lookup field for ids (default: `id__in`). */
@@ -89,16 +99,20 @@ export default class Query<M extends Model> {
      * @param {Repository} [options.repo] use this repository instead of \
      * ``Query.repo``.
      * @param [options.url] use this url instead of repository's one.
+     * @param [options.id] fetch element with this id.
+     * @param [options.ids] fetch elements with those ids
      * @param [options.lookup] query GET parameters used to get ids.
      * @param [options.params] extra GET parameters
      * @param [options.opts] options passed down to ``repo.api.get``
      */
-    async fetch({url, ids=null, repo=null, lookup="id__in", params=undefined, relations=null, ...opts}: IQueryFetch<M> = {}) : Promise<Response> {
+    async fetch({url, id=null, ids=null, repo=null, lookup="id__in", params=undefined, relations=null, path=null, ...opts}: IQueryFetch<M> = {}) : Promise<Response> {
         repo ??= this.repo
         if(!url)
-            url = repo.use?.meta?.url
+            url = repo.use?.meta?.getUrl({path, id})
 
         if(ids && lookup !== undefined) {
+            if(id)
+                throw Error("Both `ids` and `id` are provided while only one of those arguments is accepted.")
             params = {...(params || {})}
             params[lookup] = [...ids]
         }

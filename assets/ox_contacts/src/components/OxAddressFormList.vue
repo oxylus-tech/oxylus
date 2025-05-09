@@ -7,7 +7,7 @@
         <template #item="{item,index}">
             <v-list-item>
                 <!-- FIXME -->
-                <ox-address-input :item="item"/>
+                <ox-address-form :item="item"/>
             </v-list-item>
         </template>
     </ox-form-list>
@@ -15,7 +15,7 @@
 <script setup lang="ts">
 import {defineModel, ref} from 'vue'
 import {OxFormList} from 'ox/components'
-import OxAddressInput from './OxAddressInput'
+import OxAddressForm from './OxAddressForm'
 
 const items = defineModel()
 </script>

@@ -1,15 +1,17 @@
 import {models as oxModels, useModels, t} from 'ox'
+import {Country} from '@ox_locations/models'
 import * as models_ from './models'
 
 export function useContactModels(extra_models : Array<models.Model> =[]) : Object {
     const {repos, models} = useModels([
         oxModels.User, oxModels.Group,
 
-        models_.Country, models_.Person, models_.Organisation,
+        Country, models_.Person,
+        models_.Organisation, models_.OrganisationType,
         ...extra_models
     ])
 
-    repos.countries.api().get("ox/contacts/country/")
+    //repos.countries.api().get("ox/contacts/country/")
     // repos.permissions.api().get("ox/core/permission/")
     return {repos, models}
 }

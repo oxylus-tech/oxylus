@@ -26,6 +26,7 @@
     ],
     "paths": {
         "@ox/*": ["../ox/src/*"],
+        "@ox_locations/*": ["../ox_locations/src/*"],
     }
   }
 }

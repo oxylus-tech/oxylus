@@ -39,7 +39,7 @@
                             </td>
                         </template>
                     </tr>
-                    <template v-if="ctPermissions[ct.id].extra">
+                    <template v-if="ctPermissions[ct.id].extra.length">
                         <tr>
                             <td></td>
                             <td colspan="4">

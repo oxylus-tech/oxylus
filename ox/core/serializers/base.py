@@ -1,7 +1,18 @@
 from rest_framework import serializers
 
 
-__all__ = ("ModelSerializer",)
+__all__ = (
+    "RelatedField",
+    "ModelSerializer",
+)
+
+
+class RelatedField(serializers.SlugRelatedField):
+    """Provide related field based on uuid."""
+
+    def __init__(self, **kwargs):
+        kwargs.setdefault("slug_field", "uuid")
+        super().__init__(**kwargs)
 
 
 class ModelSerializer(serializers.ModelSerializer):

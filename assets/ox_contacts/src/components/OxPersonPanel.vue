@@ -10,7 +10,7 @@
 
         <template #list.filters="{list,filters}">
             <v-select class="ml-3" density="compact"
-                v-model="filters.organisations__uuid__in" multiple
+                v-model="filters.organisations__uuid__in"
                 :label="t('models.organisations')"
                 :items="organisations" item-title="$title" item-value="id"
                 hide-details />
@@ -18,8 +18,8 @@
         </template>
 
         <template #item.organisations="{item}" v-if="!slots['item.organisations']">
-            <template v-for="organisation of item.organisations">
-                 <v-chip :color="organisation.color ?? 'primary'" variant="tonal" class="mr-2">
+            <template v-for="organisation of item.$organisations">
+                 <v-chip size="small" :color="organisation.color ?? 'primary'" variant="tonal" class="mr-2">
                      {{ organisation.name }}
                  </v-chip>
              </template>
@@ -38,7 +38,7 @@
         <template #item.phone="{item}" v-if="!slots['item.phones']">
             <template v-for="phone of item.phones">
                 <v-btn :href="`tel:${phone.number}`" size='x-small'
-                    prepend-icon="mdi-mail" color="secondary">
+                    prepend-icon="mdi-phone" color="secondary">
                     {{ phone.number }}
                 </v-btn>
                 <br/>
@@ -71,7 +71,7 @@ const organisations = computed(() => repos.organisations.all())
 
 const props = withDefaults(defineProps<IModelPanelProps>(), {
     name: 'persons',
-    relations: ['organisations'],
+    relations: ['$organisations'],
     headers: ['first_name', 'last_name', 'email', 'phone', 'organisations'],
 })
 </script>

@@ -2,21 +2,17 @@
     <ox-state-alert :state="state"/>
     <v-text-field variant="underlined"
         label="Enter password" v-model="password.value"
-        :type="password.value ? 'text' : 'password'"
-        :append-icon="password.value ? 'mdi-eye' : 'mdi-eye-off'"
-        @click:append="password.value = !password.value"
+        :type="password.show ? 'text' : 'password'"
+        :append-icon="password.show ? 'mdi-eye' : 'mdi-eye-off'"
+        @click:append="password.show = !password.show"
         />
     <v-text-field variant="underlined"
         label="Confirm password" v-model="confirm.value"
-        :color="valid ? 'success' : 'error'"
+        :rules="[samePassword]"
         :type="confirm.show ? 'text' : 'password'"
         :append-icon="confirm.show ? 'mdi-eye' : 'mdi-eye-off'"
         @click:append="confirm.show = !confirm.show"
-        >
-        <template v-if="(password.value || confirm.value) && !valid" #details>
-            <div class="password-error">Provided passwords are not the same.</div>
-        </template>
-    </v-text-field>
+        />
     <div class="text-right mt-3">
         <slot name="default" :valid="valid" :value="password.value">
             <ox-validation-btn v-if="password.value"
@@ -34,7 +30,7 @@
 import {computed, inject, ref, reactive, defineModel, defineProps} from 'vue'
 
 import {OxStateAlert, OxValidationBtn} from 'ox/components'
-import {State} from 'ox'
+import {State, t} from 'ox'
 
 const repos = inject("repos")
 const props = defineProps({
@@ -52,6 +48,10 @@ function reset() {
     password.value = "";
     confirm.value = "";
     state.none()
+}
+
+function samePassword() {
+    return !confirm.value || password.value == confirm.value || t('fields.password.confirm_error')
 }
 
 async function save() {

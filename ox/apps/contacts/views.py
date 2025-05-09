@@ -6,7 +6,7 @@ from ox.core.views import AppView, ModelViewSet
 from . import models, serializers
 
 
-__all__ = ("AppView", "OrganisationViewSet", "PersonViewSet", "AddressViewSet")
+__all__ = ("AppView", "OrganisationTypeViewSet", "OrganisationViewSet", "PersonViewSet", "AddressViewSet")
 
 
 class AppView(PermissionRequiredMixin, LoginRequiredMixin, AppView):
@@ -17,18 +17,16 @@ class AppView(PermissionRequiredMixin, LoginRequiredMixin, AppView):
     default_panel = "persons"
 
 
-class CountryViewSet(ModelViewSet):
-    queryset = models.Country.objects.all().order_by("name")
-    serializer_class = serializers.CountrySerializer
+class OrganisationTypeViewSet(ModelViewSet):
+    queryset = models.OrganisationType.objects.all().order_by("name")
+    serializer_class = serializers.OrganisationTypeSerializer
     permission_classes = [DjangoModelPermissionsOrAnonReadOnly]
+    pagination_class = None
 
     search_fields = [
         "name",
     ]
-    filterset_fields = {"code", "code_3", "phone"}
-    pagination_class = None
-
-    # TODO: static view
+    filterset_fields = {"country__uuid": ["in", "exact"]}
 
 
 class OrganisationViewSet(ModelViewSet):
@@ -36,6 +34,7 @@ class OrganisationViewSet(ModelViewSet):
     serializer_class = serializers.OrganisationSerializer
     permission_classes = [DjangoModelPermissions]
 
+    filterset_fields = {"country__uuid": ["in", "exact"]}
     search_fields = ["name", "vat"]
 
 
@@ -46,6 +45,7 @@ class PersonViewSet(ModelViewSet):
 
     filterset_fields = {"organisations__uuid": ["in", "exact"]}
     search_fields = ["last_name", "first_name", "phone__number", "email__email", "organisations__name"]
+    ordering_fields = ["last_name", "first_name", "organisations"]
 
 
 class AddressViewSet(ModelViewSet):

@@ -86,6 +86,7 @@ Blocks:
                 </template>
 
                 {% if not no_nav %}
+                <template #app-bar-left="{context}">{% block app-bar-left %}{% endblock %}</template>
                 <template #app-bar-right="{context}">{% block app-bar-right %}{% endblock %}</template>
                 <template #nav-start="{context}">
                     {% block nav-start %}{% endblock %}

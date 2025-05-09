@@ -9,7 +9,8 @@ Context:
 
 Block:
 - `slots`: component's body.
-- `list-filters`: component's `list.filters` slot (scope: `{list, filters}`).
+- `list-filters`: `list.filters` slot (scope: `{list, filters}`).
+- `nav-detail`: `nav.detail` slot (scope: `{panels, panel, list, item}`)
 {% endcomment %}
 
 {% block outer %}
@@ -24,10 +25,13 @@ Block:
 
     {% if actions %}
     <template #item.actions="bind">
+        {% block actions %}{% endblock %}
         {% include actions with bind="bind" %}
     </template>
     {% endif %}
     {% endblock %}
+
+    <template #nav.detail="{panels,panel,list,item}">{% block nav-detail %}{% endblock %}</template>
 </{{ tag }}>
 {% endwith %}
 {% endblock %}

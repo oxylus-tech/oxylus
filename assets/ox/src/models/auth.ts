@@ -118,8 +118,15 @@ export interface Permission extends IPermission {}
  * @return {Boolean} true if user has permission, false otherwise.
  */
 export type IPermissionFunc = <M extends Model>(user: User, value: M) => boolean
+/**
+ * A Permission can either be a string or a function (@link IPermissionFunc}. When it is a string it can be:
+ * - a fully qualified permission codename
+ * - an action (codename is constructed based on value model).
+ *
+ */
 export type IPermissionItem = string | IPermissionFunc
 
+export type IPermissionItems = IPermissionItem | IPermissionItem[]
 
 /**
  * Helper class used to handle a set of permissions.
@@ -127,9 +134,9 @@ export type IPermissionItem = string | IPermissionFunc
  * The permissions is an array of codename or function to execute. It then can be checked against a provided model instance.
  */
 export class Permissions {
-    items: IPermissionItem[]
+    items: IPermissionItems
 
-    constructor(items: IPermissionItem[] = []) {
+    constructor(items: IPermissionItems = []) {
         this.items = items
     }
 
@@ -144,7 +151,9 @@ export class Permissions {
     can<M extends Model>(user: User, value: M): boolean {
         if(!this.items)
             return true
-        return this.items.every(p => this._can(p, user, value))
+        const items = Array.isArray(this.items) ? this.items : [this.items]
+
+        return items.every(p => this._can(p, user, value))
     }
 
     _can<M extends Model>(permission: IPermissionItem, user: User, value: M) : boolean {
@@ -154,8 +163,11 @@ export class Permissions {
         if(!user || !(value instanceof Model))
             return false
 
-        const meta = (value.constructor as typeof Model).meta
-        return user.can(`${meta.app}.${permission}_${meta.model}`)
+        if(permission.indexOf('_') <= 0 || permission.indexOf('.') <= 2) {
+            const meta = (value.constructor as typeof Model).meta
+            permission = `${meta.app}.${permission}_${meta.model}`
+        }
+        return user.can(permission)
     }
 }
 

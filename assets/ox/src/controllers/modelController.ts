@@ -121,6 +121,7 @@ export default class ModelController<M extends Model, O=IModelController<M>> {
         return options
     }
 
+    /** Return url to use in order to query API. */
     protected getQueryUrl(options: IModelFetch<M>) {
         return this.url || this.model.meta?.url
     }

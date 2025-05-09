@@ -6,7 +6,7 @@
         <template #item="{item,index}">
             <v-list-item>
                 <!-- FIXME -->
-                <ox-phone-input variant="underlined" :item="item"/>
+                <ox-phone-form variant="underlined" :item="item"/>
             </v-list-item>
         </template>
         <template #item.actions="{item}">
@@ -17,7 +17,7 @@
 <script setup lang="ts">
 import {defineModel} from 'vue'
 import {OxFormList} from 'ox/components'
-import OxPhoneInput from './OxPhoneInput'
+import OxPhoneForm from './OxPhoneForm'
 
 const items = defineModel()
 </script>

@@ -1,4 +1,7 @@
-from .base import ModelSerializer
+from .base import RelatedField, ModelSerializer
 
 
-__all__ = ("ModelSerializer",)
+__all__ = (
+    "RelatedField",
+    "ModelSerializer",
+)

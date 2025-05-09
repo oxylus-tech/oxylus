@@ -3,14 +3,6 @@ from django.contrib import admin
 from . import models
 
 
-@admin.register(models.Country)
-class CountryAdmin(admin.ModelAdmin):
-    list_display = ["code", "code_3", "flag", "name", "phone"]
-    search_fields = [
-        "name",
-    ]
-
-
 @admin.register(models.Address)
 class AddressAdmin(admin.ModelAdmin):
     pass
@@ -46,9 +38,20 @@ class ContactAdmin(admin.ModelAdmin):
     ]
 
 
+@admin.register(models.OrganisationType)
+class OrganisationTypeAdmin(admin.ModelAdmin):
+    list_display = ("id", "country", "name", "code")
+    list_filters = ("country",)
+    search_fields = ("name", "code")
+
+
 @admin.register(models.Organisation)
 class OrganisationAdmin(ContactAdmin):
-    list_filters = ("book",)
+    list_display = (
+        "id",
+        "name",
+        "type",
+    )
 
 
 @admin.register(models.Person)

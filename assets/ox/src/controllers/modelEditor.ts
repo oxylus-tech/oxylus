@@ -14,7 +14,10 @@ import type {IEditor, IEditorProps, IEditorSend} from './editor'
  * ModelEditor interface.
  */
 export interface IModelEditorProps<T extends Model> extends IEditorProps<T> {
+    /** Related repository */
     repo: Repository<T>
+    /** Empty value, if not provided generated */
+    empty: T
 }
 
 export interface IModelEditorSend extends IEditorSend {
@@ -28,6 +31,7 @@ export interface IModelEditorSend extends IEditorSend {
 export default class ModelEditor<T extends Model, P extends IModelEditorProps<T>> extends Editor<T,P> {
     constructor(options : IEditor<T,P>) {
         options.fields = Object.keys((options.props.repo.use as typeof Model).fields())
+        options.empty ??= new options.props.repo.use()
         super(options)
     }
 
@@ -45,7 +49,8 @@ export default class ModelEditor<T extends Model, P extends IModelEditorProps<T>
     }
 
     reset(val: T|null): void {
-        val ??= {}
+        if(!val || !Object.keys(val).length)
+            val = this.empty
 
         const fields = this.fields.filter(k => k in val)
         this.value = cloneDeep(pick(val, fields)) || {}

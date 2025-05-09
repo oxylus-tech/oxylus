@@ -1,8 +1,13 @@
 {% extends "ox/core/app.html" %}
+{% comment %}
+Block:
+- nav-list-contacts: contacts app navigation
+{% endcomment %}
 {% load i18n %}
 
 {% block nav-list %}
-{{ block.super }}
+<v-list-subheader>{% translate "Contacts" %}</v-list-subheader>
+{% block nav-list-contacts %}
 <ox-panel-nav panel="persons" href="{% url "ox_contacts:index" %}"
     title="{% trans "Persons" %}" icon="mdi-card-account-mail"
     v-if="context.user.can('ox_contacts.view_person')"
@@ -11,4 +16,7 @@
     title="{% trans "Organisations" %}" icon="mdi-domain"
     v-if="context.user.can('ox_contacts.view_organisation')"
     ></ox-panel-nav>
+{% endblock %}
+
+{{ block.super }}
 {% endblock %}

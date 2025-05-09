@@ -1,7 +1,8 @@
 from typing import Any
-
 from django.db import models
 from django.utils.translation import gettext_lazy as _
+
+from ox.core.models import Model
 
 import pycountry
 import phonenumbers
@@ -11,7 +12,7 @@ from phonenumbers.phonenumberutil import country_code_for_region
 __all__ = ("Country",)
 
 
-class Country(models.Model):
+class Country(Model):
     name = models.CharField(_("Name"), max_length=64)
     code = models.CharField(_("Code"), max_length=2, db_index=True)
     code_3 = models.CharField(_("Code 3"), max_length=3, db_index=True)
@@ -25,6 +26,9 @@ class Country(models.Model):
     class Meta:
         verbose_name = _("Country")
         verbose_name_plural = _("Countries")
+
+    def __str__(self):
+        return f"{self.flag} {self.name}"
 
     @classmethod
     def init_them_all(cls):
@@ -58,12 +62,12 @@ class Country(models.Model):
             for country in pycountry.countries
         }
 
-    @staticmethod
-    def validate_vat(cls, value: str) -> bool:
+    def validate_vat(self, value: str, exc: bool = False) -> bool:
         """Return wether provided value is a valid vat."""
-        from stdnum import vat
+        from stdnum import get_cc_module
 
-        return vat.is_valid(value)
+        mod = get_cc_module(self.code.lower(), "vat")
+        return mod and mod.is_valid(value)
 
     def validate_phone(self, value: str, full_check: bool = False) -> bool:
         """Validate phone number.

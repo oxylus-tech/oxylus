@@ -70,7 +70,7 @@ const {editable} = toRefs(props)
 
 const opened = ref([]);
 
-if(!items.value.length)
+if(!items.value?.length)
     opened.value.push(-1)
 
 function addItem() {

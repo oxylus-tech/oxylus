@@ -18,7 +18,7 @@
                         </v-text-field>
                         <v-select multiple
                             :label="t('fields.organisations')"
-                            v-model="editor.value.organisation_ids"
+                            v-model="editor.value.organisations"
                             :items="organisations"
                             item-title="name" item-value="id"/>
                     </v-form>
@@ -49,7 +49,7 @@
     </v-container>
 </template>
 <script setup lang="ts">
-import {defineProps, defineEmits, inject, toRefs, reactive, useTemplateRef, watch} from 'vue'
+import {computed, defineProps, defineEmits, inject, toRefs, reactive, useTemplateRef, watch} from 'vue'
 
 import { t } from "ox"
 import type {User, ModelEditor} from 'ox'
@@ -59,7 +59,7 @@ import OxPhoneFormList from './OxPhoneFormList'
 import OxAddressFormList from './OxAddressFormList'
 
 const repos = inject('repos')
-const organisations = repos.organisations.all()
+const organisations = computed(() => repos.organisations.all())
 
 const form = useTemplateRef('form')
 const editor = inject('editor')

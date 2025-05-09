@@ -12,6 +12,7 @@
   "dependencies": {
     "flag-icons": "^7.3.2",
     "oxylus": "file:../ox/package.json",
+    "ox_locations": "file:../ox_locations/package.json",
     "v-phone-input": "^4.4.2"
   },
   "devDependencies": {

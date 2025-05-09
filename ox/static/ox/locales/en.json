@@ -35,6 +35,8 @@
     "fields.color": "Color",
 
     "fields.username": "Username | Usernames",
+    "fields.password": "Password | Passwords",
+    "fields.password.confirm_error": "Password are not the same.",
     "fields.last_name": "Last Name | Last Names",
     "fields.first_name": "First Name | First Names",
     "fields.email": "Email | Emails",
@@ -48,6 +50,7 @@
 
     "models.persons": "Person | Persons",
     "models.organisations": "Organisation | Organisations",
+    "models.organisationtypes": "Organisation Type | Organisation Types",
     "fields.organisations": "Organisations",
     "fields.phone": "Phone | Phones",
     "labels.phone.call": "Call this number",

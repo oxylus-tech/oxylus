@@ -5,8 +5,8 @@ from . import views
 
 
 router = DefaultRouter()
-router.register("country", views.CountryViewSet)
 router.register("organisation", views.OrganisationViewSet)
+router.register("organisationtype", views.OrganisationTypeViewSet)
 router.register("person", views.PersonViewSet)
 router.register("address", views.AddressViewSet)
 router.register("phone", views.PhoneViewSet)

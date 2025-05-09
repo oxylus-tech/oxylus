@@ -1,7 +1,7 @@
 from django.utils.translation import gettext_lazy as _
 from rest_framework import serializers
 
-from ox.core.serializers import ModelSerializer
+from ox.core.serializers import ModelSerializer, RelatedField
 
 from . import models
 
@@ -15,23 +15,12 @@ __all__ = (
 )
 
 
-class CountrySerializer(serializers.ModelSerializer):
-    flag = serializers.CharField()
-
-    class Meta:
-        model = models.Country
-        fields = "__all__"
-
-
 class AddressSerializer(ModelSerializer):
-    country_id = serializers.PrimaryKeyRelatedField(queryset=models.Country.objects.all())
+    country = RelatedField(queryset=models.Country.objects.all())
 
     class Meta:
         model = models.Address
-        exclude = (
-            "contact",
-            "country",
-        )
+        exclude = ("contact",)
 
 
 class EmailSerializer(ModelSerializer):
@@ -46,6 +35,14 @@ class PhoneSerializer(ModelSerializer):
         exclude = ("contact",)
 
 
+class OrganisationTypeSerializer(ModelSerializer):
+    country = RelatedField(queryset=models.Country.objects.all())
+
+    class Meta:
+        model = models.OrganisationType
+        fields = "__all__"
+
+
 class ContactSerializer(ModelSerializer):
     addresses = AddressSerializer(source="address_set", many=True, required=False)
     emails = EmailSerializer(source="email_set", many=True, required=False)
@@ -53,25 +50,30 @@ class ContactSerializer(ModelSerializer):
 
     class Meta:
         nested = ("addresses", "emails", "phones")
+        fields = "__all__"
 
 
 class OrganisationSerializer(ContactSerializer):
-    country_id = serializers.PrimaryKeyRelatedField(queryset=models.Country.objects.all())
+    country = RelatedField(queryset=models.Country.objects.all(), required=False)
+    type = RelatedField(queryset=models.OrganisationType.objects.all(), required=False)
 
     class Meta(ContactSerializer.Meta):
         model = models.Organisation
-        exclude = ("country",)
 
-    def validate_vat(self, value):
-        if not models.Country.validate_vat(value):
-            raise serializers.ValidationError(_("Invalid VAT number"))
+    def validate(self, data):
+        v_data = super().validate(data)
+        country, vat = v_data.get("country"), data.get("vat")
+
+        if vat:
+            if not country:
+                raise serializers.ValidationError({"vat": _("Please select a country in order to input VAT")})
+            if not country.validate_vat(vat):
+                raise serializers.ValidationError({"vat": _("Invalid VAT number for this country")})
+        return v_data
 
 
 class PersonSerializer(ContactSerializer):
-    organisation_ids = serializers.SlugRelatedField(
-        source="organisations", slug_field="uuid", queryset=models.Organisation.objects.all(), many=True, required=False
-    )
+    organisations = RelatedField(queryset=models.Organisation.objects.all(), many=True, required=False)
 
     class Meta(ContactSerializer.Meta):
         model = models.Person
-        exclude = ["organisations"]

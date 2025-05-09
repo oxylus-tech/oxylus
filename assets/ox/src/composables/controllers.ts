@@ -28,11 +28,47 @@ import type {
 /**
  * Create a new reactive {@link Panels} and provide it as `panels`.
  *
+ * It also creates watchers in order to:
+ * - update document title based on current panel's view
+ * - keep track of current view's url: when a panels' getUrlParams changes, it will `History.pushState` storing those params;
+ *
  * @return the reactive Panels.
  */
 export function usePanels(options: IPanels) {
     const panels = reactive(new Panels(options))
     provide('panels', panels)
+
+    watch(() => panels.current, (panel) => {
+        if(panel && panel.name == panels.panel)
+            panel.show(panels.params)
+    })
+
+    watch(() => panels.current?.getUrlParams(), (vals) => {
+        if(!vals)
+            return
+
+        const params = (new URLSearchParams(vals)).toString()
+        if(params != panels.paramsString) {
+            history.pushState(vals, "", `?${params}`)
+            panels.paramsString = params
+        }
+    })
+
+    window.addEventListener("popstate", (event) => {
+        if(event.state) {
+            panels.panel = event.state.panel
+        }
+    })
+
+    // we update title after history state
+    const initialTitle = document.title
+    watch(() => panels.current?.title, (val) => {
+        if(val)
+            document.title = `${val} | ${initialTitle}`
+        else
+            document.title = initialTitle
+    })
+
     return panels
 }
 
@@ -75,6 +111,7 @@ export function useModelPanel<M extends Model, P extends IModelPanelProps<M>>(
         const index = list.getSiblingIndex(unref(panel.value), -1)
         return items.value[index] ?? null
     })
+
     return {panels: panel.panels, panel, list, items, next, prev}
 }
 
@@ -84,7 +121,11 @@ export function useModelPanel<M extends Model, P extends IModelPanelProps<M>>(
 export function useModelList<M extends Model>(options : IModelList<M>, cls: typeof ModelList = ModelList)
 {
     const list = reactive(new cls(options))
-    const items = computed(() => list.ids ? list.queryset(list.ids).get() : [])
+    const items = computed(
+        () => list.ids ?
+            list.queryset(list.ids).orderBy((item) => list.ids.indexOf(item)).get() :
+            []
+    )
 
     provide('list', list)
     provide('items', items)

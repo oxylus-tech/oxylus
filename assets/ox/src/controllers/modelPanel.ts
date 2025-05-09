@@ -14,6 +14,7 @@ import type {IPanel, IPanelProps} from './panel'
 import type Panels from './panels'
 
 import Panel from './panel'
+import {query} from './query'
 
 
 /** Model panel component properties. */
@@ -66,7 +67,7 @@ export default class ModelPanel<
 
     /** Return panel's title based on view and current item. */
     get title(): string {
-        const {props, list, panels} = this
+        const {props, list} = this
         const model = this.repo.use
         if(model) {
             // many items
@@ -86,6 +87,13 @@ export default class ModelPanel<
         return super.title
     }
 
+    getUrlParams() {
+        const {value=null, ...params} = super.getUrlParams()
+        if(value?.id)
+            params.id = value.id
+        return params
+    }
+
     /**
      * Edit a new item.
      *
@@ -99,6 +107,17 @@ export default class ModelPanel<
     created(value: M, view: string="detail.edit") {
         // this.list.load()
         this.show({view, value})
+    }
+
+    show({id=null, ...params}: {view?: string, value?: M, id: number}) {
+        if(id) {
+            query(this.repo).fetch({id, relations: this.relations}).then(r => {
+                super.show({...params, value: r.entities[0]})
+                return r
+            })
+        }
+        else
+            return super.show(params)
     }
 
     onViewChange(val: string) {

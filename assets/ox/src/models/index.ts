@@ -1,4 +1,4 @@
-import {Relation, HasMany, HasManyBy, HasOne} from 'pinia-orm'
+import {Relation, BelongsTo, HasMany, HasManyBy, HasOne} from 'pinia-orm'
 import type {Repository, PrimaryKey, Model as $Model} from 'pinia-orm'
 
 import type { ClassType } from '../utils'
@@ -29,7 +29,7 @@ export function asRelation<M extends $Model>(repo: Repository<M>, relation: stri
  * models.
  */
 export function getSourceKey(field: Relation): PrimaryKey|null  {
-    if(field instanceof HasMany || field instanceof HasManyBy || field instanceof HasOne)
+    if(field instanceof HasMany || field instanceof HasManyBy || field instanceof HasOne || field instanceof BelongsTo)
         return field.foreignKey
     return null
 }

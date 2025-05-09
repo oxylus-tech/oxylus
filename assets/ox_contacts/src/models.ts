@@ -1,28 +1,6 @@
 import { models } from "ox"
+import { Country } from '@ox_locations/models'
 import type { IModel } from "ox"
-
-
-export class Country extends models.Model {
-    static entity = "countries"
-    static meta = new models.Meta({
-        app: "ox_contacts",
-        model: "country",
-        url: "ox/contacts/country",
-        title: "name"
-    })
-
-    static fields() {
-        return {
-            id: this.attr(null),
-            name: this.string(),
-            flag: this.string(),
-            code: this.string(),
-            code_3: this.string(),
-            phone: this.number()
-        }
-    }
-}
-
 
 class Contact extends models.Model {
     static fields() {
@@ -56,8 +34,8 @@ export class Person extends Contact {
             user: this.number(),
             first_name: this.string(),
             last_name: this.string(),
-            organisation_ids: this.attr([]),
-            organisations: this.hasManyBy(Organisation, 'organisation_ids')
+            organisations: this.attr([]),
+            $organisations: this.hasManyBy(Organisation, 'organisations')
         }
     }
 
@@ -66,6 +44,25 @@ export class Person extends Contact {
     }
 }
 
+
+export class OrganisationType extends models.Model {
+    static entity = "organisationtypes"
+    static meta = new models.Meta({
+        app: "ox_contacts",
+        model: "organisationtype",
+        url: "ox/contacts/organisationtype/",
+        title: "name",
+    })
+
+    static fields() {
+        return {
+            id: this.attr(null),
+            name: this.string(),
+            country: this.string(),
+            $country: this.belongsTo(Country, 'country'),
+        }
+    }
+}
 
 export class Organisation extends Contact {
     static entity = "organisations"
@@ -79,12 +76,13 @@ export class Organisation extends Contact {
     static fields() {
         return {
             ...super.fields(),
-            group: this.number(),
-            company_form: this.string(),
-            vat: this.string(),
             color: this.string(),
-            country_id: this.number(),
-            country: this.belongsTo(Country, 'country_id'),
+            group: this.number(),
+            vat: this.string(),
+            type: this.string(),
+            country: this.string(),
+            $type: this.belongsTo(OrganisationType, 'type'),
+            $country: this.belongsTo(Country, 'country'),
         }
     }
 }
@@ -110,8 +108,8 @@ class Address extends ContactInfo {
             number: this.number(),
             box: this.string(),
             city: this.string(),
-            country_id: this.number(),
-            country: this.belongsTo(Country, 'country_id'),
+            country: this.string(),
+            $country: this.belongsTo(Country, 'country_id'),
         }
     }
 }

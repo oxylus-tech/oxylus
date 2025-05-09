@@ -152,8 +152,8 @@ const headers = computed(() => [
 
 const bind = computed(() => {
     return ({
-        panel, panels, list, items,
-        value: panel.value
+        panel, panels, list, items, context,
+        value: panel.value,
     })
 })
 </script>

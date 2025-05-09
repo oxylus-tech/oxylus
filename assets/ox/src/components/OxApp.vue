@@ -17,6 +17,7 @@
                 <slot name="title" :context="context"/>
             </v-app-bar-title>
             <v-spacer/>
+            <slot name="app-bar-left" :context="context"></slot>
             <div id="app-bar-right" class="mr-3"></div>
             <slot name="app-bar-right" :context="context"></slot>
         </v-app-bar>
@@ -88,4 +89,6 @@ watch(() => [context.state.state, context.state.data], () => {
 onErrorCaptured((err, instance, info) => {
     context.state.error(`${err}`)
 })
+
+
 </script>

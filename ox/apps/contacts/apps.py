@@ -16,4 +16,4 @@ class AppConfig(apps.AppConfig):
     index_urlname = "ox_contacts:index"
 
     class Meta:
-        dependencies = ("ox.auth",)
+        dependencies = ("ox.auth", "ox.locations")

@@ -47,7 +47,8 @@ export default defineConfig({
         extensions: ['.js', '.ts', '.json', '.vue', '.scss'],
         alias: {
             '@': fileURLToPath(new URL('./src', import.meta.url)),
-            '@ox': fileURLToPath(new URL('../ox/src/', import.meta.url))
+            '@ox': fileURLToPath(new URL('../ox/src/', import.meta.url)),
+            '@ox_locations': fileURLToPath(new URL('../ox_locations/src/', import.meta.url)),
         }
     }
 })

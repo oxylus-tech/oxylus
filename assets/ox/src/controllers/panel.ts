@@ -93,6 +93,17 @@ export default class Panel<P extends IPanelProps = IPanelProps>
         this.view ??= this.index || ''
     }
 
+    /** Return URL GET parameters for the current view */
+    getUrlParams(): IObject {
+        const params = {panel: this.name}
+        if(this.view != this.index)
+            params.view = this.view
+        if(this.view.startsWith('detail.') && this.value)
+            params.value = this.value
+        return params
+    }
+
+
     /** Set or remove an edition by name. */
     setEdition(name: string, edited: boolean) {
         if(edited) this.editions.add(name)

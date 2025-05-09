@@ -6,7 +6,7 @@ import type { Response } from '@pinia-orm/axios'
 
 import { usePermissions, usePermissionsProps } from './models'
 import { User, Model } from '../models'
-import type { IPermissionItem, Permissions } from '../models'
+import type { IPermissionItems, Permissions } from '../models'
 
 
 export type ActionRun<M extends Model, R> = (user: User, item: M, ...args: any[]) => Promise<R>
@@ -42,11 +42,14 @@ export interface IActionProps<M extends Model, R>
     /**
      * Required permission to run the action
      */
-    permissions: IPermissionItem[]
+    permissions: IPermissionItems
     /**
      * The function to call when action is executed
      */
     run: ActionRun<M,R>
+
+    /** If provided, open this link */
+    href?: string
 }
 
 
@@ -101,6 +104,11 @@ export function useAction<M extends Model,R>({props, user, emits=null}: IAction<
             throw Error(`You are not allowed to execute this action`)
 
         processing.value = true
+        if(props.href) {
+            document.location.href = props.href
+            return
+        }
+
         let result : R = props.run(user, props.item, ...args)
         if(result instanceof Promise)
             result = await result

@@ -23,6 +23,7 @@ INSTALLED_APPS = [
     "rest_framework",
     # ox
     "ox.apps.contacts",
+    "ox.apps.locations",
     "ox.apps.auth",
     "ox.core",
     # others

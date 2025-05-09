@@ -9,20 +9,16 @@
         </template>
 
         <template #list.filters="{list,filters}">
-            <v-select class="ml-3" density="compact"
-                v-model="filters.organisations__uuid__in" multiple
-                :label="t('models.organisations')"
-                :items="organisations" item-title="$title" item-value="id"
-                hide-details />
+            <ox-country-input v-model="filters.country__uuid__in"
+                class="ml-2"
+                :label="t('fields.country')" density="compact"
+                hide-details/>
             <slot name="list.filters" :list="list" :filters="filters"/>
         </template>
 
-        <template #item.organisations="{item}" v-if="!slots['item.organisations']">
-            <template v-for="organisation of item.organisations">
-                 <v-chip :color="organisation.color ?? 'primary'" variant="tonal" class="mr-2">
-                     {{ organisation.name }}
-                 </v-chip>
-             </template>
+        <template #item.country="{item}" v-if="!slots['item.country']">
+            {{ item.$country?.flag }}
+            {{ item.$country?.name }}
         </template>
 
         <template #item.name="{item}" v-if="!slots['item.color']">
@@ -42,7 +38,7 @@
         <template #item.phone="{item}" v-if="!slots['item.phones']">
             <template v-for="phone of item.phones">
                 <v-btn :href="`tel:${phone.number}`" size='x-small'
-                    prepend-icon="mdi-mail" color="secondary">
+                    prepend-icon="mdi-phone" color="secondary">
                     {{ phone.number }}
                 </v-btn>
             </template>
@@ -59,6 +55,7 @@ import { computed, defineProps, inject, useSlots, withDefaults } from 'vue'
 import { query, t } from 'ox'
 import {OxModelPanel} from 'ox/components'
 import type {IModelPanelProps} from '@ox/controllers'
+import OxCountryInput from '@ox_locations/components/OxCountryInput'
 
 import {useContactModels} from '../composables'
 import OxOrganisationEdit from './OxOrganisationEdit'
@@ -69,12 +66,13 @@ const forwardSlots = Object.keys(slots).filter(x => !(['list.filters', 'item.gro
 
 const {repos, models} = useContactModels()
 query(repos.organisations).all({dataKey: 'results'})
+query(repos.organisationtypes).all()
 
 const organisations = computed(() => repos.organisations.all())
 
 const props = withDefaults(defineProps<IModelPanelProps>(), {
     name: 'organisations',
-    //relations: ['organisations'],
+    relations: ['$country'],
     headers: ['name', 'vat', 'email', 'phone', 'country'],
 })
 </script>

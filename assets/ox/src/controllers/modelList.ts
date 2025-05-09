@@ -117,7 +117,10 @@ export default class ModelList<M extends Model> extends ModelController<M, IMode
         return super.getQueryOptions(options)
     }
 
-    /** Fetch items from API (using self's {@link Query.fetch}). */
+    /**
+     * Handle response from API.
+     * Reset list and context information such as next/prev url, total count.
+     */
     async handleResponse({append=false, ...options}: IModelListFetch<M>, response: Response): Promise<Response> {
         response = await super.handleResponse(options, response)
         if(!this.state.isError) {

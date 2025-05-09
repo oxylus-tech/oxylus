@@ -51,7 +51,7 @@ class Named(models.Model):
 class Described(Named):
     """Provide name (mandatory) and description field."""
 
-    description = models.CharField(_("Description"), max_length=256, blank=True, default="")
+    description = models.CharField(_("Description"), max_length=256, blank=True, null=True, default="")
 
     class Meta:
         abstract = True
