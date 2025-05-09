@@ -36,7 +36,8 @@ class OrganisationType(Named, Model):
 
 class Organisation(Colored, Contact):
     group = models.ForeignKey(Group, models.SET_NULL, null=True, blank=True)
-    number = models.CharField(_("Number"), max_length=32, default="", blank=True)
+    short_name = models.CharField(_("Short name"), max_length=32, null=True, blank=True)
+    reference = models.CharField(_("Reference Number"), max_length=32, default="", blank=True)
     vat = models.CharField(_("VAT"), max_length=32, blank=True, null=True)
     type = models.ForeignKey(OrganisationType, models.SET_NULL, null=True, blank=True)
     country = models.ForeignKey(Country, models.SET_NULL, null=True, blank=True)

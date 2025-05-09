@@ -21,6 +21,12 @@
                                             <ox-field-details :errors="editor.errors?.name"/>
                                         </template>
                                     </v-text-field>
+                                    <v-text-field :label="t('fields.short_name')"
+                                        v-model="editor.value.short_name" >
+                                        <template #details>
+                                            <ox-field-details :errors="editor.errors?.short_name"/>
+                                        </template>
+                                    </v-text-field>
                                 </v-col>
                             </v-row>
                         </v-layout>
@@ -30,6 +36,12 @@
                             :rules="[optionalRule(vatRule)]">
                             <template #details>
                                 <ox-field-details :errors="editor.errors?.vat"/>
+                            </template>
+                        </v-text-field>
+                        <v-text-field :label="t('fields.reference')"
+                            v-model="editor.value.reference" >
+                            <template #details>
+                                <ox-field-details :errors="editor.errors?.reference"/>
                             </template>
                         </v-text-field>
                         <v-select

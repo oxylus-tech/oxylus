@@ -51,6 +51,7 @@
     "models.persons": "Person | Persons",
     "models.organisations": "Organisation | Organisations",
     "models.organisationtypes": "Organisation Type | Organisation Types",
+    "fields.short_name": "Short Name | Short Names",
     "fields.organisations": "Organisations",
     "fields.phone": "Phone | Phones",
     "labels.phone.call": "Call this number",
@@ -63,5 +64,7 @@
     "fields.city": "City",
     "fields.country": "Country",
     "fields.vat": "VAT",
-    "fields.vat.rule": "Please provide a valid VAT number"
+    "fields.company_form": "Company Form",
+    "fields.vat.rule": "Please provide a valid VAT number",
+    "fields.reference": "Reference"
 }
