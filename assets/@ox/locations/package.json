@@ -1,0 +1,23 @@
+{
+  "name": "@ox/locations",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "pnpm exec vite",
+    "build": "pnpm exec vite build",
+    "watch": "pnpm exec vite build --watch",
+    "preview": "pnpm exec vite preview"
+  },
+  "exports": {
+    "./components": "./src/components/index.ts",
+    "./models": "./src/models.ts"
+  },
+  "dependencies": {
+    "ox": "workspace:*",
+    "@ox/auth": "workspace:*",
+    "pinia-orm": "^1.10.2",
+    "vuetify": "^3.8.3",
+    "v-phone-input": "^4.4.2"
+  }
+}

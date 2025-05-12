@@ -1,0 +1,15 @@
+{
+  "name": "@ox/core",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "pnpm exec vite",
+    "build": "pnpm exec vite build",
+    "watch": "pnpm exec vite build --watch",
+    "preview": "pnpm exec vite preview"
+  },
+  "dependencies": {
+    "ox": "workspace:*"
+  }
+}

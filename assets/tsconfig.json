@@ -1,0 +1,38 @@
+{
+  "compilerOptions": {
+    "noEmit": false,
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "resolveJsonModule": true,
+    "jsx": "preserve",
+    "jsxImportSource": "vue",
+
+    "noImplicitThis": true,
+    "strict": true,
+
+    "verbatimModuleSyntax": true,
+
+    "target": "ESNext",
+    "useDefineForClassFields": true,
+
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "skipLibCheck": true,
+    "strictNullChecks": false,
+
+    "lib": [
+        "es2022",
+        "dom"
+    ],
+
+    "baseUrl": "./",
+    "paths": {
+        "ox": ["./ox/src/lib.ts"],
+        "@ox/auth": ["./@ox/auth/src/index.ts"],
+        "*": ["node_modules/*"]
+    },
+    "include": [
+        "@ox", "ox"
+    ]
+  }
+}
