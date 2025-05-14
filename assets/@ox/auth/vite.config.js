@@ -1,5 +1,5 @@
 import { defineConfig, mergeConfig } from 'vite'
-import baseConfig from '../../vite.config.base.ts'
+import baseConfig, {staticRoot} from '../../vite.config.base.ts'
 
 
 export default mergeConfig(
@@ -7,7 +7,12 @@ export default mergeConfig(
     defineConfig({
         base: 'static/ox_auth',
         build: {
-            outDir: "../../../static/ox_auth/",
+            outDir: `${staticRoot}/ox_auth/`,
+            rollupOptions: {
+                input: {
+                    sfc: 'src/sfc.ts'
+                }
+            }
         },
     })
 )

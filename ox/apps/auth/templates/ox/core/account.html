@@ -1,0 +1,11 @@
+{% extends "ox/core/account.html" %}
+{% load i18n static %}
+
+{% block app-main %}
+{{ block.super }}
+
+<v-sheet>
+    <h2>{% translate "User information" %}</h2>
+    <ox-component src="{% static "ox_auth/OxUserEdit.js" %}"></ox-component>
+</v-sheet>
+{% endblock %}

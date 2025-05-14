@@ -1,1 +1,1 @@
-{"version":3,"mappings":";8/BAAA,OAAO,kBAA0B,EAAC","names":[],"ignoreList":[],"sources":["../../../assets/ox_auth/src/sfc.js"],"sourcesContent":["import('./components/OxUserPanel')\n"],"file":"sfc.js"}
+{"version":3,"mappings":";8/BAAA,OAAO,kBAA0B,wCACjC,OAAO,iBAAyB","names":[],"ignoreList":[],"sources":["../../../assets/@ox/auth/src/sfc.ts"],"sourcesContent":["import('./components/OxUserPanel')\nimport('./components/OxUserEdit')\n\nexport const components = {\n    a: 123\n}\n\n"],"file":"sfc.js"}

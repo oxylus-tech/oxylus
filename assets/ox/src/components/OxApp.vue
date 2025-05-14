@@ -23,7 +23,7 @@
         </v-app-bar>
         <v-navigation-drawer theme="dark" v-model="nav.drawer">
             <a class="nav-home">
-                <img v-if="logo" :src="logo" class="logo"/>
+                <v-img v-if="logo" :src="logo" class="logo"/>
             </a>
             <slot name="nav-start" :context="context"></slot>
             <slot name="nav-list" :context="context"></slot>

@@ -1,5 +1,5 @@
 import { defineConfig, mergeConfig } from 'vite'
-import baseConfig from '../../vite.config.base.ts'
+import baseConfig, {staticRoot} from '../../vite.config.base.ts'
 
 
 // https://vitejs.dev/config/
@@ -8,7 +8,7 @@ export default mergeConfig(
     defineConfig({
         base: 'static/ox_contacts',
         build: {
-            outDir: "../../../static/ox_contacts/",
+            outDir: `${staticRoot}/ox_contacts/`,
         },
     })
 )

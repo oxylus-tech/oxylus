@@ -1,9 +1,13 @@
+import { resolve } from 'path'
 import { fileURLToPath, URL } from 'node:url'
 
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import vuetify from 'vite-plugin-vuetify'
 import commonjs from '@rollup/plugin-commonjs';
+
+
+export const staticRoot = fileURLToPath(new URL('../ox/static', import.meta.url))
 
 
 // https://vitejs.dev/config/
@@ -21,6 +25,7 @@ export default defineConfig({
 
         rollupOptions: {
             external: ['vue', 'vuex', 'axios', 'ox', 'ox/app', 'ox/components', 'ox/vendor'],
+            format: 'esm',
             input: {
                 index: "src/index.ts",
                 // sfc: "src/sfc.ts",

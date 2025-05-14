@@ -15,10 +15,11 @@ export * from './rules'
  */
 export function defineAsyncComponent(url: string, name: string) {
     return $defineAsyncComponent(() => {
-        return import(url).then(module => {
+        return import(url).then(mod => {
             if(!name)
-                return module
-            const obj = Object.values(module).filter((y: {[k: string]: any}) => y.__name == name)[0]
+                return mod
+            console.log(mod, mod.components, Object.keys(mod))
+            const obj = Object.values(mod).filter((y: {[k: string]: any}) => y.__name == name)[0]
             return obj
         })
     })
