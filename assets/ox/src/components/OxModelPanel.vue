@@ -103,15 +103,13 @@
             <slot :name="slot" v-bind="bind"/>
         </template>
 
+        <!-- FIXME: views.detail.edit shall be sloted too, not only nested ones? -->
         <template #views.detail.edit v-if="(slots['views.detail.edit'] || editSlots) && canEdit">
-            <ox-model-edit
-                :repo="panel.repo" :initial="panel.value"
-                :name="`${panel.model.entity}-edit`"
-                :saved="(item) => panel.value = item">
-                <template v-for="(name, slot) in editSlots" #[name]="bind">
-                    <slot :name="slot" v-bind="bind"/>
+            <ox-view :title="t(`models.${panel.model.entity}`)">
+                <template v-for="(name, slot) in editSlots" #[name]>
+                    <slot :name="slot" :saved="saved" :value="panel.value"/>
                 </template>
-            </ox-model-edit>
+            </ox-view>
         </template>
     </ox-panel>
 </template>
@@ -123,6 +121,7 @@ import OxAction from './OxAction.vue'
 import OxListFilters from './OxListFilters.vue'
 import OxListTable from './OxListTable.vue'
 import OxPanel from './OxPanel.vue'
+import OxView from './OxView'
 import OxModelEdit from './OxModelEdit.vue'
 
 import {t, filterSlots, useModelPanel} from 'ox'
@@ -145,10 +144,17 @@ const panels = panel.panels
 const canEdit = computed(() =>  context.user.can([panel.model, panel.value?.id ? "change": "add"]))
 
 const {showFilters} = toRefs(panel)
+
+/** List table headers */
 const headers = computed(() => [
     ...props.headers,
     {key: 'actions', title: t('actions')},
 ])
+
+/** This is called by editors once object has been saved */
+function saved(item) {
+    panel.value.value = item
+}
 
 const bind = computed(() => {
     return ({

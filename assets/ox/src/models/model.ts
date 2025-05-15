@@ -31,7 +31,7 @@ export class Meta {
     }
 
     /** Return API url based on id and path. **/
-    getUrl({path=null, id=null}: {path?: string, id?: number}): string {
+    getUrl({path=null, id=null}: {path?: string, id?: number|string}): string {
         let url = this.url
         if(id)
             url += `/${id}/`

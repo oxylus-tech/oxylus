@@ -78,7 +78,7 @@ export class AppContext {
         }
 
         if(this.models !== undefined) {
-            this.repos = useModels(this.models).repos
+            this.repos = useModels(this.models)
         }
     }
 

@@ -28,6 +28,12 @@ export class Person extends Contact {
         title: "full_name",
     })
 
+    static config = {
+        axiosApi: {
+            dataKey: 'results'
+        }
+    }
+
     static fields() {
         return {
             ...super.fields(),
@@ -72,6 +78,12 @@ export class Organisation extends Contact {
         url: "ox/contacts/organisation/",
         title: "name",
     })
+
+    static config = {
+        axiosApi: {
+            dataKey: 'results'
+        }
+    }
 
     static fields() {
         return {

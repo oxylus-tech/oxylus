@@ -1,111 +1,114 @@
 <template>
-    <v-container>
-        <v-expansion-panels mandatory multiple :model-value="['info', 'email', 'phone']">
-            <v-expansion-panel title="Information" value="info">
-                <template #text>
-                    <v-form v-model="editor.valid">
-                        <v-layout>
-                            <v-row>
-                                <v-col cols="2">
-                                    <v-text-field :label="t('fields.color')" type="color"
-                                        v-model="editor.value.color" >
-                                        <template #details>
-                                            <ox-field-details :errors="editor.errors?.color"/>
-                                        </template>
-                                    </v-text-field>
-                                </v-col>
-                                <v-col>
-                                    <v-text-field :label="t('fields.name')"
-                                        :rules="[mandatoryRule]"
-                                        v-model="editor.value.name" >
-                                        <template #details>
-                                            <ox-field-details :errors="editor.errors?.name"/>
-                                        </template>
-                                    </v-text-field>
-                                    <v-text-field :label="t('fields.short_name')"
-                                        v-model="editor.value.short_name" >
-                                        <template #details>
-                                            <ox-field-details :errors="editor.errors?.short_name"/>
-                                        </template>
-                                    </v-text-field>
-                                </v-col>
-                            </v-row>
-                        </v-layout>
-                        <v-text-field :label="t('fields.reference')"
-                            v-model="editor.value.reference" >
-                            <template #details>
-                                <ox-field-details :errors="editor.errors?.reference"/>
-                            </template>
-                        </v-text-field>
-                        <ox-country-input v-model="editor.value.country"
-                            :label="t('fields.country')">
-                            <template #details>
-                                <ox-field-details :errors="editor.errors?.country"/>
-                            </template>
-                        </ox-country-input>
-                        <v-text-field :label="t('fields.vat')"
-                            v-model="editor.value.vat"
-                            :disabled="!editor.value.country"
-                            :rules="[optionalRule(vatRule)]">
-                            <template #details>
-                                <ox-field-details :errors="editor.errors?.vat"/>
-                            </template>
-                        </v-text-field>
-                        <v-select
-                            v-model="editor.value.type" :items="types"
-                            :disabled="!editor.value.country"
-                            :label="t('fields.company_form')"
-                            item-title="name" item-value="id">
-                            <template #details>
-                                <ox-field-details :errors="editor.errors?.type"/>
-                            </template>
-                        </v-select>
-                    </v-form>
-                </template>
-            </v-expansion-panel>
-            <v-expansion-panel :title="t('fields.email', 2)" value="email">
-                <template #text>
-                    <v-expansion-panel-text>
-                        <ox-email-form-list v-model="editor.value.emails"/>
-                    </v-expansion-panel-text>
-                </template>
-            </v-expansion-panel>
-            <v-expansion-panel :title="t('fields.phone', 2)" value="phone">
-                <template #text>
-                    <v-expansion-panel-text>
-                       <ox-phone-form-list v-model="editor.value.phones"/>
-                    </v-expansion-panel-text>
-                </template>
-            </v-expansion-panel>
-            <v-expansion-panel :title="t('fields.address', 2)">
-                <template #text>
-                    <v-expansion-panel-text>
-                       <ox-address-form-list v-model="editor.value.addresses"/>
-                    </v-expansion-panel-text>
-                </template>
-            </v-expansion-panel>
-        </v-expansion-panels>
-    </v-container>
+    <ox-model-edit ref="model-editor" v-bind="props" :repo="repos.organisations">
+        <template #default="{editor}">
+            <v-expansion-panels mandatory multiple :model-value="['info', 'email', 'phone']">
+                <v-expansion-panel title="Information" value="info">
+                    <template #text>
+                        <v-form v-model="editor.valid">
+                            <v-layout>
+                                <v-row>
+                                    <v-col cols="2">
+                                        <v-text-field :label="t('fields.color')" type="color"
+                                            v-model="editor.value.color" >
+                                            <template #details>
+                                                <ox-field-details :errors="editor.errors?.color"/>
+                                            </template>
+                                        </v-text-field>
+                                    </v-col>
+                                    <v-col>
+                                        <v-text-field :label="t('fields.name')"
+                                            :rules="[mandatoryRule]"
+                                            v-model="editor.value.name" >
+                                            <template #details>
+                                                <ox-field-details :errors="editor.errors?.name"/>
+                                            </template>
+                                        </v-text-field>
+                                        <v-text-field :label="t('fields.short_name')"
+                                            v-model="editor.value.short_name" >
+                                            <template #details>
+                                                <ox-field-details :errors="editor.errors?.short_name"/>
+                                            </template>
+                                        </v-text-field>
+                                    </v-col>
+                                </v-row>
+                            </v-layout>
+                            <v-text-field :label="t('fields.reference')"
+                                v-model="editor.value.reference" >
+                                <template #details>
+                                    <ox-field-details :errors="editor.errors?.reference"/>
+                                </template>
+                            </v-text-field>
+                            <ox-country-input v-model="editor.value.country"
+                                @update:modelValue="countryUpdated(editor)"
+                                :label="t('fields.country')">
+                                <template #details>
+                                    <ox-field-details :errors="editor.errors?.country"/>
+                                </template>
+                            </ox-country-input>
+                            <v-text-field :label="t('fields.vat')"
+                                v-model="editor.value.vat"
+                                :disabled="!editor.value.country"
+                                :rules="[optionalRule(vatRule)]">
+                                <template #details>
+                                    <ox-field-details :errors="editor.errors?.vat"/>
+                                </template>
+                            </v-text-field>
+                            <v-select
+                                v-model="editor.value.type" :items="types(editor)"
+                                :disabled="!editor.value.country"
+                                :label="t('fields.company_form')"
+                                item-title="name" item-value="id">
+                                <template #details>
+                                    <ox-field-details :errors="editor.errors?.type"/>
+                                </template>
+                            </v-select>
+                        </v-form>
+                    </template>
+                </v-expansion-panel>
+                <v-expansion-panel :title="t('fields.email', 2)" value="email">
+                    <template #text>
+                        <v-expansion-panel-text>
+                            <ox-email-form-list v-model="editor.value.emails"/>
+                        </v-expansion-panel-text>
+                    </template>
+                </v-expansion-panel>
+                <v-expansion-panel :title="t('fields.phone', 2)" value="phone">
+                    <template #text>
+                        <v-expansion-panel-text>
+                           <ox-phone-form-list v-model="editor.value.phones"/>
+                        </v-expansion-panel-text>
+                    </template>
+                </v-expansion-panel>
+                <v-expansion-panel :title="t('fields.address', 2)">
+                    <template #text>
+                        <v-expansion-panel-text>
+                            <ox-iban-input/>
+                           <ox-address-form-list v-model="editor.value.addresses"/>
+                        </v-expansion-panel-text>
+                    </template>
+                </v-expansion-panel>
+            </v-expansion-panels>
+        </template>
+    </ox-model-edit>
 </template>
 <script setup lang="ts">
 import {computed, defineProps, defineEmits, inject, toRefs, reactive, useTemplateRef, watch} from 'vue'
 
 import { t, query, mandatoryRule, optionalRule } from "ox"
 import type {User, ModelEditor} from 'ox'
-import {OxFieldDetails} from 'ox/components'
-import {OxCountryInput} from '@ox/locations/components'
+import {OxFieldDetails, OxModelEdit} from 'ox/components'
+import {OxCountryInput, OxIbanInput} from '@ox/locations/components'
 
 import {vatRule} from '../composables'
 import OxEmailFormList from './OxEmailFormList'
 import OxPhoneFormList from './OxPhoneFormList'
 import OxAddressFormList from './OxAddressFormList'
 
-const editor = inject('editor')
 const repos = inject('repos')
 
 // --- Organisation type
 var tried = null // used by types to avoid looping
-const types = computed(() => {
+function types(editor) {
     const country = editor.value.country
     if(!country)
         return []
@@ -117,12 +120,12 @@ const types = computed(() => {
         return repos.organisationtypes.where("country", country).get()
     }
     return items
-})
-const type = computed(() => editor.value.type && repos.organisationtypes.find(editor.value.type))
+}
 
-watch(() => editor.value.country, (val) => {
+function countryUpdated(editor) {
+    const type = editor.value.type && repos.organisationtypes.find(editor.value.type)
     // reset organisation type when country changes
-    if(type.value && type.value.country != editor.value.country)
+    if(type && type.country != editor.value.country)
         editor.value.type = null
-})
+}
 </script>

@@ -1,13 +1,18 @@
-import {models as oxModels, useModels} from 'ox'
+import {models as oxModels, useModels, query} from 'ox'
+import type {IUseModelOpts} from 'ox'
 
-export function useAuthModels(extra_models : Array<models.Model> =[]) : Object {
-    const {repos, models} = useModels([
+/**
+ * Use authentication models (wrapper over {@link useModel}).
+ *
+ * Fetch content types and permissions if not already present.
+ */
+export function useAuthModels(models: Array<models.Model> = [], opts: IUseModelOpts = {}) : Object {
+    const repos = useModels([
         oxModels.User, oxModels.Group, oxModels.Permission, oxModels.ContentType,
-        ...extra_models
-    ])
+        ...models
+    ], opts)
 
-    repos.contentTypes.api().get("ox/core/content_type/")
-    repos.permissions.api().get("ox/core/permission/")
-
-    return {repos, models}
+    query(repos.contentTypes).allOnce()
+    query(repos.permissions).allOnce()
+    return repos
 }

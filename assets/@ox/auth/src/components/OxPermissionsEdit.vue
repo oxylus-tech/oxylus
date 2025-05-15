@@ -81,10 +81,7 @@ import { VTable } from 'vuetify/components/VTable'
 import { VCheckboxBtn } from 'vuetify/components/VCheckbox'
 import { VSpacer } from 'vuetify/components'
 
-
 const repos = inject("repos")
-const models = inject("models")
-
 
 const model = defineModel()
 const {user, group} = defineProps({

@@ -44,8 +44,8 @@
             </template>
         </template>
 
-        <template #views.detail.edit.window.default="{value}">
-            <ox-organisation-edit :initial="value"/>
+        <template #views.detail.edit.default="{value, saved}">
+            <ox-organisation-edit :initial="value" :saved="saved"/>
         </template>
     </ox-model-panel>
 </template>
@@ -64,7 +64,7 @@ const context = inject('context')
 const slots = useSlots()
 const forwardSlots = Object.keys(slots).filter(x => !(['list.filters', 'item.groups'].includes(x)))
 
-const {repos, models} = useContactModels()
+const repos = useContactModels()
 query(repos.organisations).all({dataKey: 'results'})
 query(repos.organisationtypes).all()
 

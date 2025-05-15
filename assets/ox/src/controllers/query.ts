@@ -110,6 +110,13 @@ export default class Query<M extends Model> {
         if(!url)
             url = repo.use?.meta?.getUrl({path, id})
 
+        if(!id)
+            opts.dataKey ??= repo.use?.config?.axiosApi?.dataKey
+        else
+            opts.dataKey = null
+
+        console.log(url, id, opts.dataKey, opts)
+
         if(ids && lookup !== undefined) {
             if(id)
                 throw Error("Both `ids` and `id` are provided while only one of those arguments is accepted.")
@@ -144,6 +151,20 @@ export default class Query<M extends Model> {
             if(!limit) break
         }
         return result
+    }
+
+    /**
+     * Fetch all from API if repository is empty (see {@link Query.all}).
+     *
+     * For arguments see {@link Query.all}.
+     *
+     * Return null if no request has been made.
+     */
+    async allOnce(options: IQueryAll<M> = {}) : Promise<Reponse|null> {
+        const repo = options.repo ?? this.repo
+        if(!repo.first())
+            return await this.all(options)
+        return null
     }
 
     /**

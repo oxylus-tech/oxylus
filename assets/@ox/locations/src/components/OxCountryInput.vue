@@ -2,6 +2,7 @@
     <v-select v-model="value"
         :items="countries"
         item-value="id" item-title="name"
+        @update:modelValue="emits('update:modelValue', $event)"
         v-bind="props">
 
         <template v-slot:selection="{ item, index }">
@@ -22,8 +23,10 @@
     </v-select>
 </template>
 <script setup lang="ts">
-import {computed, useSlots, defineModel, defineProps, inject} from 'vue'
+import {computed, useSlots, defineModel, defineEmits, defineProps, inject} from 'vue'
 import {query} from 'ox'
+
+const emits = defineEmits(["update:modelValue"])
 
 const slots = useSlots()
 const props = defineProps({

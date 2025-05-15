@@ -1,19 +1,24 @@
 import {models as oxModels, useModels, t} from 'ox'
 import {Country} from '@ox/locations/models'
 import * as models_ from './models'
+import type {IUseModelOpts} from 'ox'
 
-export function useContactModels(extra_models : Array<models.Model> =[]) : Object {
-    const {repos, models} = useModels([
+
+/**
+ * Use contact models (wrapper over {@link useModel}).
+ */
+export function useContactModels(models: Array<models.Model> =[], opts: IUseModelOpts = {}) : Object {
+    const repos = useModels([
         oxModels.User, oxModels.Group,
 
         Country, models_.Person,
         models_.Organisation, models_.OrganisationType,
-        ...extra_models
-    ])
+        ...models
+    ], opts)
 
     //repos.countries.api().get("ox/contacts/country/")
     // repos.permissions.api().get("ox/core/permission/")
-    return {repos, models}
+    return repos
 }
 
 

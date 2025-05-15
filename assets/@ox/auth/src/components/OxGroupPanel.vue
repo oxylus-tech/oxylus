@@ -8,8 +8,8 @@
             <slot :name="name" v-bind="bind"></slot>
         </template>
 
-        <template #views.detail.edit.window.default="{value}">
-            <ox-group-edit :initial="value"/>
+        <template #views.detail.edit.default="{value, saved}">
+            <ox-group-edit :initial="value" :saved="saved"/>
         </template>
 
         <!--
@@ -34,7 +34,7 @@ import OxGroupEdit from './OxGroupEdit.vue'
 const context = inject('context')
 const slots = useSlots()
 
-const {repos, models} = useAuthModels()
+const repos = useAuthModels()
 const props = withDefaults(defineProps<IModelPanelProps>(), {
     name: 'groups',
     headers: ['id', 'name'],

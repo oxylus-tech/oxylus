@@ -1,4 +1,15 @@
 {% extends "./app.html" %}
+{% comment %}
+Blocks:
+- app-view
+{% endcomment %}
 {% load i18n %}
 
 {% block title %}{% trans "My Account" %}{% endblock %}
+
+
+{% block app-main %}
+<ox-view>
+    {% block app-view %}{% endblock %}
+</ox-view>
+{% endblock %}

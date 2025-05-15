@@ -11,7 +11,7 @@ import type {IEditor, IEditorProps, IEditorSend} from './editor'
 
 
 /**
- * ModelEditor interface.
+ * ModelEditor properties (as passed down to {@link OxModelEdit} component).
  */
 export interface IModelEditorProps<T extends Model> extends IEditorProps<T> {
     /** Related repository */
@@ -27,6 +27,11 @@ export interface IModelEditorSend extends IEditorSend {
 
 /**
  * Editor sub-class used to edit model instances.
+ *
+ * Regarding properties ({@link IModelEditorProps}):
+ * - `name` defaults to `{model.entity}-edit`.
+ * - `repo` is mandatory
+ *
  */
 export default class ModelEditor<T extends Model, P extends IModelEditorProps<T>> extends Editor<T,P> {
     constructor(options : IEditor<T,P>) {
@@ -36,6 +41,7 @@ export default class ModelEditor<T extends Model, P extends IModelEditorProps<T>
     }
 
     get repo() { return this.props.repo }
+    get name() { return this.props.name || `${this.repo.use.entity}-edit` }
 
     isEdited(): boolean {
         return !isEqual(pick(this.value, this.fields), pick(this.initial, this.fields))

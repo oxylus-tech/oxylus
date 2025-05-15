@@ -30,8 +30,8 @@
                 @click="(item) => panel.show({view: 'detail.edit', value: item})"/>
         </template>
 
-        <template #views.detail.edit.window.default="{value}">
-            <ox-user-edit :initial="value"/>
+        <template #views.detail.edit.default="{value, saved}">
+            <ox-user-edit :initial="value" :saved="saved" :full="true"/>
         </template>
     </ox-model-panel>
 </template>
@@ -49,8 +49,8 @@ const context = inject('context')
 const slots = useSlots()
 const forwardSlots = Object.keys(slots).filter(x => !(['list.filters', 'item.groups'].includes(x)))
 
-const {repos, models} = useAuthModels()
-query(repos.groups).all({dataKey: 'results'})
+const repos = useAuthModels()
+query(repos.groups).all()
 
 const groups = computed(() => repos.groups.all())
 const kanbanHeaders = computed(() => {

@@ -1,4 +1,5 @@
 export { default as OxCountryInput} from './OxCountryInput.vue'
+export { default as OxIbanInput} from './OxIbanInput.vue'
 //export { default as OxGroupEdit} from './OxGroupEdit.vue'
 //export { default as OxGroupUsers} from './OxGroupUsers.vue'
 //export { default as OxGroupPanel} from './OxGroupPanel.vue'

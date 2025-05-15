@@ -233,6 +233,21 @@ export class User extends Model {
         title: "username",
     })
 
+
+    static config = {
+        axiosApi: {
+            dataKey: 'results',
+            actions: {
+                updatePassword(id: number, value: string): Response {
+                    return this.post(
+                        `${this.meta.getUrl({id})}/password/`, {password: value},
+                        {save:false}
+                    )
+                }
+            }
+        }
+    }
+
     static fields() {
         return {
             id: this.attr(null),
@@ -271,21 +286,6 @@ export class User extends Model {
      */
     canAny(perms: IPermissionGetCodename[]): boolean {
         return this.all_permissions?.some(p => perms.includes(Permission.getCodename(p))) || false
-    }
-
-    static config = {
-        axiosApi: {
-            dataKey: 'results',
-            actions: {
-                updatePassword(id: number, value: string): Response {
-                    return this.post(
-                        `ox/core/user/${id}/password/`, {password: value},
-                        {save:false}
-                    )
-                }
-            }
-        }
-
     }
 }
 export interface User extends IUser {}
