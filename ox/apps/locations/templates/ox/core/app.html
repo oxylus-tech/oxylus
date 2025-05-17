@@ -1,0 +1,14 @@
+{% extends "ox/core/app.html" %}
+{% comment %}
+Block:
+- nav-list-contacts: contacts app navigation
+{% endcomment %}
+{% load i18n %}
+
+{% block nav-list-settings %}
+{{ block.super }}
+<ox-panel-nav panel="countries" href="{% url "ox_locations:index" %}"
+    title="{% trans "Countries" %}" icon="mdi-earth"
+    v-if="context.user.can('ox_locations.view_country')"
+    ></ox-panel-nav>
+{% endblock %}

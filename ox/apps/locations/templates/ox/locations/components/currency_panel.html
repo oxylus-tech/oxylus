@@ -1,0 +1,12 @@
+{% extends "ox/core/components/model_panel.html" %}
+{% load i18n %}
+
+{% block outer %}
+{% with "ox-currency-panel" as tag %}
+{% with "ox/locations/components/currency_actions.html" as actions %}
+{% with 1 as filters %}
+{{ block.super }}
+{% endwith %}
+{% endwith %}
+{% endwith %}
+{% endblock %}
