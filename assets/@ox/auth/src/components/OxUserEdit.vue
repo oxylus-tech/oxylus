@@ -2,7 +2,7 @@
     <ox-model-edit ref="model-editor" v-bind="props" :repo="repos.users">
         <template #default="{editor}">
             <v-expansion-panels mandatory multiple :model-value="['info']">
-                <v-expansion-panel title="Information" value="info">
+                <v-expansion-panel :title="t('views.edit.informations')" value="info">
                     <template #text>
                         <v-form v-model="editor.valid">
                             <v-text-field variant="underlined" label="User Name"
@@ -39,7 +39,7 @@
                         </v-form>
                     </template>
                 </v-expansion-panel>
-                <v-expansion-panel title="User permissions" v-if="props.full && editor.value.id">
+                <v-expansion-panel :title="t('models.permissions', 2)" value='permissions' v-if="editor.value.id">
                     <template #text>
                         <v-expansion-panel-text>
                             <ox-permissions-edit :user="editor.value"
@@ -61,7 +61,7 @@
 <script setup lang="ts">
 import {defineProps, inject, reactive, watch, withDefaults} from 'vue'
 
-import {rules, useModelEditor} from 'ox'
+import {rules, t, useModelEditor} from 'ox'
 import {OxFieldDetails, OxModelEdit} from 'ox/components'
 import type {IModelEditorProps} from 'ox'
 

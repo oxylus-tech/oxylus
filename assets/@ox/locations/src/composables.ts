@@ -1,10 +1,27 @@
 import { useModels, query } from 'ox'
-import { Country } from './models'
+import { Country, Currency } from './models'
 
 
-/** Return repository to Country and load data if not there yet */
+/** Use @ox/locations models. */
+export function useLocationModels() {
+    const repos = useModels([Country, Currency], {withDefaults: false})
+    query(repos.countries).allOnce()
+    query(repos.currencies).allOnce()
+    return repos
+}
+
+
+/** Return repository of Country and load data if not there yet */
 export function useCountries() {
     const { countries } = useModels([Country], {withDefaults: false})
     query(countries).allOnce()
-    return countries
+    return {countries}
+}
+
+
+/** Return repository of Country and load data if not there yet */
+export function useCurrencies() {
+    const { currencies } = useModels([Currency], {withDefaults: false})
+    query(currencies).allOnce()
+    return {currencies}
 }

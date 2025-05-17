@@ -115,6 +115,8 @@ export default class Query<M extends Model> {
         else
             opts.dataKey = null
 
+        console.log(url, id, opts.dataKey, opts, repo)
+
         if(ids && lookup !== undefined) {
             if(id)
                 throw Error("Both `ids` and `id` are provided while only one of those arguments is accepted.")

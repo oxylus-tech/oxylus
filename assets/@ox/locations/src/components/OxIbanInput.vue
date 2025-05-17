@@ -28,7 +28,7 @@ import { computed, defineModel, ref, watch } from 'vue';
 import { t } from 'ox'
 import { useCountries } from '../composables';
 
-const countries = useCountries()
+const {countries} = useCountries()
 
 const rawIban = defineModel({type: String, default: ''});
 const displayIban = ref('');

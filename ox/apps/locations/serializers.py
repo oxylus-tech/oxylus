@@ -5,7 +5,10 @@ from ox.core.serializers import ModelSerializer, RelatedField
 from . import models
 
 
-__all__ = ("CountrySerializer",)
+__all__ = (
+    "CurrencySerializer",
+    "CountrySerializer",
+)
 
 
 class CurrencySerializer(ModelSerializer):
@@ -15,7 +18,7 @@ class CurrencySerializer(ModelSerializer):
 
 
 class CountrySerializer(ModelSerializer):
-    flag = serializers.CharField()
+    # flag = serializers.CharField()
     currency = RelatedField(queryset=models.Currency.objects.all())
     currency_code = serializers.CharField()
 

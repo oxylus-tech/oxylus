@@ -5,13 +5,13 @@
         v-bind="props">
 
         <template v-slot:selection="{ item, index }">
-            <span class="mr-2">{{ item.raw.flag }}</span>
             {{ item.raw.name }}
+            <span class="ml-2">{{ item.code }}</span>
         </template>
         <template v-slot:item="{ props: itemProps, item }">
             <v-list-item v-bind="itemProps">
-                <template #prepend>
-                    <span class="mr-2">{{ item.raw.flag }} </span>
+                <template #append>
+                    <span class="ml-2">{{ item.raw.code }} </span>
                 </template>
             </v-list-item>
         </template>
@@ -24,7 +24,7 @@
 <script setup lang="ts">
 import {computed, useSlots, defineModel, defineEmits, defineProps, inject} from 'vue'
 import {query} from 'ox'
-import {useCountries} from '../composables'
+import {useCurrencies} from '../composables'
 
 const emits = defineEmits(["update:modelValue"])
 
@@ -38,6 +38,6 @@ const props = defineProps({
 })
 const value = defineModel()
 
-const repos = useCountries()
-const items = computed(() => repos.countries.orderBy('name').all())
+const repos = useCurrencies()
+const items = computed(() => repos.currencies.all().orderBy('name'))
 </script>

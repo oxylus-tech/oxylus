@@ -2,7 +2,7 @@
     <ox-model-edit v-bind="props" :repo="repos.persons">
         <template #default="{editor}">
             <v-expansion-panels mandatory multiple :model-value="['info', 'emails', 'phones']">
-                <v-expansion-panel title="Information" value="info">
+                <v-expansion-panel :title="t('views.edit.informations')" value="info">
                     <template #text>
                         <v-form v-model="editor.valid">
                             <v-text-field :label="t('fields.first_name')"

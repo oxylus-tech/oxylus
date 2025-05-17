@@ -1,6 +1,6 @@
 <template>
     <v-select v-model="value"
-        :placeholder="t('enums.contactinfo_kind')"
+        :placeholder="t('fields.kind')"
         :items="ContactInfo.kindItems">
         <template #item="{item, props}">
             <v-list-item v-bind="props"

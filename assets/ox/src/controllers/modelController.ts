@@ -13,10 +13,12 @@ export interface IModelController<M extends Model> {
     dataKey: string
     /** {@link Query} used to fetch list items. */
     query: Query<M>
-    /** Related fields to fetch when items are queried.  */
+    /** Related fields to get from pinia orm's database and eventually fetch when items are retrieved from API.  */
     relations?: string[]
     /** Use this URL instead of model's defined one. */
     url?: string
+    /** Fetch related fields from API when queried */
+    fetchRelations: boolean
 }
 
 export interface IModelFetch<M extends Model> extends IQueryFetch<M> {
@@ -112,10 +114,10 @@ export default class ModelController<M extends Model, O=IModelController<M>> {
 
     /** Get {@link Query.fetch} options. */
     protected getQueryOptions(options: IModelFetch<M>): IQueryFetch<M> {
-        if(!options.relations && this.relations)
+        if(!options.relations && this.relations && this.fetchRelations)
             options.relations = this.relations
-        if(!("dataKey" in options))
-            options.dataKey = this.dataKey
+        // if(!("dataKey" in options))
+        //    options.dataKey = this.dataKey
         if(!options.url)
             options.url = this.getQueryUrl(options)
         return options

@@ -17,6 +17,8 @@
     "panels.nav.add": "Create an item",
     "panels.nav.edit": "Edit item",
 
+    "views.edit.informations": "Informations",
+
     "filters.search": "Search",
     "filters.show": "Show filters",
     "filters.hide": "Hide filters",
@@ -48,8 +50,13 @@
     "fields.group": "Group",
     "fields.groups": "Groups",
 
-    "models.bankAccount": "Bank Account | Bank Accounts",
+    "models.countries": "Country | Countries",
+    "models.currencies": "Currency | Currencies",
+    "fields.currency": "Currency | Currencies",
+    "fields.continent": "Continent | Continents",
     "fields.address": "Address | Addresses",
+    "fields.code": "Code | Codes",
+    "fields.code_3": "Code 3 | Codes 3",
     "fields.bic": "BIC/SWIFT",
     "fields.bank_name": "Bank Name",
     "fields.iban": "IBAN",
@@ -58,9 +65,21 @@
     "fields.iban.help": "Example for {name}: \"{sample}\"",
     "fields.iban.country_without_iban": "The detected country {name} might not support IBAN",
 
+
+    "enums.continent.1": "Africa",
+    "enums.continent.2": "Antartica",
+    "enums.continent.3": "Asia",
+    "enums.continent.4": "Europe",
+    "enums.continent.5": "North America",
+    "enums.continent.6": "Oceania",
+    "enums.continent.7": "South America",
+
+
     "models.persons": "Person | Persons",
     "models.organisations": "Organisation | Organisations",
     "models.organisationtypes": "Organisation Type | Organisation Types",
+    "models.bankAccount": "Bank Account | Bank Accounts",
+    "fields.kind": "Kind",
     "fields.short_name": "Short Name | Short Names",
     "fields.organisations": "Organisations",
     "fields.phone": "Phone | Phones",
@@ -78,7 +97,6 @@
     "fields.vat.rule": "Please provide a valid VAT number",
     "fields.reference": "Reference",
 
-    "enums.contactinfo_kind": "Kind",
     "enums.contactinfo_kind.0": "Main",
     "enums.contactinfo_kind.1": "Professional",
     "enums.contactinfo_kind.2": "Home",
