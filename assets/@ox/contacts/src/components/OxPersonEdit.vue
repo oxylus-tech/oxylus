@@ -1,7 +1,7 @@
 <template>
     <ox-model-edit v-bind="props" :repo="repos.persons">
         <template #default="{editor}">
-            <v-expansion-panels mandatory multiple :model-value="['info', 'email', 'phone']">
+            <v-expansion-panels mandatory multiple :model-value="['info', 'emails', 'phones']">
                 <v-expansion-panel title="Information" value="info">
                     <template #text>
                         <v-form v-model="editor.valid">
@@ -25,27 +25,7 @@
                         </v-form>
                     </template>
                 </v-expansion-panel>
-                <v-expansion-panel :title="t('fields.email', 2)" value="email">
-                    <template #text>
-                        <v-expansion-panel-text>
-                            <ox-email-form-list v-model="editor.value.emails"/>
-                        </v-expansion-panel-text>
-                    </template>
-                </v-expansion-panel>
-                <v-expansion-panel :title="t('fields.phone', 2)" value="phone">
-                    <template #text>
-                        <v-expansion-panel-text>
-                           <ox-phone-form-list v-model="editor.value.phones"/>
-                        </v-expansion-panel-text>
-                    </template>
-                </v-expansion-panel>
-                <v-expansion-panel :title="t('fields.address', 2)">
-                    <template #text>
-                        <v-expansion-panel-text>
-                           <ox-address-form-list v-model="editor.value.addresses"/>
-                        </v-expansion-panel-text>
-                    </template>
-                </v-expansion-panel>
+                <ox-contact-infos v-model="editor.value" />
             </v-expansion-panels>
         </template>
     </ox-model-edit>
@@ -57,9 +37,7 @@ import { t } from "ox"
 import type {User, ModelEditor} from 'ox'
 import {OxFieldDetails, OxModelEdit} from 'ox/components'
 
-import OxEmailFormList from './OxEmailFormList'
-import OxPhoneFormList from './OxPhoneFormList'
-import OxAddressFormList from './OxAddressFormList'
+import OxContactInfos from './OxContactInfos'
 
 const repos = inject('repos')
 const organisations = computed(() => repos.organisations.all())

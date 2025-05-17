@@ -1,38 +1,66 @@
 <template>
     <v-text-field
-        v-model="formattedIban"
+        v-model="displayIban"
         label="IBAN"
         :rules="[validateIban]"
-        @input="onInput"
-        :placeholder="`e.g. ${exampleIban}`"
-    />
-    <p v-if="countryCode" class="text-caption mt-1">
-        Detected country: <strong>{{ countryCode }}</strong>
+    >
+        <template #prepend-inner v-if="country">
+            {{ country.flag }}
+        </template>
+        <template #append v-if="country && country.currency_code">
+            {{ country.currency_code }}
+        </template>
+    </v-text-field>
+    <p v-if="country" class="v-messages">
+        <div v-if="country.iban_sample">
+            <v-icon icon="mdi-help-circle-outline"/>
+            {{ t('fields.iban.help', {'name': country.name, 'sample': country.iban_sample || '...' }) }}
+        </div>
+        <div v-else class="text-warning">
+            <v-icon icon="mdi-alert-circle-outline"/>
+            {{ t('fields.iban.country_without_iban', {'name': country.name}) }}
+        </div>
     </p>
 </template>
 
 <script setup lang="ts">
-import { defineModel, ref, computed } from 'vue';
+import { computed, defineModel, ref, watch } from 'vue';
+import { t } from 'ox'
+import { useCountries } from '../composables';
 
-const ibanRaw = defineModel({type: String, default: ''});
-const formattedIban = ref('');
+const countries = useCountries()
+
+const rawIban = defineModel({type: String, default: ''});
+const displayIban = ref('');
 const countryCode = computed(() =>
-  ibanRaw.value.length >= 2 ? ibanRaw.value.substring(0, 2).toUpperCase() : ''
+  rawIban.value.length >= 2 ? rawIban.value.substring(0, 2).toUpperCase() : ''
 );
 
-// Example IBANs for UX help
-const exampleIbanByCountry = {
-  DE: 'DE89 3704 0044 0532 0130 00',
-  FR: 'FR14 2004 1010 0505 0001 3M02 606',
-  IT: 'IT60 X054 2811 1010 0000 0123 456',
-  NL: 'NL91 ABNA 0417 1643 00',
-  ES: 'ES91 2100 0418 4502 0005 1332',
-};
+const country = computed(() => countryCode.value && countries.where('code', countryCode.value).first() || null)
 
-const exampleIban = computed(() => exampleIbanByCountry[countryCode.value] || '');
+watch(displayIban, (val, old) => {
+    if(val != old) {
+        const raw = toRaw(val)
+        if(rawIban.value != raw)
+            rawIban.value = raw
+    }
+})
 
-// IBAN input formatter
-function formatIban(value) {
+watch(rawIban, (val, old) => {
+    if(val != old) {
+        const display = toDisplay(val)
+        if(displayIban.value != display)
+            displayIban.value = display
+    }
+})
+
+
+function toRaw(value) {
+    return value.replace(/\s+/g, '').toUpperCase();
+}
+
+
+function toDisplay(value) {
   return value
     .replace(/\s+/g, '')
     .replace(/[^A-Z0-9]/gi, '')
@@ -41,16 +69,13 @@ function formatIban(value) {
     ?.join(' ') || '';
 }
 
-// Handle input & formatting
-function onInput({target}) {
-  ibanRaw.value = target.value.replace(/\s+/g, '').toUpperCase();
-  formattedIban.value = formatIban(ibanRaw.value);
-}
 
-// IBAN checksum validator (mod 97)
 function validateIban(value) {
   const cleaned = value.replace(/\s+/g, '').toUpperCase();
-  if (cleaned.length < 15) return 'IBAN too short';
+
+  const expectedLen = country.value?.iban_length
+  if (cleaned.length < 15)
+      return t('fields.iban.too_short');
 
   const rearranged = cleaned.slice(4) + cleaned.slice(0, 4);
   const expanded = rearranged
@@ -59,6 +84,6 @@ function validateIban(value) {
     .join('');
 
   const mod = BigInt(expanded) % 97n;
-  return mod === 1n || 'Invalid IBAN checksum';
+  return mod === 1n || t('fields.iban.invalid_checksum');
 }
 </script>

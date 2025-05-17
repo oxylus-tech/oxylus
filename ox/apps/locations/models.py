@@ -1,8 +1,10 @@
+from datetime import date
 from typing import Any
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
 from ox.core.models import Model
+from ox.utils.models import Named
 
 import pycountry
 import phonenumbers
@@ -12,16 +14,42 @@ from phonenumbers.phonenumberutil import country_code_for_region
 __all__ = ("Country",)
 
 
+class Continent(models.IntegerChoices):
+    AFRICA = 0x01, _("Africa")
+    ANTARCTICA = 0x02, _("Antartica")
+    ASIA = 0x03, _("Asia")
+    EUROPE = 0x04, _("Europe")
+    NORTH_AMERICA = 0x05, _("North America")
+    OCEANIA = 0x06, _("Oceania")
+    SOUTH_AMERICA = 0x07, _("South America")
+
+
 class Country(Model):
-    name = models.CharField(_("Name"), max_length=64)
+    """
+    Gather information for a specific country.
+    """
+
+    name = models.CharField(_("Name"), max_length=128)
     code = models.CharField(_("Code"), max_length=2, db_index=True)
     code_3 = models.CharField(_("Code 3"), max_length=3, db_index=True)
-    phone = models.PositiveIntegerField(_("Phone prefix"), max_length=4)
+    continent = models.PositiveSmallIntegerField(_("Continent"), choices=Continent.choices)
+    phone = models.PositiveIntegerField(_("Phone prefix"))
+
+    # no money in Antarctica
+    currency = models.ForeignKey("ox_locations.currency", models.SET_NULL, blank=True, null=True)
+
+    iban_sample = models.CharField(_("Sample IBAN"), max_length=42, null=True, blank=True)
+    iban_length = models.PositiveSmallIntegerField(_("IBAN length"), null=True, blank=True)
 
     @property
     def flag(self) -> str:
         """Return UTF-8 code for this country."""
         return "".join(chr(0x1F1E6 + ord(c.upper()) - ord("A")) for c in self.code)
+
+    @property
+    def currency_code(self) -> str:
+        """Shorthand to currency.code."""
+        return self.currency and self.currency.code or None
 
     class Meta:
         verbose_name = _("Country")
@@ -81,3 +109,19 @@ class Country(Model):
             phone = phonenumbers.parse(value)
             return phone.country_code == self.code
         return True
+
+
+class Currency(Named, Model):
+    code = models.CharField(_("Code"), max_length=3)
+    numeric = models.CharField(_("Numeric code"), max_length=3)
+
+    # Some currencies don't have specification for decimal, eg. XDR
+    # Most common case is 2 digits after the comma
+    decimals = models.PositiveSmallIntegerField(_("Decimals"), default=2, blank=True, null=True)
+
+    is_iso = models.BooleanField(_("ISO standard"))
+    valid_to = models.DateField(_("Withdrawal Date"), null=True, blank=True)
+
+    @property
+    def is_active(self):
+        return not self.valid_to or self.valid_to >= date.today()

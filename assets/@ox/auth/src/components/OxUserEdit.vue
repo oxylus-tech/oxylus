@@ -7,7 +7,7 @@
                         <v-form v-model="editor.valid">
                             <v-text-field variant="underlined" label="User Name"
                                 v-model="editor.value.username"
-                                :rules="[usernameRule]">
+                                :rules="[rules.username]">
                                 <template #details>
                                     <ox-field-details :errors="editor.errors?.username"/>
                                 </template>
@@ -25,7 +25,7 @@
                                 </template>
                             </v-text-field>
                             <v-text-field variant="underlined" type="email" label="Email"
-                                v-model="editor.value.email">
+                                v-model="editor.value.email" :rules="[rules.email]">
                                 <template #details>
                                     <ox-field-details :errors="editor.errors?.email"/>
                                 </template>
@@ -61,7 +61,7 @@
 <script setup lang="ts">
 import {defineProps, inject, reactive, watch, withDefaults} from 'vue'
 
-import {usernameRule, useModelEditor} from 'ox'
+import {rules, useModelEditor} from 'ox'
 import {OxFieldDetails, OxModelEdit} from 'ox/components'
 import type {IModelEditorProps} from 'ox'
 

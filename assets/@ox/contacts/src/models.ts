@@ -1,12 +1,15 @@
-import { models } from "ox"
+import { models, t } from "ox"
 import { Country } from '@ox/locations/models'
 import type { IModel } from "ox"
 
+
+/**
+ * Base model for contacts.
+ */
 class Contact extends models.Model {
     static fields() {
         return {
             id: this.attr(null),
-            book: this.number(),
             name: this.string(),
             description: this.string(),
 
@@ -16,6 +19,14 @@ class Contact extends models.Model {
             addresses: this.attr([]),
         }
     }
+
+    /*
+    static create(val, old) {
+        val.emails = val.emails.map(v => new Email(v))
+        val.phones = val.phones.map(v => new Phone(v))
+        val.addresses = val.addresses.map(v => new Address(v))
+    }
+    */
 }
 
 
@@ -100,7 +111,7 @@ export class Organisation extends Contact {
 }
 
 
-class ContactInfo extends models.Model {
+export class ContactInfo extends models.Model {
     static fields() {
         return {
             id: this.attr(null),
@@ -108,10 +119,41 @@ class ContactInfo extends models.Model {
             kind: this.attr(null),
         }
     }
+
+    static Kind = {
+        MAIN: 0,
+        PROFESSIONAL: 1,
+        HOME: 2,
+        LEGAL: 3,
+        OTHER: 16,
+
+        display(value) {
+            return t(`enums.contactinfo_kind.${value}`)
+        }
+    }
+
+    static get kindItems() {
+        // we need to delay because title needs to be translated.
+        if(!this._kindItems) {
+            this._kindItems = Object.values(ContactInfo.Kind).filter(v => (typeof v == "number"))
+            this._kindItems.sort((a, b) => a.value - b.value)
+        }
+        return this._kindItems
+    }
+
+    /*
+    /** Get this' kind as human readable string /
+    get kindDisplay() {
+        return t(`enums.contactinfo_kind.${item[1]}`)
+    }*/
 }
 
 
-class Address extends ContactInfo {
+/** As items to be rendered in a v-select */
+
+
+
+export class Address extends ContactInfo {
     static fields() {
         return {
             ...super.fields(),
@@ -121,13 +163,13 @@ class Address extends ContactInfo {
             box: this.string(),
             city: this.string(),
             country: this.string(),
-            $country: this.belongsTo(Country, 'country_id'),
+            $country: this.belongsTo(Country, 'country'),
         }
     }
 }
 
 
-class Email extends ContactInfo {
+export class Email extends ContactInfo {
     static fields() {
         return {
             ...super.fields(),
@@ -136,11 +178,23 @@ class Email extends ContactInfo {
     }
 }
 
-class Phone extends ContactInfo {
+export class Phone extends ContactInfo {
     static fields() {
         return {
             ...super.fields(),
             number: this.string()
+        }
+    }
+}
+
+export class BankAccount extends ContactInfo {
+    static fields() {
+        return {
+            ...super.fields(),
+            name: this.string(),
+            iban: this.string(),
+            bic: this.string(),
+            address: this.string(),
         }
     }
 }

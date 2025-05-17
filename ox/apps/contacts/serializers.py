@@ -10,6 +10,7 @@ __all__ = (
     "AddressSerializer",
     "EmailSerializer",
     "PhoneSerializer",
+    "BankAccountSerializer",
     "OrganisationSerializer",
     "PersonSerializer",
 )
@@ -35,6 +36,12 @@ class PhoneSerializer(ModelSerializer):
         exclude = ("contact",)
 
 
+class BankAccountSerializer(ModelSerializer):
+    class Meta:
+        model = models.BankAccount
+        exclude = ("contact",)
+
+
 class OrganisationTypeSerializer(ModelSerializer):
     country = RelatedField(queryset=models.Country.objects.all())
 
@@ -47,9 +54,10 @@ class ContactSerializer(ModelSerializer):
     addresses = AddressSerializer(source="address_set", many=True, required=False)
     emails = EmailSerializer(source="email_set", many=True, required=False)
     phones = PhoneSerializer(source="phone_set", many=True, required=False)
+    iban_accounts = BankAccountSerializer(source="ibanaccount_set", many=True, required=False)
 
     class Meta:
-        nested = ("addresses", "emails", "phones")
+        nested = ("addresses", "emails", "phones", "iban_accounts")
         fields = "__all__"
 
 

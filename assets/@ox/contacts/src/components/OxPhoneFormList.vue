@@ -1,7 +1,10 @@
 <template>
     <ox-form-list v-model="items">
         <template #item.title="{item}">
-            {{ item.number }}
+            <v-row>
+                <v-col>{{ item.number }}</v-col>
+                <v-col cols="4">{{ ContactInfo.Kind.display(item.kind) }}</v-col>
+            </v-row>
         </template>
         <template #item="{item,index}">
             <v-list-item>
@@ -16,7 +19,10 @@
 </template>
 <script setup lang="ts">
 import {defineModel} from 'vue'
+import { t } from 'ox'
 import {OxFormList} from 'ox/components'
+
+import { ContactInfo } from '../models'
 import OxPhoneForm from './OxPhoneForm'
 
 const items = defineModel()

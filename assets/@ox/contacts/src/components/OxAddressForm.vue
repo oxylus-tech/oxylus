@@ -2,6 +2,11 @@
     <v-container>
         <v-row>
             <v-col>
+                <ox-kind-input v-model="props.item.kind" />
+            </v-col>
+        </v-row>
+        <v-row>
+            <v-col>
                 <v-text-field v-model="props.item.street"
                      :label="t('fields.street')"/>
              </v-col>
@@ -42,6 +47,7 @@
 import {defineProps, inject} from 'vue'
 import {t} from 'ox'
 import {OxCountryInput} from '@ox/locations/components'
+import OxKindInput from './OxKindInput.vue'
 
 const props = defineProps({
     item: Object,

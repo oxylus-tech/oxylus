@@ -1,0 +1,2988 @@
+- model: ox_locations.country
+  pk: 1
+  fields:
+    uuid: c24ba611-7f59-4eda-a3da-39d19e86215c
+    name: Aruba
+    code: AW
+    code_3: ABW
+    continent: 5
+    phone: 297
+    currency: 11
+    iban_sample: null
+    iban_length: null
+- model: ox_locations.country
+  pk: 2
+  fields:
+    uuid: 80235657-68ce-485f-9ec1-2e749bf7a93d
+    name: Afghanistan
+    code: AF
+    code_3: AFG
+    continent: 3
+    phone: 93
+    currency: 1
+    iban_sample: null
+    iban_length: null
+- model: ox_locations.country
+  pk: 3
+  fields:
+    uuid: b46aa8c6-22e0-450f-8560-29ddd0b2cfa3
+    name: Angola
+    code: AO
+    code_3: AGO
+    continent: 1
+    phone: 244
+    currency: 6
+    iban_sample: null
+    iban_length: null
+- model: ox_locations.country
+  pk: 4
+  fields:
+    uuid: 7781b3d7-4415-482b-aea9-7f73aaac7043
+    name: Anguilla
+    code: AI
+    code_3: AIA
+    continent: 5
+    phone: 1
+    currency: 7
+    iban_sample: null
+    iban_length: null
+- model: ox_locations.country
+  pk: 5
+  fields:
+    uuid: 10fe3047-47e1-44b9-880e-ed79f9c47b08
+    name: Åland Islands
+    code: AX
+    code_3: ALA
+    continent: 4
+    phone: 358
+    currency: 2
+    iban_sample: null
+    iban_length: null
+- model: ox_locations.country
+  pk: 6
+  fields:
+    uuid: 56f390d5-f81c-49ed-8cd3-94faa47de184
+    name: Albania
+    code: AL
+    code_3: ALB
+    continent: 4
+    phone: 355
+    currency: 3
+    iban_sample: AL47 2121 1009 0000 0002 3569 8741
+    iban_length: 34
+- model: ox_locations.country
+  pk: 7
+  fields:
+    uuid: 533e25ce-a7b8-49c4-a169-970aa2246632
+    name: Andorra
+    code: AD
+    code_3: AND
+    continent: 4
+    phone: 376
+    currency: 2
+    iban_sample: AD12 0001 2030 2003 5910 0100
+    iban_length: 29
+- model: ox_locations.country
+  pk: 8
+  fields:
+    uuid: ea2e4c59-c8b4-4303-a3fd-bd9673e58b40
+    name: United Arab Emirates
+    code: AE
+    code_3: ARE
+    continent: 3
+    phone: 971
+    currency: 157
+    iban_sample: AE07 0331 2345 6789 0123 456
+    iban_length: 28
+- model: ox_locations.country
+  pk: 9
+  fields:
+    uuid: c1e79e0a-ac81-42dd-9ce6-9ed94053eec1
+    name: Argentina
+    code: AR
+    code_3: ARG
+    continent: 7
+    phone: 54
+    currency: 9
+    iban_sample: null
+    iban_length: null
+- model: ox_locations.country
+  pk: 10
+  fields:
+    uuid: 9e76c543-159b-40e9-8c57-c3efa9f91ae8
+    name: Armenia
+    code: AM
+    code_3: ARM
+    continent: 3
+    phone: 374
+    currency: 10
+    iban_sample: null
+    iban_length: null
+- model: ox_locations.country
+  pk: 11
+  fields:
+    uuid: d65254d8-c28b-4c0e-b015-6d627916a89b
+    name: American Samoa
+    code: AS
+    code_3: ASM
+    continent: 6
+    phone: 1
+    currency: 5
+    iban_sample: null
+    iban_length: null
+- model: ox_locations.country
+  pk: 12
+  fields:
+    uuid: fbb14544-e72b-4eaf-9964-fe6e2391fb1a
+    name: Antarctica
+    code: AQ
+    code_3: ATA
+    continent: 2
+    phone: 0
+    currency: 8
+    iban_sample: null
+    iban_length: null
+- model: ox_locations.country
+  pk: 13
+  fields:
+    uuid: eb5ddf89-09d8-4ff4-83f9-ed198eafd2bb
+    name: French Southern Territories
+    code: TF
+    code_3: ATF
+    continent: 2
+    phone: 0
+    currency: 2
+    iban_sample: null
+    iban_length: null
+- model: ox_locations.country
+  pk: 14
+  fields:
+    uuid: 1034c361-db9a-4e50-ae11-4fa50b48c594
+    name: Antigua and Barbuda
+    code: AG
+    code_3: ATG
+    continent: 5
+    phone: 1
+    currency: 7
+    iban_sample: null
+    iban_length: null
+- model: ox_locations.country
+  pk: 15
+  fields:
+    uuid: f3fd3ebe-37d5-4c9b-85f4-4afa49af11a5
+    name: Australia
+    code: AU
+    code_3: AUS
+    continent: 6
+    phone: 61
+    currency: 12
+    iban_sample: null
+    iban_length: null
+- model: ox_locations.country
+  pk: 16
+  fields:
+    uuid: 19e50cac-f795-4db7-b4d2-fc6edd64256f
+    name: Austria
+    code: AT
+    code_3: AUT
+    continent: 4
+    phone: 43
+    currency: 2
+    iban_sample: AT61 1904 3002 3457 3201
+    iban_length: 24
+- model: ox_locations.country
+  pk: 17
+  fields:
+    uuid: fd0233a3-be6e-4cb0-9a1b-e35a6184d774
+    name: Azerbaijan
+    code: AZ
+    code_3: AZE
+    continent: 3
+    phone: 994
+    currency: 13
+    iban_sample: AZ21 NABZ 0000 0000 1370 1000 1944
+    iban_length: 34
+- model: ox_locations.country
+  pk: 18
+  fields:
+    uuid: 5d2f838e-06f7-4696-8d0d-b2853c3d7fba
+    name: Burundi
+    code: BI
+    code_3: BDI
+    continent: 1
+    phone: 257
+    currency: 32
+    iban_sample: null
+    iban_length: null
+- model: ox_locations.country
+  pk: 19
+  fields:
+    uuid: 3e5ede1e-1e20-48a7-82fb-3ca83123e802
+    name: Belgium
+    code: BE
+    code_3: BEL
+    continent: 4
+    phone: 32
+    currency: 2
+    iban_sample: BE68 5390 0754 7034
+    iban_length: 19
+- model: ox_locations.country
+  pk: 20
+  fields:
+    uuid: 99bf5e63-d6cf-47b3-b6a0-8a1c79cdc04d
+    name: Benin
+    code: BJ
+    code_3: BEN
+    continent: 1
+    phone: 229
+    currency: 20
+    iban_sample: null
+    iban_length: null
+- model: ox_locations.country
+  pk: 21
+  fields:
+    uuid: 213110ad-bf29-4e26-8d40-f971ffb4dc0f
+    name: Bonaire, Sint Eustatius and Saba
+    code: BQ
+    code_3: BES
+    continent: 5
+    phone: 599
+    currency: 5
+    iban_sample: null
+    iban_length: null
+- model: ox_locations.country
+  pk: 22
+  fields:
+    uuid: a8ade5b0-6611-40ce-b8c9-4f2bf68c32c2
+    name: Burkina Faso
+    code: BF
+    code_3: BFA
+    continent: 1
+    phone: 226
+    currency: 20
+    iban_sample: null
+    iban_length: null
+- model: ox_locations.country
+  pk: 23
+  fields:
+    uuid: 19e2d400-c776-4071-b2dc-69eeeafdca8e
+    name: Bangladesh
+    code: BD
+    code_3: BGD
+    continent: 3
+    phone: 880
+    currency: 16
+    iban_sample: null
+    iban_length: null
+- model: ox_locations.country
+  pk: 24
+  fields:
+    uuid: f74579f5-f36b-4c29-be91-b5f2a5259a5e
+    name: Bulgaria
+    code: BG
+    code_3: BGR
+    continent: 4
+    phone: 359
+    currency: 31
+    iban_sample: BG80 BNBG 9661 1020 3456 78
+    iban_length: 27
+- model: ox_locations.country
+  pk: 25
+  fields:
+    uuid: 112c6ed4-d825-4679-b315-736454b13f03
+    name: Bahrain
+    code: BH
+    code_3: BHR
+    continent: 3
+    phone: 973
+    currency: 15
+    iban_sample: BH67 BMAG 0000 1299 1234 56
+    iban_length: 27
+- model: ox_locations.country
+  pk: 26
+  fields:
+    uuid: 3b382730-bc26-44c9-91a0-7cc5567f18c9
+    name: Bahamas
+    code: BS
+    code_3: BHS
+    continent: 5
+    phone: 1
+    currency: 14
+    iban_sample: null
+    iban_length: null
+- model: ox_locations.country
+  pk: 27
+  fields:
+    uuid: 67146fd8-c057-4077-b1e4-5c4a4b8b0009
+    name: Bosnia and Herzegovina
+    code: BA
+    code_3: BIH
+    continent: 4
+    phone: 387
+    currency: 26
+    iban_sample: BA39 1290 0794 0102 8494
+    iban_length: 24
+- model: ox_locations.country
+  pk: 28
+  fields:
+    uuid: 3ac8dc89-2829-4cb1-9e54-26591d81ba8c
+    name: Saint Barthélemy
+    code: BL
+    code_3: BLM
+    continent: 5
+    phone: 590
+    currency: 2
+    iban_sample: null
+    iban_length: null
+- model: ox_locations.country
+  pk: 29
+  fields:
+    uuid: e33b0879-4ffe-4d01-8324-567dc9d4726a
+    name: Belarus
+    code: BY
+    code_3: BLR
+    continent: 4
+    phone: 375
+    currency: 18
+    iban_sample: null
+    iban_length: null
+- model: ox_locations.country
+  pk: 30
+  fields:
+    uuid: d4a7ea1d-2a3a-42f5-8136-5b00e11038ca
+    name: Belize
+    code: BZ
+    code_3: BLZ
+    continent: 5
+    phone: 501
+    currency: 19
+    iban_sample: null
+    iban_length: null
+- model: ox_locations.country
+  pk: 31
+  fields:
+    uuid: a3d3c002-8598-45f3-9fa5-6217de1994fa
+    name: Bermuda
+    code: BM
+    code_3: BMU
+    continent: 5
+    phone: 1
+    currency: 21
+    iban_sample: null
+    iban_length: null
+- model: ox_locations.country
+  pk: 32
+  fields:
+    uuid: 5756771a-2243-4b35-a245-419d49841b59
+    name: Bolivia, Plurinational State of
+    code: BO
+    code_3: BOL
+    continent: 7
+    phone: 591
+    currency: 24
+    iban_sample: null
+    iban_length: null
+- model: ox_locations.country
+  pk: 33
+  fields:
+    uuid: a578e99c-8bcc-4fa2-97be-badf569f39ed
+    name: Brazil
+    code: BR
+    code_3: BRA
+    continent: 7
+    phone: 55
+    currency: 29
+    iban_sample: BR97 0036 0305 0000 1000 9795 493P 1
+    iban_length: 36
+- model: ox_locations.country
+  pk: 34
+  fields:
+    uuid: 4022ac47-4c12-4978-bd34-a04ab85f728d
+    name: Barbados
+    code: BB
+    code_3: BRB
+    continent: 5
+    phone: 1
+    currency: 17
+    iban_sample: null
+    iban_length: null
+- model: ox_locations.country
+  pk: 35
+  fields:
+    uuid: cff40f5d-bf33-4d4c-8273-eac4ebd90fa2
+    name: Brunei Darussalam
+    code: BN
+    code_3: BRN
+    continent: 3
+    phone: 673
+    currency: 30
+    iban_sample: null
+    iban_length: null
+- model: ox_locations.country
+  pk: 36
+  fields:
+    uuid: 2115e1cd-e95d-4d69-a483-608b01b713a4
+    name: Bhutan
+    code: BT
+    code_3: BTN
+    continent: 3
+    phone: 975
+    currency: 22
+    iban_sample: null
+    iban_length: null
+- model: ox_locations.country
+  pk: 37
+  fields:
+    uuid: f582e363-93d7-4bf1-abf8-13f39f4e7ead
+    name: Bouvet Island
+    code: BV
+    code_3: BVT
+    continent: 2
+    phone: 0
+    currency: 28
+    iban_sample: null
+    iban_length: null
+- model: ox_locations.country
+  pk: 38
+  fields:
+    uuid: 5aef22b9-97f1-4638-8b89-1f723cc74ecd
+    name: Botswana
+    code: BW
+    code_3: BWA
+    continent: 1
+    phone: 267
+    currency: 27
+    iban_sample: null
+    iban_length: null
+- model: ox_locations.country
+  pk: 39
+  fields:
+    uuid: 335f731c-9d46-4ca5-82db-f4b9c307239e
+    name: Central African Republic
+    code: CF
+    code_3: CAF
+    continent: 1
+    phone: 236
+    currency: 35
+    iban_sample: null
+    iban_length: null
+- model: ox_locations.country
+  pk: 40
+  fields:
+    uuid: 09abb190-109b-4671-b445-f39c3b949455
+    name: Canada
+    code: CA
+    code_3: CAN
+    continent: 5
+    phone: 1
+    currency: 36
+    iban_sample: null
+    iban_length: null
+- model: ox_locations.country
+  pk: 41
+  fields:
+    uuid: 67bbd2ac-8b4f-4030-adb9-7490b6f4e0cf
+    name: Cocos (Keeling) Islands
+    code: CC
+    code_3: CCK
+    continent: 3
+    phone: 61
+    currency: 12
+    iban_sample: null
+    iban_length: null
+- model: ox_locations.country
+  pk: 42
+  fields:
+    uuid: b63a1d8e-402e-4ada-b776-efcb16115287
+    name: Switzerland
+    code: CH
+    code_3: CHE
+    continent: 4
+    phone: 41
+    currency: 144
+    iban_sample: CH93 0076 2011 6238 5295 7
+    iban_length: 26
+- model: ox_locations.country
+  pk: 43
+  fields:
+    uuid: 6d4d5d03-4a2e-4d08-8a67-c17f94e156a4
+    name: Chile
+    code: CL
+    code_3: CHL
+    continent: 7
+    phone: 56
+    currency: 38
+    iban_sample: null
+    iban_length: null
+- model: ox_locations.country
+  pk: 44
+  fields:
+    uuid: 6cfcd209-9b45-48fa-813a-ea9672e07f8f
+    name: China
+    code: CN
+    code_3: CHN
+    continent: 3
+    phone: 86
+    currency: 40
+    iban_sample: null
+    iban_length: null
+- model: ox_locations.country
+  pk: 45
+  fields:
+    uuid: ba4ede65-0020-418a-9387-4dff2447584e
+    name: Côte d'Ivoire
+    code: CI
+    code_3: CIV
+    continent: 1
+    phone: 225
+    currency: 20
+    iban_sample: null
+    iban_length: null
+- model: ox_locations.country
+  pk: 46
+  fields:
+    uuid: f618b356-b5e5-4f34-9e4e-081b17abad4b
+    name: Cameroon
+    code: CM
+    code_3: CMR
+    continent: 1
+    phone: 237
+    currency: 35
+    iban_sample: null
+    iban_length: null
+- model: ox_locations.country
+  pk: 47
+  fields:
+    uuid: dd60f26f-c603-47fa-b31b-cbd895951e54
+    name: Congo, The Democratic Republic of the
+    code: CD
+    code_3: COD
+    continent: 1
+    phone: 243
+    currency: 44
+    iban_sample: null
+    iban_length: null
+- model: ox_locations.country
+  pk: 48
+  fields:
+    uuid: 690f43ee-f5f2-4110-91e6-f256ed17c6d2
+    name: Congo
+    code: CG
+    code_3: COG
+    continent: 1
+    phone: 242
+    currency: 35
+    iban_sample: null
+    iban_length: null
+- model: ox_locations.country
+  pk: 49
+  fields:
+    uuid: db88bcdf-8785-42a2-95e7-acc8fd35ebae
+    name: Cook Islands
+    code: CK
+    code_3: COK
+    continent: 6
+    phone: 682
+    currency: 45
+    iban_sample: null
+    iban_length: null
+- model: ox_locations.country
+  pk: 50
+  fields:
+    uuid: 1f4b2206-e73c-4c62-ab9c-bf3e6feb84c4
+    name: Colombia
+    code: CO
+    code_3: COL
+    continent: 7
+    phone: 57
+    currency: 41
+    iban_sample: null
+    iban_length: null
+- model: ox_locations.country
+  pk: 51
+  fields:
+    uuid: 1160c457-0c7b-42d4-be96-40ba5d54c232
+    name: Comoros
+    code: KM
+    code_3: COM
+    continent: 1
+    phone: 269
+    currency: 43
+    iban_sample: null
+    iban_length: null
+- model: ox_locations.country
+  pk: 52
+  fields:
+    uuid: c710d1f0-fe3e-4ef4-aa05-d20d239c6ddc
+    name: Cabo Verde
+    code: CV
+    code_3: CPV
+    continent: 1
+    phone: 238
+    currency: 33
+    iban_sample: null
+    iban_length: null
+- model: ox_locations.country
+  pk: 53
+  fields:
+    uuid: ff45ab5a-32a1-4a77-9643-474dc95c799c
+    name: Costa Rica
+    code: CR
+    code_3: CRI
+    continent: 5
+    phone: 506
+    currency: 46
+    iban_sample: CR05 0152 0200 1026 2840 66
+    iban_length: 27
+- model: ox_locations.country
+  pk: 54
+  fields:
+    uuid: 39cd5a7c-b265-44de-ae8c-cd39d5f77bf6
+    name: Cuba
+    code: CU
+    code_3: CUB
+    continent: 5
+    phone: 53
+    currency: 47
+    iban_sample: null
+    iban_length: null
+- model: ox_locations.country
+  pk: 55
+  fields:
+    uuid: ad980f35-19ee-4a31-a95e-6ca7aacc6738
+    name: Curaçao
+    code: CW
+    code_3: CUW
+    continent: 5
+    phone: 599
+    currency: 48
+    iban_sample: null
+    iban_length: null
+- model: ox_locations.country
+  pk: 56
+  fields:
+    uuid: 1a80f974-df5d-47af-9e8e-1b2e95cfec10
+    name: Christmas Island
+    code: CX
+    code_3: CXR
+    continent: 3
+    phone: 61
+    currency: 12
+    iban_sample: null
+    iban_length: null
+- model: ox_locations.country
+  pk: 57
+  fields:
+    uuid: ef836796-ef39-4ee1-bc89-86b6fd4c0bb1
+    name: Cayman Islands
+    code: KY
+    code_3: CYM
+    continent: 5
+    phone: 1
+    currency: 37
+    iban_sample: null
+    iban_length: null
+- model: ox_locations.country
+  pk: 58
+  fields:
+    uuid: fb972207-012a-4058-a2da-2fa184b3524f
+    name: Cyprus
+    code: CY
+    code_3: CYP
+    continent: 3
+    phone: 357
+    currency: 2
+    iban_sample: CY17 0020 0128 0000 0012 0052 7600
+    iban_length: 34
+- model: ox_locations.country
+  pk: 59
+  fields:
+    uuid: 9bd872af-b028-48e7-b0c8-760eac27bed6
+    name: Czechia
+    code: CZ
+    code_3: CZE
+    continent: 4
+    phone: 420
+    currency: 49
+    iban_sample: CZ65 0800 0000 1920 0014 5399
+    iban_length: 29
+- model: ox_locations.country
+  pk: 60
+  fields:
+    uuid: d20406e4-9c60-4c7f-b0bb-66bc54e82519
+    name: Germany
+    code: DE
+    code_3: DEU
+    continent: 4
+    phone: 49
+    currency: 2
+    iban_sample: DE89 3704 0044 0532 0130 00
+    iban_length: 27
+- model: ox_locations.country
+  pk: 61
+  fields:
+    uuid: befb8e6d-291f-4c0f-9976-543d5eb1d381
+    name: Djibouti
+    code: DJ
+    code_3: DJI
+    continent: 1
+    phone: 253
+    currency: 51
+    iban_sample: null
+    iban_length: null
+- model: ox_locations.country
+  pk: 62
+  fields:
+    uuid: fadddcd7-9cab-4e12-81a7-47f440a16855
+    name: Dominica
+    code: DM
+    code_3: DMA
+    continent: 5
+    phone: 1
+    currency: 7
+    iban_sample: null
+    iban_length: null
+- model: ox_locations.country
+  pk: 63
+  fields:
+    uuid: 1900d482-56c3-4483-b731-3c9854cbe135
+    name: Denmark
+    code: DK
+    code_3: DNK
+    continent: 4
+    phone: 45
+    currency: 50
+    iban_sample: DK50 0040 0440 1162 43
+    iban_length: 22
+- model: ox_locations.country
+  pk: 64
+  fields:
+    uuid: 1ad5d95a-9d4e-4091-9e01-a2fb192d848c
+    name: Dominican Republic
+    code: DO
+    code_3: DOM
+    continent: 5
+    phone: 1
+    currency: 52
+    iban_sample: null
+    iban_length: null
+- model: ox_locations.country
+  pk: 65
+  fields:
+    uuid: 9fe71a12-b8e0-445b-ab65-634ab5ca51dd
+    name: Algeria
+    code: DZ
+    code_3: DZA
+    continent: 1
+    phone: 213
+    currency: 4
+    iban_sample: null
+    iban_length: null
+- model: ox_locations.country
+  pk: 66
+  fields:
+    uuid: 4d62d34d-75f4-437c-b814-87927d464970
+    name: Ecuador
+    code: EC
+    code_3: ECU
+    continent: 7
+    phone: 593
+    currency: 5
+    iban_sample: null
+    iban_length: null
+- model: ox_locations.country
+  pk: 67
+  fields:
+    uuid: 2cea4418-dfeb-4da0-8577-c83bf64aa573
+    name: Egypt
+    code: EG
+    code_3: EGY
+    continent: 1
+    phone: 20
+    currency: 53
+    iban_sample: null
+    iban_length: null
+- model: ox_locations.country
+  pk: 68
+  fields:
+    uuid: 4a490bd6-c4d3-4d24-9b1b-0e6f422599ab
+    name: Eritrea
+    code: ER
+    code_3: ERI
+    continent: 1
+    phone: 291
+    currency: 55
+    iban_sample: null
+    iban_length: null
+- model: ox_locations.country
+  pk: 69
+  fields:
+    uuid: a8c3242c-b2c1-4b35-9899-8c4789379d0d
+    name: Western Sahara
+    code: EH
+    code_3: ESH
+    continent: 1
+    phone: 212
+    currency: 108
+    iban_sample: null
+    iban_length: null
+- model: ox_locations.country
+  pk: 70
+  fields:
+    uuid: fcdb3430-1478-448f-ae9e-38e7542e2e4d
+    name: Spain
+    code: ES
+    code_3: ESP
+    continent: 4
+    phone: 34
+    currency: 2
+    iban_sample: ES91 2100 0418 4502 0005 1332
+    iban_length: 29
+- model: ox_locations.country
+  pk: 71
+  fields:
+    uuid: 912db745-8536-4d5c-ba41-9a2c3d74d59b
+    name: Estonia
+    code: EE
+    code_3: EST
+    continent: 4
+    phone: 372
+    currency: 2
+    iban_sample: EE38 2200 2210 2014 5685
+    iban_length: 24
+- model: ox_locations.country
+  pk: 72
+  fields:
+    uuid: cf8a17fc-ce0d-41e2-a07d-1f9dc97caa44
+    name: Ethiopia
+    code: ET
+    code_3: ETH
+    continent: 1
+    phone: 251
+    currency: 57
+    iban_sample: null
+    iban_length: null
+- model: ox_locations.country
+  pk: 73
+  fields:
+    uuid: 0c7c3b69-8545-4d36-88ca-fa0809274315
+    name: Finland
+    code: FI
+    code_3: FIN
+    continent: 4
+    phone: 358
+    currency: 2
+    iban_sample: FI21 1234 5600 0007 85
+    iban_length: 22
+- model: ox_locations.country
+  pk: 74
+  fields:
+    uuid: 6f96291d-502f-4b05-805a-284edd956290
+    name: Fiji
+    code: FJ
+    code_3: FJI
+    continent: 6
+    phone: 679
+    currency: 59
+    iban_sample: null
+    iban_length: null
+- model: ox_locations.country
+  pk: 75
+  fields:
+    uuid: 8cd0134b-c808-4df7-bf6b-8988eb929484
+    name: Falkland Islands (Malvinas)
+    code: FK
+    code_3: FLK
+    continent: 7
+    phone: 500
+    currency: 58
+    iban_sample: null
+    iban_length: null
+- model: ox_locations.country
+  pk: 76
+  fields:
+    uuid: 4ae4c542-d5bc-450e-bd20-47f9d313bf4a
+    name: France
+    code: FR
+    code_3: FRA
+    continent: 4
+    phone: 33
+    currency: 2
+    iban_sample: FR14 2004 1010 0505 0001 3M02 606
+    iban_length: 33
+- model: ox_locations.country
+  pk: 77
+  fields:
+    uuid: 9e321690-04ff-4239-bfa9-39be366f29a4
+    name: Faroe Islands
+    code: FO
+    code_3: FRO
+    continent: 4
+    phone: 298
+    currency: 50
+    iban_sample: FO97 5432 0388 8999 44
+    iban_length: 22
+- model: ox_locations.country
+  pk: 78
+  fields:
+    uuid: 8bc9e7c5-e84e-4614-838e-ba704a023cb2
+    name: Micronesia, Federated States of
+    code: FM
+    code_3: FSM
+    continent: 6
+    phone: 691
+    currency: 5
+    iban_sample: null
+    iban_length: null
+- model: ox_locations.country
+  pk: 79
+  fields:
+    uuid: 50497149-ee2c-45ae-b44c-31443037782b
+    name: Gabon
+    code: GA
+    code_3: GAB
+    continent: 1
+    phone: 241
+    currency: 35
+    iban_sample: null
+    iban_length: null
+- model: ox_locations.country
+  pk: 80
+  fields:
+    uuid: c84cb3c8-e451-4645-b150-3109302b934c
+    name: United Kingdom
+    code: GB
+    code_3: GBR
+    continent: 4
+    phone: 44
+    currency: 66
+    iban_sample: GB29 NWBK 6016 1331 9268 19
+    iban_length: 27
+- model: ox_locations.country
+  pk: 81
+  fields:
+    uuid: 786b7381-6a9a-4d03-9c34-4dca5c079931
+    name: Georgia
+    code: GE
+    code_3: GEO
+    continent: 3
+    phone: 995
+    currency: 62
+    iban_sample: GE29 NB00 0000 0101 9049 17
+    iban_length: 27
+- model: ox_locations.country
+  pk: 82
+  fields:
+    uuid: 9a71674c-297b-4f53-a362-46923c9d9713
+    name: Guernsey
+    code: GG
+    code_3: GGY
+    continent: 4
+    phone: 44
+    currency: 66
+    iban_sample: null
+    iban_length: null
+- model: ox_locations.country
+  pk: 83
+  fields:
+    uuid: 38afbec6-6887-4dce-b9ed-1c942e53cb7a
+    name: Ghana
+    code: GH
+    code_3: GHA
+    continent: 1
+    phone: 233
+    currency: 63
+    iban_sample: null
+    iban_length: null
+- model: ox_locations.country
+  pk: 84
+  fields:
+    uuid: 751641db-0f6c-4d95-865e-5324f361851c
+    name: Gibraltar
+    code: GI
+    code_3: GIB
+    continent: 4
+    phone: 350
+    currency: 64
+    iban_sample: GI75 NWBK 0000 0000 7099 453
+    iban_length: 28
+- model: ox_locations.country
+  pk: 85
+  fields:
+    uuid: 5123548c-3cbd-40c1-bab5-7a155f94960c
+    name: Guinea
+    code: GN
+    code_3: GIN
+    continent: 1
+    phone: 224
+    currency: 67
+    iban_sample: null
+    iban_length: null
+- model: ox_locations.country
+  pk: 86
+  fields:
+    uuid: d5b9f6b1-8ed6-422e-baa4-401ca609f7ca
+    name: Guadeloupe
+    code: GP
+    code_3: GLP
+    continent: 5
+    phone: 590
+    currency: 2
+    iban_sample: null
+    iban_length: null
+- model: ox_locations.country
+  pk: 87
+  fields:
+    uuid: eff98649-1ef1-41c1-aa85-69aeb9969ff7
+    name: Gambia
+    code: GM
+    code_3: GMB
+    continent: 1
+    phone: 220
+    currency: 61
+    iban_sample: null
+    iban_length: null
+- model: ox_locations.country
+  pk: 88
+  fields:
+    uuid: e750c293-c1d3-4b65-ad61-c728f5f04d08
+    name: Guinea-Bissau
+    code: GW
+    code_3: GNB
+    continent: 1
+    phone: 245
+    currency: 20
+    iban_sample: null
+    iban_length: null
+- model: ox_locations.country
+  pk: 89
+  fields:
+    uuid: b9c64bfa-1b90-44f4-bd0d-d0ff1b2b4d2e
+    name: Equatorial Guinea
+    code: GQ
+    code_3: GNQ
+    continent: 1
+    phone: 240
+    currency: 35
+    iban_sample: null
+    iban_length: null
+- model: ox_locations.country
+  pk: 90
+  fields:
+    uuid: e092f24f-4a0d-40f9-a6ab-44828b4c5bd4
+    name: Greece
+    code: GR
+    code_3: GRC
+    continent: 4
+    phone: 30
+    currency: 2
+    iban_sample: GR16 0110 1250 0000 0001 2300 695
+    iban_length: 33
+- model: ox_locations.country
+  pk: 91
+  fields:
+    uuid: 25e483ae-1242-4985-bae8-d5557648308f
+    name: Grenada
+    code: GD
+    code_3: GRD
+    continent: 5
+    phone: 1
+    currency: 7
+    iban_sample: null
+    iban_length: null
+- model: ox_locations.country
+  pk: 92
+  fields:
+    uuid: 0d28cacb-2c5c-4a92-b317-ce4081e77832
+    name: Greenland
+    code: GL
+    code_3: GRL
+    continent: 5
+    phone: 299
+    currency: 50
+    iban_sample: GL89 2121 0120 0000 0001 23
+    iban_length: 27
+- model: ox_locations.country
+  pk: 93
+  fields:
+    uuid: d6c5875a-67dd-417f-a594-9b54e8d85856
+    name: Guatemala
+    code: GT
+    code_3: GTM
+    continent: 5
+    phone: 502
+    currency: 65
+    iban_sample: null
+    iban_length: null
+- model: ox_locations.country
+  pk: 94
+  fields:
+    uuid: c912ca70-ab5d-47c8-9f82-06126292505e
+    name: French Guiana
+    code: GF
+    code_3: GUF
+    continent: 7
+    phone: 594
+    currency: 2
+    iban_sample: null
+    iban_length: null
+- model: ox_locations.country
+  pk: 95
+  fields:
+    uuid: fb9237a8-09d4-4f3f-9cca-186467b89099
+    name: Guam
+    code: GU
+    code_3: GUM
+    continent: 6
+    phone: 1
+    currency: 5
+    iban_sample: null
+    iban_length: null
+- model: ox_locations.country
+  pk: 96
+  fields:
+    uuid: 71184b84-6c73-4fbe-ad2e-45956be527bc
+    name: Guyana
+    code: GY
+    code_3: GUY
+    continent: 7
+    phone: 592
+    currency: 68
+    iban_sample: null
+    iban_length: null
+- model: ox_locations.country
+  pk: 97
+  fields:
+    uuid: 0d9304c6-f8ba-446a-8fc6-ba9af090a9a6
+    name: Hong Kong
+    code: HK
+    code_3: HKG
+    continent: 3
+    phone: 852
+    currency: 71
+    iban_sample: null
+    iban_length: null
+- model: ox_locations.country
+  pk: 98
+  fields:
+    uuid: 9856b242-9887-4cde-a29c-dd3b34f8178b
+    name: Heard Island and McDonald Islands
+    code: HM
+    code_3: HMD
+    continent: 2
+    phone: 0
+    currency: 12
+    iban_sample: null
+    iban_length: null
+- model: ox_locations.country
+  pk: 99
+  fields:
+    uuid: 0b56b8ab-c07d-45d2-a9c2-afd26ee3d217
+    name: Honduras
+    code: HN
+    code_3: HND
+    continent: 5
+    phone: 504
+    currency: 70
+    iban_sample: null
+    iban_length: null
+- model: ox_locations.country
+  pk: 100
+  fields:
+    uuid: fabb03c8-0544-4780-8e8d-aef6cb024503
+    name: Croatia
+    code: HR
+    code_3: HRV
+    continent: 4
+    phone: 385
+    currency: 2
+    iban_sample: HR12 1001 0051 8630 0016 0
+    iban_length: 26
+- model: ox_locations.country
+  pk: 101
+  fields:
+    uuid: ce384020-48f6-490a-99d2-d1dda4a04c68
+    name: Haiti
+    code: HT
+    code_3: HTI
+    continent: 5
+    phone: 509
+    currency: 69
+    iban_sample: null
+    iban_length: null
+- model: ox_locations.country
+  pk: 102
+  fields:
+    uuid: 40c714e4-c9ff-4031-8e6c-04b24a905d36
+    name: Hungary
+    code: HU
+    code_3: HUN
+    continent: 4
+    phone: 36
+    currency: 72
+    iban_sample: HU42 1177 3016 1111 1018 0000 0000
+    iban_length: 34
+- model: ox_locations.country
+  pk: 103
+  fields:
+    uuid: a124da2d-d436-41e1-b0b9-375ad0800f4f
+    name: Indonesia
+    code: ID
+    code_3: IDN
+    continent: 3
+    phone: 62
+    currency: 74
+    iban_sample: null
+    iban_length: null
+- model: ox_locations.country
+  pk: 104
+  fields:
+    uuid: 0aab7ee1-4437-4b80-aa76-6060c104bd36
+    name: Isle of Man
+    code: IM
+    code_3: IMN
+    continent: 4
+    phone: 44
+    currency: 66
+    iban_sample: null
+    iban_length: null
+- model: ox_locations.country
+  pk: 105
+  fields:
+    uuid: c1b67503-6d19-4c7c-8342-146d207f243b
+    name: India
+    code: IN
+    code_3: IND
+    continent: 3
+    phone: 91
+    currency: 22
+    iban_sample: null
+    iban_length: null
+- model: ox_locations.country
+  pk: 106
+  fields:
+    uuid: 30f09289-e99f-4c46-bf9c-53e327b7c401
+    name: British Indian Ocean Territory
+    code: IO
+    code_3: IOT
+    continent: 3
+    phone: 246
+    currency: 5
+    iban_sample: null
+    iban_length: null
+- model: ox_locations.country
+  pk: 107
+  fields:
+    uuid: 72e991a0-38a8-435c-ad6c-7094d2c57ecf
+    name: Ireland
+    code: IE
+    code_3: IRL
+    continent: 4
+    phone: 353
+    currency: 2
+    iban_sample: IE29 AIBK 9311 5212 3456 78
+    iban_length: 27
+- model: ox_locations.country
+  pk: 108
+  fields:
+    uuid: dce0c604-6085-4af0-a965-fbee6583198d
+    name: Iran, Islamic Republic of
+    code: IR
+    code_3: IRN
+    continent: 3
+    phone: 98
+    currency: 76
+    iban_sample: null
+    iban_length: null
+- model: ox_locations.country
+  pk: 109
+  fields:
+    uuid: 10b085d5-d04b-4be6-8e9d-cc1303a0f2a5
+    name: Iraq
+    code: IQ
+    code_3: IRQ
+    continent: 3
+    phone: 964
+    currency: 77
+    iban_sample: null
+    iban_length: null
+- model: ox_locations.country
+  pk: 110
+  fields:
+    uuid: fc7f14fe-d877-4da6-a92b-a26d625ff6fe
+    name: Iceland
+    code: IS
+    code_3: ISL
+    continent: 4
+    phone: 354
+    currency: 73
+    iban_sample: IS14 0159 2600 7654 5510 7303 39
+    iban_length: 32
+- model: ox_locations.country
+  pk: 111
+  fields:
+    uuid: f6ac31ed-abef-4bf8-8f26-e485a1cf3265
+    name: Israel
+    code: IL
+    code_3: ISR
+    continent: 3
+    phone: 972
+    currency: 78
+    iban_sample: IL62 0108 0000 0009 9999 999
+    iban_length: 28
+- model: ox_locations.country
+  pk: 112
+  fields:
+    uuid: d014dfdc-e5f7-4ad2-a16d-078cfbf9fd46
+    name: Italy
+    code: IT
+    code_3: ITA
+    continent: 4
+    phone: 39
+    currency: 2
+    iban_sample: IT60 X054 2811 1010 0000 0123 456
+    iban_length: 33
+- model: ox_locations.country
+  pk: 113
+  fields:
+    uuid: f92f8da5-cdd9-4563-b6f3-a1e7c15663b9
+    name: Jamaica
+    code: JM
+    code_3: JAM
+    continent: 5
+    phone: 1
+    currency: 79
+    iban_sample: null
+    iban_length: null
+- model: ox_locations.country
+  pk: 114
+  fields:
+    uuid: a8731db7-10bf-4f56-bf3d-a488e26c8734
+    name: Jersey
+    code: JE
+    code_3: JEY
+    continent: 4
+    phone: 44
+    currency: 66
+    iban_sample: null
+    iban_length: null
+- model: ox_locations.country
+  pk: 115
+  fields:
+    uuid: 481d7b8f-0151-4733-a133-9391e46a8ddc
+    name: Jordan
+    code: JO
+    code_3: JOR
+    continent: 3
+    phone: 962
+    currency: 81
+    iban_sample: JO94 CBJO 0010 0000 0000 0131 0003 02
+    iban_length: 37
+- model: ox_locations.country
+  pk: 116
+  fields:
+    uuid: 51f80290-0b67-4415-8322-b17f5fe20370
+    name: Japan
+    code: JP
+    code_3: JPN
+    continent: 3
+    phone: 81
+    currency: 80
+    iban_sample: null
+    iban_length: null
+- model: ox_locations.country
+  pk: 117
+  fields:
+    uuid: 0644610d-8768-4395-90bf-4436886166e3
+    name: Kazakhstan
+    code: KZ
+    code_3: KAZ
+    continent: 3
+    phone: 7
+    currency: 82
+    iban_sample: null
+    iban_length: null
+- model: ox_locations.country
+  pk: 118
+  fields:
+    uuid: 1955ad9c-8201-4945-a208-0504a1c61327
+    name: Kenya
+    code: KE
+    code_3: KEN
+    continent: 1
+    phone: 254
+    currency: 83
+    iban_sample: null
+    iban_length: null
+- model: ox_locations.country
+  pk: 119
+  fields:
+    uuid: 3b368c47-fda1-4042-b2d3-09492c31aeb7
+    name: Kyrgyzstan
+    code: KG
+    code_3: KGZ
+    continent: 3
+    phone: 996
+    currency: 87
+    iban_sample: null
+    iban_length: null
+- model: ox_locations.country
+  pk: 120
+  fields:
+    uuid: 65bd11b2-bea6-477b-9a57-e2bda34256d6
+    name: Cambodia
+    code: KH
+    code_3: KHM
+    continent: 3
+    phone: 855
+    currency: 34
+    iban_sample: null
+    iban_length: null
+- model: ox_locations.country
+  pk: 121
+  fields:
+    uuid: bd8c81d3-8679-4867-80df-4ad9b7497b18
+    name: Kiribati
+    code: KI
+    code_3: KIR
+    continent: 6
+    phone: 686
+    currency: 12
+    iban_sample: null
+    iban_length: null
+- model: ox_locations.country
+  pk: 122
+  fields:
+    uuid: c7e971bc-54c5-4b92-aa70-397505be854f
+    name: Saint Kitts and Nevis
+    code: KN
+    code_3: KNA
+    continent: 5
+    phone: 1
+    currency: 7
+    iban_sample: null
+    iban_length: null
+- model: ox_locations.country
+  pk: 123
+  fields:
+    uuid: a2190617-bae8-4180-93ed-67b0588b0a75
+    name: Korea, Republic of
+    code: KR
+    code_3: KOR
+    continent: 3
+    phone: 82
+    currency: 85
+    iban_sample: null
+    iban_length: null
+- model: ox_locations.country
+  pk: 124
+  fields:
+    uuid: e40e06f7-1026-4f6b-8d01-0e9acb1b7c15
+    name: Kuwait
+    code: KW
+    code_3: KWT
+    continent: 3
+    phone: 965
+    currency: 86
+    iban_sample: KW81 CBKU 0000 0000 0000 1234 5601 01
+    iban_length: 37
+- model: ox_locations.country
+  pk: 125
+  fields:
+    uuid: 14df25be-dec9-4101-a106-f1f7a19be38e
+    name: Lao People's Democratic Republic
+    code: LA
+    code_3: LAO
+    continent: 3
+    phone: 856
+    currency: 88
+    iban_sample: null
+    iban_length: null
+- model: ox_locations.country
+  pk: 126
+  fields:
+    uuid: 1c0e1033-f366-49be-bf3c-9d1e415115de
+    name: Lebanon
+    code: LB
+    code_3: LBN
+    continent: 3
+    phone: 961
+    currency: 89
+    iban_sample: LB62 0999 0000 0001 0019 0122 9114
+    iban_length: 34
+- model: ox_locations.country
+  pk: 127
+  fields:
+    uuid: 22d5d33d-6dc7-472e-ba64-665a568b9aa8
+    name: Liberia
+    code: LR
+    code_3: LBR
+    continent: 1
+    phone: 231
+    currency: 92
+    iban_sample: null
+    iban_length: null
+- model: ox_locations.country
+  pk: 128
+  fields:
+    uuid: 5bcba488-d23c-4a0b-bc65-05fb840c014b
+    name: Libya
+    code: LY
+    code_3: LBY
+    continent: 1
+    phone: 218
+    currency: 93
+    iban_sample: null
+    iban_length: null
+- model: ox_locations.country
+  pk: 129
+  fields:
+    uuid: 917d39c2-9b9f-4d35-a64f-35564c6f4151
+    name: Saint Lucia
+    code: LC
+    code_3: LCA
+    continent: 5
+    phone: 1
+    currency: 7
+    iban_sample: null
+    iban_length: null
+- model: ox_locations.country
+  pk: 130
+  fields:
+    uuid: f07051a8-ff02-4c92-9821-c49c98a5cf0d
+    name: Liechtenstein
+    code: LI
+    code_3: LIE
+    continent: 4
+    phone: 423
+    currency: 94
+    iban_sample: LI21 0881 0000 2324 013A A
+    iban_length: 26
+- model: ox_locations.country
+  pk: 131
+  fields:
+    uuid: 486cb392-0ba3-432f-b203-f60cfd68ce4d
+    name: Sri Lanka
+    code: LK
+    code_3: LKA
+    continent: 3
+    phone: 94
+    currency: 139
+    iban_sample: null
+    iban_length: null
+- model: ox_locations.country
+  pk: 132
+  fields:
+    uuid: ab3d1d21-b04b-438b-a15f-e4b65e349ad8
+    name: Lesotho
+    code: LS
+    code_3: LSO
+    continent: 1
+    phone: 266
+    currency: 90
+    iban_sample: null
+    iban_length: null
+- model: ox_locations.country
+  pk: 133
+  fields:
+    uuid: 91ce69cf-ddca-43fa-b974-2995548e448f
+    name: Lithuania
+    code: LT
+    code_3: LTU
+    continent: 4
+    phone: 370
+    currency: 2
+    iban_sample: LT12 1000 0111 0100 1000
+    iban_length: 24
+- model: ox_locations.country
+  pk: 134
+  fields:
+    uuid: 0e8420c6-532f-439e-9dde-356afcc25e72
+    name: Luxembourg
+    code: LU
+    code_3: LUX
+    continent: 4
+    phone: 352
+    currency: 2
+    iban_sample: LU28 0019 4006 4475 0000
+    iban_length: 24
+- model: ox_locations.country
+  pk: 135
+  fields:
+    uuid: 42cf02a4-3916-4e18-8f41-e3f5cf15091e
+    name: Latvia
+    code: LV
+    code_3: LVA
+    continent: 4
+    phone: 371
+    currency: 2
+    iban_sample: LV80 BANK 0000 4351 9500 1
+    iban_length: 26
+- model: ox_locations.country
+  pk: 136
+  fields:
+    uuid: 12cade3f-c565-4d4f-b84e-d4bf0156a714
+    name: Macao
+    code: MO
+    code_3: MAC
+    continent: 3
+    phone: 853
+    currency: 95
+    iban_sample: null
+    iban_length: null
+- model: ox_locations.country
+  pk: 137
+  fields:
+    uuid: 31ee263d-2d86-4207-adb0-25b75e5ad7ec
+    name: Saint Martin (French part)
+    code: MF
+    code_3: MAF
+    continent: 5
+    phone: 590
+    currency: 2
+    iban_sample: null
+    iban_length: null
+- model: ox_locations.country
+  pk: 138
+  fields:
+    uuid: 36abd5e0-e0c6-4bf6-bd40-c747ac3cf882
+    name: Morocco
+    code: MA
+    code_3: MAR
+    continent: 1
+    phone: 212
+    currency: 108
+    iban_sample: null
+    iban_length: null
+- model: ox_locations.country
+  pk: 139
+  fields:
+    uuid: a028938b-f36e-4a5c-a569-dd217573575f
+    name: Monaco
+    code: MC
+    code_3: MCO
+    continent: 4
+    phone: 377
+    currency: 2
+    iban_sample: MC58 1101 6000 0101 3547 6950 445
+    iban_length: 33
+- model: ox_locations.country
+  pk: 140
+  fields:
+    uuid: 2108eb58-e5e7-4ac3-a77b-7eb236a188d8
+    name: Moldova, Republic of
+    code: MD
+    code_3: MDA
+    continent: 4
+    phone: 373
+    currency: 106
+    iban_sample: null
+    iban_length: null
+- model: ox_locations.country
+  pk: 141
+  fields:
+    uuid: 2bf4a411-e6b6-47bf-a48e-be0c5d365b19
+    name: Madagascar
+    code: MG
+    code_3: MDG
+    continent: 1
+    phone: 261
+    currency: 97
+    iban_sample: null
+    iban_length: null
+- model: ox_locations.country
+  pk: 142
+  fields:
+    uuid: bf281f29-038d-4669-8613-dbeb507381a5
+    name: Maldives
+    code: MV
+    code_3: MDV
+    continent: 3
+    phone: 960
+    currency: 100
+    iban_sample: null
+    iban_length: null
+- model: ox_locations.country
+  pk: 143
+  fields:
+    uuid: 0db78e49-e725-4e85-a6d1-cff762faec19
+    name: Mexico
+    code: MX
+    code_3: MEX
+    continent: 5
+    phone: 52
+    currency: 104
+    iban_sample: null
+    iban_length: null
+- model: ox_locations.country
+  pk: 144
+  fields:
+    uuid: 65892ee5-ad99-47b5-a561-9a013089a464
+    name: Marshall Islands
+    code: MH
+    code_3: MHL
+    continent: 6
+    phone: 692
+    currency: 5
+    iban_sample: null
+    iban_length: null
+- model: ox_locations.country
+  pk: 145
+  fields:
+    uuid: 8c022b76-a0d3-4986-a4da-7b1af9442884
+    name: North Macedonia
+    code: MK
+    code_3: MKD
+    continent: 4
+    phone: 389
+    currency: 96
+    iban_sample: MK07 2501 2000 0058 984
+    iban_length: 23
+- model: ox_locations.country
+  pk: 146
+  fields:
+    uuid: 6663815e-ce99-4b9c-9cd9-6c49c58b568e
+    name: Mali
+    code: ML
+    code_3: MLI
+    continent: 1
+    phone: 223
+    currency: 20
+    iban_sample: null
+    iban_length: null
+- model: ox_locations.country
+  pk: 147
+  fields:
+    uuid: b3ad61b5-b833-48b6-8cf4-320f59631b78
+    name: Malta
+    code: MT
+    code_3: MLT
+    continent: 4
+    phone: 356
+    currency: 2
+    iban_sample: MT84 MALT 0110 0001 2345 MTLC AST0 01S
+    iban_length: 38
+- model: ox_locations.country
+  pk: 148
+  fields:
+    uuid: 29da7341-b468-4684-97e0-e61337323493
+    name: Myanmar
+    code: MM
+    code_3: MMR
+    continent: 3
+    phone: 95
+    currency: 110
+    iban_sample: null
+    iban_length: null
+- model: ox_locations.country
+  pk: 149
+  fields:
+    uuid: 532ea7d2-edc8-4a6d-8cc9-8e6732225df4
+    name: Montenegro
+    code: ME
+    code_3: MNE
+    continent: 4
+    phone: 382
+    currency: 2
+    iban_sample: ME25 5050 0001 2345 6789 51
+    iban_length: 27
+- model: ox_locations.country
+  pk: 150
+  fields:
+    uuid: ed405c58-86a9-48a4-a437-b7e12d1c0bb6
+    name: Mongolia
+    code: MN
+    code_3: MNG
+    continent: 3
+    phone: 976
+    currency: 107
+    iban_sample: null
+    iban_length: null
+- model: ox_locations.country
+  pk: 151
+  fields:
+    uuid: eb535948-d44b-4d8b-acc9-08fdabaad372
+    name: Northern Mariana Islands
+    code: MP
+    code_3: MNP
+    continent: 6
+    phone: 1
+    currency: 5
+    iban_sample: null
+    iban_length: null
+- model: ox_locations.country
+  pk: 152
+  fields:
+    uuid: 1e2e0fc8-db84-46f5-915e-8d6574e5f3c3
+    name: Mozambique
+    code: MZ
+    code_3: MOZ
+    continent: 1
+    phone: 258
+    currency: 109
+    iban_sample: null
+    iban_length: null
+- model: ox_locations.country
+  pk: 153
+  fields:
+    uuid: 20804484-79ad-4758-b4cd-69b1befb482a
+    name: Mauritania
+    code: MR
+    code_3: MRT
+    continent: 1
+    phone: 222
+    currency: 101
+    iban_sample: MR13 0002 0001 0100 0012 3456 753
+    iban_length: 33
+- model: ox_locations.country
+  pk: 154
+  fields:
+    uuid: a962690e-9407-4f63-a862-f34cac19eca4
+    name: Montserrat
+    code: MS
+    code_3: MSR
+    continent: 5
+    phone: 1
+    currency: 7
+    iban_sample: null
+    iban_length: null
+- model: ox_locations.country
+  pk: 155
+  fields:
+    uuid: c7512cad-87e0-431e-9c86-684a7dfdb63c
+    name: Martinique
+    code: MQ
+    code_3: MTQ
+    continent: 5
+    phone: 596
+    currency: 2
+    iban_sample: null
+    iban_length: null
+- model: ox_locations.country
+  pk: 156
+  fields:
+    uuid: 6d2aca77-9bc0-4691-84bc-352716fc9c12
+    name: Mauritius
+    code: MU
+    code_3: MUS
+    continent: 1
+    phone: 230
+    currency: 102
+    iban_sample: MU17 BOMM 0101 1010 3030 0200 000M UR
+    iban_length: 37
+- model: ox_locations.country
+  pk: 157
+  fields:
+    uuid: 4299fd3c-cb9a-447b-a978-3fdae049ed1e
+    name: Malawi
+    code: MW
+    code_3: MWI
+    continent: 1
+    phone: 265
+    currency: 98
+    iban_sample: null
+    iban_length: null
+- model: ox_locations.country
+  pk: 158
+  fields:
+    uuid: 487f2a1e-0533-41fc-ad7a-931e4b3b001f
+    name: Malaysia
+    code: MY
+    code_3: MYS
+    continent: 3
+    phone: 60
+    currency: 99
+    iban_sample: null
+    iban_length: null
+- model: ox_locations.country
+  pk: 159
+  fields:
+    uuid: 7fb37504-c6e9-426d-8312-4b425c4eaf67
+    name: Mayotte
+    code: YT
+    code_3: MYT
+    continent: 1
+    phone: 262
+    currency: 2
+    iban_sample: null
+    iban_length: null
+- model: ox_locations.country
+  pk: 160
+  fields:
+    uuid: a0581d37-de8d-42a3-91e4-7040547abff0
+    name: Namibia
+    code: NA
+    code_3: NAM
+    continent: 1
+    phone: 264
+    currency: 111
+    iban_sample: null
+    iban_length: null
+- model: ox_locations.country
+  pk: 161
+  fields:
+    uuid: 40b2b285-f739-4e2c-89e5-dabaf585c690
+    name: New Caledonia
+    code: NC
+    code_3: NCL
+    continent: 6
+    phone: 687
+    currency: 60
+    iban_sample: null
+    iban_length: null
+- model: ox_locations.country
+  pk: 162
+  fields:
+    uuid: 06ad0b56-405d-40fa-b1f3-f5c7b0556428
+    name: Niger
+    code: NE
+    code_3: NER
+    continent: 1
+    phone: 227
+    currency: 20
+    iban_sample: null
+    iban_length: null
+- model: ox_locations.country
+  pk: 163
+  fields:
+    uuid: a2cad1bc-45bb-43e1-9990-b7f7e2f6bbea
+    name: Norfolk Island
+    code: NF
+    code_3: NFK
+    continent: 6
+    phone: 672
+    currency: 12
+    iban_sample: null
+    iban_length: null
+- model: ox_locations.country
+  pk: 164
+  fields:
+    uuid: edc92401-d63b-4c59-96d5-e05dd6ca96a7
+    name: Nigeria
+    code: NG
+    code_3: NGA
+    continent: 1
+    phone: 234
+    currency: 114
+    iban_sample: null
+    iban_length: null
+- model: ox_locations.country
+  pk: 165
+  fields:
+    uuid: 83c3f86d-9e9e-4042-a347-c91a3b77964d
+    name: Nicaragua
+    code: NI
+    code_3: NIC
+    continent: 5
+    phone: 505
+    currency: 113
+    iban_sample: null
+    iban_length: null
+- model: ox_locations.country
+  pk: 166
+  fields:
+    uuid: 569b1a51-7bc6-48c9-9323-7e8b29e67315
+    name: Niue
+    code: NU
+    code_3: NIU
+    continent: 6
+    phone: 683
+    currency: 45
+    iban_sample: null
+    iban_length: null
+- model: ox_locations.country
+  pk: 167
+  fields:
+    uuid: 34135f7e-467e-4ee1-a8e2-e2e497288883
+    name: Netherlands
+    code: NL
+    code_3: NLD
+    continent: 4
+    phone: 31
+    currency: 2
+    iban_sample: NL91 ABNA 0417 1643 00
+    iban_length: 22
+- model: ox_locations.country
+  pk: 168
+  fields:
+    uuid: ede501b4-af84-4717-bdd1-efe90f73b081
+    name: Norway
+    code: 'NO'
+    code_3: NOR
+    continent: 4
+    phone: 47
+    currency: 28
+    iban_sample: NO93 8601 1117 947
+    iban_length: 18
+- model: ox_locations.country
+  pk: 169
+  fields:
+    uuid: d5af215b-f205-4ada-be97-d642a893994b
+    name: Nepal
+    code: NP
+    code_3: NPL
+    continent: 3
+    phone: 977
+    currency: 112
+    iban_sample: null
+    iban_length: null
+- model: ox_locations.country
+  pk: 170
+  fields:
+    uuid: 972717ec-43fb-4720-a813-ca170dc35f59
+    name: Nauru
+    code: NR
+    code_3: NRU
+    continent: 6
+    phone: 674
+    currency: 12
+    iban_sample: null
+    iban_length: null
+- model: ox_locations.country
+  pk: 171
+  fields:
+    uuid: c0b90740-d5af-40ec-8d19-3d185b19b5e6
+    name: New Zealand
+    code: NZ
+    code_3: NZL
+    continent: 6
+    phone: 64
+    currency: 45
+    iban_sample: null
+    iban_length: null
+- model: ox_locations.country
+  pk: 172
+  fields:
+    uuid: efc10392-6b2a-43de-b3a6-d2250394dc20
+    name: Oman
+    code: OM
+    code_3: OMN
+    continent: 3
+    phone: 968
+    currency: 115
+    iban_sample: null
+    iban_length: null
+- model: ox_locations.country
+  pk: 173
+  fields:
+    uuid: c458913a-b2bc-4f2f-8033-a7738e85267e
+    name: Pakistan
+    code: PK
+    code_3: PAK
+    continent: 3
+    phone: 92
+    currency: 116
+    iban_sample: PK36 SCBL 0000 0011 2345 6702
+    iban_length: 29
+- model: ox_locations.country
+  pk: 174
+  fields:
+    uuid: b01c42a6-effc-4149-bda3-7ffbf8d520b9
+    name: Panama
+    code: PA
+    code_3: PAN
+    continent: 5
+    phone: 507
+    currency: 117
+    iban_sample: null
+    iban_length: null
+- model: ox_locations.country
+  pk: 175
+  fields:
+    uuid: c67ee9a6-9993-45a1-ae49-13ad8343b9bf
+    name: Pitcairn
+    code: PN
+    code_3: PCN
+    continent: 6
+    phone: 0
+    currency: 45
+    iban_sample: null
+    iban_length: null
+- model: ox_locations.country
+  pk: 176
+  fields:
+    uuid: 8dd7f7b2-5c94-49bb-8a36-c3809ac15ea6
+    name: Peru
+    code: PE
+    code_3: PER
+    continent: 7
+    phone: 51
+    currency: 120
+    iban_sample: null
+    iban_length: null
+- model: ox_locations.country
+  pk: 177
+  fields:
+    uuid: 0d72afe9-520e-4e7b-b952-5088aa0ca815
+    name: Philippines
+    code: PH
+    code_3: PHL
+    continent: 3
+    phone: 63
+    currency: 121
+    iban_sample: null
+    iban_length: null
+- model: ox_locations.country
+  pk: 178
+  fields:
+    uuid: 7afc7293-fc8d-40a1-9d2d-1e75807a17db
+    name: Palau
+    code: PW
+    code_3: PLW
+    continent: 6
+    phone: 680
+    currency: 5
+    iban_sample: null
+    iban_length: null
+- model: ox_locations.country
+  pk: 179
+  fields:
+    uuid: ba04702d-b1f5-464b-b154-98f2bb688321
+    name: Papua New Guinea
+    code: PG
+    code_3: PNG
+    continent: 6
+    phone: 675
+    currency: 118
+    iban_sample: null
+    iban_length: null
+- model: ox_locations.country
+  pk: 180
+  fields:
+    uuid: 67e9deb6-0643-46a3-8c3b-ed314f3b467e
+    name: Poland
+    code: PL
+    code_3: POL
+    continent: 4
+    phone: 48
+    currency: 122
+    iban_sample: PL61 1090 1014 0000 0712 1981 2874
+    iban_length: 34
+- model: ox_locations.country
+  pk: 181
+  fields:
+    uuid: 75ed414a-cdd4-4cfc-869c-10c49c595843
+    name: Puerto Rico
+    code: PR
+    code_3: PRI
+    continent: 5
+    phone: 1
+    currency: 5
+    iban_sample: null
+    iban_length: null
+- model: ox_locations.country
+  pk: 182
+  fields:
+    uuid: 94bf9588-930e-4233-b174-858369ce1258
+    name: Korea, Democratic People's Republic of
+    code: KP
+    code_3: PRK
+    continent: 3
+    phone: 850
+    currency: 84
+    iban_sample: null
+    iban_length: null
+- model: ox_locations.country
+  pk: 183
+  fields:
+    uuid: ec0c9ca9-b0ae-4431-9ab8-577a3128f6ea
+    name: Portugal
+    code: PT
+    code_3: PRT
+    continent: 4
+    phone: 351
+    currency: 2
+    iban_sample: PT50 0002 0123 1234 5678 9015 4
+    iban_length: 31
+- model: ox_locations.country
+  pk: 184
+  fields:
+    uuid: 5a9e9b1a-be0d-40ae-a972-ba93782a5974
+    name: Paraguay
+    code: PY
+    code_3: PRY
+    continent: 7
+    phone: 595
+    currency: 119
+    iban_sample: null
+    iban_length: null
+- model: ox_locations.country
+  pk: 185
+  fields:
+    uuid: 90617dd0-b1d5-48e2-a8d3-c8e18b5e50de
+    name: Palestine, State of
+    code: PS
+    code_3: PSE
+    continent: 3
+    phone: 970
+    currency: 78
+    iban_sample: PS92 PALS 0000 0000 0400 1234 5670 2
+    iban_length: 36
+- model: ox_locations.country
+  pk: 186
+  fields:
+    uuid: 770f2e66-448c-4028-b50a-d974fa6c91d1
+    name: French Polynesia
+    code: PF
+    code_3: PYF
+    continent: 6
+    phone: 689
+    currency: 60
+    iban_sample: null
+    iban_length: null
+- model: ox_locations.country
+  pk: 187
+  fields:
+    uuid: ba096cd5-7cb8-4e9f-866c-64532052c50c
+    name: Qatar
+    code: QA
+    code_3: QAT
+    continent: 3
+    phone: 974
+    currency: 123
+    iban_sample: QA58 DOHB 0000 1234 5678 90AB CDEF G
+    iban_length: 36
+- model: ox_locations.country
+  pk: 188
+  fields:
+    uuid: 8e942b8f-4590-4c06-98d0-64a799ac4dac
+    name: Réunion
+    code: RE
+    code_3: REU
+    continent: 1
+    phone: 262
+    currency: 2
+    iban_sample: null
+    iban_length: null
+- model: ox_locations.country
+  pk: 189
+  fields:
+    uuid: c50b7b3d-838f-4e06-8282-7dffed33f78c
+    name: Romania
+    code: RO
+    code_3: ROU
+    continent: 4
+    phone: 40
+    currency: 124
+    iban_sample: RO49 AAAA 1B31 0075 9384 0000
+    iban_length: 29
+- model: ox_locations.country
+  pk: 190
+  fields:
+    uuid: 767377c1-9cca-470e-b972-791894304e34
+    name: Russian Federation
+    code: RU
+    code_3: RUS
+    continent: 4
+    phone: 7
+    currency: 125
+    iban_sample: null
+    iban_length: null
+- model: ox_locations.country
+  pk: 191
+  fields:
+    uuid: bd0c8bbc-c1e5-4a90-863b-b96ab8bfcda9
+    name: Rwanda
+    code: RW
+    code_3: RWA
+    continent: 1
+    phone: 250
+    currency: 126
+    iban_sample: null
+    iban_length: null
+- model: ox_locations.country
+  pk: 192
+  fields:
+    uuid: 43f5dc2a-54e2-44de-bdff-e3c236c0ae27
+    name: Saudi Arabia
+    code: SA
+    code_3: SAU
+    continent: 3
+    phone: 966
+    currency: 130
+    iban_sample: SA03 8000 0000 6080 1016 7519
+    iban_length: 29
+- model: ox_locations.country
+  pk: 193
+  fields:
+    uuid: 4ec151a3-2cb5-4a4e-a7cf-e5158b97491d
+    name: Sudan
+    code: SD
+    code_3: SDN
+    continent: 1
+    phone: 249
+    currency: 140
+    iban_sample: null
+    iban_length: null
+- model: ox_locations.country
+  pk: 194
+  fields:
+    uuid: bcf09bc3-b6aa-4f3a-95b8-372480984861
+    name: Senegal
+    code: SN
+    code_3: SEN
+    continent: 1
+    phone: 221
+    currency: 20
+    iban_sample: null
+    iban_length: null
+- model: ox_locations.country
+  pk: 195
+  fields:
+    uuid: 4a830fad-7840-4b60-bf7e-87b10252f20f
+    name: Singapore
+    code: SG
+    code_3: SGP
+    continent: 3
+    phone: 65
+    currency: 134
+    iban_sample: null
+    iban_length: null
+- model: ox_locations.country
+  pk: 196
+  fields:
+    uuid: 761d23fc-90bc-41f0-895f-a0bc68be3f46
+    name: South Georgia and the South Sandwich Islands
+    code: GS
+    code_3: SGS
+    continent: 2
+    phone: 0
+    currency: 66
+    iban_sample: null
+    iban_length: null
+- model: ox_locations.country
+  pk: 197
+  fields:
+    uuid: e279fb38-58ca-438e-8bd6-cd05f163a148
+    name: Saint Helena, Ascension and Tristan da Cunha
+    code: SH
+    code_3: SHN
+    continent: 1
+    phone: 290
+    currency: 127
+    iban_sample: null
+    iban_length: null
+- model: ox_locations.country
+  pk: 198
+  fields:
+    uuid: 1a5a3cd2-f552-4f13-af5b-bb7e39894a43
+    name: Svalbard and Jan Mayen
+    code: SJ
+    code_3: SJM
+    continent: 4
+    phone: 47
+    currency: 28
+    iban_sample: null
+    iban_length: null
+- model: ox_locations.country
+  pk: 199
+  fields:
+    uuid: 07f7d7a2-1684-456a-a738-89fef75b00f0
+    name: Solomon Islands
+    code: SB
+    code_3: SLB
+    continent: 6
+    phone: 677
+    currency: 136
+    iban_sample: null
+    iban_length: null
+- model: ox_locations.country
+  pk: 200
+  fields:
+    uuid: fcb6b472-32a0-49f6-82c2-ff5348bcae68
+    name: Sierra Leone
+    code: SL
+    code_3: SLE
+    continent: 1
+    phone: 232
+    currency: 133
+    iban_sample: null
+    iban_length: null
+- model: ox_locations.country
+  pk: 201
+  fields:
+    uuid: 86004b50-e2fd-4500-bb6b-4a503345677b
+    name: El Salvador
+    code: SV
+    code_3: SLV
+    continent: 5
+    phone: 503
+    currency: 5
+    iban_sample: null
+    iban_length: null
+- model: ox_locations.country
+  pk: 202
+  fields:
+    uuid: d50e0d94-b2cf-404a-b420-ea3bb5013fa4
+    name: San Marino
+    code: SM
+    code_3: SMR
+    continent: 4
+    phone: 378
+    currency: 2
+    iban_sample: SM86 U032 2509 8000 0000 0270 100
+    iban_length: 33
+- model: ox_locations.country
+  pk: 203
+  fields:
+    uuid: 68c17aca-0b9f-4b04-b6f1-7bb3c6c6fb5a
+    name: Somalia
+    code: SO
+    code_3: SOM
+    continent: 1
+    phone: 252
+    currency: 137
+    iban_sample: null
+    iban_length: null
+- model: ox_locations.country
+  pk: 204
+  fields:
+    uuid: 0dcedcc6-f5ce-4e58-9fd8-b07969e6ac28
+    name: Saint Pierre and Miquelon
+    code: PM
+    code_3: SPM
+    continent: 5
+    phone: 508
+    currency: 2
+    iban_sample: null
+    iban_length: null
+- model: ox_locations.country
+  pk: 205
+  fields:
+    uuid: 3fddd42c-9c4c-4382-94fc-985fdbaea311
+    name: Serbia
+    code: RS
+    code_3: SRB
+    continent: 4
+    phone: 381
+    currency: 131
+    iban_sample: RS35 2600 0560 1001 6113 79
+    iban_length: 27
+- model: ox_locations.country
+  pk: 206
+  fields:
+    uuid: 9c816f2f-edac-4d96-9cb5-a7f2fc6b4020
+    name: South Sudan
+    code: SS
+    code_3: SSD
+    continent: 1
+    phone: 211
+    currency: 138
+    iban_sample: null
+    iban_length: null
+- model: ox_locations.country
+  pk: 207
+  fields:
+    uuid: 3167e17a-0b38-41d9-a01d-09b9d660017a
+    name: Sao Tome and Principe
+    code: ST
+    code_3: STP
+    continent: 1
+    phone: 239
+    currency: 129
+    iban_sample: null
+    iban_length: null
+- model: ox_locations.country
+  pk: 208
+  fields:
+    uuid: bc7d4d57-f8d4-4ebb-a266-78173871e08e
+    name: Suriname
+    code: SR
+    code_3: SUR
+    continent: 7
+    phone: 597
+    currency: 141
+    iban_sample: null
+    iban_length: null
+- model: ox_locations.country
+  pk: 209
+  fields:
+    uuid: 310570b6-ad3f-4666-9734-37ed46c27a64
+    name: Slovakia
+    code: SK
+    code_3: SVK
+    continent: 4
+    phone: 421
+    currency: 2
+    iban_sample: SK31 1200 0000 1987 4263 7541
+    iban_length: 29
+- model: ox_locations.country
+  pk: 210
+  fields:
+    uuid: d6c5de83-efa5-416c-ab9d-9115c4050311
+    name: Slovenia
+    code: SI
+    code_3: SVN
+    continent: 4
+    phone: 386
+    currency: 2
+    iban_sample: SI56 1910 0000 0123 438
+    iban_length: 23
+- model: ox_locations.country
+  pk: 211
+  fields:
+    uuid: 69618d04-8658-4398-8776-fad8c51209cf
+    name: Sweden
+    code: SE
+    code_3: SWE
+    continent: 4
+    phone: 46
+    currency: 142
+    iban_sample: SE45 5000 0000 0583 9825 7466
+    iban_length: 29
+- model: ox_locations.country
+  pk: 212
+  fields:
+    uuid: 4c8b0385-54b3-4496-9f34-68f38a4ddad1
+    name: Eswatini
+    code: SZ
+    code_3: SWZ
+    continent: 1
+    phone: 268
+    currency: 56
+    iban_sample: null
+    iban_length: null
+- model: ox_locations.country
+  pk: 213
+  fields:
+    uuid: 8b052c21-a4f2-40cd-973d-a63f7716a736
+    name: Sint Maarten (Dutch part)
+    code: SX
+    code_3: SXM
+    continent: 5
+    phone: 1
+    currency: 48
+    iban_sample: null
+    iban_length: null
+- model: ox_locations.country
+  pk: 214
+  fields:
+    uuid: 7d920ed2-ca25-4a87-a97f-bd40b8a9c929
+    name: Seychelles
+    code: SC
+    code_3: SYC
+    continent: 1
+    phone: 248
+    currency: 132
+    iban_sample: null
+    iban_length: null
+- model: ox_locations.country
+  pk: 215
+  fields:
+    uuid: 66e7dc57-7efa-40f6-94f2-2b0f53edac5e
+    name: Syrian Arab Republic
+    code: SY
+    code_3: SYR
+    continent: 3
+    phone: 963
+    currency: 145
+    iban_sample: null
+    iban_length: null
+- model: ox_locations.country
+  pk: 216
+  fields:
+    uuid: c217e87a-861e-4a6c-8758-6c4c90d53fef
+    name: Turks and Caicos Islands
+    code: TC
+    code_3: TCA
+    continent: 5
+    phone: 1
+    currency: 5
+    iban_sample: null
+    iban_length: null
+- model: ox_locations.country
+  pk: 217
+  fields:
+    uuid: 49b29958-98fe-4c73-ab5a-ae4523ae5489
+    name: Chad
+    code: TD
+    code_3: TCD
+    continent: 1
+    phone: 235
+    currency: 35
+    iban_sample: null
+    iban_length: null
+- model: ox_locations.country
+  pk: 218
+  fields:
+    uuid: 84512497-b06a-41dc-8683-1088d4d35274
+    name: Togo
+    code: TG
+    code_3: TGO
+    continent: 1
+    phone: 228
+    currency: 20
+    iban_sample: null
+    iban_length: null
+- model: ox_locations.country
+  pk: 219
+  fields:
+    uuid: f92d565f-7940-4086-b9a9-54e662245860
+    name: Thailand
+    code: TH
+    code_3: THA
+    continent: 3
+    phone: 66
+    currency: 149
+    iban_sample: null
+    iban_length: null
+- model: ox_locations.country
+  pk: 220
+  fields:
+    uuid: 963b06c5-0130-4933-93ee-2e831afac37f
+    name: Tajikistan
+    code: TJ
+    code_3: TJK
+    continent: 3
+    phone: 992
+    currency: 147
+    iban_sample: null
+    iban_length: null
+- model: ox_locations.country
+  pk: 221
+  fields:
+    uuid: 41395839-5864-4288-ae57-a883c6325301
+    name: Tokelau
+    code: TK
+    code_3: TKL
+    continent: 6
+    phone: 690
+    currency: 45
+    iban_sample: null
+    iban_length: null
+- model: ox_locations.country
+  pk: 222
+  fields:
+    uuid: 2dbed3b1-75a9-431d-a0d8-3e0b91658ee6
+    name: Turkmenistan
+    code: TM
+    code_3: TKM
+    continent: 3
+    phone: 993
+    currency: 154
+    iban_sample: null
+    iban_length: null
+- model: ox_locations.country
+  pk: 223
+  fields:
+    uuid: dd0a939e-b2a9-4727-8d37-40f110db582e
+    name: Timor-Leste
+    code: TL
+    code_3: TLS
+    continent: 3
+    phone: 670
+    currency: 5
+    iban_sample: null
+    iban_length: null
+- model: ox_locations.country
+  pk: 224
+  fields:
+    uuid: b963c91c-bb04-4ab2-83a0-3db88fe1277f
+    name: Tonga
+    code: TO
+    code_3: TON
+    continent: 6
+    phone: 676
+    currency: 150
+    iban_sample: null
+    iban_length: null
+- model: ox_locations.country
+  pk: 225
+  fields:
+    uuid: 0e868639-3bd9-4a88-b889-450e1a859f1d
+    name: Trinidad and Tobago
+    code: TT
+    code_3: TTO
+    continent: 5
+    phone: 1
+    currency: 151
+    iban_sample: null
+    iban_length: null
+- model: ox_locations.country
+  pk: 226
+  fields:
+    uuid: f9d8598e-402d-4181-8e30-03b9c161ed41
+    name: Tunisia
+    code: TN
+    code_3: TUN
+    continent: 1
+    phone: 216
+    currency: 152
+    iban_sample: TN59 1001 6000 0103 1234 5600 0
+    iban_length: 31
+- model: ox_locations.country
+  pk: 227
+  fields:
+    uuid: d1b71fb2-ac42-4883-8430-bd2b7dcaf1ae
+    name: Türkiye
+    code: TR
+    code_3: TUR
+    continent: 3
+    phone: 90
+    currency: 153
+    iban_sample: TR33 0006 1005 1978 6457 8413 26
+    iban_length: 32
+- model: ox_locations.country
+  pk: 228
+  fields:
+    uuid: f56625b2-dcb9-4db9-a533-4e853173f2c6
+    name: Tuvalu
+    code: TV
+    code_3: TUV
+    continent: 6
+    phone: 688
+    currency: 12
+    iban_sample: null
+    iban_length: null
+- model: ox_locations.country
+  pk: 229
+  fields:
+    uuid: 118700a5-66f6-4f81-af9f-62b1f5601bc3
+    name: Taiwan, Province of China
+    code: TW
+    code_3: TWN
+    continent: 3
+    phone: 886
+    currency: 146
+    iban_sample: null
+    iban_length: null
+- model: ox_locations.country
+  pk: 230
+  fields:
+    uuid: 3da485b1-a67d-4fa6-b594-f34df3d38962
+    name: Tanzania, United Republic of
+    code: TZ
+    code_3: TZA
+    continent: 1
+    phone: 255
+    currency: 148
+    iban_sample: null
+    iban_length: null
+- model: ox_locations.country
+  pk: 231
+  fields:
+    uuid: 2bef09d4-d396-4092-8290-e7a76225edfc
+    name: Uganda
+    code: UG
+    code_3: UGA
+    continent: 1
+    phone: 256
+    currency: 155
+    iban_sample: null
+    iban_length: null
+- model: ox_locations.country
+  pk: 232
+  fields:
+    uuid: c290d0fe-bf1a-464f-abbc-982078071fb3
+    name: Ukraine
+    code: UA
+    code_3: UKR
+    continent: 4
+    phone: 380
+    currency: 156
+    iban_sample: null
+    iban_length: null
+- model: ox_locations.country
+  pk: 233
+  fields:
+    uuid: 163f5e9a-3651-45d8-ac2d-ed943f7cf961
+    name: United States Minor Outlying Islands
+    code: UM
+    code_3: UMI
+    continent: 6
+    phone: 0
+    currency: 5
+    iban_sample: null
+    iban_length: null
+- model: ox_locations.country
+  pk: 234
+  fields:
+    uuid: 73b34a50-c27c-4c68-b83e-881bac8f539f
+    name: Uruguay
+    code: UY
+    code_3: URY
+    continent: 7
+    phone: 598
+    currency: 161
+    iban_sample: null
+    iban_length: null
+- model: ox_locations.country
+  pk: 235
+  fields:
+    uuid: d3ac444e-8235-467e-b96a-db613a82fc9d
+    name: United States
+    code: US
+    code_3: USA
+    continent: 5
+    phone: 1
+    currency: 5
+    iban_sample: null
+    iban_length: null
+- model: ox_locations.country
+  pk: 236
+  fields:
+    uuid: 2e35fcec-6c45-4fb7-89d9-753009f75d52
+    name: Uzbekistan
+    code: UZ
+    code_3: UZB
+    continent: 3
+    phone: 998
+    currency: 162
+    iban_sample: null
+    iban_length: null
+- model: ox_locations.country
+  pk: 237
+  fields:
+    uuid: 3f851e04-945d-4d88-907a-3f7a317fe56f
+    name: Holy See (Vatican City State)
+    code: VA
+    code_3: VAT
+    continent: 4
+    phone: 39
+    currency: 2
+    iban_sample: null
+    iban_length: null
+- model: ox_locations.country
+  pk: 238
+  fields:
+    uuid: df185965-2d29-4137-bf3d-0304ed843151
+    name: Saint Vincent and the Grenadines
+    code: VC
+    code_3: VCT
+    continent: 5
+    phone: 1
+    currency: 7
+    iban_sample: null
+    iban_length: null
+- model: ox_locations.country
+  pk: 239
+  fields:
+    uuid: 60c9a65b-6538-4c74-a7f9-a427f2b3ffbb
+    name: Venezuela, Bolivarian Republic of
+    code: VE
+    code_3: VEN
+    continent: 7
+    phone: 58
+    currency: 165
+    iban_sample: null
+    iban_length: null
+- model: ox_locations.country
+  pk: 240
+  fields:
+    uuid: 2fdc258e-6422-49b4-a7ef-b32bac6a530e
+    name: Virgin Islands, British
+    code: VG
+    code_3: VGB
+    continent: 5
+    phone: 1
+    currency: 5
+    iban_sample: null
+    iban_length: null
+- model: ox_locations.country
+  pk: 241
+  fields:
+    uuid: b7b08fa1-78e8-4fee-b82b-e2ba4f6a1631
+    name: Virgin Islands, U.S.
+    code: VI
+    code_3: VIR
+    continent: 5
+    phone: 1
+    currency: 5
+    iban_sample: null
+    iban_length: null
+- model: ox_locations.country
+  pk: 242
+  fields:
+    uuid: 9189fcca-f1a8-41d1-aff6-0acae50b5348
+    name: Viet Nam
+    code: VN
+    code_3: VNM
+    continent: 3
+    phone: 84
+    currency: 166
+    iban_sample: null
+    iban_length: null
+- model: ox_locations.country
+  pk: 243
+  fields:
+    uuid: 375afb29-d504-450a-9c21-2f4a5a049b81
+    name: Vanuatu
+    code: VU
+    code_3: VUT
+    continent: 6
+    phone: 678
+    currency: 163
+    iban_sample: null
+    iban_length: null
+- model: ox_locations.country
+  pk: 244
+  fields:
+    uuid: 7051472c-b576-47e3-af32-9d4541c47db0
+    name: Wallis and Futuna
+    code: WF
+    code_3: WLF
+    continent: 6
+    phone: 681
+    currency: 60
+    iban_sample: null
+    iban_length: null
+- model: ox_locations.country
+  pk: 245
+  fields:
+    uuid: fea98c87-0fbf-45de-99b1-1b4d9c91cd5c
+    name: Samoa
+    code: WS
+    code_3: WSM
+    continent: 6
+    phone: 685
+    currency: 128
+    iban_sample: null
+    iban_length: null
+- model: ox_locations.country
+  pk: 246
+  fields:
+    uuid: 7b1e933c-f96c-4620-bc25-afa0e703f300
+    name: Yemen
+    code: YE
+    code_3: YEM
+    continent: 3
+    phone: 967
+    currency: 167
+    iban_sample: null
+    iban_length: null
+- model: ox_locations.country
+  pk: 247
+  fields:
+    uuid: d141101e-7ea5-40f1-b692-ad39e969cfdc
+    name: South Africa
+    code: ZA
+    code_3: ZAF
+    continent: 1
+    phone: 27
+    currency: 91
+    iban_sample: null
+    iban_length: null
+- model: ox_locations.country
+  pk: 248
+  fields:
+    uuid: 31005087-cef9-4151-af3a-74241330f62a
+    name: Zambia
+    code: ZM
+    code_3: ZMB
+    continent: 1
+    phone: 260
+    currency: 168
+    iban_sample: null
+    iban_length: null
+- model: ox_locations.country
+  pk: 249
+  fields:
+    uuid: 6d47261b-a837-40b5-a529-3c6bab05fb71
+    name: Zimbabwe
+    code: ZW
+    code_3: ZWE
+    continent: 1
+    phone: 263
+    currency: 169
+    iban_sample: null
+    iban_length: null

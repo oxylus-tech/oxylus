@@ -30,7 +30,7 @@
     "models.groups": "Group | Groups",
     "models.users": "User | Users",
 
-    "fields._.mandatory": "This field is required",
+    "fields._.required": "This field is required",
     "fields.id": "Id",
     "fields.name": "Name | Names",
     "fields.color": "Color",
@@ -48,6 +48,15 @@
     "fields.group": "Group",
     "fields.groups": "Groups",
 
+    "models.bankAccount": "Bank Account | Bank Accounts",
+    "fields.address": "Address | Addresses",
+    "fields.bic": "BIC/SWIFT",
+    "fields.bank_name": "Bank Name",
+    "fields.iban": "IBAN",
+    "fields.iban.invalid_checksum": "Invalid IBAN checksum",
+    "fields.iban.too_short": "IBAN too short",
+    "fields.iban.help": "Example for {name}: \"{sample}\"",
+    "fields.iban.country_without_iban": "The detected country {name} might not support IBAN",
 
     "models.persons": "Person | Persons",
     "models.organisations": "Organisation | Organisations",
@@ -67,5 +76,14 @@
     "fields.vat": "VAT",
     "fields.company_form": "Company Form",
     "fields.vat.rule": "Please provide a valid VAT number",
-    "fields.reference": "Reference"
+    "fields.reference": "Reference",
+
+    "enums.contactinfo_kind": "Kind",
+    "enums.contactinfo_kind.0": "Main",
+    "enums.contactinfo_kind.1": "Professional",
+    "enums.contactinfo_kind.2": "Home",
+    "enums.contactinfo_kind.3": "Legal",
+    "enums.contactinfo_kind.16": "Other",
+
+    "empty": ""
 }

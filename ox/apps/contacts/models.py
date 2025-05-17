@@ -7,7 +7,17 @@ from ox.apps.locations.models import Country
 from ox.utils.models import Named, Colored
 
 
-__all__ = ("Contact", "ContactQuerySet", "Person", "Organisation", "OrganisationType", "Email", "Phone", "Address")
+__all__ = (
+    "Contact",
+    "ContactQuerySet",
+    "Person",
+    "Organisation",
+    "OrganisationType",
+    "Email",
+    "Phone",
+    "Address",
+    "BankAccount",
+)
 
 
 class ContactQuerySet(InheritanceQuerySet):
@@ -108,3 +118,14 @@ class Email(ContactInfo):
     class Meta:
         verbose_name = _("Email")
         verbose_name_plural = _("Emails")
+
+
+class BankAccount(ContactInfo, Named):
+    iban = models.CharField(_("IBAN"), max_length=40)
+    bic = models.CharField(_("SWIFT/BIC"), max_length=11)
+    address = models.CharField(_("Address"), max_length=128)
+    bank_name = models.CharField(_("Bank Name"), max_length=128)
+
+    class Meta:
+        verbose_name = _("IBAN Account")
+        verbose_name_plural = _("IBAN Accounts")
