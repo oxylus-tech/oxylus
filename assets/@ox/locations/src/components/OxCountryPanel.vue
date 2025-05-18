@@ -9,7 +9,7 @@
         </template>
 
         <template #list.filters="{list,filters}">
-            <ox-continent-input class="ml-3" density="compact"
+            <ox-continent-input class="ml-3" density="compact" hide-details
                 v-model="filters.continent"
                 :label="t('fields.continent')" />
 
@@ -32,7 +32,7 @@
         </template> -->
 
         <template #views.detail.edit.default="{value, saved}">
-            <ox-country-edit :initial="value" :saved="saved" :full="true"/>
+            <ox-country-edit :initial="value" :saved="saved"/>
         </template>
     </ox-model-panel>
 </template>

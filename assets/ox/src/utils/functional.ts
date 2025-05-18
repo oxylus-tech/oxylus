@@ -1,5 +1,6 @@
 
 
+// TODO: remove in favor of TS' Record
 /**
  * {@link IObject}'s key
  */
@@ -20,7 +21,7 @@ export type IObject<V=any> = {[k: IObjectKey]: V}
  * @param attr - attribute name to look for.
  * @return a `Set` of collected values.
  */
-export function collectAttr(objs: IObject[], attr: string): Set<any> {
+export function collectAttr(objs: Record[], attr: string): Set<any> {
     let dest : Set<any> = new Set()
     for(const obj of objs) {
         const vals = obj[attr]
@@ -39,7 +40,7 @@ export function collectAttr(objs: IObject[], attr: string): Set<any> {
  * Either a function returning the created value or an object to take values from
  * @name MapKeysPred
  */
-export type MapKeysPred = IObject | ((key: IObjectKey) => any)
+export type MapKeysPred = Record | ((key: RecordKey) => any)
 
 
 /**
@@ -49,10 +50,10 @@ export type MapKeysPred = IObject | ((key: IObjectKey) => any)
  * @property map - take value from this object or calling this function.
  * @return newly created object.
  */
-export function mapToObject(keys: IObject | Array<IObjectKey>, map: MapKeysPred | IObject) : IObject<IObjectKey> {
+export function mapToObject(keys: Record | Array<RecordKey>, map: MapKeysPred | Record) : Record<RecordKey> {
     if(!Array.isArray(keys))
         keys = Object.keys(keys)
-    return keys.reduce((dest: IObject, key: IObjectKey) => {
+    return keys.reduce((dest: Record, key: RecordKey) => {
         dest[key] = map instanceof Function ? map(key) : map[key];
         return dest
     }, {})
@@ -61,7 +62,7 @@ export function mapToObject(keys: IObject | Array<IObjectKey>, map: MapKeysPred 
 /**
  * Same as `Object.assign`, but skipping empty values
  */
-export function assignNonEmpty(target: IObject, source: IObject) {
+export function assignNonEmpty(target: Record, source: Record) {
     if(!source)
         return
 
@@ -78,7 +79,7 @@ export function assignNonEmpty(target: IObject, source: IObject) {
  * @param [assign] assign using this object
  * @return the object passed as target.
  */
-export function reset(target: IObject, assign: IObject|undefined=undefined) : IObject {
+export function reset(target: Record, assign: Record|undefined=undefined) : Record {
     for(const key of Object.keys(target)) {
         const val = assign?.[key]
         if(!assign || val === undefined)
@@ -98,7 +99,29 @@ export function reset(target: IObject, assign: IObject|undefined=undefined) : IO
  * Shallow copy of a class instance
  * Assign extra `attrs` attributes.
  */
-export function shallowCopy(source: IObject, attrs: IObject={}) {
+export function shallowCopy(source: Record, attrs: Record={}) {
     const clone = Object.create(Object.getPrototypeOf(source))
     return Object.assign(clone, {...source, ...attrs})
+}
+
+/**
+ * Return a new object from provided one with only specified values.
+ */
+export function filterValues(source: Record, fields: string[]) {
+    return Object.keys(source).reduce((dst, key) => {
+        if(fields.indexOf(key) != -1)
+            dst[key] = source[key]
+        return dst
+    }, {})
+}
+
+/**
+ * Return a new object from provided one with specified values excluded.
+ */
+export function excludeValues(source: Record, fields: string[]) {
+    return Object.keys(source).reduce((dst, key) => {
+        if(fields.indexOf(key) == -1)
+            dst[key] = source[key]
+        return dst
+    }, {})
 }

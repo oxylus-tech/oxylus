@@ -17,7 +17,7 @@ export type Filters = IObject<FilterValue>
 
 
 /** Base interface of a ModelList */
-export interface IModelList<M extends Model> extends ModelController<M> {
+export interface IModelList<M extends Model> extends IModelController<M> {
     /** Provide extra GET parameters. */
     filters?: Filters
     /** Response's key used to return URL to previous paginated items. */

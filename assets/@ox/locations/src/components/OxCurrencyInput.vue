@@ -39,5 +39,5 @@ const props = defineProps({
 const value = defineModel()
 
 const repos = useCurrencies()
-const items = computed(() => repos.currencies.all().orderBy('name'))
+const items = computed(() => repos.currencies.orderBy('name').all())
 </script>

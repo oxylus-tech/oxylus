@@ -74,7 +74,7 @@
 import {computed, defineProps, defineEmits, inject, toRefs, reactive, useTemplateRef, watch} from 'vue'
 
 import { t, query, rules} from "ox"
-import type {User, ModelEditor} from 'ox'
+import type {User, IModelEditorProps} from 'ox'
 import {OxFieldDetails, OxModelEdit} from 'ox/components'
 import {OxCountryInput, OxIbanInput} from '@ox/locations/components'
 
@@ -82,6 +82,7 @@ import {vatRule} from '../composables'
 import OxContactInfos from './OxContactInfos'
 
 const repos = inject('repos')
+const props = defineProps<IModelEditorProps>()
 
 // --- Organisation type
 var tried = null // used by types to avoid looping

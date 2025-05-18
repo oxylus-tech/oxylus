@@ -23,7 +23,8 @@ import { Country } from '../models'
 const value = defineModel()
 const slots = useSlots()
 const props = defineProps({
-    density: String
+    density: String,
+    hideDetails: Boolean,
 })
 
 </script>

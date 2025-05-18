@@ -34,12 +34,14 @@
 import {computed, defineProps, defineEmits, inject, toRefs, reactive, useTemplateRef, watch} from 'vue'
 
 import { t } from "ox"
-import type {User, ModelEditor} from 'ox'
+import type {User, IModelEditorProps} from 'ox'
 import {OxFieldDetails, OxModelEdit} from 'ox/components'
 
 import OxContactInfos from './OxContactInfos'
 
 const repos = inject('repos')
+const props = defineProps<IModelEditorProps>()
+
 const organisations = computed(() => repos.organisations.all())
 
 const form = useTemplateRef('form')

@@ -1,5 +1,5 @@
 <template>
-    <ox-model-edit ref="model-editor" v-bind="props" :repo="repos.organisations">
+    <ox-model-edit ref="model-editor" v-bind="props" :repo="repos.countries">
         <template #default="{editor}">
             <v-form v-model="editor.valid">
                 <v-layout>
@@ -15,7 +15,7 @@
                             </v-text-field>
                         </v-col>
                         <v-col cols="2">
-                            <v-text-field :label="t('fields.iso_alpha_2')"
+                            <v-text-field :label="t('fields.code')"
                                 :rules="[rules.required]"
                                 v-model="editor.value.code">
                                 <template #details>
@@ -24,7 +24,7 @@
                             </v-text-field>
                         </v-col>
                         <v-col cols="2">
-                            <v-text-field :label="t('fields.iso_alpha_3')"
+                            <v-text-field :label="t('fields.code_3')"
                                 :rules="[rules.required]"
                                 v-model="editor.value.code_3">
                                 <template #details>
@@ -34,7 +34,7 @@
                         </v-col>
                     </v-row>
                 </v-layout>
-                <ox-continent-input class="ml-3" density="compact"
+                <ox-continent-input class="ml-3"
                     v-model="editor.value.continent"
                     :label="t('fields.continent')">
                     <template #details>
@@ -57,6 +57,7 @@
 // import {computed, defineProps, } from 'vue'
 
 import { t, query, rules} from "ox"
+import type {IModelEditorProps} from 'ox'
 import {OxFieldDetails, OxModelEdit} from 'ox/components'
 
 import {useLocationModels} from '../composables'
@@ -64,4 +65,5 @@ import OxContinentInput from './OxContinentInput.vue'
 import OxCurrencyInput from './OxCurrencyInput'
 
 const repos = useLocationModels()
+const props = defineProps<IModelEditorProps>()
 </script>

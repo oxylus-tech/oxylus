@@ -34,6 +34,12 @@ export class Country extends models.Model {
         title: "name"
     })
 
+    static config = {
+        axiosApi: {
+            dataKey: 'results'
+        }
+    }
+
     static fields() {
         return {
             id: this.attr(null),

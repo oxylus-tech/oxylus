@@ -1,6 +1,8 @@
 <template>
     <v-data-table-server
-            :items="items" item-index="id" :items-length="list.count || items.length"
+            :items="items" item-index="id"
+            :items-length="list.count || items.length"
+            :items-per-page="props.itemsPerPage"
             :loading="list.state?.isProcessing"
             :headers="headers"
             class="align-top-table"
@@ -33,7 +35,7 @@
 import { computed, defineProps, inject, ref, useSlots } from 'vue'
 
 import { t, tKeys } from 'ox'
-import { Permissions } from '../models'
+// import { Permissions } from '../models'
 import { filterSlots } from '../utils'
 import OxAction from './OxAction.vue'
 
@@ -44,10 +46,12 @@ const panel = inject('panel')
 const list = inject('list')
 const items = inject('items')
 
-const permissions = new Permissions(['change'])
+const permissions = ['change']
 const props = defineProps({
     // list: Object,
+    /** Table headers */
     headers: Array,
+    /** If True, allow user to edit (display edit button) */
     edit: Boolean,
 })
 
