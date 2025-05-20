@@ -10,6 +10,15 @@ export default {
     },
 
     /**
+     * Validate field errors returned from the server.
+     */
+    errors(errorList) {
+        return () => {
+            errorList?.length ? errorList.join('<br>') : true
+        }
+    },
+
+    /**
      * Return a rule whose validating value is optional.
      *
      * By default rules require value to be provided. This returns a new

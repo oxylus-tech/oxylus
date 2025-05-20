@@ -1,3 +1,4 @@
+import {uniqWith} from 'lodash'
 import {unref} from 'vue'
 import type {Ref} from 'vue'
 import type {Response} from '@pinia-orm/axios'
@@ -38,7 +39,7 @@ export interface IModelListFetch<M extends Model> extends IModelFetch<M> {
      * Append items to list. If `false` (default), fetch results will replace
      * current list items.
      */
-    append?: boolean
+    append?: boolean | number
 }
 
 
@@ -61,7 +62,8 @@ export interface IModelListFetch<M extends Model> extends IModelFetch<M> {
  * await list.load({url: '/users'})
  */
 export default class ModelList<M extends Model> extends ModelController<M, IModelList<M>> {
-    ids: number[] = []
+    // ids: number[] = []
+    items: M[] = []
     filters: Filters = {}
     nextUrl: string|null = null
     prevUrl: string|null = null
@@ -73,13 +75,16 @@ export default class ModelList<M extends Model> extends ModelController<M, IMode
     countKey = "count"
 
     /** Get items count. */
-    get length(): number { return this.ids.length }
+    get length(): number { return this.items.length }
+
+    /** Get ids **/
+    get ids(): number[] { return this.items.map(v => v.id) }
 
     /** Get item by list index */
-    get(index: number): number { return index < this.ids.length ? this.ids[index] : null }
+    get(index: number): number { return index < this.items.length ? this.items[index] : null }
 
     /** Get item index by id */
-    findIndex(id: number): number { return this.ids.indexOf(id) }
+    findIndex(id: number): number { return this.items.findIndex((v) => v.id == id) }
 
     /**
      * Get item id next to provided one at the specified direction.
@@ -94,7 +99,7 @@ export default class ModelList<M extends Model> extends ModelController<M, IMode
 
         const index = this.findIndex(item.id)
         const sibling = index >= 0 ? index+step : -1
-        return sibling >= 0 && sibling < this.ids.length ? sibling : -1
+        return sibling >= 0 && sibling < this.items.length ? sibling : -1
     }
 
     /**
@@ -124,18 +129,29 @@ export default class ModelList<M extends Model> extends ModelController<M, IMode
     async handleResponse({append=false, ...options}: IModelListFetch<M>, response: Response): Promise<Response> {
         response = await super.handleResponse(options, response)
         if(!this.state.isError) {
-            const ids = [...collectAttr(response.entities, 'id')]
-            this.ids = append ? this.ids.concat(ids) : ids
+            /*const ids = [...collectAttr(response.entities, 'id')]
+            if(typeof append == "number")
+                this.ids.splice(append, 0, ...ids)
+            else
+                this.ids = append ? this.ids.concat(ids) : ids
+                */
+            if(typeof append == "number")
+                this.items.splice(append, 0, ...response.entities)
+            else
+                this.items = append ? this.items.concat(response.entities) : response.entities
+
+            this.items = uniqWith(this.items, (a, b) => a.id == b.id)
             this.nextUrl = response.response.data[this.nextKey] || null
             this.prevUrl = response.response.data[this.prevKey] || null
-            this.count = response.response.data[this.countKey] || this.ids.length
+            this.count = response.response.data[this.countKey] || this.length
         }
         return response
     }
 }
 
 export default interface ModelList<M extends Model> extends IModelList<M> {
-    ids: number[]
+    //ids: number[]
+    items: M[]
     nextUrl: string|null
     prevUrl: string|null
     count: number|null

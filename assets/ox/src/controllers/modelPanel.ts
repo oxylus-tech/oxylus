@@ -19,12 +19,26 @@ import {query} from './query'
 
 /** Model panel component properties. */
 export interface IModelPanelProps<M extends Model> extends IPanelProps {
+    /** Current repository */
     repo: Repository<M>
-    search: string
+    // search: string
+    /** Current view */
     view: string
+    /** List table headers */
     headers?: string[]
+    /** Related fields to get from pinia orm's database and eventually fetch when items are retrieved from API.  */
     relations?: string[]
+    /** Show filters */
     showFilters?: boolean
+    /** Fetch related fields from API when queried */
+    fetchRelations: boolean
+    /** Search filter lookup */
+    search: string
+
+    /**
+     * Display this warning on the top of the panel.
+     */
+    warning?: string
 }
 
 /** Model panel interface. */

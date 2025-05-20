@@ -58,8 +58,9 @@ export default class Panels {
     }
 
     register(name: string, child: Panel) {
-        if(name in this.children)
+        /*if(name in this.children) {
             throw Error(`Child panel is already registered ${name}.`)
+        }*/
         this.children[name] = child
     }
 

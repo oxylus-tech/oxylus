@@ -25,6 +25,8 @@ const slots = useSlots()
 const props = defineProps({
     density: String,
     hideDetails: Boolean,
+    rules: Array,
+    disabled: Boolean,
 })
 
 </script>

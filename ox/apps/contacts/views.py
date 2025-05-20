@@ -1,12 +1,50 @@
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
+from django.utils.translation import gettext_lazy as _
 
 from rest_framework.permissions import DjangoModelPermissions, DjangoModelPermissionsOrAnonReadOnly
 
-from ox.core.views import AppView, ModelViewSet
+from ox.core.views import AppView, ModelViewSet, register_nav
 from . import models, serializers
 
 
 __all__ = ("AppView", "OrganisationTypeViewSet", "OrganisationViewSet", "PersonViewSet", "AddressViewSet")
+
+
+register_nav(
+    "contacts",
+    {
+        "title": _("Contacts"),
+        "type": "group",
+        "items": {
+            "persons": {
+                "url": "ox_contacts:index",
+                "title": _("Persons"),
+                "icon": "mdi-card-account-mail",
+                "order": 0,
+                "permissions": "ox_contacts.view_person",
+            },
+            "organisations": {
+                "url": "ox_contacts:index",
+                "title": _("Organisations"),
+                "icon": "mdi-domain",
+                "permissions": "ox_contacts.view_organisation",
+            },
+            "settings": {
+                "title": _("Settings"),
+                "type": "subheader",
+                "order": 100,
+                "items": {
+                    "organisationTypes": {
+                        "url": "ox_contacts:index",
+                        "title": _("Organisation Types"),
+                        "icon": "mdi-domain-switch",
+                        "permissions": "ox_contacts.view_organisationtype",
+                    }
+                },
+            },
+        },
+    },
+)
 
 
 class AppView(PermissionRequiredMixin, LoginRequiredMixin, AppView):
@@ -21,12 +59,9 @@ class OrganisationTypeViewSet(ModelViewSet):
     queryset = models.OrganisationType.objects.all().order_by("name")
     serializer_class = serializers.OrganisationTypeSerializer
     permission_classes = [DjangoModelPermissionsOrAnonReadOnly]
-    pagination_class = None
 
-    search_fields = [
-        "name",
-    ]
     filterset_fields = {"country__uuid": ["in", "exact"]}
+    search_fields = ["name", "abbreviation", "code"]
 
 
 class OrganisationViewSet(ModelViewSet):

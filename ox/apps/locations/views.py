@@ -1,11 +1,35 @@
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
+from django.utils.translation import gettext_lazy as _
 from rest_framework.permissions import DjangoModelPermissionsOrAnonReadOnly
 
-from ox.core.views import AppView, ModelViewSet
+from ox.core.views import AppView, ModelViewSet, register_nav
 from . import models, serializers, filters
 
 
-__all__ = ("CountryViewSet",)
+__all__ = ("AppView", "CountryViewSet", "CurrencyViewSet")
+
+
+register_nav(
+    "settings.locations",
+    {
+        "title": _("Locations"),
+        "type": "subheader",
+        "items": {
+            "countries": {
+                "url": "ox_locations:index",
+                "title": _("Countries"),
+                "icon": "mdi-earth",
+                "permissions": "ox_locations.view_country",
+            },
+            "currencies": {
+                "url": "ox_locations:index",
+                "title": _("Currencies"),
+                "icon": "mdi-currency-eur",
+                "permissions": "ox_locations.view_currency",
+            },
+        },
+    },
+)
 
 
 class AppView(PermissionRequiredMixin, LoginRequiredMixin, AppView):
@@ -35,7 +59,10 @@ class CurrencyViewSet(ModelViewSet):
     search_fields = [
         "name",
     ]
-    filterset_fields = {"code", "name", "numeric"}
-    pagination_class = None
+    filterset_fields = {
+        "code": ["exact"],
+        "name": ["exact", "icontains"],
+        "numeric": ["exact"],
+    }
 
     # TODO: static view

@@ -1,14 +1,14 @@
 <template>
     <v-text-field
         v-model="displayIban"
-        label="IBAN"
+        :label="props.label || 'IBAN'"
         :rules="[validateIban]"
     >
         <template #prepend-inner v-if="country">
             {{ country.flag }}
         </template>
-        <template #append v-if="country && country.currency_code">
-            {{ country.currency_code }}
+        <template #append v-if="country && country.$currency">
+            {{ country.$currency.code }}
         </template>
     </v-text-field>
     <p v-if="country" class="v-messages">
@@ -24,19 +24,24 @@
 </template>
 
 <script setup lang="ts">
-import { computed, defineModel, ref, watch } from 'vue';
-import { t } from 'ox'
-import { useCountries } from '../composables';
+import { computed, defineProps, defineModel, ref, watch } from 'vue';
+import { t, query } from 'ox'
+import { useLocationModels } from '../composables';
 
-const {countries} = useCountries()
+const {countries, currencies} = useLocationModels()
+query(countries).allOnce()
+query(currencies).allOnce()
 
+const props = defineProps({
+    label: String,
+})
 const rawIban = defineModel({type: String, default: ''});
 const displayIban = ref('');
 const countryCode = computed(() =>
   rawIban.value.length >= 2 ? rawIban.value.substring(0, 2).toUpperCase() : ''
 );
 
-const country = computed(() => countryCode.value && countries.where('code', countryCode.value).first() || null)
+const country = computed(() => countryCode.value && countries.where('code', countryCode.value).with('$currency').first() || null)
 
 watch(displayIban, (val, old) => {
     if(val != old) {

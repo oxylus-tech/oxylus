@@ -104,12 +104,30 @@ export function shallowCopy(source: Record, attrs: Record={}) {
     return Object.assign(clone, {...source, ...attrs})
 }
 
+
+/**
+ * Return two objects from the provided one with the first one having
+ * values specified by keys, other with what's left.
+ */
+export function splitValues(source: Record, keys: Record|string[]) {
+    if(!Array.isArray(keys))
+        keys = Object.keys(keys)
+    return Object.keys(source).reduce((dst, key) => {
+        if(keys.indexOf(key) == -1)
+            dst[1][key] = source[key]
+        else
+            dst[0][key] = source[key]
+        return dst
+    }, [{}, {}])
+}
+
+
 /**
  * Return a new object from provided one with only specified values.
  */
-export function filterValues(source: Record, fields: string[]) {
+export function filterValues(source: Record, keys: string[]) {
     return Object.keys(source).reduce((dst, key) => {
-        if(fields.indexOf(key) != -1)
+        if(keys.indexOf(key) != -1)
             dst[key] = source[key]
         return dst
     }, {})
@@ -118,9 +136,9 @@ export function filterValues(source: Record, fields: string[]) {
 /**
  * Return a new object from provided one with specified values excluded.
  */
-export function excludeValues(source: Record, fields: string[]) {
+export function excludeValues(source: Record, keys: string[]) {
     return Object.keys(source).reduce((dst, key) => {
-        if(fields.indexOf(key) == -1)
+        if(keys.indexOf(key) == -1)
             dst[key] = source[key]
         return dst
     }, {})

@@ -71,6 +71,10 @@ export class Model extends PModel {
         app: "ox_core",
     })
 
+    static config = {
+        axiosApi: { dataKey: 'results' }
+    }
+
     /** Get model's Meta class */
     get $meta(): Meta { return (this.constructor as typeof Model).meta }
 

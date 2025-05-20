@@ -33,11 +33,15 @@ export interface IPanelProps extends IPanelInfo {
 /** Component properties used by OxPanelNav */
 export type IPanelNavProps = IPanelInfo & {
     /** Panel's name */
-    panel: string
+    value: string
     /** Panels page **/
-    href?: string
-    /** Only display the navigation item when panel is active. */
-    auto?: boolean
+    url?: string
+    /** Required permission */
+    permissions?: string|string[]
+    /** Item type: subheader, divider, (item by default) */
+    type?: string,
+    /** Nested items */
+    items?: Record[]
 }
 
 export interface IPanel<P> extends IPanelInfo {

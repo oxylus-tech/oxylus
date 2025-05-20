@@ -45,6 +45,8 @@ export interface IQueryFetch<M extends Model> extends Partial<object> {
     params?: IObject
     /** Fetch items from thoses relations. */
     relations?: string[]
+    /** If true (default value), save items in Pinia repository */
+    save: boolean
 }
 
 /**
@@ -107,6 +109,12 @@ export default class Query<M extends Model> {
      */
     async fetch({url, id=null, ids=null, repo=null, lookup="id__in", params=undefined, relations=null, path=null, ...opts}: IQueryFetch<M> = {}) : Promise<Response> {
         repo ??= this.repo
+
+        if(ids?.length === 1) {
+            id = ids[0]
+            ids = null
+        }
+
         if(!url)
             url = repo.use?.meta?.getUrl({path, id})
 
@@ -217,7 +225,7 @@ export default class Query<M extends Model> {
         const fk = getSourceKey(rel)
         if(!fk)
             throw Error(`No source ids attributes for ${relation}.`)
-        const ids = collectAttr(objs, fk)
+        const ids = [... new Set(collectAttr(objs, fk))]
         const query = new Query(repo2, this.repos)
         return query.all({...options, ids, repo: repo2})
     }

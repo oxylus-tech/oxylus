@@ -1,9 +1,5 @@
 <template>
-    <ox-model-panel :name="props.name"
-            icon="mdi-account-multiple" :repo="repos.groups"
-            :headers="props.headers"
-            :relations="props.relations"
-            search="search">
+    <ox-model-panel v-bind="props" :repo="repos.groups" icon="mdi-account-multiple">
         <template v-for="(_, name) in slots" :key="name" #[name]="bind">
             <slot :name="name" v-bind="bind"></slot>
         </template>
@@ -22,16 +18,14 @@
     </ox-model-panel>
 </template>
 <script setup lang="ts">
-import { defineProps, inject, useSlots, withDefaults } from 'vue'
+import { defineProps, useSlots, withDefaults } from 'vue'
 
 import type {IModelPanelProps} from 'ox'
 
 import { OxModelPanel } from 'ox/components'
 import { useAuthModels } from '../composables'
 import OxGroupEdit from './OxGroupEdit.vue'
-// import OxGroupUsers from './OxGroupUsers.vue'
 
-const context = inject('context')
 const slots = useSlots()
 
 const repos = useAuthModels()

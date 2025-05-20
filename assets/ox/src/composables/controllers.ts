@@ -100,7 +100,11 @@ export function useModelPanel<M extends Model, P extends IModelPanelProps<M>>(
     query ??= useQuery(options.props.repo, inject('repos'))
     options.panels ??= inject('panels')
 
-    const {list, items} = useModelList({query, relations: options.props.relations})
+    const {list, items} = useModelList({
+        query,
+        relations: options.props.relations,
+        fetchRelations: options.props.fetchRelations
+    })
     const {panel} = usePanel({list, ...options}, ModelPanel)
 
     const next = computed(() => {
@@ -121,10 +125,10 @@ export function useModelPanel<M extends Model, P extends IModelPanelProps<M>>(
 export function useModelList<M extends Model>(options : IModelList<M>, cls: typeof ModelList = ModelList)
 {
     const list = reactive(new cls(options))
-    const items = computed(
-        () => list.ids ?
+    const items = computed(() =>
+        list.save && list.relations && list.length ?
             list.queryset(list.ids).orderBy((item) => list.ids.indexOf(item)).get() :
-            []
+            list.items
     )
 
     provide('list', list)

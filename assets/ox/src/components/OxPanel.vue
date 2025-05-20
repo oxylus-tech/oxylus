@@ -14,7 +14,7 @@
                     icon="mdi-information-outline" />
             </Teleport>
 
-            <slot name="top"></slot>
+            <slot name="top"/>
 
             <slot name="default">
                 <template v-if="views">

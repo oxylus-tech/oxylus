@@ -1,17 +1,18 @@
 <template>
-    <ox-autocomplete :repo="repos.countries" lookup="name__icontains"
+    <ox-autocomplete :repo="repos.organisationTypes"
         item-value="id" item-title="name"
-        v-model="value"
-        v-bind="props"
+        lookup="search" :filters="{country__uuid: props.country}"
+        :custom-filter="customFilter"
+        v-model="value" v-bind="props"
         >
         <template #selection="{ item, index }">
-            <span class="mr-2">{{ item.raw.flag }}</span>
             {{ item.raw.name }}
+            <span class="ml-2">{{ item.raw.abbreviation }}</span>
         </template>
         <template #item="{ props: itemProps, item }">
             <v-list-item v-bind="itemProps">
-                <template #prepend>
-                    <span class="mr-2">{{ item.raw.flag }} </span>
+                <template #append>
+                    <span class="ml-2">{{ item.raw.abbreviation }} </span>
                 </template>
             </v-list-item>
         </template>
@@ -23,9 +24,9 @@
 </template>
 <script setup lang="ts">
 import {useSlots, defineModel, defineProps} from 'vue'
-import {query} from 'ox'
+import {query, useModels} from 'ox'
 import {OxAutocomplete} from 'ox/components'
-import {useCountries} from '../composables'
+import {OrganisationType} from '../models'
 
 const slots = useSlots()
 const props = defineProps({
@@ -34,8 +35,17 @@ const props = defineProps({
     multiple: Boolean,
     hideDetails: Boolean,
     density: String,
+    country: String,
+    disabled: Boolean,
     rules: Array,
 })
 const value = defineModel()
-const repos = useCountries()
+
+const repos = useModels([OrganisationType])
+
+function customFilter(title, text, item) {
+    text = text.toUpperCase()
+    return item.raw.name.toUpperCase().indexOf(text) != -1 ||
+        item.raw.abbreviation.toUpperCase().indexOf(text) != -1
+}
 </script>

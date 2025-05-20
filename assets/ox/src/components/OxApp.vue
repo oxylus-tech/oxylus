@@ -21,16 +21,19 @@
             <div id="app-bar-right" class="mr-3"></div>
             <slot name="app-bar-right" :context="context"></slot>
         </v-app-bar>
-        <v-navigation-drawer theme="dark" v-model="nav.drawer">
-            <a class="nav-home">
-                <v-img v-if="logo" :src="logo" class="logo"/>
-            </a>
-            <slot name="nav-start" :context="context"></slot>
-            <slot name="nav-list" :context="context"></slot>
-            <template #append v-if="slots['nav-end']">
-                <slot name="nav-end" :context="context"></slot>
+        <ox-app-nav v-model:drawer="nav.drawer" :items="context.data.nav">
+            <template #prepend>
+                <a class="nav-home">
+                    <v-img v-if="logo" :src="logo" class="logo"/>
+                </a>
+                <slot name="nav-start" :context="context"></slot>
             </template>
-        </v-navigation-drawer>
+            <template #append v-if="slots['nav-end']">
+                <v-list v-model:opened="nav.opened">
+                    <slot name="nav-end" :context="context"></slot>
+                </v-list>
+            </template>
+        </ox-app-nav>
         <v-main>
             <slot name="main">
                 <v-tabs-window v-model="panels.panel">
@@ -56,10 +59,9 @@
 import { useSlots, withDefaults, onErrorCaptured, onMounted } from 'vue'
 import { computed, defineProps, inject, provide, reactive, watch } from 'vue'
 
-import {useAppContext, usePanels} from 'ox'
+import {useAppContext, usePanels, t} from 'ox'
 import type {Model} from '../models'
-
-import { t } from 'ox'
+import OxAppNav from './OxAppNav'
 
 const slots = useSlots()
 
@@ -89,6 +91,4 @@ watch(() => [context.state.state, context.state.data], () => {
 onErrorCaptured((err, instance, info) => {
     context.state.error(`${err}`)
 })
-
-
 </script>

@@ -1,9 +1,9 @@
 <template>
-    <v-select v-model="value" :items="items"
+    <ox-autocomplete :repo="repos.currencies" lookup="name__icontains"
         item-value="id" item-title="name"
-        @update:modelValue="emits('update:modelValue', $event)"
-        v-bind="props">
-
+        v-model="value"
+        v-bind="props"
+        >
         <template v-slot:selection="{ item, index }">
             {{ item.raw.name }}
             <span class="ml-2">{{ item.code }}</span>
@@ -19,14 +19,13 @@
         <template v-for="slot of slots" #[slot]="bind">
             <slot :name="slot" v-bind="bind"/>
         </template>
-    </v-select>
+    </ox-autocomplete>
 </template>
 <script setup lang="ts">
-import {computed, useSlots, defineModel, defineEmits, defineProps, inject} from 'vue'
+import {useSlots, defineModel, defineProps} from 'vue'
 import {query} from 'ox'
+import {OxAutocomplete} from 'ox/components'
 import {useCurrencies} from '../composables'
-
-const emits = defineEmits(["update:modelValue"])
 
 const slots = useSlots()
 const props = defineProps({
@@ -34,10 +33,9 @@ const props = defineProps({
     name: String,
     multiple: Boolean,
     hideDetails: Boolean,
-    density: String
+    density: String,
+    rules: Array,
 })
 const value = defineModel()
-
 const repos = useCurrencies()
-const items = computed(() => repos.currencies.orderBy('name').all())
 </script>

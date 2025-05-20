@@ -37,7 +37,9 @@ class OrganisationType(Named, Model):
     """Represent a kind of Organisation."""
 
     country = models.ForeignKey(Country, models.CASCADE)
-    code = models.CharField(_("Abbreviation"), max_length=8, blank=True, default="")
+    code = models.CharField(_("Code"), max_length=8, blank=True, default="")
+    abbreviation = models.CharField(_("Abbreviation"), max_length=32, blank=True, default="")
+    language_code = models.CharField(_("Language Code"), max_length=4, blank=True, default="")
 
     class Meta:
         verbose_name = _("Company Form")

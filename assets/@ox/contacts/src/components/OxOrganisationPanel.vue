@@ -1,9 +1,5 @@
 <template>
-    <ox-model-panel :name="props.name"
-            icon="mdi-domain" :repo="repos.organisations"
-            :headers="props.headers"
-            :relations="props.relations"
-            search="search">
+    <ox-model-panel v-bind="props" :repo="repos.organisations" icon="mdi-domain">
         <template v-for="name in forwardSlots" :key="name" #[name]="bind">
             <slot :name="name" v-bind="bind"/>
         </template>
@@ -50,7 +46,7 @@
     </ox-model-panel>
 </template>
 <script setup lang="ts">
-import { computed, defineProps, inject, useSlots, withDefaults } from 'vue'
+import { computed, defineProps, useSlots, withDefaults } from 'vue'
 
 import { query, t } from 'ox'
 import {OxModelPanel} from 'ox/components'
@@ -60,13 +56,11 @@ import {OxCountryInput} from '@ox/locations/components'
 import {useContactModels} from '../composables'
 import OxOrganisationEdit from './OxOrganisationEdit'
 
-const context = inject('context')
 const slots = useSlots()
 const forwardSlots = Object.keys(slots).filter(x => !(['list.filters', 'item.groups'].includes(x)))
 
 const repos = useContactModels()
 query(repos.organisations).all({dataKey: 'results'})
-query(repos.organisationtypes).all()
 
 const organisations = computed(() => repos.organisations.all())
 

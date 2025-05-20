@@ -21,6 +21,7 @@ export class ContentType extends Model {
         url: "ox/core/content_type/",
         title: "label"
     })
+    static config = {}
 
     static fields() {
         return {
@@ -72,6 +73,7 @@ export class Permission extends Model {
         url: "ox/core/permission/",
         title: "label"
     })
+    static config = {}
 
     static fields() {
         return {
@@ -189,12 +191,6 @@ export class Group extends Model {
         icon: "mdi-account-multiple",
         title: "name",
     })
-
-    static config = {
-        axiosApi: {
-            dataKey: 'results',
-        }
-    }
 
     static fields() {
         return {

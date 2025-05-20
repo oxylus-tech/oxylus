@@ -19,6 +19,9 @@
 
     "views.edit.informations": "Informations",
 
+    "alerts.danger_zone_system_data":
+        "Be cautious when updating system data as they are not meant to be directly modified. Changing those values may break things unexpectedly.",
+
     "filters.search": "Search",
     "filters.show": "Show filters",
     "filters.hide": "Hide filters",
@@ -64,6 +67,11 @@
     "fields.iban.too_short": "IBAN too short",
     "fields.iban.help": "Example for {name}: \"{sample}\"",
     "fields.iban.country_without_iban": "The detected country {name} might not support IBAN",
+    "fields.phone_prefix": "Phone Prefix | Phone Prefixes",
+    "fields.numeric": "Numeric Code | Numeric Codes",
+    "fields.is_iso": "Is ISO",
+    "fields.valid_to": "Valid to",
+
 
 
     "enums.continent.1": "Africa",
@@ -77,7 +85,7 @@
 
     "models.persons": "Person | Persons",
     "models.organisations": "Organisation | Organisations",
-    "models.organisationtypes": "Organisation Type | Organisation Types",
+    "models.organisationTypes": "Organisation Type | Organisation Types",
     "models.bankAccount": "Bank Account | Bank Accounts",
     "fields.kind": "Kind",
     "fields.short_name": "Short Name | Short Names",
@@ -96,6 +104,8 @@
     "fields.company_form": "Company Form",
     "fields.vat.rule": "Please provide a valid VAT number",
     "fields.reference": "Reference",
+    "fields.abbreviation": "Abbreviation",
+    "fields.language_code": "Language Code",
 
     "enums.contactinfo_kind.0": "Main",
     "enums.contactinfo_kind.1": "Professional",

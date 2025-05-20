@@ -19,6 +19,8 @@ export interface IModelController<M extends Model> {
     url?: string
     /** Fetch related fields from API when queried */
     fetchRelations: boolean
+    /** If true (default value), save items in Pinia repository */
+    save: boolean
 }
 
 export interface IModelFetch<M extends Model> extends IQueryFetch<M> {
@@ -42,6 +44,7 @@ export interface IModelFetch<M extends Model> extends IQueryFetch<M> {
  */
 export default class ModelController<M extends Model, O=IModelController<M>> {
     state = State.none()
+    save = true
 
     /** The repository of contained items. */
     get repo(): Repository<M> { return this.query.repo }
@@ -119,13 +122,10 @@ export default class ModelController<M extends Model, O=IModelController<M>> {
         // if(!("dataKey" in options))
         //    options.dataKey = this.dataKey
         if(!options.url)
-            options.url = this.getQueryUrl(options)
+            options.url = this.url
+        if(!("save" in options))
+            options.save = this.save
         return options
-    }
-
-    /** Return url to use in order to query API. */
-    protected getQueryUrl(options: IModelFetch<M>) {
-        return this.url || this.model.meta?.url
     }
 }
 export default interface ModelController<M extends Model, O> extends IModelController<M> {

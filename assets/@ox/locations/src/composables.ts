@@ -5,8 +5,8 @@ import { Country, Currency } from './models'
 /** Use @ox/locations models. */
 export function useLocationModels() {
     const repos = useModels([Country, Currency], {withDefaults: false})
-    query(repos.countries).allOnce()
-    query(repos.currencies).allOnce()
+    //query(repos.countries).allOnce()
+    //query(repos.currencies).allOnce()
     return repos
 }
 
@@ -14,7 +14,7 @@ export function useLocationModels() {
 /** Return repository of Country and load data if not there yet */
 export function useCountries() {
     const { countries } = useModels([Country], {withDefaults: false})
-    query(countries).allOnce()
+    //query(countries).allOnce()
     return {countries}
 }
 
@@ -22,6 +22,6 @@ export function useCountries() {
 /** Return repository of Country and load data if not there yet */
 export function useCurrencies() {
     const { currencies } = useModels([Currency], {withDefaults: false})
-    query(currencies).allOnce()
+    //query(currencies).allOnce()
     return {currencies}
 }

@@ -19,7 +19,7 @@
     </form>
 </template>
 <script setup>
-import { computed, defineProps, defineExpose, inject, watch } from 'vue'
+import { computed, defineProps, defineExpose, inject } from 'vue'
 import { t } from 'ox'
 
 const list = inject('list')
@@ -40,6 +40,5 @@ function reset() {
     list.load()
 }
 
-watch(() => Object.values(list.filters), () => list.load())
 defineExpose({ icon, hasFilters, reset})
 </script>

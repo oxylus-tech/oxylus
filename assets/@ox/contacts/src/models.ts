@@ -39,12 +39,6 @@ export class Person extends Contact {
         title: "full_name",
     })
 
-    static config = {
-        axiosApi: {
-            dataKey: 'results'
-        }
-    }
-
     static fields() {
         return {
             ...super.fields(),
@@ -63,7 +57,7 @@ export class Person extends Contact {
 
 
 export class OrganisationType extends models.Model {
-    static entity = "organisationtypes"
+    static entity = "organisationTypes"
     static meta = new models.Meta({
         app: "ox_contacts",
         model: "organisationtype",
@@ -76,6 +70,9 @@ export class OrganisationType extends models.Model {
             id: this.attr(null),
             name: this.string(),
             country: this.string(),
+            abbreviation: this.string(),
+            language_code: this.string(),
+            code: this.string(),
             $country: this.belongsTo(Country, 'country'),
         }
     }
@@ -89,12 +86,6 @@ export class Organisation extends Contact {
         url: "ox/contacts/organisation/",
         title: "name",
     })
-
-    static config = {
-        axiosApi: {
-            dataKey: 'results'
-        }
-    }
 
     static fields() {
         return {

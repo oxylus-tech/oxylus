@@ -91,14 +91,6 @@ Blocks:
                 <template #nav-start="{context}">
                     {% block nav-start %}{% endblock %}
                 </template>
-                <template #nav-list="{context}">
-                    {% block nav-list %}
-                    {% endblock %}
-                    {% block nav-list-settings %}
-                    <v-list-subheader class="ml-2">{% trans "Settings" %}</v-list-subheader>
-                    {% endblock %}
-
-                </template>
                 <template #nav-end="{context}">
                     {% block nav-end %}
                     {% include './components/nav_user.html' %}

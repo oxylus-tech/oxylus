@@ -1,9 +1,5 @@
 <template>
-    <ox-model-panel :name="props.name"
-            icon="mdi-account" :repo="repos.users"
-            :headers="props.headers"
-            :relations="props.relations"
-            search="search">
+    <ox-model-panel v-bind="props" :repo="repos.users" icon="mdi-account">
         <template v-for="name in forwardSlots" :key="name" #[name]="bind">
             <slot :name="name" v-bind="bind"/>
         </template>
@@ -36,7 +32,7 @@
     </ox-model-panel>
 </template>
 <script setup lang="ts">
-import { computed, defineProps, inject, useSlots, withDefaults } from 'vue'
+import { computed, defineProps, useSlots, withDefaults } from 'vue'
 
 import { useModels, query } from 'ox'
 import {OxModelPanel, OxListKanban} from 'ox/components'
@@ -45,7 +41,6 @@ import type {IModelPanelProps} from 'ox'
 import {useAuthModels} from '../composables'
 import OxUserEdit from './OxUserEdit.vue'
 
-const context = inject('context')
 const slots = useSlots()
 const forwardSlots = Object.keys(slots).filter(x => !(['list.filters', 'item.groups'].includes(x)))
 

@@ -80,6 +80,8 @@
         </template>
 
         <template #top>
+            <v-alert v-if="props.warning" type="warning" variant="tonal" :text="props.warning" />
+            <slot name="top"/>
             <ox-list-filters ref="filters"
                     v-show="panel.view.startsWith('list.') && showFilters"
                     :search="props.search"
@@ -114,7 +116,7 @@
     </ox-panel>
 </template>
 <script setup lang="ts">
-import { computed, defineProps, inject, useTemplateRef, useSlots, toRefs, withDefaults } from 'vue'
+import { computed, defineProps, inject, useTemplateRef, useSlots, toRefs, withDefaults, watch } from 'vue'
 import { Teleport } from 'vue'
 
 import OxAction from './OxAction.vue'
@@ -134,7 +136,9 @@ const editSlots = filterSlots(slots, 'views.detail.edit.')
 
 const filters = useTemplateRef('filters')
 const props = withDefaults(defineProps<IModelPanelProps>(), {
-    index: 'list.table'
+    index: 'list.table',
+    search: 'search',
+    fetchRelations: true,
 })
 
 const context = inject('context')
@@ -162,4 +166,6 @@ const bind = computed(() => {
         value: panel.value,
     })
 })
+
+watch(() => Object.values(list.filters), () => list.load())
 </script>
