@@ -7,7 +7,8 @@
         </template>
     </template>
     <template v-else-if="props.type == 'group'">
-        <v-list-group v-if="!props.permissions || context.user.can(props.permissions)" :value="props.value">
+        <v-list-group v-if="!props.permissions || context.user.can(props.permissions)" :value="props.value"
+                class="bg-surface-lighten">
             <template #activator="{props:itemProps}">
                 <v-list-item v-bind="itemProps"
                     :title="props.title" :prepend-icon="props.icon" />
