@@ -1,5 +1,5 @@
 <template>
-    <v-autocomplete v-bind="fieldProps"
+    <v-autocomplete v-bind="attrs"
         :items="items" :loading="list.state.isProcessing"
         v-model="value"
         v-model:search="search"
@@ -11,7 +11,7 @@
 </template>
 <script setup lang="ts">
 import { isEqual } from 'lodash'
-import { computed, defineProps, defineModel, inject, ref, onMounted, toRaw, useSlots, watch } from 'vue'
+import { defineModel, inject, ref, onMounted, useAttrs, useSlots, watch } from 'vue'
 import type {Repository} from 'pinia-orm'
 import { VAutocomplete } from 'vuetify/components/VAutocomplete'
 
@@ -27,29 +27,17 @@ interface IAutoCompleteProps extends IModelList {
     repo: Repository
     /** Search lookup */
     lookup: string
-
-    /** v-autocomplete parameters */
-    label: string
-    name: string
-    disabled: boolean
-    multiple: boolean
-    hideDetails: boolean
-    density: string
-    itemTitle: string
-    itemValue: string
-    customFilter: (itemTitle: string, queryText: string, item: any) =>  boolean
 }
+
 
 const props = withDefaults(defineProps<IAutoCompleteProps>(), {
     lookup: 'search',
 })
+const attrs = useAttrs()
 const repos = inject('repos')
 
-const $props = computed(() => splitValues(props, VAutocomplete.props))
-const fieldProps = computed(() => $props.value[0])
-
 // list props are not expected to change, only `filters`
-const listProps = excludeValues($props.value[1], ['repo', 'search'])
+const listProps = excludeValues(props, ['repo', 'search'])
 const {list, items} = useModelList({
         ...listProps.value?.[1],
         filters: props.filters || {},

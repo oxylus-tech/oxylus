@@ -1,5 +1,5 @@
 <template>
-    <v-select v-model="value" v-bind="props"
+    <v-select v-model="value" v-bind="attrs"
         :placeholder="t('fields.continent')"
         :items="Country.continentItems">
         <template #item="{item, props}">
@@ -16,17 +16,10 @@
     </v-select>
 </template>
 <script setup lang="ts">
-import { defineModel, defineProps, useSlots } from 'vue'
+import { defineModel, defineProps, useAttrs } from 'vue'
 import { t } from 'ox'
 import { Country } from '../models'
 
 const value = defineModel()
-const slots = useSlots()
-const props = defineProps({
-    density: String,
-    hideDetails: Boolean,
-    rules: Array,
-    disabled: Boolean,
-})
-
+const attrs = useAttrs()
 </script>

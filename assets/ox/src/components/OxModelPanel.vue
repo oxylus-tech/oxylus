@@ -94,7 +94,7 @@
 
         <!-- list.table is always provided -->
         <template #views.list.table v-if="!slots['views.list.table']">
-            <ox-list-table :headers="headers" edit>
+            <ox-list-table :headers="headers">
                 <template v-for="(_, name) in itemSlots" v-slot:[name]="bind" :key="name">
                     <slot :name="name" v-bind="bind"/>
                 </template>
@@ -106,7 +106,7 @@
         </template>
 
         <!-- FIXME: views.detail.edit shall be sloted too, not only nested ones? -->
-        <template #views.detail.edit v-if="(slots['views.detail.edit'] || editSlots) && canEdit">
+        <template #views.detail.edit v-if="slots['views.detail.edit'] || editSlots">
             <ox-view :title="t(`models.${panel.model.entity}`)">
                 <template v-for="(name, slot) in editSlots" #[name]>
                     <slot :name="slot" :saved="saved" :value="panel.value"/>

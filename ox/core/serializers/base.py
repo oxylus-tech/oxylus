@@ -36,6 +36,7 @@ class ModelSerializer(serializers.ModelSerializer):
         return {}
 
     # TODO: update existing ones
+    # TODO: permission check here
     def save_nested(self, obj, nested):
         for field, values in nested.items():
             model_field = getattr(self.Meta.model, field.source)

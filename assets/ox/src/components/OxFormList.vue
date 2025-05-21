@@ -8,8 +8,8 @@
                     </v-list-item-title>
                     <template #append>
                         <div @click.stop="">
-                            <slot name="item.actions" :item="item" :index="index" :editable="editable" />
-                            <template v-if="editable">
+                            <slot name="item.actions" :item="item" :index="index" v-bind="props" />
+                            <template v-if="can.delete">
                                 <v-btn type="button" class="ml-2" size="small"
                                     @click.stop.prevent="removeItem(index)" color="error"
                                     :aria-label="t('actions.remove')"
@@ -20,10 +20,12 @@
                     </template>
                 </v-list-item>
             </template>
-            <slot name="item" :item="item" :index="index"/>
+            <v-form :disabled="!can.change">
+                <slot name="item" :item="item" :index="index" :editable="can.change"/>
+            </v-form>
         </v-list-group>
-        <v-divider v-if="items.length"/>
-        <template v-if="editable">
+        <template v-if="can.add">
+            <v-divider v-if="items.length"/>
             <v-list-group :value="-1">
                 <template #activator="{props}">
                     <v-list-item v-bind="props" :title="t('actions.add_item')" prepend-icon="mdi-plus"/>
@@ -47,26 +49,27 @@
         </template>
     </v-list>
 </template>
-<style>
-.flex-row {
-
-}
-</style>
 <script setup lang="ts">
 /**
  * This component provides simple list rendering and edition.
  */
-import {defineModel, defineProps, ref, reactive, provide, useTemplateRef, toRefs} from "vue"
+import {computed, defineModel, defineProps, inject, ref, reactive, provide, useTemplateRef, toRefs} from "vue"
 import {t} from "ox"
 
 /** v-model: the list of items. **/
 const items = defineModel()
+const user = inject('user')
 const newItem = ref({})
 const props = defineProps({
-    /** Allow to add and edit items */
-    editable: {type: Boolean, default: true},
+    useModel: Function,
+    editable: Boolean,
 })
-const {editable} = toRefs(props)
+
+const can = computed(() => ({
+    add: props.editable && user.can([props.useModel, 'add']),
+    change: props.editable && user.can([props.useModel, 'change']),
+    delete: props.editable && user.can([props.useModel, 'delete']),
+}))
 
 const opened = ref([]);
 
@@ -80,6 +83,6 @@ function addItem() {
 
 function removeItem(index) {
     if(confirm(t('actions.delete.confirm')))
-        props.editable && items.value.splice(index)
+        props.delete && items.value.splice(index)
 }
 </script>

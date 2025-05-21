@@ -33,6 +33,9 @@ export class Meta {
     /** Return API url based on id and path. **/
     getUrl({path=null, id=null}: {path?: string, id?: number|string}): string {
         let url = this.url
+        if(!url)
+            throw Error("No url declared on this model.")
+
         if(id)
             url += `/${id}/`
         if(path)

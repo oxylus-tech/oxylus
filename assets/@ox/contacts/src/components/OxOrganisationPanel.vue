@@ -18,7 +18,7 @@
         </template>
 
         <template #item.name="{item}" v-if="!slots['item.color']">
-            <v-btn size='small' variant="outline" :color="item.color" icon="mdi-domain"/>
+            <v-icon :color="item.color">mdi-domain</v-icon>
             {{ item.name }}
         </template>
 

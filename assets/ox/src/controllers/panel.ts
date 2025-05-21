@@ -42,6 +42,8 @@ export type IPanelNavProps = IPanelInfo & {
     type?: string,
     /** Nested items */
     items?: Record[]
+    /** Order */
+    order: number
 }
 
 export interface IPanel<P> extends IPanelInfo {

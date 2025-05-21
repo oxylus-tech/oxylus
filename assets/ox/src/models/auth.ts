@@ -1,3 +1,4 @@
+import { unref } from 'vue'
 import type {Response} from '@pinia-orm/axios'
 import { Model, Meta } from './model'
 import type { IModel } from './model'
@@ -97,7 +98,7 @@ export class Permission extends Model {
     static getCodename(perm: IPermissionGetCodename): string {
         if(Array.isArray(perm)) {
             const [model, action] = perm
-            return `${model.meta.app}.${action}_${model.meta.model}`
+            return `${unref(model).meta.app}.${action}_${model.meta.model}`
         }
         return perm
     }
@@ -236,7 +237,7 @@ export class User extends Model {
             actions: {
                 updatePassword(id: number, value: string): Response {
                     return this.post(
-                        `${this.meta.getUrl({id})}/password/`, {password: value},
+                        `${this.repository.use.meta.getUrl({id})}password/`, {password: value},
                         {save:false}
                     )
                 }

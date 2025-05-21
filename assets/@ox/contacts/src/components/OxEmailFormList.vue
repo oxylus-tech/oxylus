@@ -1,5 +1,5 @@
 <template>
-    <ox-form-list v-model="items">
+    <ox-form-list v-model="items" v-bind="attrs">
         <template #item.title="{item}">
             <v-row>
                 <v-col>{{ item.email }}</v-col>
@@ -18,7 +18,7 @@
     </ox-form-list>
 </template>
 <script setup lang="ts">
-import {defineModel} from 'vue'
+import {defineModel, useAttrs} from 'vue'
 import { t } from 'ox'
 import {OxFormList} from 'ox/components'
 
@@ -26,4 +26,5 @@ import { ContactInfo } from '../models'
 import OxEmailForm from './OxEmailForm'
 
 const items = defineModel()
+const attrs = useAttrs()
 </script>

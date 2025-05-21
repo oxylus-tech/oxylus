@@ -1,4 +1,4 @@
-from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.utils.translation import gettext_lazy as _
 from rest_framework.permissions import DjangoModelPermissionsOrAnonReadOnly
 
@@ -32,11 +32,10 @@ register_nav(
 )
 
 
-class AppView(PermissionRequiredMixin, LoginRequiredMixin, AppView):
+class AppView(LoginRequiredMixin, AppView):
     """Application view used to handle users and groups."""
 
     template_name = "ox/locations/app.html"
-    permission_required = ["ox_locations.view_countries", "ox_contact.view_currency"]
     default_panel = "countries"
 
 

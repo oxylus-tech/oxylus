@@ -1,25 +1,27 @@
 <template>
     <ox-state-alert :state="state"/>
-    <v-text-field variant="underlined"
-        label="Enter password" v-model="password.value"
-        :type="password.show ? 'text' : 'password'"
-        :append-icon="password.show ? 'mdi-eye' : 'mdi-eye-off'"
-        @click:append="password.show = !password.show"
-        />
-    <v-text-field variant="underlined"
-        label="Confirm password" v-model="confirm.value"
-        :rules="[samePassword]"
-        :type="confirm.show ? 'text' : 'password'"
-        :append-icon="confirm.show ? 'mdi-eye' : 'mdi-eye-off'"
-        @click:append="confirm.show = !confirm.show"
-        />
-    <div class="text-right mt-3">
-        <slot name="default" :valid="valid" :value="password.value">
-            <ox-validation-btn v-if="password.value"
-                @validate="save()" @reset="reset()"
-                :state="state" :validate-disabled="!valid"/>
-        </slot>
-    </div>
+    <v-form>
+        <v-text-field variant="underlined"
+            label="Enter password" v-model="password.value"
+            :type="password.show ? 'text' : 'password'"
+            :append-icon="password.show ? 'mdi-eye' : 'mdi-eye-off'"
+            @click:append="password.show = !password.show"
+            />
+        <v-text-field variant="underlined"
+            label="Confirm password" v-model="confirm.value"
+            :rules="[samePassword]"
+            :type="confirm.show ? 'text' : 'password'"
+            :append-icon="confirm.show ? 'mdi-eye' : 'mdi-eye-off'"
+            @click:append="confirm.show = !confirm.show"
+            />
+        <div class="text-right mt-3">
+            <slot name="default" :valid="valid" :value="password.value">
+                <ox-validation-btn v-if="password.value"
+                    @validate="save()" @reset="reset()"
+                    :state="state" :validate-disabled="!valid"/>
+            </slot>
+        </div>
+    </v-form>
 </template>
 <style>
 .password-error {

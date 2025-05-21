@@ -2,7 +2,7 @@
     <ox-autocomplete :repo="repos.countries" lookup="name__icontains"
         item-value="id" item-title="name"
         v-model="value"
-        v-bind="props"
+        v-bind="attrs"
         >
         <template #selection="{ item, index }">
             <span class="mr-2">{{ item.raw.flag }}</span>
@@ -22,20 +22,13 @@
     </ox-autocomplete>
 </template>
 <script setup lang="ts">
-import {useSlots, defineModel, defineProps} from 'vue'
+import {useAttrs, useSlots, defineModel, defineProps} from 'vue'
 import {query} from 'ox'
 import {OxAutocomplete} from 'ox/components'
 import {useCountries} from '../composables'
 
 const slots = useSlots()
-const props = defineProps({
-    label: String,
-    name: String,
-    multiple: Boolean,
-    hideDetails: Boolean,
-    density: String,
-    rules: Array,
-})
+const attrs = useAttrs()
 const value = defineModel()
 const repos = useCountries()
 </script>

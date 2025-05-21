@@ -16,12 +16,16 @@
         </template>
 
         <template #item.actions="{item}">
-            <ox-action v-if="edit"
+            <ox-action v-if="user.can([item.constructor, 'change'])"
                 icon="mdi-pencil" button
                 :title="t('actions.edit')"
-                :permissions="permissions"
                 :item="item"
-                :run="runEdit"/>
+                :run="show"/>
+            <ox-action v-else-if="user.can([item.constructor, 'view'])"
+                icon="mdi-eye-outline" button
+                :title="t('actions.edit')"
+                :item="item"
+                :run="show"/>
             <slot name="item.actions" :value="item" :dense="true" :button="true"/>
         </template>
     </v-data-table-server>
@@ -45,8 +49,8 @@ const itemSlots = filterSlots(slots, 'item.', {exclude: ['item.actions']})
 const panel = inject('panel')
 const list = inject('list')
 const items = inject('items')
+const user = inject('user')
 
-const permissions = ['change']
 const props = defineProps({
     // list: Object,
     /** Table headers */
@@ -73,7 +77,7 @@ function updateOptions(event) {
     list.filters.ordering = event.sortBy.map(({key, order}) => order == 'asc' ? key : `-${key}`)
 }
 
-function runEdit(user, item) {
+function show(user, item) {
     panel.show({view: 'detail.edit', value: item})
 }
 </script>

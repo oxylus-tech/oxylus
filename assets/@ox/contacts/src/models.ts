@@ -145,6 +145,11 @@ export class ContactInfo extends models.Model {
 
 
 export class Address extends ContactInfo {
+    static meta = new models.Meta({
+        app: "ox_contacts",
+        model: "address",
+    })
+
     static fields() {
         return {
             ...super.fields(),
@@ -161,6 +166,11 @@ export class Address extends ContactInfo {
 
 
 export class Email extends ContactInfo {
+    static meta = new models.Meta({
+        app: "ox_contacts",
+        model: "email",
+    })
+
     static fields() {
         return {
             ...super.fields(),
@@ -170,6 +180,11 @@ export class Email extends ContactInfo {
 }
 
 export class Phone extends ContactInfo {
+    static meta = new models.Meta({
+        app: "ox_contacts",
+        model: "phone",
+    })
+
     static fields() {
         return {
             ...super.fields(),
@@ -179,6 +194,11 @@ export class Phone extends ContactInfo {
 }
 
 export class BankAccount extends ContactInfo {
+    static meta = new models.Meta({
+        app: "ox_contacts",
+        model: "bankaccount",
+    })
+
     static fields() {
         return {
             ...super.fields(),

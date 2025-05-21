@@ -9,7 +9,7 @@ __all__ = ("AppConfig",)
 class AppConfig(apps.AppConfig):
     name = "ox.apps.locations"
     label = "ox_locations"
-    verbose_name = _("Contacts")
+    verbose_name = _("Locations")
     icon = "mdi-flag"
 
     root_url = "ox/locations"

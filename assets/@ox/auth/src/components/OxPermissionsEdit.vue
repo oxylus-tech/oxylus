@@ -19,7 +19,7 @@
                         <template v-for="perm in ctPermissions[ct.id].crud">
                             <td>
                                 <v-checkbox-btn color="primary" class="mb-2 d-inline"
-                                    v-model="model" :value="perm.id">
+                                    v-model="model" :value="perm.id" :disabled="disabled">
                                 </v-checkbox-btn>
                                 <template v-if="user">
                                     <template v-if="groupPermissions[perm.id]">
@@ -47,7 +47,7 @@
                                     <div>
                                         <v-checkbox-btn color="primary" class="mb-2"
                                             :label="perm.name"
-                                            v-model="value" :value="perm.id">
+                                            v-model="value" :value="perm.id" :disabled="disabled">
                                         </v-checkbox-btn>
                                         <template v-if="user && groupPermissions[perm.id]">
                                             <template v-for="group of groupPermissions[perm.id]">
@@ -82,6 +82,7 @@ import { VCheckboxBtn } from 'vuetify/components/VCheckbox'
 import { VSpacer } from 'vuetify/components'
 
 const repos = inject("repos")
+const $user = inject("user")
 
 const model = defineModel()
 const {user, group} = defineProps({
@@ -96,6 +97,7 @@ const {user, group} = defineProps({
     group: {type: Object, default: null},
 })
 
+const disabled = computed(() => !$user.can("auth.change_permission"))
 
 const cts = repos.contentTypes.with("permissions").get()
 

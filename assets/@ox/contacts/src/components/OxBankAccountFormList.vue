@@ -1,5 +1,5 @@
 <template>
-    <ox-form-list v-model="items">
+    <ox-form-list v-model="items" v-bind="attrs">
         <template #item.title="{item}">
             {{ item.iban }}
         </template>
@@ -12,9 +12,10 @@
     </ox-form-list>
 </template>
 <script setup lang="ts">
-import {defineModel} from 'vue'
+import {defineModel, useAttrs} from 'vue'
 import {OxFormList} from 'ox/components'
 import OxBankAccountForm from './OxBankAccountForm'
 
 const items = defineModel()
+const attrs = useAttrs()
 </script>

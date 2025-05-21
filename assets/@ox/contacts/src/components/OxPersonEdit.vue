@@ -4,7 +4,6 @@
             <v-expansion-panels mandatory multiple :model-value="['info', 'emails', 'phones']">
                 <v-expansion-panel :title="t('views.edit.informations')" value="info">
                     <template #text>
-                        <v-form v-model="editor.valid">
                             <v-text-field :label="t('fields.first_name')"
                                 v-model="editor.value.first_name" >
                                 <template #details>
@@ -22,7 +21,6 @@
                                 v-model="editor.value.organisations"
                                 :items="organisations"
                                 item-title="name" item-value="id"/>
-                        </v-form>
                     </template>
                 </v-expansion-panel>
                 <ox-contact-infos v-model="editor.value" />
@@ -43,7 +41,4 @@ const repos = inject('repos')
 const props = defineProps<IModelEditorProps>()
 
 const organisations = computed(() => repos.organisations.all())
-
-const form = useTemplateRef('form')
-const editor = inject('editor')
 </script>

@@ -1,6 +1,5 @@
 from django.apps import apps
 from django.core.exceptions import ImproperlyConfigured
-from django.http import HttpResponseNotAllowed
 from django.views.generic.base import ContextMixin, TemplateView
 from django.utils.translation import gettext_lazy as _
 from django.urls import reverse
@@ -113,14 +112,6 @@ class AppMixin(UserAuthMixin, BaseAppMixin):
 class AppView(AppMixin, TemplateView):
     """Base view used for ox based applications."""
 
-    services: [] = None
-    """Allowed services.
-
-    It can either be:
-        - a list/tuple of services names
-        - a dict of ``{service_name: "permission"}``
-    """
-
     def get_template_names(self):
         try:
             names = super().get_template_names()
@@ -133,14 +124,4 @@ class AppView(AppMixin, TemplateView):
 
     def get(self, *args, service=None, **kwargs):
         context = self.get_context_data(**kwargs)
-        if service and not self.service_allowed(service):
-            return HttpResponseNotAllowed(f"Service '{service}' is not allowed")
         return self.render_to_response(context)
-
-    def service_allowed(self, service):
-        if self.services and service in self.services:
-            if isinstance(service, dict):
-                perm = self.services[service]
-                return self.request.user.has_perm(perm)
-            return True
-        return False
