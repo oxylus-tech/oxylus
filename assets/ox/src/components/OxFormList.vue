@@ -1,5 +1,5 @@
 <template>
-    <v-list v-model:opened="opened">
+    <v-list v-model:opened="opened" v-if="items?.length">
         <v-list-group v-for="item, index in items" :key="index" :value="index">
             <template #activator="{props}">
                 <v-list-item v-bind="props">
@@ -48,6 +48,7 @@
             </v-list-group>
         </template>
     </v-list>
+    <div v-else>{{ t("lists.empty") }}</div>
 </template>
 <script setup lang="ts">
 /**

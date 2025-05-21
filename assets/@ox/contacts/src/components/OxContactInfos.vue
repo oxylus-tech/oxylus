@@ -1,5 +1,6 @@
 <template>
-    <v-expansion-panel :title="t('fields.email', 2)" value="emails">
+    <v-expansion-panel :title="t('fields.email', 2)" value="emails"
+            v-if="user.can('ox_contacts.view_email')">
         <template #text>
             <v-expansion-panel-text>
                 <ox-email-form-list v-model="value.emails"
@@ -8,7 +9,8 @@
             </v-expansion-panel-text>
         </template>
     </v-expansion-panel>
-    <v-expansion-panel :title="t('fields.phone', 2)" value="phones">
+    <v-expansion-panel :title="t('fields.phone', 2)" value="phones"
+            v-if="user.can('ox_contacts.view_phone')">
         <template #text>
             <v-expansion-panel-text>
                 <ox-phone-form-list v-model="value.phones"
@@ -17,7 +19,8 @@
             </v-expansion-panel-text>
         </template>
     </v-expansion-panel>
-    <v-expansion-panel :title="t('fields.address', 2)">
+    <v-expansion-panel :title="t('fields.address', 2)"
+            v-if="user.can('ox_contacts.view_address')">
         <template #text>
             <v-expansion-panel-text>
                 <ox-address-form-list v-model="value.addresses"
@@ -26,7 +29,8 @@
             </v-expansion-panel-text>
         </template>
     </v-expansion-panel>
-    <v-expansion-panel :title="t('models.bankAccount', 2)">
+    <v-expansion-panel :title="t('models.bankAccount', 2)"
+            v-if="user.can('ox_contacts.view_bankaccount')">
         <template #text>
             <v-expansion-panel-text>
                 <ox-bank-account-form-list v-model="value.addresses"

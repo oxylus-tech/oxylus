@@ -18,6 +18,7 @@
     "panels.nav.edit": "Edit item",
 
     "views.edit.informations": "Informations",
+    "lists.empty": "No data to display",
 
     "alerts.danger_zone_system_data":
         "Be cautious when updating system data as they are not meant to be directly modified. Changing those values may break things unexpectedly.",

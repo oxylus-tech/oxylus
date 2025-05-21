@@ -5,6 +5,7 @@
             :items-per-page="props.itemsPerPage"
             :loading="list.state?.isProcessing"
             :headers="headers"
+            :no-data-text="t('lists.empty')"
             class="align-top-table"
             @update:options="updateOptions">
         <template v-slot:loading>
