@@ -1,0 +1,54 @@
+{
+  "private": true,
+  "name": "ox-monorepo",
+  "workspaces": [
+    "ox",
+    "@ox/*"
+  ],
+  "scripts": {
+    "dev": "pnpm -r --sort run dev",
+    "build": "pnpm -r --sort run build",
+    "watch": "pnpm -r --sort run watch",
+    "preview": "pnpm -r --sort run preview"
+  },
+  "devDependencies": {
+    "@intlify/unplugin-vue-i18n": "^5.3.1",
+    "@popperjs/core": "^2.11.8",
+    "@rollup/plugin-commonjs": "^25.0.8",
+    "@types/lodash": "^4.17.16",
+    "@vitejs/plugin-vue": "^5.2.4",
+    "@vue/devtools-api": "^7.7.6",
+    "add": "^2.0.6",
+    "concurrently": "^9.1.2",
+    "eslint": "^7.32.0",
+    "eslint-plugin-vue": "^8.7.1",
+    "npm": "^10.9.2",
+    "sass": "^1.88.0",
+    "typedoc": "^0.27.9",
+    "typescript": "^5.8.3",
+    "vite": "^5.4.19",
+    "vite-plugin-babel-macros": "^1.0.6",
+    "vite-plugin-vuetify": "^2.1.1"
+  },
+  "eslintConfig": {
+    "root": true,
+    "env": {
+      "node": true,
+      "es2022": true
+    },
+    "extends": [
+      "plugin:vue/vue3-essential",
+      "eslint:recommended"
+    ],
+    "parserOptions": {
+      "parser": "@babel/eslint-parser"
+    },
+    "rules": {}
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not dead",
+    "not ie 11"
+  ]
+}

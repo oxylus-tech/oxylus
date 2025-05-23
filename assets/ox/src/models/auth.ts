@@ -1,8 +1,10 @@
+import { unref } from 'vue'
 import type {Response} from '@pinia-orm/axios'
 import { Model, Meta } from './model'
 import type { IModel } from './model'
 
 
+/** Interface of {@link ContentType} model */
 export interface IContentType extends IModel {
     app: string
     model: string
@@ -11,6 +13,7 @@ export interface IContentType extends IModel {
     permissions: Permission[]
 }
 
+/** Represent `django.contrib.contenttypes.models.ContentType`. */
 export class ContentType extends Model {
     static entity = "contentTypes"
     static meta = new Meta({
@@ -19,6 +22,7 @@ export class ContentType extends Model {
         url: "ox/core/content_type/",
         title: "label"
     })
+    static config = {}
 
     static fields() {
         return {
@@ -31,10 +35,8 @@ export class ContentType extends Model {
         }
     }
 
-    /**
-    * @property {string} label used as django identifier
-    */
-    get label() {
+    /** Label used as django identifier */
+    get label(): string {
         return `${this.app}.${this.model}`
     }
 
@@ -51,6 +53,7 @@ export class ContentType extends Model {
 export interface ContentType extends IContentType {}
 
 
+/** Interface of {@link Permission} model. */
 export interface IPermission extends IModel {
     name: string
     label: string
@@ -59,6 +62,10 @@ export interface IPermission extends IModel {
     content_type: ContentType[]
 }
 
+/** Argument of {@link Permission.getCodename} */
+export type IPermissionGetCodename = string | [ClassType<Model>, string]
+
+/** Represent `django.contrib.auth.models.Permission`. */
 export class Permission extends Model {
     static entity = "permissions"
     static meta = new Meta({
@@ -67,6 +74,7 @@ export class Permission extends Model {
         url: "ox/core/permission/",
         title: "label"
     })
+    static config = {}
 
     static fields() {
         return {
@@ -79,7 +87,24 @@ export class Permission extends Model {
         }
     }
 
-    //! Action based on codename
+    /**
+     * Return permission as codename.
+     *
+     * Perm can be:
+     * - a string
+     * - a list of [ClassType, actionString]
+     */
+    // TODO: correct typescript type
+    static getCodename(perm: IPermissionGetCodename): string {
+        if(Array.isArray(perm)) {
+            const [model, action] = perm
+            return `${unref(model).meta.app}.${action}_${model.meta.model}`
+        }
+        return perm
+    }
+
+
+    /** Action based on codename */
     get action() {
         return this.codename.split("_")[0]
     }
@@ -96,25 +121,42 @@ export interface Permission extends IPermission {}
  * @return {Boolean} true if user has permission, false otherwise.
  */
 export type IPermissionFunc = <M extends Model>(user: User, value: M) => boolean
+/**
+ * A Permission can either be a string or a function (@link IPermissionFunc}. When it is a string it can be:
+ * - a fully qualified permission codename
+ * - an action (codename is constructed based on value model).
+ *
+ */
 export type IPermissionItem = string | IPermissionFunc
 
+export type IPermissionItems = IPermissionItem | IPermissionItem[]
 
+/**
+ * Helper class used to handle a set of permissions.
+ *
+ * The permissions is an array of codename or function to execute. It then can be checked against a provided model instance.
+ */
 export class Permissions {
-    items: IPermissionItem[]
+    items: IPermissionItems
 
-    constructor(items: IPermissionItem[] = []) {
+    constructor(items: IPermissionItems = []) {
         this.items = items
     }
 
     /**
     * Return true when user has the permission to execute the action.
+    *
+    * Different cases:
+    * - no permissions contained returns `true`
+    * - permissions is a an array: all must returns `true`
+    * - permissions is a single item
     */
     can<M extends Model>(user: User, value: M): boolean {
         if(!this.items)
             return true
-        if(Array.isArray(this.items))
-            return this.items.every(p => this._can(p, user, value))
-        return this._can(this.items, user, value)
+        const items = Array.isArray(this.items) ? this.items : [this.items]
+
+        return items.every(p => this._can(p, user, value))
     }
 
     _can<M extends Model>(permission: IPermissionItem, user: User, value: M) : boolean {
@@ -124,19 +166,23 @@ export class Permissions {
         if(!user || !(value instanceof Model))
             return false
 
-        const meta = (value.constructor as typeof Model).meta
-        return user.can(`${meta.app}.${permission}_${meta.model}`)
+        if(permission.indexOf('_') <= 0 || permission.indexOf('.') <= 2) {
+            const meta = (value.constructor as typeof Model).meta
+            permission = `${meta.app}.${permission}_${meta.model}`
+        }
+        return user.can(permission)
     }
-
 }
 
 
+/** Interface of {@link Group} model. */
 export interface IGroup {
     name: string
     permissions_id: number[]
     permissions: Permission[]
 }
 
+/** Represent `django.contrib.auth.models.Group`. */
 export class Group extends Model {
     static entity = "groups"
     static meta = new Meta({
@@ -146,12 +192,6 @@ export class Group extends Model {
         icon: "mdi-account-multiple",
         title: "name",
     })
-
-    static config = {
-        axiosApi: {
-            dataKey: 'results',
-        }
-    }
 
     static fields() {
         return {
@@ -165,6 +205,7 @@ export class Group extends Model {
 export interface Group extends IGroup {}
 
 
+/** Interface of {@link User} model. */
 export interface IUser {
     username: string
     last_name: string
@@ -178,6 +219,7 @@ export interface IUser {
     groups?: Group[]
 }
 
+/** Represent `django.contrib.auth.models.User`. */
 export class User extends Model {
     static entity = "users"
     static meta = new Meta({
@@ -187,6 +229,21 @@ export class User extends Model {
         icon: "mdi-account",
         title: "username",
     })
+
+
+    static config = {
+        axiosApi: {
+            dataKey: 'results',
+            actions: {
+                updatePassword(id: number, value: string): Response {
+                    return this.post(
+                        `${this.repository.use.meta.getUrl({id})}password/`, {password: value},
+                        {save:false}
+                    )
+                }
+            }
+        }
+    }
 
     static fields() {
         return {
@@ -204,27 +261,28 @@ export class User extends Model {
         }
     }
 
-    can(perm: string): boolean {
+    /**
+     * Return `true` if the user has the provided permission.
+     *
+     * Permission is checked against `all_permissions` field.
+     *
+     * It can be ({@link Permission.getCodename}):
+     * - a string: permission codename
+     * - a list of: `[ModelClass, "action string"]`
+     *
+     */
+    can(perm: IPermissionGetCodename): boolean {
+        perm = Permission.getCodename(perm)
         return this.all_permissions?.includes(perm) || false
     }
 
-    canAny(perms: string[]): boolean {
-        return this.all_permissions?.some(p => perms.includes(p)) || false
-    }
-
-    static config = {
-        axiosApi: {
-            dataKey: 'results',
-            actions: {
-                updatePassword(id: number, value: string): Response {
-                    return this.post(
-                        `ox/core/user/${id}/password/`, {password: value},
-                        {save:false}
-                    )
-                }
-            }
-        }
-
+    /**
+     * Return `true` if the user has any of the provided permissions.
+     *
+     * Value is checked against `all_permissions` field.
+     */
+    canAny(perms: IPermissionGetCodename[]): boolean {
+        return this.all_permissions?.some(p => perms.includes(Permission.getCodename(p))) || false
     }
 }
 export interface User extends IUser {}

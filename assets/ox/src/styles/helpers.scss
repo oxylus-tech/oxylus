@@ -11,6 +11,7 @@
 
 .flex-row { display: flex; flex-direction: row; }
 .flex-column { display: flex; flex-direction: column; }
+.justify-right { justify-content: right }
 
 .al-center { align: center }
 .als-flex-end { align-self: flex-end }
@@ -24,3 +25,7 @@
 .grow-4 { flex-grow: 4; }
 .grow-5 { flex-grow: 5; }
 .grow-6 { flex-grow: 6; }
+
+.text-success { color: rgb(var(--theme-success)) }
+.text-error { color: rgb(var(--theme-error)) }
+.text-warning { color: rgb(var(--theme-warning)) }

@@ -16,7 +16,7 @@ export type IStateData = {[k: string]: any} | null
 /**
  * Colors associated with states
  */
-export const StateColors = {}
+export const StateColors : {[k: symbol]: string} = {}
 StateColors[States.NONE] = ''
 StateColors[States.PROCESSING] = 'info'
 StateColors[States.SENDING] = 'info'

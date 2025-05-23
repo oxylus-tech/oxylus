@@ -1,6 +1,7 @@
 import { createApp as $createApp, reactive, watch } from 'vue'
 import { createVuetify as $createVuetify } from 'vuetify'
 import { md3 } from 'vuetify/blueprints'
+import colors from 'vuetify/util/colors'
 
 import { createPinia as $createPinia, setActivePinia } from 'pinia'
 import { createORM } from 'pinia-orm'
@@ -10,7 +11,7 @@ import axios from 'axios'
 import '../styles/index.scss'
 import * as vendorComponents from 'ox/vendor'
 import config from '../config'
-import {i18n} from './i18n'
+import {i18n, useI18n} from './i18n'
 
 import type {IObject} from '../utils'
 
@@ -20,7 +21,7 @@ import type {IObject} from '../utils'
  * plugin initialization.
  */
 export interface ICreateVuetifyOpts extends IObject {
-    components?: IObject[]
+    components?: Record<string,any>
 }
 
 
@@ -31,11 +32,11 @@ export interface ICreateAppOpts {
     /**
      * Vue's `createApp` `props` arguments
      */
-    props: IObject
+    props?: IObject
     /**
      *  Vuetify plugin's parameters (passed to {@link createVuetify})
      */
-    vuetify: ICreateVuetifyOpts
+    vuetify?: ICreateVuetifyOpts
     /**
      * Plugins to add to Vue application.
      */
@@ -43,19 +44,15 @@ export interface ICreateAppOpts {
 }
 
 export interface IInitOpts extends ICreateAppOpts {
-    /**
-     * Vue's App config.
-     */
-    App: IObject
-    /**
-     * Element selector to mount application on.
-     */
-    el: string
+    /** Vue's App config. */
+    App?: IObject
+    /** Element selector to mount application on. */
+    el?: string
     /**
      * If True (default), defer application creation after page has been
      * loaded (on `window.load` event)
      */
-    onLoad: boolean
+    onLoad?: boolean
 }
 
 
@@ -93,6 +90,8 @@ export function createApp(app: IObject, {props={}, vuetify={}, plugins=null}: IC
 
     app.use(createVuetify(vuetify))
     app.use(i18n)
+    useI18n()
+
     plugins && plugins.forEach(plugin => app.use(plugin))
     return app
 }
@@ -103,14 +102,32 @@ export function createApp(app: IObject, {props={}, vuetify={}, plugins=null}: IC
  * Create and return vuetify plugin with default components set.
  * This is called by `createApp`.
  */
-export function createVuetify({components={}, ...opts}: ICreateVuetifyOpts) {
+export function createVuetify({components={}, defaults={}, ...opts}: ICreateVuetifyOpts) {
     opts.components = {
         ...vendorComponents,
         ...components
     }
     return $createVuetify({
         blueprint: md3,
-        theme: {},
+        theme: {
+            themes: {
+                light: {
+                    dark: false,
+                    colors: {
+                        primary: colors.green.darken1,
+                        secondary: colors.green.lighten4
+                    }
+                }
+            }
+        },
+        defaults: {
+            ...defaults,
+            VTextField: { variant: 'underlined', },
+            VSelect: { variant: 'underlined', },
+            VTextarea: { variant: 'underlined', },
+            VCombobox: { variant: 'underlined', },
+            VAutocomplete: { variant: 'underlined', },
+        },
         ...opts
     })
 }
@@ -126,16 +143,15 @@ export function createPinia({axiosConfig=null, baseURL=null}: IObject={}) {
         baseURL = document.body.dataset.apiUrl
 
     const pinia = $createPinia()
-    const piniaOrm = createORM({})
-    // temp workaround: createORM does not keep provided plugins
-    // using {plugins: ...} later
-    piniaOrm().use(
-        createPiniaOrmAxios({
-            axios,
-            ...(axiosConfig || config.axiosConfig),
-            baseURL,
-        })
-    )
+    const piniaOrm = createORM({
+        plugins: [
+            createPiniaOrmAxios({
+                axios,
+                ...(axiosConfig || config.axiosConfig),
+                baseURL,
+            })
+        ]
+    })
     setActivePinia(pinia)
     return pinia.use(piniaOrm)
 }

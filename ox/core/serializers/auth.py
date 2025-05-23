@@ -23,7 +23,7 @@ class ContentTypeSerializer(serializers.ModelSerializer):
 
     def get_model_verbose(self, obj):
         cl = obj.model_class()
-        return cl._meta.verbose_name.capitalize()
+        return cl and cl._meta.verbose_name.capitalize()
 
 
 class PermissionSerializer(serializers.ModelSerializer):

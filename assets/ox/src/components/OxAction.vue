@@ -1,12 +1,14 @@
 <template>
-    <template v-if="action.allowed">
+    <template v-if="allowed">
         <v-btn v-if="props.button" variant="text"
+            :disabled="processing"
             :color="props.color" :icon="props.icon"
             :title="props.title" :aria-label="props.title"
             @click.stop="run">
         </v-btn>
         <v-list-item v-else
             :title="props.title" :base-color="props.color" :prepend-icon="props.icon"
+            :disabled="processing"
             @click.stop="run"/>
     </template>
 </template>
@@ -16,17 +18,13 @@ import {useAction} from 'ox'
 
 import type {IPermission, Model} from 'ox'
 import type {ActionRun, ActionCompleted} from 'ox'
-import type {ActionProps} from '../composables/actions'
+import type {IActionProps} from '../composables/actions'
 
-const props = defineProps<ActionProps>()
+const props = defineProps<IActionProps>()
 
 const emits = defineEmits<{
     completed: ActionCompleted
 }>()
 const context = inject('context')
-const action = useAction({user: context.user, emits}, props)
-
-async function run(...args) {
-    await action.run(...args)
-}
+const {run, processing, allowed} = useAction({user: context.user, emits, props})
 </script>

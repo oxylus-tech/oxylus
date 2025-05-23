@@ -29,6 +29,7 @@ class Command(BaseCommand):
         exclude = set()
 
         for assets in assets_list:
+            print(f"{repr(assets)}: collect...")
             done = assets.collect(exclude=exclude, **kwargs)
             if done is None:
                 print(f"{repr(assets)}: no assets to collect.")

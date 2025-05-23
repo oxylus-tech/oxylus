@@ -31,6 +31,7 @@ import { computed, defineEmits, defineProps, inject } from 'vue'
 
 const emits = defineEmits(['click'])
 const list = inject('list')
+const items = inject('items')
 
 const props = defineProps({
     itemTitle: String,
@@ -45,7 +46,6 @@ const props = defineProps({
     colorVariant: {type: String, default: 'lighten-2'},
 })
 
-const items = computed(() => list.items)
 
 function color(idx) {
     idx = idx % props.colors.length

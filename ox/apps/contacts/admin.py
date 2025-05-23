@@ -18,16 +18,42 @@ class PhoneAdmin(admin.ModelAdmin):
     pass
 
 
-@admin.register(models.ContactInfo)
-class ContactInfoAdmin(admin.ModelAdmin):
-    pass
+class AddressInline(admin.TabularInline):
+    model = models.Address
+
+
+class EmailInline(admin.TabularInline):
+    model = models.Email
+
+
+class PhoneInline(admin.TabularInline):
+    model = models.Phone
+
+
+class ContactAdmin(admin.ModelAdmin):
+    inlines = [
+        EmailInline,
+        PhoneInline,
+        AddressInline,
+    ]
+
+
+@admin.register(models.OrganisationType)
+class OrganisationTypeAdmin(admin.ModelAdmin):
+    list_display = ("id", "country", "name", "code")
+    list_filters = ("country",)
+    search_fields = ("name", "code")
 
 
 @admin.register(models.Organisation)
-class OrganisationAdmin(admin.ModelAdmin):
-    pass
+class OrganisationAdmin(ContactAdmin):
+    list_display = (
+        "id",
+        "name",
+        "type",
+    )
 
 
 @admin.register(models.Person)
-class PersonAdmin(admin.ModelAdmin):
+class PersonAdmin(ContactAdmin):
     pass

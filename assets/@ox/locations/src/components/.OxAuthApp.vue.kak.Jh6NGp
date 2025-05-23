@@ -1,0 +1,91 @@
+<template>
+    <ox-app title="Users & Groups" :data="data">
+        <template #main="{context}">
+            <v-tabs-window v-model="context.panel.name">
+                <ox-panel name="user-list" tabbed
+                    title="{% trans "All Users" %}" icon="mdi-account"
+                    :allowed="context.user.can('auth.view_user')"
+                    >
+                    <ox-api-data-table :repo="repos.users" :items="users" :headers="{{ user_table_headers|json }}">
+                        <template #item.groups="{item}">
+                             <v-chip color="primary" v-for="group of item.groups" variant="tonal" class="mr-1">
+                                 [[ group.name ]]
+                             </v-chip>
+                        </template>
+
+                        <template #actions="bind">
+                            <slot name="user-list-actions" :context="context"></slot>
+                        </template>
+                    </o-api-data-collection>
+                </ox-panel>
+
+                <ox-panel name="user-edit" tabbed
+                        title="{% trans "Edit User" %}" icon="mdi-account-pencil"
+                        :allowed="context.user.can('auth.change_user')"
+                        >
+                    <template #sheet="{panel}">
+                        <ox-edit-panel :repo="repos.user"
+                            v-model:panel="panel"
+                            v-model:value="panel.data">
+                            <template #window-default="{editors, reset, value}">
+                                <ox-account-editor @saved="reset" :editors="editors" :initial="value"/>
+                            </template>
+                            <template #actions="bind">
+                                <slot name="user-edit-actions" v-bind="bind"></slot>
+                            </template>
+                        </ox-edit-panel>
+                    </template>
+                </ox-panel>
+
+                <ox-panel name="user-add" tabbed
+                        title="{% trans "New User" %}" icon="mdi-account-plus"
+                        :allowed="context.user.can('auth.add_user')">
+                    <ox-account-editor :panel="panel"
+                        :initial="new models.User()"
+                        @saved="(value) => context.show('user-edit', value)">
+                    </ox-account-editor>
+                </ox-panel>
+
+                <ox-panel name="group-list" tabbed
+                        title="{% trans "All Groups" %}" icon="mdi-account-multiple"
+                        :allowed="context.user.can('auth.view_group')">
+                    <ox-api-data-table :repo="repos.groups" :items="groups" :headers="{{ group_table_headers|json }}">
+                        {% block group-list-data-table %}
+                        <template #actions="bind">
+                            {% block group-list-actions %}
+                            {% include "./widgets/group_actions.html" %}
+                            {% endblock %}
+                        </template>
+                        {% endblock %}
+                    </o-api-data-collection>
+                </ox-panel>
+                <ox-panel name="group-add" tabbed
+                        :allowed="context.user.can('auth.add_group')">
+                    <ox-group-editor
+                        :initial="new models.Group()"
+                        @saved="(value) => context.show('group-edit', value)">
+                    </ox-group-editor>
+                </ox-panel>
+                <ox-panel name="group-edit" tabbed
+                        :allowed="context.user.can('auth.change_group')">
+                    <template #sheet="{panel}">
+                        {% include "./widgets/group_edit.html" with value="panel.data" %}
+                    </template>
+                </ox-panel>
+                {% endblock %}
+            </v-tabs-window>
+        </template>
+    </ox-app>
+</template>
+<script setup>
+import {useAppData, useModels} from 'oxerp/composables'
+import * as authModels from 'oxerp/models/auth'
+
+const {repos, models} = useModels(authModels)
+const props = defineProps({
+    baseUrl: String,
+    title: String,
+    data: Object,
+})
+
+</script>

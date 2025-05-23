@@ -4,16 +4,15 @@
         icon="mdi-delete" color="error"
         :title="t('actions.delete')" :confirm="t('actions.delete.confirm')"
         :permissions="['delete', (u, o) => o.id]"
-        :run="run" @completed="panel?.show()"
+        :run="run" @completed="panel?.show({view:panel.index})"
     />
 </template>
 <script setup lang="ts">
 import { defineProps, inject } from 'vue'
-import { useI18n } from 'vue-i18n'
+import { t } from 'ox'
 
 import OxAction from './OxAction.vue'
 
-const { t } = useI18n()
 const panel = inject('panel')
 const repos = inject('repos')
 

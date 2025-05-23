@@ -1,4 +1,4 @@
-{% load i18n static ox_utils %}
+{% load i18n static ox %}
 {% comment %}
 Base template for all pages.
 
@@ -75,7 +75,7 @@ Blocks:
         {% if app_data %}{{ app_data|json_script:"app-data" }}{% endif %}
         <div id="app">
             {% block app-container %}
-            <ox-app api-url="{% url "api-index" %}">
+            <ox-app api-url="{% url "api-index" %}" logo="{% static "ox-logo.png" %}">
                 {% block app %}
                 <template #title="{context}">
                     {% block app-title %}
@@ -86,16 +86,16 @@ Blocks:
                 </template>
 
                 {% if not no_nav %}
-                <template #app-bar-right="{context}">{% block app-bar-right %}{% include './components/app_bar_right.html' %}{% endblock %}</template>
-                <template #nav-start="{context}">{% block nav-start %}{% endblock %}</template>
-                <template #nav-list="{context}">
-                    {% block nav-list %}
-                    {% endblock %}
-                    {% block nav-list-settings %}
-                    <v-list-subheader class="ml-2">{% trans "Settings" %}</v-list-subheader>
+                <template #app-bar-left="{context}">{% block app-bar-left %}{% endblock %}</template>
+                <template #app-bar-right="{context}">{% block app-bar-right %}{% endblock %}</template>
+                <template #nav-start="{context}">
+                    {% block nav-start %}{% endblock %}
+                </template>
+                <template #nav-end="{context}">
+                    {% block nav-end %}
+                    {% include './components/nav_user.html' %}
                     {% endblock %}
                 </template>
-                <template #nav-end="{context}">{% block nav-end %}{% endblock %}</template>
                 {% endif %}
 
                 <template #default="{context}">{% block app-main %}{% endblock %}</template>

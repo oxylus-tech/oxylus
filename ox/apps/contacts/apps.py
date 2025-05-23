@@ -10,10 +10,10 @@ class AppConfig(apps.AppConfig):
     name = "ox.apps.contacts"
     label = "ox_contacts"
     verbose_name = _("Contacts")
-    icon = "mdi-account-group-outline"
+    icon = "mdi-card-account-mail"
 
     root_url = "ox/contacts"
     index_urlname = "ox_contacts:index"
 
     class Meta:
-        dependencies = ("ox.auth",)
+        dependencies = ("ox.auth", "ox.locations")

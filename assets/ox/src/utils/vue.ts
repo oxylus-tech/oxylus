@@ -1,3 +1,6 @@
+import {inject, provide, reactive as $reactive} from 'vue'
+
+
 export interface IFilterSlotOpts {
     exclude?: string[]
 }
@@ -19,4 +22,19 @@ export function filterSlots(slots: {[k: string]: Function}, prefix: string, {exc
     if(exclude)
         names = names.filter(k => !exclude.includes(k))
     return names.reduce((d, k) => { d[k] = k.replace(prefix, ''); return d }, dest)
+}
+
+
+/**
+ * Get injected value, `provide()` one if none is found.
+ *
+ * @return the injected value or the new provided one.
+ */
+export function injectOrProvide<T>(key: string, factory: () => T): any {
+    let value = inject(key)
+    if(value === undefined) {
+        value = factory()
+        provide(key, value)
+    }
+    return value
 }

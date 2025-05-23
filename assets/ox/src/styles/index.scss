@@ -43,3 +43,28 @@ body {
     &:not(:empty) + #app-bar-title { display: none }
     &:empty { display: none; }
 }
+
+table tbody th {
+    color: rgb(var(--v-theme-on-secondary));
+    background-color: rgb(var(--v-theme-secondary));
+}
+
+
+/**
+ * Overload padding in navigation drawer for group items
+ */
+.v-navigation-drawer .v-list-group__items {
+    --indent-padding: 0px !important;
+    border-bottom: 1px rgba(255, 255, 255, 0.1) solid;
+}
+
+.v-navigation-drawer .v-list-group__items .v-list-item,
+.v-navigation-drawer .v-list-group__items .v-list-subheader
+{
+    background-color: rgba(255, 255, 255, 0.02) !important; /* or any lighter color */
+}
+
+
+.ox-model-edit .v-field--disabled {
+    opacity: 1 !important;
+}

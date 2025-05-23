@@ -1,0 +1,1790 @@
+- model: ox_locations.currency
+  pk: 1
+  fields:
+    uuid: 51354976-b76c-407a-a70e-e6b2e7a456e5
+    name: Afghani
+    code: AFN
+    decimals: 2
+    numeric: '971'
+    is_iso: true
+    valid_to: null
+- model: ox_locations.currency
+  pk: 2
+  fields:
+    uuid: 0dda7a62-f2e5-4aef-afbf-c8c151f7dc02
+    name: Euro
+    code: EUR
+    decimals: 2
+    numeric: '978'
+    is_iso: true
+    valid_to: null
+- model: ox_locations.currency
+  pk: 3
+  fields:
+    uuid: 4319afd1-a6d3-44f4-8fad-99530492dc99
+    name: Lek
+    code: ALL
+    decimals: 2
+    numeric: 008
+    is_iso: true
+    valid_to: null
+- model: ox_locations.currency
+  pk: 4
+  fields:
+    uuid: ca53e4b3-0c5a-4c6e-8e76-3b9d3ebc7075
+    name: Algerian Dinar
+    code: DZD
+    decimals: 2
+    numeric: '012'
+    is_iso: true
+    valid_to: null
+- model: ox_locations.currency
+  pk: 5
+  fields:
+    uuid: 0fc62afb-57cf-4d68-9302-8f3118327002
+    name: US Dollar
+    code: USD
+    decimals: 2
+    numeric: '840'
+    is_iso: true
+    valid_to: null
+- model: ox_locations.currency
+  pk: 6
+  fields:
+    uuid: 2800f60f-086b-4d76-a2e9-96f016d124fc
+    name: Kwanza
+    code: AOA
+    decimals: 2
+    numeric: '973'
+    is_iso: true
+    valid_to: null
+- model: ox_locations.currency
+  pk: 7
+  fields:
+    uuid: 3b181140-b745-4fe1-ab04-f23a1eb1e01a
+    name: East Caribbean Dollar
+    code: XCD
+    decimals: 2
+    numeric: '951'
+    is_iso: true
+    valid_to: null
+- model: ox_locations.currency
+  pk: 8
+  fields:
+    uuid: 9c3f40c5-02ef-4bf6-a597-05745c6731ca
+    name: No universal currency
+    code: ''
+    decimals: null
+    numeric: ''
+    is_iso: true
+    valid_to: null
+- model: ox_locations.currency
+  pk: 9
+  fields:
+    uuid: 91a2f833-0799-4a58-bf15-94220fad11af
+    name: Argentine Peso
+    code: ARS
+    decimals: 2
+    numeric: '032'
+    is_iso: true
+    valid_to: null
+- model: ox_locations.currency
+  pk: 10
+  fields:
+    uuid: 8b8e7995-1df2-44b8-b20a-2d428f6c2663
+    name: Armenian Dram
+    code: AMD
+    decimals: 2
+    numeric: '051'
+    is_iso: true
+    valid_to: null
+- model: ox_locations.currency
+  pk: 11
+  fields:
+    uuid: e3cda037-ecf8-4f9a-a116-7e9d5a90f521
+    name: Aruban Florin
+    code: AWG
+    decimals: 2
+    numeric: '533'
+    is_iso: true
+    valid_to: null
+- model: ox_locations.currency
+  pk: 12
+  fields:
+    uuid: 9ee98b00-3b67-4b62-bb1e-867b280f3d91
+    name: Australian Dollar
+    code: AUD
+    decimals: 2
+    numeric: '036'
+    is_iso: true
+    valid_to: null
+- model: ox_locations.currency
+  pk: 13
+  fields:
+    uuid: 5c04e416-9b33-4f7f-9185-74404567e385
+    name: Azerbaijan Manat
+    code: AZN
+    decimals: 2
+    numeric: '944'
+    is_iso: true
+    valid_to: null
+- model: ox_locations.currency
+  pk: 14
+  fields:
+    uuid: 2db59930-5dc6-4640-8bcd-07eda7970901
+    name: Bahamian Dollar
+    code: BSD
+    decimals: 2
+    numeric: '044'
+    is_iso: true
+    valid_to: null
+- model: ox_locations.currency
+  pk: 15
+  fields:
+    uuid: 3780f3f7-5600-4b31-8edc-7a33b7037669
+    name: Bahraini Dinar
+    code: BHD
+    decimals: 3
+    numeric: 048
+    is_iso: true
+    valid_to: null
+- model: ox_locations.currency
+  pk: 16
+  fields:
+    uuid: 110cdca8-acdd-457c-abdb-f43be0685db0
+    name: Taka
+    code: BDT
+    decimals: 2
+    numeric: '050'
+    is_iso: true
+    valid_to: null
+- model: ox_locations.currency
+  pk: 17
+  fields:
+    uuid: fb5fc999-16ac-40d6-accf-c189b9fd97be
+    name: Barbados Dollar
+    code: BBD
+    decimals: 2
+    numeric: '052'
+    is_iso: true
+    valid_to: null
+- model: ox_locations.currency
+  pk: 18
+  fields:
+    uuid: 582664b3-7525-4fc0-9805-3f67066379a4
+    name: Belarusian Ruble
+    code: BYN
+    decimals: 2
+    numeric: '933'
+    is_iso: true
+    valid_to: null
+- model: ox_locations.currency
+  pk: 19
+  fields:
+    uuid: aab0b29c-b298-4204-b917-70a44edb8493
+    name: Belize Dollar
+    code: BZD
+    decimals: 2
+    numeric: 084
+    is_iso: true
+    valid_to: null
+- model: ox_locations.currency
+  pk: 20
+  fields:
+    uuid: 01fd2546-bf11-4e4d-baf2-e06be8a9b4d0
+    name: CFA Franc BCEAO
+    code: XOF
+    decimals: 0
+    numeric: '952'
+    is_iso: true
+    valid_to: null
+- model: ox_locations.currency
+  pk: 21
+  fields:
+    uuid: 328d869b-c358-4ac7-8ed5-3d10514cd0db
+    name: Bermudian Dollar
+    code: BMD
+    decimals: 2
+    numeric: '060'
+    is_iso: true
+    valid_to: null
+- model: ox_locations.currency
+  pk: 22
+  fields:
+    uuid: cde4d06e-e05e-46a2-8a6c-deee7e8db536
+    name: Indian Rupee
+    code: INR
+    decimals: 2
+    numeric: '356'
+    is_iso: true
+    valid_to: null
+- model: ox_locations.currency
+  pk: 23
+  fields:
+    uuid: 3d3fbd1c-7c0c-46cd-b02f-0585e9162280
+    name: Ngultrum
+    code: BTN
+    decimals: 2
+    numeric: '064'
+    is_iso: true
+    valid_to: null
+- model: ox_locations.currency
+  pk: 24
+  fields:
+    uuid: 1237d804-5562-4209-bba6-b0922a51cab2
+    name: Boliviano
+    code: BOB
+    decimals: 2
+    numeric: 068
+    is_iso: true
+    valid_to: null
+- model: ox_locations.currency
+  pk: 25
+  fields:
+    uuid: 12e88f23-78ae-4df8-8531-39ffd01d2362
+    name: Mvdol
+    code: BOV
+    decimals: 2
+    numeric: '984'
+    is_iso: true
+    valid_to: null
+- model: ox_locations.currency
+  pk: 26
+  fields:
+    uuid: 0ffe12ce-5c82-464a-b314-79a78feceb19
+    name: Convertible Mark
+    code: BAM
+    decimals: 2
+    numeric: '977'
+    is_iso: true
+    valid_to: null
+- model: ox_locations.currency
+  pk: 27
+  fields:
+    uuid: d767dac3-48f1-49b7-ae77-cb9c6360bae5
+    name: Pula
+    code: BWP
+    decimals: 2
+    numeric: '072'
+    is_iso: true
+    valid_to: null
+- model: ox_locations.currency
+  pk: 28
+  fields:
+    uuid: 5ffd951d-7038-488b-9155-336a9a57e5f7
+    name: Norwegian Krone
+    code: NOK
+    decimals: 2
+    numeric: '578'
+    is_iso: true
+    valid_to: null
+- model: ox_locations.currency
+  pk: 29
+  fields:
+    uuid: f107ddcd-e530-42c6-8e87-5a986bd796f3
+    name: Brazilian Real
+    code: BRL
+    decimals: 2
+    numeric: '986'
+    is_iso: true
+    valid_to: null
+- model: ox_locations.currency
+  pk: 30
+  fields:
+    uuid: 4b4ad647-41ec-4074-ae5f-aef743349e08
+    name: Brunei Dollar
+    code: BND
+    decimals: 2
+    numeric: 096
+    is_iso: true
+    valid_to: null
+- model: ox_locations.currency
+  pk: 31
+  fields:
+    uuid: a3a95461-e31f-4b0e-b714-b894061c5c38
+    name: Bulgarian Lev
+    code: BGN
+    decimals: 2
+    numeric: '975'
+    is_iso: true
+    valid_to: null
+- model: ox_locations.currency
+  pk: 32
+  fields:
+    uuid: 06f49470-a9ee-4fbf-8fce-5ff3466ea8b7
+    name: Burundi Franc
+    code: BIF
+    decimals: 0
+    numeric: '108'
+    is_iso: true
+    valid_to: null
+- model: ox_locations.currency
+  pk: 33
+  fields:
+    uuid: ac62ae9c-ca3c-4cb6-b541-4bdd0fd83afd
+    name: Cabo Verde Escudo
+    code: CVE
+    decimals: 2
+    numeric: '132'
+    is_iso: true
+    valid_to: null
+- model: ox_locations.currency
+  pk: 34
+  fields:
+    uuid: 0a8437bd-1f58-4c7f-b710-566387b913fb
+    name: Riel
+    code: KHR
+    decimals: 2
+    numeric: '116'
+    is_iso: true
+    valid_to: null
+- model: ox_locations.currency
+  pk: 35
+  fields:
+    uuid: f5d34895-86d4-42b0-81f8-e2406e63f51f
+    name: CFA Franc BEAC
+    code: XAF
+    decimals: 0
+    numeric: '950'
+    is_iso: true
+    valid_to: null
+- model: ox_locations.currency
+  pk: 36
+  fields:
+    uuid: 7a40d479-bf07-4084-a8c9-4395feb3a79b
+    name: Canadian Dollar
+    code: CAD
+    decimals: 2
+    numeric: '124'
+    is_iso: true
+    valid_to: null
+- model: ox_locations.currency
+  pk: 37
+  fields:
+    uuid: b9997c16-2ab4-4344-a244-bbec2d73dbcb
+    name: Cayman Islands Dollar
+    code: KYD
+    decimals: 2
+    numeric: '136'
+    is_iso: true
+    valid_to: null
+- model: ox_locations.currency
+  pk: 38
+  fields:
+    uuid: f8bf280c-be5a-44e7-a857-0f2d40feb772
+    name: Chilean Peso
+    code: CLP
+    decimals: 0
+    numeric: '152'
+    is_iso: true
+    valid_to: null
+- model: ox_locations.currency
+  pk: 39
+  fields:
+    uuid: f6a3bec6-e2a8-426e-ba76-b07bd13365b2
+    name: Unidad de Fomento
+    code: CLF
+    decimals: 4
+    numeric: '990'
+    is_iso: true
+    valid_to: null
+- model: ox_locations.currency
+  pk: 40
+  fields:
+    uuid: 2b9e56af-6ef8-4be3-916c-e71621f0f848
+    name: Yuan Renminbi
+    code: CNY
+    decimals: 2
+    numeric: '156'
+    is_iso: true
+    valid_to: null
+- model: ox_locations.currency
+  pk: 41
+  fields:
+    uuid: 6e3f0ec2-c7f2-43fd-87ec-a01825e8c3aa
+    name: Colombian Peso
+    code: COP
+    decimals: 2
+    numeric: '170'
+    is_iso: true
+    valid_to: null
+- model: ox_locations.currency
+  pk: 42
+  fields:
+    uuid: c485e13f-afcf-42a2-9b0f-b1eeba675670
+    name: Unidad de Valor Real
+    code: COU
+    decimals: 2
+    numeric: '970'
+    is_iso: true
+    valid_to: null
+- model: ox_locations.currency
+  pk: 43
+  fields:
+    uuid: 893abe83-ce7d-4536-95c2-4e73d1b21c4b
+    name: 'Comorian Franc '
+    code: KMF
+    decimals: 0
+    numeric: '174'
+    is_iso: true
+    valid_to: null
+- model: ox_locations.currency
+  pk: 44
+  fields:
+    uuid: 1c194f7e-5556-47e7-813a-81b02d86b793
+    name: Congolese Franc
+    code: CDF
+    decimals: 2
+    numeric: '976'
+    is_iso: true
+    valid_to: null
+- model: ox_locations.currency
+  pk: 45
+  fields:
+    uuid: 00641066-9de6-4ea4-b6fe-ff802ff12f68
+    name: New Zealand Dollar
+    code: NZD
+    decimals: 2
+    numeric: '554'
+    is_iso: true
+    valid_to: null
+- model: ox_locations.currency
+  pk: 46
+  fields:
+    uuid: 89d29ae1-3154-4ce9-8fbb-d292c4c618ad
+    name: Costa Rican Colon
+    code: CRC
+    decimals: 2
+    numeric: '188'
+    is_iso: true
+    valid_to: null
+- model: ox_locations.currency
+  pk: 47
+  fields:
+    uuid: e23d02cb-5790-4ef3-9dcd-e5ac942f3553
+    name: Cuban Peso
+    code: CUP
+    decimals: 2
+    numeric: '192'
+    is_iso: true
+    valid_to: null
+- model: ox_locations.currency
+  pk: 48
+  fields:
+    uuid: 5bef6b97-0652-4019-9362-6cd514b0f0d2
+    name: Caribbean Guilder
+    code: XCG
+    decimals: 2
+    numeric: '532'
+    is_iso: true
+    valid_to: null
+- model: ox_locations.currency
+  pk: 49
+  fields:
+    uuid: b153cdd2-da6e-4c73-ba0f-1a915ab21b8c
+    name: Czech Koruna
+    code: CZK
+    decimals: 2
+    numeric: '203'
+    is_iso: true
+    valid_to: null
+- model: ox_locations.currency
+  pk: 50
+  fields:
+    uuid: de206eeb-6e2c-4a96-8507-4b00126741d4
+    name: Danish Krone
+    code: DKK
+    decimals: 2
+    numeric: '208'
+    is_iso: true
+    valid_to: null
+- model: ox_locations.currency
+  pk: 51
+  fields:
+    uuid: 24f79376-19b5-455e-8937-40b5fc6e972e
+    name: Djibouti Franc
+    code: DJF
+    decimals: 0
+    numeric: '262'
+    is_iso: true
+    valid_to: null
+- model: ox_locations.currency
+  pk: 52
+  fields:
+    uuid: a642c010-9abe-46b1-834e-50a3805d0347
+    name: Dominican Peso
+    code: DOP
+    decimals: 2
+    numeric: '214'
+    is_iso: true
+    valid_to: null
+- model: ox_locations.currency
+  pk: 53
+  fields:
+    uuid: 57c6cf30-7e05-449c-801c-3be312577c8d
+    name: Egyptian Pound
+    code: EGP
+    decimals: 2
+    numeric: '818'
+    is_iso: true
+    valid_to: null
+- model: ox_locations.currency
+  pk: 54
+  fields:
+    uuid: b47f0d82-16c0-42da-bf2b-30e9a8525470
+    name: El Salvador Colon
+    code: SVC
+    decimals: 2
+    numeric: '222'
+    is_iso: true
+    valid_to: null
+- model: ox_locations.currency
+  pk: 55
+  fields:
+    uuid: 03bbffb1-96d6-45c6-beb4-b12b1c7f2ea1
+    name: Nakfa
+    code: ERN
+    decimals: 2
+    numeric: '232'
+    is_iso: true
+    valid_to: null
+- model: ox_locations.currency
+  pk: 56
+  fields:
+    uuid: 8738db2d-5386-4c25-9d11-94e7cd13b0e4
+    name: Lilangeni
+    code: SZL
+    decimals: 2
+    numeric: '748'
+    is_iso: true
+    valid_to: null
+- model: ox_locations.currency
+  pk: 57
+  fields:
+    uuid: 222ae246-5413-42ca-a271-46571165783f
+    name: Ethiopian Birr
+    code: ETB
+    decimals: 2
+    numeric: '230'
+    is_iso: true
+    valid_to: null
+- model: ox_locations.currency
+  pk: 58
+  fields:
+    uuid: a15e76ce-171b-44ee-a87a-694351083773
+    name: Falkland Islands Pound
+    code: FKP
+    decimals: 2
+    numeric: '238'
+    is_iso: true
+    valid_to: null
+- model: ox_locations.currency
+  pk: 59
+  fields:
+    uuid: 25d6913a-4f91-4e68-9500-53060dc31147
+    name: Fiji Dollar
+    code: FJD
+    decimals: 2
+    numeric: '242'
+    is_iso: true
+    valid_to: null
+- model: ox_locations.currency
+  pk: 60
+  fields:
+    uuid: 1a07a7a7-f60e-4ff8-8398-5c30c4f742b2
+    name: CFP Franc
+    code: XPF
+    decimals: 0
+    numeric: '953'
+    is_iso: true
+    valid_to: null
+- model: ox_locations.currency
+  pk: 61
+  fields:
+    uuid: 19a0763e-c90a-479f-8539-3eadc39a73bc
+    name: Dalasi
+    code: GMD
+    decimals: 2
+    numeric: '270'
+    is_iso: true
+    valid_to: null
+- model: ox_locations.currency
+  pk: 62
+  fields:
+    uuid: 9828926d-7982-4f60-a599-00ad22a8c830
+    name: Lari
+    code: GEL
+    decimals: 2
+    numeric: '981'
+    is_iso: true
+    valid_to: null
+- model: ox_locations.currency
+  pk: 63
+  fields:
+    uuid: 5a04ebaf-265d-4e83-97fe-dff0bd67fb6a
+    name: Ghana Cedi
+    code: GHS
+    decimals: 2
+    numeric: '936'
+    is_iso: true
+    valid_to: null
+- model: ox_locations.currency
+  pk: 64
+  fields:
+    uuid: ec08dee6-eb54-45e5-8c22-8ac589447837
+    name: Gibraltar Pound
+    code: GIP
+    decimals: 2
+    numeric: '292'
+    is_iso: true
+    valid_to: null
+- model: ox_locations.currency
+  pk: 65
+  fields:
+    uuid: eab8fcb9-96eb-4219-a5de-1dbd29efbdc6
+    name: Quetzal
+    code: GTQ
+    decimals: 2
+    numeric: '320'
+    is_iso: true
+    valid_to: null
+- model: ox_locations.currency
+  pk: 66
+  fields:
+    uuid: 1371389f-d623-4eb3-8a40-e1b52b7bd0fb
+    name: Pound Sterling
+    code: GBP
+    decimals: 2
+    numeric: '826'
+    is_iso: true
+    valid_to: null
+- model: ox_locations.currency
+  pk: 67
+  fields:
+    uuid: 4f3438c9-60cb-4180-a7be-ad54d70a63ce
+    name: Guinean Franc
+    code: GNF
+    decimals: 0
+    numeric: '324'
+    is_iso: true
+    valid_to: null
+- model: ox_locations.currency
+  pk: 68
+  fields:
+    uuid: 7d368598-0401-4b13-9216-9d5745d30e33
+    name: Guyana Dollar
+    code: GYD
+    decimals: 2
+    numeric: '328'
+    is_iso: true
+    valid_to: null
+- model: ox_locations.currency
+  pk: 69
+  fields:
+    uuid: b37d6687-b423-451f-97c6-7eeefd8d4e31
+    name: Gourde
+    code: HTG
+    decimals: 2
+    numeric: '332'
+    is_iso: true
+    valid_to: null
+- model: ox_locations.currency
+  pk: 70
+  fields:
+    uuid: 62b8c82f-4f7a-4089-b987-a849d23c861e
+    name: Lempira
+    code: HNL
+    decimals: 2
+    numeric: '340'
+    is_iso: true
+    valid_to: null
+- model: ox_locations.currency
+  pk: 71
+  fields:
+    uuid: 9aa944f4-2a6c-485e-9116-4dffa95d7823
+    name: Hong Kong Dollar
+    code: HKD
+    decimals: 2
+    numeric: '344'
+    is_iso: true
+    valid_to: null
+- model: ox_locations.currency
+  pk: 72
+  fields:
+    uuid: fa8fa180-b2d3-4559-ad02-e77f899585d4
+    name: Forint
+    code: HUF
+    decimals: 2
+    numeric: '348'
+    is_iso: true
+    valid_to: null
+- model: ox_locations.currency
+  pk: 73
+  fields:
+    uuid: c40b9f56-8bcc-45d3-bf19-94b04e2739ef
+    name: Iceland Krona
+    code: ISK
+    decimals: 0
+    numeric: '352'
+    is_iso: true
+    valid_to: null
+- model: ox_locations.currency
+  pk: 74
+  fields:
+    uuid: 20617ba5-c454-4e86-bd47-e7280a9c075b
+    name: Rupiah
+    code: IDR
+    decimals: 2
+    numeric: '360'
+    is_iso: true
+    valid_to: null
+- model: ox_locations.currency
+  pk: 75
+  fields:
+    uuid: 73bcfb51-340e-43b3-b7f2-dd44ebd30f23
+    name: SDR (Special Drawing Right)
+    code: XDR
+    decimals: null
+    numeric: '960'
+    is_iso: true
+    valid_to: null
+- model: ox_locations.currency
+  pk: 76
+  fields:
+    uuid: c040b7b1-9012-4e7e-b69b-0a022049c46f
+    name: Iranian Rial
+    code: IRR
+    decimals: 2
+    numeric: '364'
+    is_iso: true
+    valid_to: null
+- model: ox_locations.currency
+  pk: 77
+  fields:
+    uuid: a6325511-a49e-494f-923f-aa87f98fef53
+    name: Iraqi Dinar
+    code: IQD
+    decimals: 3
+    numeric: '368'
+    is_iso: true
+    valid_to: null
+- model: ox_locations.currency
+  pk: 78
+  fields:
+    uuid: 143e3ab4-73df-4417-a0e7-195f6203ed77
+    name: New Israeli Sheqel
+    code: ILS
+    decimals: 2
+    numeric: '376'
+    is_iso: true
+    valid_to: null
+- model: ox_locations.currency
+  pk: 79
+  fields:
+    uuid: 4cac05f2-4b05-48b2-9ba0-97a9987bdfeb
+    name: Jamaican Dollar
+    code: JMD
+    decimals: 2
+    numeric: '388'
+    is_iso: true
+    valid_to: null
+- model: ox_locations.currency
+  pk: 80
+  fields:
+    uuid: 53c28ae4-7bc4-4c88-a488-ecc256aa17f5
+    name: Yen
+    code: JPY
+    decimals: 0
+    numeric: '392'
+    is_iso: true
+    valid_to: null
+- model: ox_locations.currency
+  pk: 81
+  fields:
+    uuid: 3246e26b-56f6-4b7d-af9d-a33ffc14dbb8
+    name: Jordanian Dinar
+    code: JOD
+    decimals: 3
+    numeric: '400'
+    is_iso: true
+    valid_to: null
+- model: ox_locations.currency
+  pk: 82
+  fields:
+    uuid: bf795c19-796c-469f-ba91-96eaf44e797f
+    name: Tenge
+    code: KZT
+    decimals: 2
+    numeric: '398'
+    is_iso: true
+    valid_to: null
+- model: ox_locations.currency
+  pk: 83
+  fields:
+    uuid: ef271e2d-46a6-416a-8759-38f8c9c2a584
+    name: Kenyan Shilling
+    code: KES
+    decimals: 2
+    numeric: '404'
+    is_iso: true
+    valid_to: null
+- model: ox_locations.currency
+  pk: 84
+  fields:
+    uuid: 310a6d3c-93bb-48fb-aea2-865b2161a4b5
+    name: North Korean Won
+    code: KPW
+    decimals: 2
+    numeric: '408'
+    is_iso: true
+    valid_to: null
+- model: ox_locations.currency
+  pk: 85
+  fields:
+    uuid: 8dd5379e-e511-4c7f-84bc-68e23ddad8b3
+    name: Won
+    code: KRW
+    decimals: 0
+    numeric: '410'
+    is_iso: true
+    valid_to: null
+- model: ox_locations.currency
+  pk: 86
+  fields:
+    uuid: cba00032-3d9b-4ea8-832e-c2c1257be014
+    name: Kuwaiti Dinar
+    code: KWD
+    decimals: 3
+    numeric: '414'
+    is_iso: true
+    valid_to: null
+- model: ox_locations.currency
+  pk: 87
+  fields:
+    uuid: c8c4ca97-d307-4c1a-bc96-9f6b4c4ad546
+    name: Som
+    code: KGS
+    decimals: 2
+    numeric: '417'
+    is_iso: true
+    valid_to: null
+- model: ox_locations.currency
+  pk: 88
+  fields:
+    uuid: a7fe3689-d956-4814-8a0a-f446211455b8
+    name: Lao Kip
+    code: LAK
+    decimals: 2
+    numeric: '418'
+    is_iso: true
+    valid_to: null
+- model: ox_locations.currency
+  pk: 89
+  fields:
+    uuid: 99bb7d58-ccfd-4ba2-8e5b-4433d8b59aea
+    name: Lebanese Pound
+    code: LBP
+    decimals: 2
+    numeric: '422'
+    is_iso: true
+    valid_to: null
+- model: ox_locations.currency
+  pk: 90
+  fields:
+    uuid: ccbd055b-929c-4865-80ab-27154389e925
+    name: Loti
+    code: LSL
+    decimals: 2
+    numeric: '426'
+    is_iso: true
+    valid_to: null
+- model: ox_locations.currency
+  pk: 91
+  fields:
+    uuid: 41a00d7f-5de4-48a0-8898-a2dc97894f4f
+    name: Rand
+    code: ZAR
+    decimals: 2
+    numeric: '710'
+    is_iso: true
+    valid_to: null
+- model: ox_locations.currency
+  pk: 92
+  fields:
+    uuid: 2817de4f-12c1-46bc-b756-89d09e0988d4
+    name: Liberian Dollar
+    code: LRD
+    decimals: 2
+    numeric: '430'
+    is_iso: true
+    valid_to: null
+- model: ox_locations.currency
+  pk: 93
+  fields:
+    uuid: 40bf1f97-d0a0-4a1d-8ad8-901e8fabc212
+    name: Libyan Dinar
+    code: LYD
+    decimals: 3
+    numeric: '434'
+    is_iso: true
+    valid_to: null
+- model: ox_locations.currency
+  pk: 94
+  fields:
+    uuid: 0d1bc4a8-4dcb-4e9c-9e7a-716bcb2e0ea3
+    name: Swiss Franc
+    code: CHF
+    decimals: 2
+    numeric: '756'
+    is_iso: true
+    valid_to: null
+- model: ox_locations.currency
+  pk: 95
+  fields:
+    uuid: 8b5a0f2b-3f84-4aba-8e51-750e17d9ad16
+    name: Pataca
+    code: MOP
+    decimals: 2
+    numeric: '446'
+    is_iso: true
+    valid_to: null
+- model: ox_locations.currency
+  pk: 96
+  fields:
+    uuid: 744cc505-d76d-4139-888a-cc097a58a6ce
+    name: Denar
+    code: MKD
+    decimals: 2
+    numeric: '807'
+    is_iso: true
+    valid_to: null
+- model: ox_locations.currency
+  pk: 97
+  fields:
+    uuid: b61423e0-b88d-4f9b-96b8-c655b56f8829
+    name: Malagasy Ariary
+    code: MGA
+    decimals: 2
+    numeric: '969'
+    is_iso: true
+    valid_to: null
+- model: ox_locations.currency
+  pk: 98
+  fields:
+    uuid: 25b497ae-57b3-4a30-b66b-bace4cd04052
+    name: Malawi Kwacha
+    code: MWK
+    decimals: 2
+    numeric: '454'
+    is_iso: true
+    valid_to: null
+- model: ox_locations.currency
+  pk: 99
+  fields:
+    uuid: 83a8a197-9d84-4414-a181-bf938890a7f7
+    name: Malaysian Ringgit
+    code: MYR
+    decimals: 2
+    numeric: '458'
+    is_iso: true
+    valid_to: null
+- model: ox_locations.currency
+  pk: 100
+  fields:
+    uuid: 8ee5e504-b7d9-441c-99f6-e8c5d3d9311c
+    name: Rufiyaa
+    code: MVR
+    decimals: 2
+    numeric: '462'
+    is_iso: true
+    valid_to: null
+- model: ox_locations.currency
+  pk: 101
+  fields:
+    uuid: c4e8de19-741b-4160-b561-7ec27ee9d1cb
+    name: Ouguiya
+    code: MRU
+    decimals: 2
+    numeric: '929'
+    is_iso: true
+    valid_to: null
+- model: ox_locations.currency
+  pk: 102
+  fields:
+    uuid: 9ae58d01-ab82-42c2-b92b-d1e8fb1b294d
+    name: Mauritius Rupee
+    code: MUR
+    decimals: 2
+    numeric: '480'
+    is_iso: true
+    valid_to: null
+- model: ox_locations.currency
+  pk: 103
+  fields:
+    uuid: 85219830-413d-42cc-8476-5267cfdf89de
+    name: ADB Unit of Account
+    code: XUA
+    decimals: null
+    numeric: '965'
+    is_iso: true
+    valid_to: null
+- model: ox_locations.currency
+  pk: 104
+  fields:
+    uuid: c87ddde8-1fd9-49a2-b3e6-f74fd8eed962
+    name: Mexican Peso
+    code: MXN
+    decimals: 2
+    numeric: '484'
+    is_iso: true
+    valid_to: null
+- model: ox_locations.currency
+  pk: 105
+  fields:
+    uuid: 0bc6063f-1ef7-40aa-9857-5fbdf3f33a0d
+    name: Mexican Unidad de Inversion (UDI)
+    code: MXV
+    decimals: 2
+    numeric: '979'
+    is_iso: true
+    valid_to: null
+- model: ox_locations.currency
+  pk: 106
+  fields:
+    uuid: 730f2c50-48ad-4f66-ba39-284168991e39
+    name: Moldovan Leu
+    code: MDL
+    decimals: 2
+    numeric: '498'
+    is_iso: true
+    valid_to: null
+- model: ox_locations.currency
+  pk: 107
+  fields:
+    uuid: 2ddb4786-12d9-412f-8354-f9ef0bba2b7c
+    name: Tugrik
+    code: MNT
+    decimals: 2
+    numeric: '496'
+    is_iso: true
+    valid_to: null
+- model: ox_locations.currency
+  pk: 108
+  fields:
+    uuid: d8d4cfad-aec5-47fb-9257-0ea4eda09a7f
+    name: Moroccan Dirham
+    code: MAD
+    decimals: 2
+    numeric: '504'
+    is_iso: true
+    valid_to: null
+- model: ox_locations.currency
+  pk: 109
+  fields:
+    uuid: fad07114-3f96-4082-9a5b-7a8f18daa16d
+    name: Mozambique Metical
+    code: MZN
+    decimals: 2
+    numeric: '943'
+    is_iso: true
+    valid_to: null
+- model: ox_locations.currency
+  pk: 110
+  fields:
+    uuid: bfab05df-7d97-4cca-b9d0-e91460dffac1
+    name: Kyat
+    code: MMK
+    decimals: 2
+    numeric: '104'
+    is_iso: true
+    valid_to: null
+- model: ox_locations.currency
+  pk: 111
+  fields:
+    uuid: 4aaf9497-f65d-4ee0-be24-3185aa8fc8f0
+    name: Namibia Dollar
+    code: NAD
+    decimals: 2
+    numeric: '516'
+    is_iso: true
+    valid_to: null
+- model: ox_locations.currency
+  pk: 112
+  fields:
+    uuid: ac09ad94-c3dd-4d9b-ab3e-72b2ed401f25
+    name: Nepalese Rupee
+    code: NPR
+    decimals: 2
+    numeric: '524'
+    is_iso: true
+    valid_to: null
+- model: ox_locations.currency
+  pk: 113
+  fields:
+    uuid: 241e65d9-f5cd-4918-b103-c7c46e33edf9
+    name: Cordoba Oro
+    code: NIO
+    decimals: 2
+    numeric: '558'
+    is_iso: true
+    valid_to: null
+- model: ox_locations.currency
+  pk: 114
+  fields:
+    uuid: 5e1c5bda-9b3d-4c71-bd9d-7ef42ba911e6
+    name: Naira
+    code: NGN
+    decimals: 2
+    numeric: '566'
+    is_iso: true
+    valid_to: null
+- model: ox_locations.currency
+  pk: 115
+  fields:
+    uuid: 4661a8a6-a71e-40e6-b396-c41cc6b85079
+    name: Rial Omani
+    code: OMR
+    decimals: 3
+    numeric: '512'
+    is_iso: true
+    valid_to: null
+- model: ox_locations.currency
+  pk: 116
+  fields:
+    uuid: 446aec83-c2ba-46a8-8653-c3bf95cb746b
+    name: Pakistan Rupee
+    code: PKR
+    decimals: 2
+    numeric: '586'
+    is_iso: true
+    valid_to: null
+- model: ox_locations.currency
+  pk: 117
+  fields:
+    uuid: 8d65365a-f68a-4d03-99fa-58dee7efba3f
+    name: Balboa
+    code: PAB
+    decimals: 2
+    numeric: '590'
+    is_iso: true
+    valid_to: null
+- model: ox_locations.currency
+  pk: 118
+  fields:
+    uuid: f9cc2f9b-9dd5-499c-9419-cf8238b60cde
+    name: Kina
+    code: PGK
+    decimals: 2
+    numeric: '598'
+    is_iso: true
+    valid_to: null
+- model: ox_locations.currency
+  pk: 119
+  fields:
+    uuid: 7f926788-f00b-4c16-94f7-622ab8c860ec
+    name: Guarani
+    code: PYG
+    decimals: 0
+    numeric: '600'
+    is_iso: true
+    valid_to: null
+- model: ox_locations.currency
+  pk: 120
+  fields:
+    uuid: 85a14a61-5b33-45f0-9034-448972a9f176
+    name: Sol
+    code: PEN
+    decimals: 2
+    numeric: '604'
+    is_iso: true
+    valid_to: null
+- model: ox_locations.currency
+  pk: 121
+  fields:
+    uuid: cf1db744-6cdf-43c2-ae5c-24f676862f2a
+    name: Philippine Peso
+    code: PHP
+    decimals: 2
+    numeric: '608'
+    is_iso: true
+    valid_to: null
+- model: ox_locations.currency
+  pk: 122
+  fields:
+    uuid: e840ef46-5c55-4282-bee8-1c4431004bc3
+    name: Zloty
+    code: PLN
+    decimals: 2
+    numeric: '985'
+    is_iso: true
+    valid_to: null
+- model: ox_locations.currency
+  pk: 123
+  fields:
+    uuid: 55d4c4ad-7615-492b-a294-a3346bfbd837
+    name: Qatari Rial
+    code: QAR
+    decimals: 2
+    numeric: '634'
+    is_iso: true
+    valid_to: null
+- model: ox_locations.currency
+  pk: 124
+  fields:
+    uuid: aca1c8dc-dcc5-4476-a382-2060b1bbb67c
+    name: Romanian Leu
+    code: RON
+    decimals: 2
+    numeric: '946'
+    is_iso: true
+    valid_to: null
+- model: ox_locations.currency
+  pk: 125
+  fields:
+    uuid: fad587d1-5a75-4122-8a69-8895534374bb
+    name: Russian Ruble
+    code: RUB
+    decimals: 2
+    numeric: '643'
+    is_iso: true
+    valid_to: null
+- model: ox_locations.currency
+  pk: 126
+  fields:
+    uuid: 52d61e92-e082-4741-9474-094840188aa8
+    name: Rwanda Franc
+    code: RWF
+    decimals: 0
+    numeric: '646'
+    is_iso: true
+    valid_to: null
+- model: ox_locations.currency
+  pk: 127
+  fields:
+    uuid: 0d00bf19-937a-47bf-9265-75ff6197f3a4
+    name: Saint Helena Pound
+    code: SHP
+    decimals: 2
+    numeric: '654'
+    is_iso: true
+    valid_to: null
+- model: ox_locations.currency
+  pk: 128
+  fields:
+    uuid: 0485957b-bd0d-44d6-9ad4-5f265f60b4e6
+    name: Tala
+    code: WST
+    decimals: 2
+    numeric: '882'
+    is_iso: true
+    valid_to: null
+- model: ox_locations.currency
+  pk: 129
+  fields:
+    uuid: 58fcbfaa-68f6-4dfa-8c5f-9993f8b14d75
+    name: Dobra
+    code: STN
+    decimals: 2
+    numeric: '930'
+    is_iso: true
+    valid_to: null
+- model: ox_locations.currency
+  pk: 130
+  fields:
+    uuid: fd05c521-f6a5-48a2-9617-fb663f8be752
+    name: Saudi Riyal
+    code: SAR
+    decimals: 2
+    numeric: '682'
+    is_iso: true
+    valid_to: null
+- model: ox_locations.currency
+  pk: 131
+  fields:
+    uuid: 07872b5c-ee3b-418b-98e4-df8ff5c3000e
+    name: Serbian Dinar
+    code: RSD
+    decimals: 2
+    numeric: '941'
+    is_iso: true
+    valid_to: null
+- model: ox_locations.currency
+  pk: 132
+  fields:
+    uuid: aedf2ef7-3b0a-4935-ad39-785d8a2d5e4d
+    name: Seychelles Rupee
+    code: SCR
+    decimals: 2
+    numeric: '690'
+    is_iso: true
+    valid_to: null
+- model: ox_locations.currency
+  pk: 133
+  fields:
+    uuid: 13e8c7ef-f357-4521-b4c0-14bfd7e41c77
+    name: Leone
+    code: SLE
+    decimals: 2
+    numeric: '925'
+    is_iso: true
+    valid_to: null
+- model: ox_locations.currency
+  pk: 134
+  fields:
+    uuid: 24d492ec-7593-43b1-a43e-bc6f4ef7b5bb
+    name: Singapore Dollar
+    code: SGD
+    decimals: 2
+    numeric: '702'
+    is_iso: true
+    valid_to: null
+- model: ox_locations.currency
+  pk: 135
+  fields:
+    uuid: 1383e298-5a77-4de0-bc0e-8682687afbe7
+    name: Sucre
+    code: XSU
+    decimals: null
+    numeric: '994'
+    is_iso: true
+    valid_to: null
+- model: ox_locations.currency
+  pk: 136
+  fields:
+    uuid: 72386516-5b08-4b92-b5e3-2111230f07be
+    name: Solomon Islands Dollar
+    code: SBD
+    decimals: 2
+    numeric: 090
+    is_iso: true
+    valid_to: null
+- model: ox_locations.currency
+  pk: 137
+  fields:
+    uuid: 3755354d-43c6-4857-85f7-a03daf7b623a
+    name: Somali Shilling
+    code: SOS
+    decimals: 2
+    numeric: '706'
+    is_iso: true
+    valid_to: null
+- model: ox_locations.currency
+  pk: 138
+  fields:
+    uuid: 2bae1098-a811-4e44-8e89-2712bf9f2eb6
+    name: South Sudanese Pound
+    code: SSP
+    decimals: 2
+    numeric: '728'
+    is_iso: true
+    valid_to: null
+- model: ox_locations.currency
+  pk: 139
+  fields:
+    uuid: bc0f4791-5843-493b-a475-7ffbff984a0e
+    name: Sri Lanka Rupee
+    code: LKR
+    decimals: 2
+    numeric: '144'
+    is_iso: true
+    valid_to: null
+- model: ox_locations.currency
+  pk: 140
+  fields:
+    uuid: 24d36488-cb6d-49b0-bfe4-ea8c6d498509
+    name: Sudanese Pound
+    code: SDG
+    decimals: 2
+    numeric: '938'
+    is_iso: true
+    valid_to: null
+- model: ox_locations.currency
+  pk: 141
+  fields:
+    uuid: 24444eb4-94d9-410e-91a3-38fe0acd873a
+    name: Surinam Dollar
+    code: SRD
+    decimals: 2
+    numeric: '968'
+    is_iso: true
+    valid_to: null
+- model: ox_locations.currency
+  pk: 142
+  fields:
+    uuid: 9cef37f1-41c8-45be-bb51-c4dd615e3dd7
+    name: Swedish Krona
+    code: SEK
+    decimals: 2
+    numeric: '752'
+    is_iso: true
+    valid_to: null
+- model: ox_locations.currency
+  pk: 143
+  fields:
+    uuid: a1fe22c7-c599-4211-a133-99a410b5d400
+    name: WIR Euro
+    code: CHE
+    decimals: 2
+    numeric: '947'
+    is_iso: true
+    valid_to: null
+- model: ox_locations.currency
+  pk: 144
+  fields:
+    uuid: 91f12bf4-ac5e-4702-b838-2a12405ff60b
+    name: WIR Franc
+    code: CHW
+    decimals: 2
+    numeric: '948'
+    is_iso: true
+    valid_to: null
+- model: ox_locations.currency
+  pk: 145
+  fields:
+    uuid: c4cee59b-33ae-4d90-8367-6c04fbb52787
+    name: Syrian Pound
+    code: SYP
+    decimals: 2
+    numeric: '760'
+    is_iso: true
+    valid_to: null
+- model: ox_locations.currency
+  pk: 146
+  fields:
+    uuid: 8bc4b293-7d27-42c0-bc99-87bc86e5eb4d
+    name: New Taiwan Dollar
+    code: TWD
+    decimals: 2
+    numeric: '901'
+    is_iso: true
+    valid_to: null
+- model: ox_locations.currency
+  pk: 147
+  fields:
+    uuid: 372a840a-bc7b-4aa0-8591-41f44da5859e
+    name: Somoni
+    code: TJS
+    decimals: 2
+    numeric: '972'
+    is_iso: true
+    valid_to: null
+- model: ox_locations.currency
+  pk: 148
+  fields:
+    uuid: 5a9f658a-bc0d-4e83-aff7-3fe7dd9ed778
+    name: Tanzanian Shilling
+    code: TZS
+    decimals: 2
+    numeric: '834'
+    is_iso: true
+    valid_to: null
+- model: ox_locations.currency
+  pk: 149
+  fields:
+    uuid: d5fed29d-f6d8-4ac6-b920-1235d49c5d7a
+    name: Baht
+    code: THB
+    decimals: 2
+    numeric: '764'
+    is_iso: true
+    valid_to: null
+- model: ox_locations.currency
+  pk: 150
+  fields:
+    uuid: eaa259a6-3f2c-4eab-8edd-2ae17e35d080
+    name: Pa’anga
+    code: TOP
+    decimals: 2
+    numeric: '776'
+    is_iso: true
+    valid_to: null
+- model: ox_locations.currency
+  pk: 151
+  fields:
+    uuid: 142e2f93-ca51-46dd-84b8-7726a01a6de0
+    name: Trinidad and Tobago Dollar
+    code: TTD
+    decimals: 2
+    numeric: '780'
+    is_iso: true
+    valid_to: null
+- model: ox_locations.currency
+  pk: 152
+  fields:
+    uuid: 9c0af97e-33e8-4867-859f-72618425e5ac
+    name: Tunisian Dinar
+    code: TND
+    decimals: 3
+    numeric: '788'
+    is_iso: true
+    valid_to: null
+- model: ox_locations.currency
+  pk: 153
+  fields:
+    uuid: d489674f-96b7-4365-8248-c1286ae2e3d6
+    name: Turkish Lira
+    code: TRY
+    decimals: 2
+    numeric: '949'
+    is_iso: true
+    valid_to: null
+- model: ox_locations.currency
+  pk: 154
+  fields:
+    uuid: 8cce770b-3c04-47a8-abfb-5593c13cc421
+    name: Turkmenistan New Manat
+    code: TMT
+    decimals: 2
+    numeric: '934'
+    is_iso: true
+    valid_to: null
+- model: ox_locations.currency
+  pk: 155
+  fields:
+    uuid: e7efd6b4-2173-4868-979d-14700adfa624
+    name: Uganda Shilling
+    code: UGX
+    decimals: 0
+    numeric: '800'
+    is_iso: true
+    valid_to: null
+- model: ox_locations.currency
+  pk: 156
+  fields:
+    uuid: a57b5839-9609-41f7-bdc8-7788f3451c0e
+    name: Hryvnia
+    code: UAH
+    decimals: 2
+    numeric: '980'
+    is_iso: true
+    valid_to: null
+- model: ox_locations.currency
+  pk: 157
+  fields:
+    uuid: bf54bc0b-6018-4088-afe8-af9de6e3e187
+    name: UAE Dirham
+    code: AED
+    decimals: 2
+    numeric: '784'
+    is_iso: true
+    valid_to: null
+- model: ox_locations.currency
+  pk: 158
+  fields:
+    uuid: cfe31287-85ab-48fe-96db-fa22e6036e22
+    name: US Dollar (Next day)
+    code: USN
+    decimals: 2
+    numeric: '997'
+    is_iso: true
+    valid_to: null
+- model: ox_locations.currency
+  pk: 159
+  fields:
+    uuid: 4de03ccc-4138-4f53-9f1e-2f3c83c0f65f
+    name: Peso Uruguayo
+    code: UYU
+    decimals: 2
+    numeric: '858'
+    is_iso: true
+    valid_to: null
+- model: ox_locations.currency
+  pk: 160
+  fields:
+    uuid: 19a86326-69a4-4597-9850-795f16687b1e
+    name: Uruguay Peso en Unidades Indexadas (UI)
+    code: UYI
+    decimals: 0
+    numeric: '940'
+    is_iso: true
+    valid_to: null
+- model: ox_locations.currency
+  pk: 161
+  fields:
+    uuid: 2ab6423f-0c60-4cf8-820b-3173e0421d28
+    name: Unidad Previsional
+    code: UYW
+    decimals: 4
+    numeric: '927'
+    is_iso: true
+    valid_to: null
+- model: ox_locations.currency
+  pk: 162
+  fields:
+    uuid: cc8f7689-d308-477f-917d-987e174cc4c6
+    name: Uzbekistan Sum
+    code: UZS
+    decimals: 2
+    numeric: '860'
+    is_iso: true
+    valid_to: null
+- model: ox_locations.currency
+  pk: 163
+  fields:
+    uuid: 77cafcea-498f-43e4-a265-8930be18cb44
+    name: Vatu
+    code: VUV
+    decimals: 0
+    numeric: '548'
+    is_iso: true
+    valid_to: null
+- model: ox_locations.currency
+  pk: 164
+  fields:
+    uuid: 4e035516-c3e0-45b0-a403-22e795353aa0
+    name: Bolívar Soberano
+    code: VES
+    decimals: 2
+    numeric: '928'
+    is_iso: true
+    valid_to: null
+- model: ox_locations.currency
+  pk: 165
+  fields:
+    uuid: 033a56b5-5fb0-44e2-af34-3a7549d0c92d
+    name: Bolívar Soberano
+    code: VED
+    decimals: 2
+    numeric: '926'
+    is_iso: true
+    valid_to: null
+- model: ox_locations.currency
+  pk: 166
+  fields:
+    uuid: bc2e4677-582a-49ac-be42-f9ca0b08276d
+    name: Dong
+    code: VND
+    decimals: 0
+    numeric: '704'
+    is_iso: true
+    valid_to: null
+- model: ox_locations.currency
+  pk: 167
+  fields:
+    uuid: 4fb6b389-d905-4cf7-ba48-d7e318a6a7d1
+    name: Yemeni Rial
+    code: YER
+    decimals: 2
+    numeric: '886'
+    is_iso: true
+    valid_to: null
+- model: ox_locations.currency
+  pk: 168
+  fields:
+    uuid: aa8785f7-81fb-4145-9eaf-f8ad870b226b
+    name: Zambian Kwacha
+    code: ZMW
+    decimals: 2
+    numeric: '967'
+    is_iso: true
+    valid_to: null
+- model: ox_locations.currency
+  pk: 169
+  fields:
+    uuid: 006e0097-6572-4234-8e00-5c4c2e321f6b
+    name: Zimbabwe Gold
+    code: ZWG
+    decimals: 2
+    numeric: '924'
+    is_iso: true
+    valid_to: null
+- model: ox_locations.currency
+  pk: 170
+  fields:
+    uuid: 74e91632-a7c7-439c-8558-2b7ea5435081
+    name: Bond Markets Unit European Composite Unit (EURCO)
+    code: XBA
+    decimals: null
+    numeric: '955'
+    is_iso: true
+    valid_to: null
+- model: ox_locations.currency
+  pk: 171
+  fields:
+    uuid: 00593f9c-f476-4aa7-b772-95f0c8a43610
+    name: Bond Markets Unit European Monetary Unit (E.M.U.-6)
+    code: XBB
+    decimals: null
+    numeric: '956'
+    is_iso: true
+    valid_to: null
+- model: ox_locations.currency
+  pk: 172
+  fields:
+    uuid: d4169287-b16f-451f-b6b4-f2aa54bb37c2
+    name: Bond Markets Unit European Unit of Account 9 (E.U.A.-9)
+    code: XBC
+    decimals: null
+    numeric: '957'
+    is_iso: true
+    valid_to: null
+- model: ox_locations.currency
+  pk: 173
+  fields:
+    uuid: e90f153e-a5b7-467f-92d6-6c1f53d3b08c
+    name: Bond Markets Unit European Unit of Account 17 (E.U.A.-17)
+    code: XBD
+    decimals: null
+    numeric: '958'
+    is_iso: true
+    valid_to: null
+- model: ox_locations.currency
+  pk: 174
+  fields:
+    uuid: 091e43f9-f4fd-4c3b-8642-b6a7c34c345e
+    name: Codes specifically reserved for testing purposes
+    code: XTS
+    decimals: null
+    numeric: '963'
+    is_iso: true
+    valid_to: null
+- model: ox_locations.currency
+  pk: 175
+  fields:
+    uuid: 9f3f327d-fa19-4baf-be00-21713e8fc06e
+    name: The codes assigned for transactions where no currency is involved
+    code: XXX
+    decimals: null
+    numeric: '999'
+    is_iso: true
+    valid_to: null
+- model: ox_locations.currency
+  pk: 176
+  fields:
+    uuid: fb0d67fe-c3fc-4e77-b958-9bd867b6d61a
+    name: Gold
+    code: XAU
+    decimals: null
+    numeric: '959'
+    is_iso: true
+    valid_to: null
+- model: ox_locations.currency
+  pk: 177
+  fields:
+    uuid: 3214e419-dce9-4862-8be2-931003507430
+    name: Palladium
+    code: XPD
+    decimals: null
+    numeric: '964'
+    is_iso: true
+    valid_to: null
+- model: ox_locations.currency
+  pk: 178
+  fields:
+    uuid: b6ea6442-305e-48b7-bbb7-5a963f248332
+    name: Platinum
+    code: XPT
+    decimals: null
+    numeric: '962'
+    is_iso: true
+    valid_to: null
+- model: ox_locations.currency
+  pk: 179
+  fields:
+    uuid: 8b390328-8670-4e0d-ada6-b420d90cd885
+    name: Silver
+    code: XAG
+    decimals: null
+    numeric: '961'
+    is_iso: true
+    valid_to: null

@@ -6,6 +6,6 @@ __all__ = ("AppConfig",)
 
 
 class AppConfig(apps.AppConfig):
-    name = "ox.tests.app"
+    name = "tests.app"
     label = "ox_test"
     verbose_name = _("Oxerp Test App")

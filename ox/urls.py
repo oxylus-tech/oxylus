@@ -23,7 +23,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path, include
-
+from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
 
 from ox.core.views import core, accounts
 from ox.utils.apps import DiscoverModules
@@ -94,6 +94,8 @@ router = Router()
 urlpatterns = [
     path("api/", (lambda *a, **kw: {}), name="api-index"),
     *router.get_urls(),
+    path("api/schema/", SpectacularAPIView.as_view(), name="schema"),
+    path("api/swagger/", SpectacularSwaggerView.as_view(url_name="schema")),
     path("admin/", admin.site.urls),
     path("accounts/login/", accounts.LoginView.as_view(), name="login"),
 ]

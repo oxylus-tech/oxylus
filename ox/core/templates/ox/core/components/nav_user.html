@@ -1,0 +1,11 @@
+{% load i18n %}
+
+<template v-if="context.user">
+    <v-list-subheader class="ml-2" :title="context.user.username"></v-list-subheader>
+
+    {% block user-menu %}{% endblock %}
+    <v-divider></v-divider>
+    <v-list-item link prepend-icon="mdi-cog" title="{% trans "My Account" %}"
+        href="{% url 'ox_core:account' %}"></v-list-item>
+    <v-list-item link prepend-icon="mdi-logout" title="{% trans "Log out" %}"></v-list-item>
+</template>

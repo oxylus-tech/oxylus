@@ -22,7 +22,7 @@ export default defineConfig({
         'process.env.NODE_ENV': '"production"',
     },
     build: {
-        outDir: "../../static/ox",
+        outDir: "../../ox/static/ox",
         sourcemap: true,
 
         lib : {

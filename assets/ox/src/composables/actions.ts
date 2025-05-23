@@ -6,14 +6,14 @@ import type { Response } from '@pinia-orm/axios'
 
 import { usePermissions, usePermissionsProps } from './models'
 import { User, Model } from '../models'
-import type { IPermissionItem, Permissions } from '../models'
+import type { IPermissionItems, Permissions } from '../models'
 
 
 export type ActionRun<M extends Model, R> = (user: User, item: M, ...args: any[]) => Promise<R>
 export type ActionCompleted<M extends Model, R> = (user: User, item: Model, result: R) => void
 
 
-export interface ActionProps<M extends Model, R>
+export interface IActionProps<M extends Model, R>
 {
     /**
      * Value or model instance.
@@ -42,11 +42,14 @@ export interface ActionProps<M extends Model, R>
     /**
      * Required permission to run the action
      */
-    permissions: IPermissionItem[]
+    permissions: IPermissionItems
     /**
      * The function to call when action is executed
      */
     run: ActionRun<M,R>
+
+    /** If provided, open this link */
+    href?: string
 }
 
 
@@ -72,68 +75,48 @@ export interface IAction<M extends Model, R> {
 /**
  * Action's parameters, `user` MUST be provided.
  */
-type ActionOpts = {
-    /**
-     * The user running the action.
-     */
+export interface IAction<M extends Model, R> {
+    /** Action components properties */
+    props: IActionProps<M, R>
+    /** The user running the action. */
     user: User
-    /**
-     * If provided, emits `completed` once the action has been
-     * executed.
-     */
+    /** If provided, emits `completed` once the action has been executed. */
     emits?: (event: string, ...opts: any[]) => void
 }
 
 
 /**
- * An `Action` is a function executable by the user.
- *
- * This class provides:
- * - user permissions check: {@link ActionProps.permissions}, {@link Action.permissions}, {@link Action.allowed}
- * - running status: {@link Action.processing}
- * - event emits when action is done: `completed` ({@link ActionCompleted})
+ * Create a new action, returning:
+ * - processing: ref to boolean indicating wether the action is processing
+ * - permissions: Permissions instance
+ * - allowed: computed ref indicating wether the action is allowed
+ * - run: async function to call in order to run the method
  */
-class Action<M extends Model, R> {
-    constructor(opts: ActionOpts, props: ActionProps<M,R>) {
-        Object.assign(this, opts)
-        this.props = props
+export function useAction<M extends Model,R>({props, user, emits=null}: IAction<M,R>) {
+    const processing = ref(false)
+    const {permissions, allowed} = usePermissions(user, props.permissions, props.item)
 
-        this.processing = ref(false)
-        const perms = usePermissions(this.user, props.permissions, props.item)
-        this.permissions = perms.permissions
-        this.allowed = perms.allowed
-    }
-
-    /**
-     * Execute the action.
-     */
-    async run(...args: any[]): Promise<R> {
-        if(this.props.confirm && !confirm(this.props.confirm))
+    /** Execute the action. */
+    const run = async (...args: any[]): Promise<R> => {
+        if(props.confirm && !confirm(props.confirm))
             return
-        if(!this.allowed.value)
+        if(!allowed.value)
             throw Error(`You are not allowed to execute this action`)
 
-        this.processing.value = true
-        let result : R = this.props.run(this.user, this.props.item, ...args)
+        processing.value = true
+        if(props.href) {
+            document.location.href = props.href
+            return
+        }
+
+        let result : R = props.run(user, props.item, ...args)
         if(result instanceof Promise)
             result = await result
 
-        this.processing.value = false
-        if(this.emits)
-            this.emits('completed', this.props.item, ...args)
+        processing.value = false
+        if(emits)
+            emits('completed', props.item, ...args)
         return result
     }
-}
-
-interface Action<M extends Model, R> extends IAction<M,R> {}
-
-
-/**
- * Create a new {@link Action}.
- *
- * Important note: the object is NOT reactive, although some of its
- * attributes are.
- */
-export function useAction<M extends Model,R>(opts: ActionOpts, props: ActionProps<M,R>) : Action<M,R> {
-    return new Action(opts, props)
+    return {processing, permissions, allowed, run}
 }

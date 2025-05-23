@@ -1,0 +1,12 @@
+{% extends "ox/core/app.html" %}
+{% comment %}
+Context:
+- user_table_headers: headers of user data table
+{% endcomment %}
+{% load i18n %}
+
+{% block app-main %}
+{% include "./components/person_panel.html" with tabbed=1 %}
+{% include "./components/organisation_panel.html" with tabbed=1 %}
+{% include "./components/organisation_type_panel.html" with tabbed=1 %}
+{% endblock %}

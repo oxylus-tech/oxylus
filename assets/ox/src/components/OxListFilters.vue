@@ -1,5 +1,5 @@
 <template>
-    <form @submit.prevent="list.fetch()" class="width-full">
+    <form @submit.prevent="list.load()" class="width-full">
         <v-toolbar dense color="transparent">
             <v-app-bar-nav-icon :icon="icon" readonly/>
             <v-text-field v-if="props.search && list.filters"
@@ -7,7 +7,7 @@
                 v-model="list.filters[props.search]"
                 hide-details/>
             <slot :list="list" :filters="list.filters"/>
-            <v-btn @click.stop="list.fetch()" class="ml-2" icon="mdi-check"
+            <v-btn @click.stop="list.load()" class="ml-2" icon="mdi-check"
                 :aria-label="$t('filters.apply')"
                 :title="t('filters.apply')"
             />
@@ -20,8 +20,7 @@
 </template>
 <script setup>
 import { computed, defineProps, defineExpose, inject } from 'vue'
-import { useI18n } from 'ox'
-const { t } = useI18n()
+import { t } from 'ox'
 
 const list = inject('list')
 const props = defineProps({
@@ -38,7 +37,7 @@ const icon = computed(() => hasFilters.value ? 'mdi-filter-check' : 'mdi-filter-
 
 function reset() {
     list.filters = {}
-    list.fetch()
+    list.load()
 }
 
 defineExpose({ icon, hasFilters, reset})

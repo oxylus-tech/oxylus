@@ -17,40 +17,57 @@
                 <slot name="title" :context="context"/>
             </v-app-bar-title>
             <v-spacer/>
+            <slot name="app-bar-left" :context="context"></slot>
             <div id="app-bar-right" class="mr-3"></div>
             <slot name="app-bar-right" :context="context"></slot>
         </v-app-bar>
-        <v-navigation-drawer theme="dark" v-model="nav.drawer" v-if="slots['nav-list']">
-            <slot name="nav-start" :context="context"></slot>
-            <slot name="nav-list" :context="context"></slot>
-            <slot name="nav-end" :context="context"></slot>
-            <template #append v-if="slots['app-nav']">
-                <div class="text-right pa-3">
-                </div>
+        <ox-app-nav v-model:drawer="nav.drawer" :items="context.data.nav">
+            <template #prepend>
+                <a class="nav-home">
+                    <v-img v-if="logo" :src="logo" class="logo"/>
+                </a>
+                <slot name="nav-start" :context="context"></slot>
             </template>
-        </v-navigation-drawer>
+            <template #append v-if="slots['nav-end']">
+                <v-list v-model:opened="nav.opened">
+                    <slot name="nav-end" :context="context"></slot>
+                </v-list>
+            </template>
+        </ox-app-nav>
         <v-main>
-            <v-tabs-window v-model="context.panel.name">
-                <slot name="default" :context="context"></slot>
-            </v-tabs-window>
+            <slot name="main">
+                <v-tabs-window v-model="panels.panel">
+                    <template #default="bind">
+                        <slot name="default" v-bind="bind" :context="context"></slot>
+                    </template>
+                </v-tabs-window>
+            </slot>
         </v-main>
     </v-app>
 </template>
+<style>
+.nav-home {
+    display: block;
+    text-align: left;
+}
+.nav-home .logo {
+    max-height: 4em;
+    margin: 1em 1em 0.4em 1em;
+}
+</style>
 <script setup lang="ts">
-import { useSlots, withDefaults, onErrorCaptured } from 'vue'
+import { useSlots, withDefaults, onErrorCaptured, onMounted } from 'vue'
 import { computed, defineProps, inject, provide, reactive, watch } from 'vue'
 
-import {useAppContext} from 'ox'
+import {useAppContext, usePanels, t} from 'ox'
 import type {Model} from '../models'
-
-// we force ox_core locales to be loaded
-import { useI18n } from 'ox'
-const { t } = useI18n()
+import OxAppNav from './OxAppNav'
 
 const slots = useSlots()
 
 interface Props {
     apiUrl?: string
+    logo?: string
     dataEl?: string
     models?: Model[]
     data?: object
@@ -60,11 +77,12 @@ const props = withDefaults(defineProps<Props>(), {
     dataEl: document.body.dataset?.appData
 })
 
-const nav = reactive({
-    drawer: true,
-})
+const nav = reactive({drawer: true})
 
 const context = useAppContext(props)
+const panels = usePanels()
+
+onMounted(() => { panels.panel = context.data.panel })
 
 watch(() => [context.state.state, context.state.data], () => {
     context.showState = true

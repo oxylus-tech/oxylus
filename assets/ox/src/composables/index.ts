@@ -2,14 +2,11 @@ import { defineAsyncComponent as $defineAsyncComponent } from 'vue'
 
 export * from './app'
 export * from './actions'
-export * from './edit'
 export * from './init'
 export * from './i18n'
-export * from './list'
 export * from './models'
-export * from './panel'
-export * from './model_panel'
-export * from './api'
+export * from './controllers'
+export {default as rules} from './rules'
 
 
 /**
@@ -18,10 +15,11 @@ export * from './api'
  */
 export function defineAsyncComponent(url: string, name: string) {
     return $defineAsyncComponent(() => {
-        return import(url).then(module => {
+        return import(url).then(mod => {
             if(!name)
-                return module
-            const obj = Object.values(module).filter(y => y.__name == name)[0]
+                return mod
+            console.log(mod, mod.components, Object.keys(mod))
+            const obj = Object.values(mod).filter((y: {[k: string]: any}) => y.__name == name)[0]
             return obj
         })
     })

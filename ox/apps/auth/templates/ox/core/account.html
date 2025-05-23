@@ -1,0 +1,9 @@
+{% extends "ox/core/account.html" %}
+{% load i18n static %}
+
+{% block app-view %}
+<template #tab.account>{% translate "Account" %}</template>
+<template #window.account>
+    <ox-component src="{% static "ox_auth/OxUserEdit.js" %}" :initial="context.user"></ox-component>
+</template>
+{% endblock %}
