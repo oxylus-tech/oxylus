@@ -3,7 +3,7 @@
         item-value="id" item-title="name"
         lookup="search" :filters="{country__uuid: props.country}"
         :custom-filter="customFilter"
-        v-model="value" v-bind="props"
+        v-model="value" v-bind="attrs"
         >
         <template #selection="{ item, index }">
             {{ item.raw.name }}
@@ -23,22 +23,16 @@
     </ox-autocomplete>
 </template>
 <script setup lang="ts">
-import {useSlots, defineModel, defineProps} from 'vue'
+import {useAttrs, useSlots, defineModel, defineProps} from 'vue'
 import {query, useModels} from 'ox'
 import {OxAutocomplete} from 'ox/components'
 import {OrganisationType} from '../models'
 
 const slots = useSlots()
 const props = defineProps({
-    label: String,
-    name: String,
-    multiple: Boolean,
-    hideDetails: Boolean,
-    density: String,
-    country: String,
-    disabled: Boolean,
-    rules: Array,
+    country: String
 })
+const attrs = useAttrs()
 const value = defineModel()
 
 const repos = useModels([OrganisationType])

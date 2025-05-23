@@ -38,26 +38,17 @@ export function usePanels(options: IPanels) {
     const panels = reactive(new Panels(options))
     provide('panels', panels)
 
-    watch(() => panels.current, (panel) => {
-        if(panel && panel.name == panels.panel)
-            panel.show(panels.params)
-    })
-
-    watch(() => panels.current?.getUrlParams(), (vals) => {
-        if(!vals)
-            return
-
-        const params = (new URLSearchParams(vals)).toString()
-        if(params != panels.paramsString) {
-            history.pushState(vals, "", `?${params}`)
-            panels.paramsString = params
-        }
+    onMounted(() => {
+        panels.readDocumentLocation()
+        panels.panel && panels.show({
+            panel: panels.panel, silent: true,
+            ...panels.params
+        })
     })
 
     window.addEventListener("popstate", (event) => {
-        if(event.state) {
-            panels.panel = event.state.panel
-        }
+        if(event.state)
+            panels.show({...event.state, silent: true})
     })
 
     // we update title after history state
@@ -85,8 +76,7 @@ export function usePanel<P extends IPanelProps>(options: IPanel<P>, cls: typeof 
     onMounted(() => panel.panels.register(panel.name, panel))
     onUnmounted(() => panel.panels.unregister(panel.name))
 
-    if(panel.onViewChange)
-        watch(() => panel.view, (val) => panel.onViewChange(val))
+    // watch(() => panel.view, (val, old) => val != old && panel.onViewChange(val))
     return {panel}
 }
 
@@ -165,7 +155,7 @@ export function useEditor<
     provide('editor', editor)
 
     const edited = computed(() => editor.isEdited())
-    watch(() => editor.initial, (val) => editor.reset(val || editor.default))
+    watch(() => editor.props.initial, (val) => editor.reset(val || editor.default))
 
     const panel = inject('panel') as Panel
     if(panel)

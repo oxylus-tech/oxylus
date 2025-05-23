@@ -4,7 +4,7 @@ from django.contrib.auth.models import User, Group
 
 from ox.core.models import Model, InheritanceQuerySet
 from ox.apps.locations.models import Country
-from ox.utils.models import Named, Colored
+from ox.utils.models import Named, Described, Colored
 
 
 __all__ = (
@@ -46,7 +46,7 @@ class OrganisationType(Named, Model):
         verbose_name_plural = _("Company Forms")
 
 
-class Organisation(Colored, Contact):
+class Organisation(Described, Colored, Contact):
     group = models.ForeignKey(Group, models.SET_NULL, null=True, blank=True)
     short_name = models.CharField(_("Short name"), max_length=32, null=True, blank=True)
     reference = models.CharField(_("Reference Number"), max_length=32, default="", blank=True)

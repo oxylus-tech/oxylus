@@ -13,10 +13,12 @@ import {getCookieList} from '../utils'
 export function createI18n() {
     // remove country specific locale as they are not provided by locales
     // client side
-    const candidates = (getCookieList("lang", ",") || ["en"]).map(
+    const candidates = (getCookieList("lang", ",") || navigator.languages || ["en"]).map(
         x => x.toLowerCase().replace(/[_-](\w+)/, "")
     )
     const locale = candidates.find(x => x in config.locales)
+
+
     return $createI18n({
         legacy: false,
         globalInjection: true,

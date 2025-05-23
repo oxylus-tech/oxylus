@@ -90,6 +90,7 @@ export class Organisation extends Contact {
     static fields() {
         return {
             ...super.fields(),
+            short_name: this.string(),
             color: this.string(),
             group: this.number(),
             vat: this.string(),

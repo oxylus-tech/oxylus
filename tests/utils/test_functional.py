@@ -1,41 +1,23 @@
 import pytest
 
-from ox.utils import functional
+from ox.utils import functional, tests
+
+
+class OwnedClass(functional.Owned, tests.Mock):
+    pass
 
 
 @pytest.fixture
-def A():
-    class A:
-        pass
-
-    return A
+def owned():
+    return OwnedClass(foo=123, bar={"tee": 456})
 
 
-@pytest.fixture
-def B():
-    class B:
-        pass
+class TestOwned:
+    def test_contribute(self, owned):
+        owner = tests.Mock()
+        owned_2 = owned.contribute(owner)
 
-    return B
-
-
-@pytest.fixture
-def C(A):
-    class C(A):
-        pass
-
-    return C
-
-
-def test_merge_bases_no_append(A, B, C):
-    functional.merge_bases(C, [A, B], False)
-    assert issubclass(C, A)
-    assert issubclass(C, B)
-    assert len(C.__bases__) == 2
-
-
-def test_merge_bases_with_append(A, B, C):
-    functional.merge_bases(C, [B], True)
-    assert issubclass(C, A)
-    assert issubclass(C, B)
-    assert len(C.__bases__) == 2
+        assert getattr(owned, "_owner", None) is None
+        assert owned_2._owner is owner
+        assert owned_2 is not owned
+        assert (owned_2.foo, owned_2.bar) == (owned.foo, owned.bar)

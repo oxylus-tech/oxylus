@@ -72,11 +72,12 @@ export default class Editor<T extends IObject, P extends IEditorProps<T>> {
             this.state = new State()
 
         this.value = {} as T
+        this.initial = this.props.initial || {}
         this.valid = true
         this.reset(this.initial)
     }
 
-    get initial(): T { return this.props.initial || {} }
+    //get initial(): T { return this.props.initial || {} }
     get name(): string { return this.props.name }
     get url(): string|null { return this.props.url }
 
@@ -122,7 +123,8 @@ export default class Editor<T extends IObject, P extends IEditorProps<T>> {
 
         const state = await this.send(value)
         if(state.isOk) {
-            this.reset(state.data as T)
+            this.reset(state.data as T, true)
+            this.initial = cloneDeep(this.value)
             this.saved?.(this.value)
         }
         else

@@ -2,7 +2,8 @@
     <ox-state-alert :state="editor.state"/>
     <div class="mb-3">
         <ox-validation-btn v-if="editable && edited"
-            @validate="editor.save()" @reset="editor.discard()" :state="editor.state" :validate-disabled="!editor.valid"/>
+            @validate="editor.save()" @reset="editor.discard()" :state="editor.state" :validate-disabled="!editor.valid"
+            :disabled="editor.state.isProcessing" />
     </div>
     <v-container class="ox-model-edit">
         <v-form v-model="editor.valid" :disabled="!editable">

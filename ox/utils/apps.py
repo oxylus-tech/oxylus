@@ -55,26 +55,55 @@ class DiscoverModules:
     """Utility function used to discover sub-modules in applications.
 
     For each declared sub-module, there must be an equivalent method
-    handler with the following signature: `handle_{module_name}(self,
-    app, module, **kw)`.
+    handler with the following signature: ``handle_{module_name}(self,
+    app, module, **kw)`` (where dots in ``module_name`` are replace by ``_``)
     """
 
-    module_names: str | list[str] | tuple[str] = ""
+    module_names: str | Iterable[str] = ""
     """A single or a list of module names to look-up for."""
 
-    def run(self, app_configs=None, **kw):
-        """Run."""
-        for module_name in self.module_names:
+    def __init__(self, module_names: str | Iterable[str] | None = None, **handlers):
+        """
+        :param module_names: list of module names to look up
+        :param handlers: list of handler functions.
+        """
+        if module_names is not None:
+            self.module_names = module_names
+
+        if handlers:
+            for key, handler in handlers.items():
+                if not key.startswith("handle_"):
+                    raise ValueError(f"Invalid handler method name: {key} (should start with `handle_`)")
+                setattr(self, key, handler)
+
+    def run(self, app_configs: Iterable[AppConfig] = None, **kw):
+        """Run handler over all modules."""
+        if app_configs is None:
+            app_configs = apps.get_app_configs()
+
+        for module_name in self.get_module_names():
             self.run_handler(module_name, app_configs, **kw)
 
-    def run_handler(self, module_name, app_configs=None, **kw):
+    def get_module_names(self) -> Iterable[str]:
+        """Return modules names as an iterable"""
+        if isinstance(self.module_names, str):
+            return [
+                self.module_names,
+            ]
+        return self.module_names
+
+    def run_handler(self, module_name: str, app_configs: Iterable[AppConfig] = None, **kw):
+        """Run handler over app config looking for the provided module."""
         handler = self.get_handler(module_name)
-        app_configs = app_configs or apps.get_app_configs()
+        if app_configs is None:
+            app_configs = apps.get_app_configs()
+
         for app in app_configs:
             if mod := self.get_app_module(app, module_name):
                 handler(app, mod, **kw)
 
     def get_handler(self, module_name):
+        """Return handler function for the provided"""
         fn = f"handle_{module_name.replace('.','_')}"
         if not hasattr(self, fn):
             raise NotImplementedError(f"Handler is not implemented for `{module_name}`. Expected `{fn}`.")

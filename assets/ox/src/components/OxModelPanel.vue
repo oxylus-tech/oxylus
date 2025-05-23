@@ -35,30 +35,36 @@
 
                     <v-btn :disabled="!prev"
                             :title="t('prev')" :aria-label="t('prev')"
-                            @click.stop="panel.show({value: prev})">
+                            @click.stop="panel.show({view: panel.view, value: prev})">
                         <v-icon icon="mdi-chevron-left"/>
                     </v-btn>
                     <v-btn :disabled="!next"
                             :title="t('next')" :aria-label="t('next')"
-                            @click.stop="panel.show({value: next})">
+                            @click.stop="panel.show({view: panel.view, value: next})">
                         <v-icon icon="mdi-chevron-right"/>
                     </v-btn>
                 </v-btn-group>
             </template>
 
-            <v-btn-toggle class="ml-3" color="secondary" v-model="panel.view" density="compact" variant="tonal" mandatory>
+            <v-btn-toggle class="ml-3" color="secondary"
+                density="compact" variant="tonal" mandatory
+                v-model="panel.view"
+                >
                 <!-- TODO: permission check -->
                 <v-btn value="list.table"
+                        @click.stop="panel.show({view: 'list.table'})"
                         :title="t('panels.nav.table')"
                         :aria-label="t('panels.nav.table')">
                     <v-icon>mdi-table</v-icon>
                 </v-btn>
                 <v-btn value="list.cards" v-if="slots['views.list.cards']"
+                        @click.stop="panel.show({view: 'list.cards'})"
                         :title="t('panels.nav.cards')"
                         :aria-label="t('panels.nav.cards')">
                     <v-icon>mdi-card-account-details</v-icon>
                 </v-btn>
                 <v-btn value="list.kanban" v-if="slots['views.list.kanban']"
+                        @click.stop="panel.show({view: 'list.kanban'})"
                         :title="t('panels.nav.kanban')"
                         :aria-label="t('panels.nav.kanban')">
                     <v-icon>mdi-view-column</v-icon>
@@ -70,6 +76,7 @@
                     <v-icon>mdi-plus-box</v-icon>
                 </v-btn>
                 <v-btn value="detail.edit" v-if="slots['views.detail.edit'] || editSlots"
+                        @click.stop="panel.show({view: 'detail.edit', value: panel.value})"
                         :disabled="!panel.value?.id"
                         :title="t('panels.nav.edit')"
                         :aria-label="t('panels.nav.edit')">

@@ -117,11 +117,20 @@ export default class Panel<P extends IPanelProps = IPanelProps>
     }
 
     /** Show a view, providing optional value */
-    show({view=null, value=null}: {view?: string, value?: any}={}) {
-        if(this.onLeave()) {
-            if(view !== null)
-                this.view = view || this.index
+    show({view=null, value=null, silent=false}: {view?: string, value?: any, silent?: boolean}={}) {
+        if((view != this.view || value != this.value) && this.onLeave()) {
+            this.view = view || this.index
             this.value = value
+            !silent && this.updateLocation()
+        }
+    }
+
+    /** Update current location using History api */
+    updateLocation() {
+        const params = this.getUrlParams()
+        if(params) {
+            const url = (new URLSearchParams(params)).toString()
+            history.pushState(params, "", `?${url}`)
         }
     }
 
@@ -141,6 +150,7 @@ export default class Panel<P extends IPanelProps = IPanelProps>
     }
 
     onViewChange(val: string) {
+        console.log('onViewChange', val)
         if(!val)
             this.view = this.index
     }

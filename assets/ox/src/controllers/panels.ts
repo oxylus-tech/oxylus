@@ -7,7 +7,8 @@ export interface IPanels {
     /** Current panel's name. **/
     panel: string
     /** Display/GET parameters for the current panel. */
-    params: {}
+    params: Record
+    silent: boolean
 }
 
 
@@ -28,25 +29,24 @@ export default class Panels {
     params: Record<string, any> = {}
     paramsString: string = ''
     children: {[k: string]: Panel} = {}
-
-    get current() : Panel|null {
-        return this.children[this.panel] || null
-    }
+    current: Panel|null
 
     constructor(options: IPanels|null = null) {
         options && assignNonEmpty(this, options)
-        this.readDocumentLocation()
     }
 
     /**
-     * Set {@link Panels.params
+     * Set {@link Panels.params based on current document location.
      */
     readDocumentLocation() {
-        this.paramsString = document.location.search
-        const params = new URLSearchParams(this.paramsString)
-        this.params = Object.fromEntries(params.entries())
+        this.paramsString = document.location.search.substring(1)
+        const search = new URLSearchParams(this.paramsString)
+        const {panel, ...params} = Object.fromEntries(search.entries())
+        this.panel = panel
+        this.params = params || {}
     }
 
+    /** Read provided path and return current panel and view */
     static readPath(path: string) : IPanels {
         if(!path)
             return {panel: "", view: ""}
@@ -57,17 +57,29 @@ export default class Panels {
         return {panel: path.substring(0, idx), view: path.substring(idx+1)}
     }
 
+    /** Register a panel */
     register(name: string, child: Panel) {
-        /*if(name in this.children) {
-            throw Error(`Child panel is already registered ${name}.`)
-        }*/
-        this.children[name] = child
+        if(!this.children[name]) {
+            this.children[name] = child
+
+            // Set current to child if required
+            if(this.panel == child.name) {
+                this.current = child
+                child.show(this.params)
+            }
+        }
     }
 
+    /** Unregister a panel */
     unregister(name: string) {
         delete this.children[name]
     }
 
+    /**
+     * Show a panel, loading page provided by href if required.
+     * When there is already a panel displayed, it will call {@link Panel.onLeave} in order to eventually prevent
+     * unwanted page change.
+     */
     show({force=false, href=null, ...options}: IPanelShow) {
         const proceed = force || !this.current || this.current.onLeave()
         if(!proceed)
@@ -87,7 +99,7 @@ export default class Panels {
         this.reset(options)
     }
 
-    reset({panel, view=null, value=null, id=null}: IPanels) {
+    reset({panel, silent=false, ...params}: IPanels) {
         const panelChanged = (panel && panel != this.panel)
         if(panelChanged && this.current) {
             if(!this.current.onLeave())
@@ -95,7 +107,11 @@ export default class Panels {
         }
 
         this.panel = panel || this.panel
-        this.params = {view, value, id}
+        this.params = params
+
+        // Set current and if yet registered, show it.
+        this.current = this.children[this.panel]
+        this.current?.show({...this.params, silent})
     }
 }
 export default interface Panels extends IPanels {
