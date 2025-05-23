@@ -1,31 +1,52 @@
 Oxylus
 ======
 
-Oxylus is a web application and framework focused on back-office tools. It relies on the combination power of Django and Vue in order to provide full featured and modern user experience.
+Oxylus is a modular, extensible platform designed to host a wide range of business applications — from contact and organization management to accounting, custom DevOps integrations, AI-enhanced workflows, and more.
 
-It is fully extensible in order to provide solutions to many use case, and ease their interoperability. Some of them could be in the futures: retail business tools, ai development tools.
-
-The current project is in its early development steps. Don't expect it to be fully featured and free of bugs. We are at the step of setting up quality assurance on the proof of concept.
-
+The goal is to provide a solid, open-source foundation that supports both essential features and custom development, while encouraging collaboration, mutualization of development costs, and reuse of functionality across users and sectors.
 
 .. image:: ./docs/source/static/screenshot-1.png
     :align: center
 
-
-**It features:**
-
-- core runtime application;
-- extensibility: through Django's views and Vue's components;
-- applications (mostly planed):
-
-    - authentication: users, groups, permissions;
-    - contacts: people, companies, address books management;
-    - user and applications settings;
-
-- development tools among other things
+The current project is in its early development steps. Don't expect it to be fully featured and free of bugs. We are at the step of setting up quality assurance on the proof of concept.
 
 
-Go to documentation in order to get more information.
+Why Oxylus?
+-----------
+
+-️ Designed for extensibility: A core platform with reusable modules and clearly structured architecture for seamless integration of new apps.
+
+- Open-Source by design: All code is licensed under an open license, enabling transparency, auditability, and community-driven improvement.
+
+- Inclusive by intention: Accessibility is a priority, with ARIA standards already in use and full WCAG compliance planned.
+
+- Shared development: Custom features developed for one client are made available to the entire user base, fostering a sustainable ecosystem and reducing duplicated effort.
+
+- Built with proven tools: Leveraging the power and maturity of Django (backend) and Vue.js (frontend) to deliver robust, modern applications.
+
+
+Features
+--------
+
+- Core framework backend and frontend;
+- Datasets
+- Frontend component library
+
+Applications (and datasets when applicable):
+
+- `auth`: user, groups and permissions managements;
+- `locations`: country and related informations such as VAT/IBAN validation and examples; phone prefix; continent;
+- `contacts`: contacts and organisations management, entity types, related information (address, email, phone, bank account);
+- `content` [WIP]: generic content edition and template framework to be used to render specific content (e.g. mails, invoices, etc.)
+- `mailing-lists`: manage mailing-list and subscription, using contacts and organisations;
+
+Technically:
+
+- Backend: Django, Django Rest Framework
+- Frontend: Vue, Vuetify, Pinia, Pinia-ORM
+- QA: pre-commit, unit tests
+- Documentation
+
 
 
 Practices and conventions
@@ -36,6 +57,7 @@ Here are conventions and practices we want for this project.
 **Regardless who you are or define yourself, you have the right to be fully respected**, as we all are at first humans. It implies that pricks are not welcome here.
 
 **Stick to PEPs and good development practices**. This including:
+
 - pytest as much as possible;
 - pre-commit code quality;
 - CI/CD tests before merge;
@@ -46,61 +68,3 @@ Here are conventions and practices we want for this project.
 **KISS** is the way, remember it at each step of the conception and usage. Avoid to dive in the deep waters of hacky-dirty design and code -- you'll loose important parts of your life and health;
 
 *Remember that code is easy to write, but is even more easy to get dirty. Good design and workflow are necessary as they avoid tons of problems. Providing projects is not a sprint, but a marathon -- a long harcheous journey between development, testing, quality assesment, production usage and debugging.*
-
-
-Code quality
-------------
-
-- build tools:
-
-    - python: poetry is the way;
-    - assets: vitejs is the way;
-
-- modularity should be clean in usage:
-
-    - extensibility should allow declarative subclassing, using class or instance attributes: this reduces code boilerplate;
-    - clear separation of concerns and scope for each (sub-)class, including what should be at a class or instance level;
-
-- performances:
-
-    - optimize by design, don't over-optimize;
-    - batch operation as much as possible, without implying dirty and unreadable code;
-
-- multi-files modules will only expose public interfaces and classes in their `__init__.py` file;
-- when using external libraries, ensure that:
-
-    - project well organised and coded;
-    - project is active and won't die anytime soon if not yet dead;
-    - maintainers are reactive and a community is behind them;
-    - licenses matches;
-    - regardless whoever they are, people are respected;
-
-Regarding to Django specific conventions:
-
-- translation MUST be integrated;
-- views and templates:
-    - exploit the extensibility of Django templates;
-- assets code should be clean: use of modern build systems in order to generate it;
-- one use case/scope per application, which must be well defined;
-- `QuerySet` should be used to provide batch db helpers;
-
-
-Project structure
------------------
-
-The project is structured as follow:
-- `oxerp/`: application project instance and common tools, such as routers, utility function and classes to be used by applications and project;
-    - `settings/`: Django settings files (`dev`, `test`, `prod`)
-    - `utils/`: utility classes and functions;
-    - `apps/`: common Django applications of oxerp
-        - `base/`: base application models, views, filters, templates, assets, etc.
-        - `auth/`: users, groups and permissions management interfaces and tools;
-- `scripts/`: development and production scripts, cookiecutter templates, etc;
-
-Each application is structured as a regular Django application using tools such as `rest-framework` or `django-filter`, and with the expected peculiarities:
-
-- `assets/`, `statics/` (source and dist directory): assets are vite-js projects;
-- `controllers/`: it clears separate concerns between commands and the controllers they may require;
-- `models`, `views`: one file for each model, in order to have clean and short modules content.;
-- `filters`, `serializers`, `forms`, `permissions`: when they are mostly declarative, we keep them as single-file modules;
-- `urls`: discovered at project init, provides `router` instance used to generate urls;

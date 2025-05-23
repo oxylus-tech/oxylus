@@ -4020,7 +4020,7 @@ if (__INTLIFY_PROD_DEVTOOLS__) {
   e.__INTLIFY__ = !0, ri(e.__INTLIFY_DEVTOOLS_GLOBAL_HOOK__);
 }
 function ho() {
-  const t = (Br("lang", ",") || ["en"]).map(
+  const t = (Br("lang", ",") || navigator.languages || ["en"]).map(
     (n) => n.toLowerCase().replace(/[_-](\w+)/, "")
   ).find((n) => n in Wt.locales);
   return ro({

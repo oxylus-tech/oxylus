@@ -164,7 +164,7 @@ const headers = computed(() => [
 
 /** This is called by editors once object has been saved */
 function saved(item) {
-    panel.value.value = item
+    panel.value = item
 }
 
 const bind = computed(() => {

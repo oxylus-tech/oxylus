@@ -1839,7 +1839,7 @@ const pa = /* @__PURE__ */ ae({
       { key: "actions", title: w("actions") }
     ]);
     function C(L) {
-      a.value.value = L;
+      a.value = L;
     }
     const k = I(() => ({
       panel: a,
