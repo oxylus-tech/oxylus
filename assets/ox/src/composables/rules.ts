@@ -13,9 +13,7 @@ export default {
      * Validate field errors returned from the server.
      */
     errors(errorList) {
-        return () => {
-            errorList?.length ? errorList.join('<br>') : true
-        }
+        return () => (errorList?.length ? errorList.join('<br>') || false : true)
     },
 
     /**

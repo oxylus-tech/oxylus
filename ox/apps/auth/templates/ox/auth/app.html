@@ -1,11 +1,16 @@
 {% extends "ox/core/app.html" %}
-{% comment %}
-Context:
-- user_table_headers: headers of user data table
-{% endcomment %}
 {% load i18n %}
 
-{% block app-main %}
-{% include "./components/user_panel.html" with tabbed=1 %}
-{% include "./components/group_panel.html" with tabbed=1 %}
+{% block app %}
+{{ block.super }}
+<template #panels.users>
+    {% block users %}
+    {% include "ox/core/components/model_panel.html" with tag="ox-user-panel" name="users" %}
+    {% endblock %}
+</template>
+<template #panels.groups>
+    {% block groups %}
+    {% include "ox/core/components/model_panel.html" with tag="ox-group-panel" name="groups" %}
+    {% endblock %}
+</template>
 {% endblock %}

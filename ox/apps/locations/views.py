@@ -2,33 +2,34 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.utils.translation import gettext_lazy as _
 from rest_framework.permissions import DjangoModelPermissionsOrAnonReadOnly
 
-from ox.core.views import AppView, ModelViewSet, register_nav
+from ox.core.views import AppView, ModelViewSet, nav
 from . import models, serializers, filters
 
 
 __all__ = ("AppView", "CountryViewSet", "CurrencyViewSet")
 
 
-register_nav(
-    "settings.locations",
-    {
-        "title": _("Locations"),
-        "type": "subheader",
-        "items": {
-            "countries": {
-                "url": "ox_locations:index",
-                "title": _("Countries"),
-                "icon": "mdi-earth",
-                "permissions": "ox_locations.view_country",
-            },
-            "currencies": {
-                "url": "ox_locations:index",
-                "title": _("Currencies"),
-                "icon": "mdi-currency-eur",
-                "permissions": "ox_locations.view_currency",
-            },
-        },
-    },
+nav.app_nav["settings"].append(
+    nav.NavSubGroup(
+        "locations",
+        _("Locations"),
+        items=[
+            nav.NavItem(
+                "countries",
+                _("Countries"),
+                url="ox_locations:index",
+                icon="mdi-earth",
+                permissions="ox_locations.view_country",
+            ),
+            nav.NavItem(
+                "currencies",
+                _("Currencies"),
+                url="ox_locations:index",
+                icon="mdi-currency-eur",
+                permissions="ox_locations.view_currency",
+            ),
+        ],
+    ),
 )
 
 

@@ -34,17 +34,17 @@ export interface IEditor<T,P extends IEditorProps<T>> extends IEditorProps<T> {
     [index: string]: any
 
     props: P
-    /** Value to use as initial for creating object */
-    default: T & Record<string, any>
     /**
      * @property value - current edited value
      */
     value: T & Record<string, any>
+    /** Empty value, if not provided generated */
+    empty: T
     /**
     * @property state - current editor state. Set to `State.PROCESSING` when
     * saving instance.
     */
-    state: State,
+    state: State
 }
 
 
@@ -63,7 +63,6 @@ export interface IEditorSend extends IObject {}
 export default class Editor<T extends IObject, P extends IEditorProps<T>> {
     state = State.none()
     value: T & Record<string, any> = {} as T
-    default: T & Record<string, any> = {} as T
 
     constructor(options: IEditor<T,P>)
     {
@@ -71,13 +70,13 @@ export default class Editor<T extends IObject, P extends IEditorProps<T>> {
         if(!this.state)
             this.state = new State()
 
-        this.value = {} as T
-        this.initial = this.props.initial || {}
+        this.value ??= {} as T
+        this.empty ??= {} as T
+        this.initial ??= this.props.initial || this.empty
         this.valid = true
         this.reset(this.initial)
     }
 
-    //get initial(): T { return this.props.initial || {} }
     get name(): string { return this.props.name }
     get url(): string|null { return this.props.url }
 
@@ -94,11 +93,12 @@ export default class Editor<T extends IObject, P extends IEditorProps<T>> {
      * Reset editor data to provided value.
      * When value is provided, reset initial to this value.
      */
-    reset(initial: T|null = null) {
-        reset(this.value, initial || {})
+    reset(value: T|null = null) {
+        reset(this.value, value ?? this.empty)
         this.state.none()
     }
 
+    /** Return wether value has been edited or not */
     isEdited(): boolean {
         return !isEqual(this.value, this.initial)
     }
@@ -115,7 +115,7 @@ export default class Editor<T extends IObject, P extends IEditorProps<T>> {
     async save(value: T|null = null): Promise<State> {
         this.state.processing()
 
-        if(!this.valid)
+        if(this.valid === false)
             return this.state.error({
                 "_": "Some of the input values are invalid"
             })
@@ -124,7 +124,7 @@ export default class Editor<T extends IObject, P extends IEditorProps<T>> {
         const state = await this.send(value)
         if(state.isOk) {
             this.reset(state.data as T, true)
-            this.initial = cloneDeep(this.value)
+            // this.initial = cloneDeep(this.value)
             this.saved?.(this.value)
         }
         else
@@ -154,22 +154,3 @@ export default interface Editor<T,P extends IEditorProps<T>> extends IEditor<T,P
     // Whether edited data are valid. Default to `true`.
     valid: boolean
 }
-
-// /**
-//  * Editor subclass used to edit ordered arrays.
-//  */
-// export class ArrayEditor extends Editor {
-//     _reset(val) { this.value = this.bind ? val : [...val] }
-//     isEdited() { this.value != this.initial }
-// }
-//
-//
-// /**
-//  * Editor subclass used to edit unordered arrays.
-//  */
-// export class CollectionEditor extends ArrayEditor {
-//     isEdited() {
-//         return this.value.length != this.initial.length ||
-//             this.value.some(v => this.initial.indexOf(v) == -1)
-//     }
-// }

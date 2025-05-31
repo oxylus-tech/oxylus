@@ -3,8 +3,9 @@ Render a panel component.
 
 Context:
 - `tag="ox-model-panel`: component's tag
+- `name`: panel name (used as tab value and `panel.name`)
 - `attrs`: component's attributes
-- `filters`: if true, add `list-filters` block
+- `filters`: if true (default), add `list-filters` block
 - `actions`: path to item's action django template.
 
 Block:
@@ -15,9 +16,9 @@ Block:
 
 {% block outer %}
 {% with tag|default:"ox-model-panel" as tag %}
-<{{ tag }} {{ attrs }}>
+<{{ tag }} {% if name %}name="{{ name }}"{% endif %} {{ attrs }}>
     {% block slots %}
-    {% if filters %}
+    {% if filters|default_if_none:1 %}
     <template #list.filters="{filters,list}">
         {% block list-filters %}{% endblock %}
     </template>
@@ -26,7 +27,7 @@ Block:
     {% if actions %}
     <template #item.actions="bind">
         {% block actions %}{% endblock %}
-        {% include actions with bind="bind" %}
+        {% include actions|default:"ox/components/model_actions.html" with bind="bind" %}
     </template>
     {% endif %}
     {% endblock %}

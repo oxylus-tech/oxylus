@@ -14,6 +14,9 @@ The current project is in its early development steps. Don't expect it to be ful
 Why Oxylus?
 -----------
 
+We want to provide a tool that can be used as a base to develop full featured and modern applications. More than an ERP, it provides the foundations of an ecosystem that can be shared and used at lower cost than
+traditional enteprise solutions (so called open-source ones included).
+
 -️ Designed for extensibility: A core platform with reusable modules and clearly structured architecture for seamless integration of new apps.
 
 - Open-Source by design: All code is licensed under an open license, enabling transparency, auditability, and community-driven improvement.

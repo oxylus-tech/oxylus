@@ -38,12 +38,10 @@ const slots = useSlots()
 const forwardSlots = Object.keys(slots).filter(x => !(['list.filters', 'top'].includes(x)))
 
 const repos = useContactModels()
-query(repos.countries).allOnce()
-
 const props = withDefaults(defineProps<IModelPanelProps>(), {
     name: 'organisationTypes',
     relations: ['$country'],
-    fetchRelations: false,
+    fetchRelations: true,
     headers: ['name', 'abbreviation', 'code', 'country', 'language_code'],
 })
 </script>

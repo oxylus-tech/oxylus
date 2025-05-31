@@ -10,7 +10,9 @@ req_factory = RequestFactory()
 # ---- Users & Groups
 @pytest.fixture
 def user(db):
-    return User.objects.create_user(username="test-user", password="test")
+    return User.objects.create_user(
+        username="test-user", password="test", first_name="test", last_name="user", email="test@user.org"
+    )
 
 
 @pytest.fixture

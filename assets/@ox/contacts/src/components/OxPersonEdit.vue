@@ -1,6 +1,6 @@
 <template>
     <ox-model-edit v-bind="props" :repo="repos.persons">
-        <template #default="{editor}">
+        <template #default="{editor, disabled}">
             <v-expansion-panels mandatory multiple :model-value="['info', 'emails', 'phones']">
                 <v-expansion-panel :title="t('views.edit.informations')" value="info">
                     <template #text>
@@ -14,6 +14,15 @@
                                 v-model="editor.value.last_name" >
                                 <template #details>
                                     <ox-field-details :errors="editor.errors?.last_name"/>
+                                </template>
+                            </v-text-field>
+                            <v-text-field
+                                v-model="editor.value.email"
+                                :label="t('fields.email')"
+                                :rules="[rules.email]"
+                                :disabled="disabled || editor.value.user">
+                                <template #details v-if="editor.value.user">
+                                    {{ t('fields._.from_user') }}
                                 </template>
                             </v-text-field>
                             <v-select multiple
@@ -31,7 +40,7 @@
 <script setup lang="ts">
 import {computed, defineProps, defineEmits, inject, toRefs, reactive, useTemplateRef, watch} from 'vue'
 
-import { t } from "ox"
+import { t, rules } from "ox"
 import type {User, IModelEditorProps} from 'ox'
 import {OxFieldDetails, OxModelEdit} from 'ox/components'
 

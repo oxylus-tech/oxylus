@@ -12,7 +12,7 @@
     </v-navigation-drawer>
 </template>
 <script setup>
-import { computed, defineModel, defineProps, defineEmits, inject, onMounted, ref, watch } from 'vue'
+import { computed, defineModel, inject, ref } from 'vue'
 
 import OxAppNavItem from './OxAppNavItem'
 
@@ -25,28 +25,29 @@ const props = defineProps({
     items: Array
 })
 
-const items = computed(() => props.items)
+const items = computed(() => {
+    updateOpened(props.items)
+    return props.items
+})
 
+/** Update opened items */
+function updateOpened(items) {
+    opened.value = getOpened(items)
+}
 
+/** Get opened menu items */
 function getOpened(items) {
     if(panels.panel)
         for(const item of items) {
             if(item.items) {
                 const val = getOpened(item.items)
                 if(val)
-                    return [val, item.value]
+                    return [val, item.name]
             }
-            else if(item.value == panels.panel)
-                return [item.value]
+            else if(item.name == panels.panel)
+                return [item.name]
         }
 }
 
-function updateOpened() {
-    opened.value = getOpened(items.value)
-}
 
-
-onMounted(updateOpened)
-watch(items, updateOpened)
-watch(() => panels.panel, updateOpened)
 </script>

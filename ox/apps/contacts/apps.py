@@ -17,3 +17,6 @@ class AppConfig(apps.AppConfig):
 
     class Meta:
         dependencies = ("ox.auth", "ox.locations")
+
+    def ready(self):
+        pass

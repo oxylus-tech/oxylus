@@ -72,6 +72,7 @@ Blocks:
     <body class="loading {% if request.is_mobile %}mobile{% endif %}"
         data-api-url="{% url "api-index" %}" {% if app_data %}data-app-data="app-data"{% endif %}
     >
+        {% spaceless %}
         {% if app_data %}{{ app_data|json_script:"app-data" }}{% endif %}
         <div id="app">
             {% block app-container %}
@@ -80,7 +81,10 @@ Blocks:
                 <template #title="{context}">
                     {% block app-title %}
                         {% block title %}
-                        {% if app_config %}{{ app_config.verbose_name }}{% endif %}
+                        {% if app_config %}
+                            {% if app_config.icon %}<i class="{{ app_config.icon }}"></i>{% endif %}
+                            {{ app_config.verbose_name }}
+                        {% endif %}
                         {% endblock %}
                     {% endblock %}
                 </template>
@@ -98,7 +102,9 @@ Blocks:
                 </template>
                 {% endif %}
 
-                <template #default="{context}">{% block app-main %}{% endblock %}</template>
+                <template #default="{context}">
+                    {% block app-main %}{% endblock %}
+                </template>
                 {% endblock %}
             </ox-app>
             {% endblock %}
@@ -112,5 +118,6 @@ Blocks:
                 </div>
                 <div class="grow-1">&nbsp;</div>
         </div>
+        {% endspaceless %}
     </body>
 </html>

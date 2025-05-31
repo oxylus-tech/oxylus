@@ -86,6 +86,28 @@ export default class ModelList<M extends Model> extends ModelController<M, IMode
     /** Get item index by id */
     findIndex(id: number): number { return this.items.findIndex((v) => v.id == id) }
 
+    /** Return True if item is in list */
+    contains(id: number): boolean { return this.findIndex(id) != -1 }
+
+    /** Add item if not present in list.
+    *
+    * @param item - item to insert
+    * @param index - if provided insert at this position
+    * @return item index if already in the list, else insertion one
+    */
+    add(item: M, index?: number = null): boolean {
+        const idx = this.findIndex(item.id)
+        if(idx != -1)
+            return idx
+
+        if(index !== null) {
+            this.items.splice(index, 1, item)
+            return index
+        }
+        this.items.push(item)
+        return this.items.length-1
+    }
+
     /**
      * Get item id next to provided one at the specified direction.
      *

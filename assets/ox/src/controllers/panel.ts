@@ -33,7 +33,7 @@ export interface IPanelProps extends IPanelInfo {
 /** Component properties used by OxPanelNav */
 export type IPanelNavProps = IPanelInfo & {
     /** Panel's name */
-    value: string
+    name: string
     /** Panels page **/
     url?: string
     /** Required permission */

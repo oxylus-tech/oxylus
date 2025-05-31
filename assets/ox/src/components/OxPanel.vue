@@ -1,36 +1,34 @@
 <template>
-    <v-tabs-window-item :value="props.name">
-        <ox-state-alert v-if="props.state" :state="props.state" delay/>
-        <v-sheet class="ma-4">
-            <Teleport to="#app-bar-sheet-title" :disabled="!mounted || panels.panel != props.name">
-                <v-icon v-if="props.icon" :icon="props.icon"/>
-                {{ props.title }}
-            </Teleport>
+    <ox-state-alert v-if="props.state" :state="props.state" delay/>
+    <v-sheet class="ma-4">
+        <Teleport to="#app-bar-sheet-title" :disabled="!mounted || panels.panel != props.name">
+            <v-icon v-if="props.icon" :icon="props.icon"/>
+            {{ props.title }}
+        </Teleport>
 
-            <Teleport to="#app-bar-right" :disabled="!mounted || panels.panel != props.name">
-                <slot name="append-title"/>
-                <v-btn v-if="props.help" class="ml-3"
-                    :href="props.help" panels="new"
-                    icon="mdi-information-outline" />
-            </Teleport>
+        <Teleport to="#app-bar-right" :disabled="!mounted || panels.panel != props.name">
+            <slot name="append-title"/>
+            <v-btn v-if="props.help" class="ml-3"
+                :href="props.help" panels="new"
+                icon="mdi-information-outline" />
+        </Teleport>
 
-            <slot name="top"/>
+        <slot name="top"/>
 
-            <slot name="default">
-                <template v-if="views">
-                    <v-window v-model="panel.view">
-                        <template v-for="(name, slot) in views" :key="name">
-                            <v-window-item :value="name">
-                                <slot :name="slot"></slot>
-                            </v-window-item>
-                        </template>
-                    </v-window>
-                </template>
-            </slot>
+        <slot name="default">
+            <template v-if="views">
+                <v-window v-model="panel.view">
+                    <template v-for="(name, slot) in views" :key="name">
+                        <v-window-item :value="name">
+                            <slot :name="slot"></slot>
+                        </v-window-item>
+                    </template>
+                </v-window>
+            </template>
+        </slot>
 
-            <slot name="bottom"></slot>
-        </v-sheet>
-    </v-tabs-window-item>
+        <slot name="bottom"></slot>
+    </v-sheet>
 </template>
 <script setup lang="ts">
 import { defineProps, inject, onMounted, onUnmounted, ref, useSlots, watch } from 'vue'

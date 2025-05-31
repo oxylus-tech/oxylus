@@ -3,47 +3,49 @@ from django.utils.translation import gettext_lazy as _
 
 from rest_framework.permissions import DjangoModelPermissions, DjangoModelPermissionsOrAnonReadOnly
 
-from ox.core.views import AppView, ModelViewSet, register_nav
+from ox.core.views import AppView, ModelViewSet, nav
 from . import models, serializers
 
 
 __all__ = ("AppView", "OrganisationTypeViewSet", "OrganisationViewSet", "PersonViewSet", "AddressViewSet")
 
 
-register_nav(
-    "contacts",
-    {
-        "title": _("Contacts"),
-        "type": "group",
-        "items": {
-            "persons": {
-                "url": "ox_contacts:index",
-                "title": _("Persons"),
-                "icon": "mdi-card-account-mail",
-                "order": 0,
-                "permissions": "ox_contacts.view_person",
-            },
-            "organisations": {
-                "url": "ox_contacts:index",
-                "title": _("Organisations"),
-                "icon": "mdi-domain",
-                "permissions": "ox_contacts.view_organisation",
-            },
-            "settings": {
-                "title": _("Settings"),
-                "type": "subheader",
-                "order": 100,
-                "items": {
-                    "organisationTypes": {
-                        "url": "ox_contacts:index",
-                        "title": _("Organisation Types"),
-                        "icon": "mdi-domain-switch",
-                        "permissions": "ox_contacts.view_organisationtype",
-                    }
-                },
-            },
-        },
-    },
+nav.app_nav.append(
+    nav.NavGroup(
+        "contacts",
+        _("Contacts"),
+        items=[
+            nav.NavItem(
+                "persons",
+                _("Persons"),
+                url="ox_contacts:index",
+                icon="mdi-card-account-mail",
+                order=0,
+                permissions="ox_contacts.view_person",
+            ),
+            nav.NavItem(
+                "organisations",
+                _("Organisations"),
+                url="ox_contacts:index",
+                icon="mdi-domain",
+                permissions="ox_contacts.view_organisation",
+            ),
+            nav.NavSubGroup(
+                "settings",
+                _("Settings"),
+                order=100,
+                items=[
+                    nav.NavItem(
+                        "organisationtypes",
+                        _("Organisation Types"),
+                        url="ox_contacts:index",
+                        icon="mdi-domain-switch",
+                        permissions="ox_contacts.view_organisationtype",
+                    )
+                ],
+            ),
+        ],
+    )
 )
 
 
@@ -78,7 +80,7 @@ class PersonViewSet(ModelViewSet):
     permission_classes = [DjangoModelPermissions]
 
     filterset_fields = {"organisations__uuid": ["in", "exact"]}
-    search_fields = ["last_name", "first_name", "phone__number", "email__email", "organisations__name"]
+    search_fields = ["last_name", "first_name", "email", "phone__number", "email_set__email", "organisations__name"]
     ordering_fields = ["last_name", "first_name", "organisations"]
 
 

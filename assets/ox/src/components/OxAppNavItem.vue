@@ -8,7 +8,7 @@
             </template>
         </template>
         <template v-else-if="props.type == 'group'">
-            <v-list-group :value="props.value">
+            <v-list-group :value="props.name">
                 <template #activator="{props:itemProps}">
                     <v-list-item v-bind="itemProps"
                         :title="props.title" :prepend-icon="props.icon" />
@@ -21,8 +21,8 @@
         </template>
         <v-divider v-else-if="props.type == 'divider'"/>
         <v-list-item v-else
-            :active="panels.panel == props.value"
-            :value="props.value"
+            :active="panels.panel == props.name"
+            :value="props.name"
             :prepend-icon="props.icon" :title="props.title"
             @click.stop="show"/>
     </template>
@@ -48,7 +48,7 @@ function shouldShow(item) {
 
 
 function show() {
-    const vals = { panel: props.value, href: props.url }
+    const vals = { panel: props.name, href: props.url }
     console.log(props, vals)
     panels.show(vals)
 }

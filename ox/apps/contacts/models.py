@@ -1,6 +1,6 @@
 from django.db import models
 from django.utils.translation import gettext_lazy as _
-from django.contrib.auth.models import User, Group
+from django.contrib.auth.models import User
 
 from ox.core.models import Model, InheritanceQuerySet
 from ox.apps.locations.models import Country
@@ -47,7 +47,7 @@ class OrganisationType(Named, Model):
 
 
 class Organisation(Described, Colored, Contact):
-    group = models.ForeignKey(Group, models.SET_NULL, null=True, blank=True)
+    # group = models.OneToOneField(Group, models.SET_NULL, null=True, blank=True)
     short_name = models.CharField(_("Short name"), max_length=32, null=True, blank=True)
     reference = models.CharField(_("Reference Number"), max_length=32, default="", blank=True)
     vat = models.CharField(_("VAT"), max_length=32, blank=True, null=True)
@@ -60,9 +60,11 @@ class Organisation(Described, Colored, Contact):
 
 
 class Person(Contact):
-    user = models.ForeignKey(User, models.CASCADE, null=True, blank=True)
+    user = models.OneToOneField(User, models.CASCADE, null=True, blank=True, related_name="contact")
     first_name = models.CharField(_("First name"), default="", max_length=64)
     last_name = models.CharField(_("Last name"), default="", max_length=64)
+    email = models.EmailField(_("Email"), unique=True, blank=True, null=True)
+    """ When linked to user, this is User's email. """
     organisations = models.ManyToManyField(Organisation, null=True, blank=True)
 
     class Meta:
@@ -120,6 +122,7 @@ class Email(ContactInfo):
     class Meta:
         verbose_name = _("Email")
         verbose_name_plural = _("Emails")
+        default_related_name = "email_set"
 
 
 class BankAccount(ContactInfo, Named):

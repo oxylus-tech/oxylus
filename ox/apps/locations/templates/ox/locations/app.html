@@ -1,11 +1,16 @@
 {% extends "ox/core/app.html" %}
-{% comment %}
-Context:
-- user_table_headers: headers of user data table
-{% endcomment %}
 {% load i18n %}
 
-{% block app-main %}
-{% include "./components/country_panel.html" with tabbed=1 %}
-{% include "./components/currency_panel.html" with tabbed=1 %}
+{% block app %}
+{{ block.super }}
+<template #panels.countries>
+    {% block countries %}
+    {% include "ox/core/components/model_panel.html" with tag="ox-country-panel" name="countries" %}
+    {% endblock %}
+</template>
+<template #panels.currencies>
+    {% block currencies %}
+    {% include "ox/core/components/model_panel.html" with tag="ox-currency-panel" name="currencies" %}
+    {% endblock %}
+</template>
 {% endblock %}

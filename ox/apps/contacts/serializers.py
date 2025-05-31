@@ -82,6 +82,18 @@ class OrganisationSerializer(ContactSerializer):
 
 class PersonSerializer(ContactSerializer):
     organisations = RelatedField(queryset=models.Organisation.objects.all(), many=True, required=False)
+    email = serializers.EmailField(required=False)
 
     class Meta(ContactSerializer.Meta):
         model = models.Person
+        read_only_fields = ("user",)
+
+    def validate(self, data):
+        v_data = super().validate(data)
+        if self.instance and self.instance.user:
+            email = v_data.get("email")
+            if email and email != self.instance.user.email:
+                raise serializers.ValidationError(
+                    {"email": _("Default email can't be changed for a contact linked to a user")}
+                )
+        return v_data

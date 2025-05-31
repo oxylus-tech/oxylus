@@ -16,8 +16,6 @@ import type {IEditor, IEditorProps, IEditorSend} from './editor'
 export interface IModelEditorProps<T extends Model> extends IEditorProps<T> {
     /** Related repository */
     repo: Repository<T>
-    /** Empty value, if not provided generated */
-    empty: T
 }
 
 export interface IModelEditorSend extends IEditorSend {
@@ -42,7 +40,6 @@ export default class ModelEditor<T extends Model, P extends IModelEditorProps<T>
 
     get repo() { return this.props.repo }
     get name() { return this.props.name || `${this.repo.use.entity}-edit` }
-
     isEdited(): boolean {
         return !isEqual(pick(this.value, this.fields), pick(this.initial, this.fields))
     }
@@ -54,12 +51,12 @@ export default class ModelEditor<T extends Model, P extends IModelEditorProps<T>
         return url
     }
 
-    reset(val: T|null): void {
-        if(!val || !Object.keys(val).length)
-            val = this.empty
+    reset(value: T|null): void {
+        if(!value || !Object.keys(value).length)
+            value = this.empty
 
-        const fields = this.fields.filter(k => k in val)
-        this.value = cloneDeep(pick(val, fields)) || {}
+        const fields = this.fields.filter(k => k in value)
+        this.value = cloneDeep(pick(value, fields)) || {}
         this.state.none()
     }
 

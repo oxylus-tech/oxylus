@@ -56,6 +56,7 @@
 
     "models.countries": "Country | Countries",
     "models.currencies": "Currency | Currencies",
+    "fields._.from_user": "This contact is linked to a user, you can't change this value",
     "fields.currency": "Currency | Currencies",
     "fields.continent": "Continent | Continents",
     "fields.address": "Address | Addresses",

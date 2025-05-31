@@ -164,7 +164,11 @@ const headers = computed(() => [
 
 /** This is called by editors once object has been saved */
 function saved(item) {
-    panel.value = item
+    if(item?.id)
+        panel.value = panel.repo.whereId(item.id).first()
+    else
+        panel.value = item
+    list.load()
 }
 
 const bind = computed(() => {

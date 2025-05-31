@@ -5,7 +5,7 @@
                 :disabled="props.disabled">
             <slot name="reset">{{ props.resetLabel }}</slot>
         </v-btn>
-        <v-btn v-if="props.state.isSending"
+        <v-btn v-if="props.state.isSending || props.state.isProcessing"
                 color="primary" prepend-icon="mdi-content-save" disabled>
             Saving
         </v-btn>

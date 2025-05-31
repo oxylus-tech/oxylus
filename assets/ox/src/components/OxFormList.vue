@@ -1,36 +1,43 @@
 <template>
-    <v-list v-model:opened="opened" v-if="items?.length">
-        <v-list-group v-for="item, index in items" :key="index" :value="index">
-            <template #activator="{props}">
-                <v-list-item v-bind="props">
-                    <v-list-item-title>
-                        <slot name="item.title" :item="item"/>
-                    </v-list-item-title>
-                    <template #append>
-                        <div @click.stop="">
-                            <slot name="item.actions" :item="item" :index="index" v-bind="props" />
-                            <template v-if="can.delete">
-                                <v-btn type="button" class="ml-2" size="small"
-                                    @click.stop.prevent="removeItem(index)" color="error"
-                                    :aria-label="t('actions.remove')"
-                                    :title="t('actions.remove')"
-                                    icon="mdi-delete"/>
-                            </template>
-                        </div>
-                    </template>
-                </v-list-item>
-            </template>
-            <v-form :disabled="!can.change">
-                <slot name="item" :item="item" :index="index" :editable="can.change"/>
-            </v-form>
-        </v-list-group>
+    <v-list v-model:opened="opened">
+        <template v-if="items?.length">
+             <v-list-group v-for="item, index in items" :key="index" :value="index">
+                <template #activator="{props}">
+                    <v-list-item v-bind="props">
+                        <v-list-item-title>
+                            <slot name="item.title" :item="item"/>
+                        </v-list-item-title>
+                        <template #append>
+                            <div @click.stop="">
+                                <slot name="item.actions" :item="item" :index="index" v-bind="props" />
+                                <template v-if="can.delete">
+                                    <v-btn type="button" class="ml-2" size="small"
+                                        @click.stop.prevent="removeItem(index)" color="error"
+                                        :aria-label="t('actions.remove')"
+                                        :title="t('actions.remove')"
+                                        icon="mdi-delete"/>
+                                </template>
+                            </div>
+                        </template>
+                    </v-list-item>
+                </template>
+                <v-form :disabled="!can.change">
+                    <slot name="item" :item="item" :index="index" :editable="can.change"/>
+                </v-form>
+            </v-list-group>
+        </template>
+        <template v-else>
+            <v-list-item :title="t('lists.empty')" />
+        </template>
         <template v-if="can.add">
             <v-divider v-if="items.length"/>
             <v-list-group :value="-1">
                 <template #activator="{props}">
                     <v-list-item v-bind="props" :title="t('actions.add_item')" prepend-icon="mdi-plus"/>
                 </template>
-                <slot name="item" :item="newItem" :edit="true"/>
+                <v-form>
+                    <slot name="item" :item="newItem" :edit="true"/>
+                </v-form>
                 <v-list-item v-if="newItem">
                     <div class="flex-row justify-right">
                         <v-btn size="small" v-if="newItem" @click="newItem={}"
@@ -48,7 +55,6 @@
             </v-list-group>
         </template>
     </v-list>
-    <div v-else>{{ t("lists.empty") }}</div>
 </template>
 <script setup lang="ts">
 /**

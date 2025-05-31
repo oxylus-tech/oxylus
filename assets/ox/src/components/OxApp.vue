@@ -8,9 +8,6 @@
                 <v-app-bar-nav-icon icon="mdi-apps"
                     :title="t('nav.panels')" :aria-label="t('nav.panels')"
                     @click.stop="nav.drawer = !nav.drawer"/>
-                <v-app-bar-nav-icon v-if="slots['app-nav'] && !nav.drawer2"
-                    icon="mdi-menu"
-                    @click="nav.drawer2 = true; nav.drawer = false"/>
             </template>
             <v-app-bar-title id="app-bar-sheet-title"/>
             <v-app-bar-title id="app-bar-title">
@@ -39,6 +36,10 @@
                 <v-tabs-window v-model="panels.panel">
                     <template #default="bind">
                         <slot name="default" v-bind="bind" :context="context"></slot>
+
+                        <v-tabs-window-item v-for="(name, slot) in panelsSlots" :key="slot" :value="name">
+                            <slot :name="slot" v-bind="bind" :context="context"/>
+                        </v-tabs-window-item>
                     </template>
                 </v-tabs-window>
             </slot>
@@ -59,11 +60,12 @@
 import { useSlots, withDefaults, onErrorCaptured, onMounted } from 'vue'
 import { computed, defineProps, inject, provide, reactive, watch } from 'vue'
 
-import {useAppContext, usePanels, t} from 'ox'
+import {useAppContext, usePanels, t, filterSlots} from 'ox'
 import type {Model} from '../models'
 import OxAppNav from './OxAppNav'
 
 const slots = useSlots()
+const panelsSlots = filterSlots(slots, "panels.")
 
 interface Props {
     apiUrl?: string

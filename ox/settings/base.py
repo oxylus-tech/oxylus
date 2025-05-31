@@ -23,7 +23,9 @@ SECRET_KEY = "django-insecure-bg*enkwcea%4xjcvkpbb_h@6#ue78#t1q(z^w@faagal7**^9i
 INSTALLED_APPS = [
     "django_filters",
     "rest_framework",
+    "caps",
     # ox
+    "ox.apps.files",
     "ox.apps.contacts",
     "ox.apps.locations",
     "ox.apps.auth",

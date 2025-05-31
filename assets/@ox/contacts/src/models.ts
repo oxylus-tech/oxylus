@@ -43,6 +43,7 @@ export class Person extends Contact {
         return {
             ...super.fields(),
             user: this.number(),
+            email: this.string(),
             first_name: this.string(),
             last_name: this.string(),
             organisations: this.attr([]),

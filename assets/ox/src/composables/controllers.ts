@@ -149,13 +149,16 @@ export function useEditor<
     cls: typeof Editor<T,P>=Editor<T,P>
 )
 {
-    const initial = options.initial || unref
+    const initial = options.initial || options.props.initial
     const editor = reactive(new cls(options))
 
     provide('editor', editor)
 
     const edited = computed(() => editor.isEdited())
-    watch(() => editor.props.initial, (val) => editor.reset(val || editor.default))
+    watch(() => editor.props.initial, (val) => {
+        editor.initial = val || editor.empty
+        editor.reset(val || editor.empty)
+    })
 
     const panel = inject('panel') as Panel
     if(panel)
