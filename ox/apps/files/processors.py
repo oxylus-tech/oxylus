@@ -4,6 +4,7 @@ from typing import IO
 
 import magic
 import PIL
+from PIL import Image
 from django.utils.translation import gettext_lazy as _
 
 
@@ -32,7 +33,7 @@ class FileProcessor:
         :param force: create file even if it exists
         :return boolean indicating wether file has been created
         """
-        if not force and path.exists():
+        if not force and out.exists():
             return False
         return self._create_preview(path, out)
 
@@ -44,6 +45,13 @@ class FileProcessor:
         Same arguments and return than :py:meth:`create_preview`.
         """
         return False
+
+    def get_metadata(self, path: Path) -> dict[str, str]:
+        """Return file metadata.
+
+        :param path: file path
+        """
+        return {}
 
 
 class ImageProcessor(FileProcessor):
@@ -81,7 +89,7 @@ class ImageProcessor(FileProcessor):
         :yield: ``FileNotFound`` if file cannot be found
         """
         try:
-            with PIL.Image.open(path) as im:
+            with Image.open(path) as im:
                 im.thumbnail(ox_files_settings.THUMBNAIL_SIZE)
                 im.save(out, "JPEG")
                 return True
@@ -105,6 +113,7 @@ class FileProcessors:
 
     def __init__(self, default_processor, processors: list[FileProcessor] = []):
         self.default_processor = default_processor
+        self.mime_types = {}
         for processor in processors:
             self.register(processor)
 
@@ -113,9 +122,8 @@ class FileProcessors:
         if not isinstance(processor, FileProcessor):
             raise TypeError("processor is not a subclass `FileProcessor`.")
 
-        if processor not in self.processors:
-            self.processors.append(processor)
-            self.mime_types.update((mt, processor) for mt in processor.mime_types)
+        self.processors.append(processor)
+        self.mime_types.update((mt, processor) for mt in processor.mime_types)
 
     def read_mime_type(self, file_or_stream: Path | str | IO) -> str:
         """Return mime type for the provided file or stream."""
