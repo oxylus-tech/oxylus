@@ -12,7 +12,7 @@ __all__ = ("AppView", "FolderViewSet", "FolderAccessViewSet", "FileViewSet", "Fi
 
 
 nav.app_nav.append(
-    nav.NavSubGroup(
+    nav.NavGroup(
         "files",
         _("Files"),
         items=[
