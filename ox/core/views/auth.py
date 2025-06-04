@@ -44,7 +44,10 @@ class GroupViewSet(viewsets.ModelViewSet):
 
 
 class UserViewSet(viewsets.ModelViewSet):
-    queryset = User.objects.all().prefetch_related(*_prefetch_lookups("user_"), *_prefetch_lookups("groups__"))
+    queryset = User.objects.all().prefetch_related(
+        *_prefetch_lookups("user_"),
+        *_prefetch_lookups("groups__"),
+    )
     serializer_class = auth.UserSerializer
     permission_classes = [DjangoModelPermissions]
     filterset_fields = {"id": ["in"], "groups__id": ["exact", "in"]}

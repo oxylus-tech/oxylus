@@ -1,15 +1,14 @@
 from __future__ import annotations
 
+from pathlib import Path
 from uuid import uuid4
 
 from django.db import models
 from django.core.exceptions import PermissionDenied, ValidationError
 from django.utils.translation import gettext_lazy as _
 
-from model_utils.managers import InheritanceQuerySet
-
-from caps.models import Object, ObjectQuerySet
-from ox.utils.models import Named, Timestamped, TreeNode, TreeNodeQuerySet
+from caps.models import Owned, OwnedQuerySet
+from ox.utils.models import Named, Described, Timestamped, SaveHook, SaveHookQuerySet, TreeNode, TreeNodeQuerySet
 
 from .conf import ox_files_settings
 from . import processors
@@ -24,11 +23,11 @@ def file_upload_to(instance, filename):
     return f"{ox_files_settings.UPLOAD_TO}/{uuid4()}.{ext}"
 
 
-class FolderQuerySet(ObjectQuerySet, TreeNodeQuerySet):
+class FolderQuerySet(OwnedQuerySet, TreeNodeQuerySet):
     pass
 
 
-class Folder(Named, Timestamped, Object, TreeNode):
+class Folder(Named, Timestamped, Owned, TreeNode):
     """
     Represent a virtual File folder. This is how they are addressed and
     organised from user point of view.
@@ -42,7 +41,6 @@ class Folder(Named, Timestamped, Object, TreeNode):
     :py:meth:`rename` and :py:meth:`move_to` methods to ensure that these values are correctly set.
 
     When those values raises a ValidationError, user should assume that values of the model are invalid.
-
     """
 
     objects = FolderQuerySet.as_manager()
@@ -77,7 +75,7 @@ class Folder(Named, Timestamped, Object, TreeNode):
         if self.parent and self.parent.owner_id != self.owner.id:
             raise PermissionDenied(f"Owner of `{self.name}` directory should be the same.")
 
-        if File.objects.filter(parent=self.parent, name=self.name):
+        if File.objects.filter(folder=self.parent, name=self.name):
             raise ValidationError(f"A file `{self.name}` already exists in {self.parent.name}.")
 
     def rename(self, name: str, save: bool = True):
@@ -102,34 +100,59 @@ class Folder(Named, Timestamped, Object, TreeNode):
             super().move_to(parent, save)
 
 
-class FileQuerySet(InheritanceQuerySet, ObjectQuerySet):
-    pass
+class FileQuerySet(SaveHookQuerySet, OwnedQuerySet):
+    def delete(self, clear_files: bool | None = None):
+        if clear_files is None:
+            clear_files = ox_files_settings.CLEAR_FILES_ON_DELETE
+
+        if clear_files:
+            self.clear_files(update=False)
+        return super().delete()
+
+    def clear_files(self, update: bool = True):
+        """
+        Delete files from filesystem and optionally update fields.
+
+        :param update: if True (default), update queryset fields.
+        """
+        for file, preview in self.values_list("file", "preview"):
+            Path(file).unlink(missing_ok=True)
+            preview and Path(preview).unlink(missing_ok=True)
+
+        if update:
+            self.update(file=None, preview=None)
 
 
-class File(Named, Timestamped, Object):
+class File(Described, Timestamped, SaveHook, Owned):
     """
-    Base class for files.
+    This class represent a file.
 
-    It assumes that sub-classing models will provide a field ``file`` with
-    an interface similar to FileField.
+    Files are looked up for a matching :py:class:`~.processors.FileProcessor` (reading mime-type). A processors
+    handles different tasks such as creating preview (thumbnails) or getting metadata. In order to do so, it uses
+    :py:data:`~.processors.registry` that provides helpers to read mime types and register file processors.
+
+    A file can be nested under a :py:attr:`parent` folder. If ``None`` is provided, then it will be at the root of
+    the filesystem.
+
+    Each file is also attached to an :py:attr:`owner` that specifies who has
+    access to the object (using ``django-caps`` permission system).
+
+    At deletion, related files and previews can be deleted based on ``.conf.ox_files_settings`` (``CLEAR_FILES_ON_DELETE=True`` option).
     """
 
     # When folder is null, it is at root
-    parent = models.ForeignKey(Folder, models.CASCADE, null=True, blank=True, related_name="files")
+    folder = models.ForeignKey(Folder, models.CASCADE, null=True, blank=True, related_name="files")
 
-    file = models.FileField(_("File"), upload_to=file_upload_to)
+    file = models.FileField(_("File"), upload_to=file_upload_to, null=True)
     preview = models.FileField(_("Preview"), upload_to=file_upload_to, null=True, blank=True)
     mime_type = models.CharField(_("Mime Type"), max_length=127, blank=True)
     file_size = models.PositiveIntegerField(_("File Size"), blank=True)
-    preview_size = models.PositiveIntegerField(_("Preview file size"), blank=True, default=0)
 
     caption = models.TextField(_("Caption"), default="", help_text=_("Displayed below object when rendered."))
     alternate = models.TextField(
         _("Alternate text"), default="", help_text=_("Displayed as replacement text when object is not displayed.")
     )
-    description = models.TextField(
-        _("Description"), default="", help_text=_("Description used at rendering for people using screen-readers.")
-    )
+    ariaDescription = models.TextField(_("ARIA Description"), default="")
     metadata = models.JSONField(_("Metadata"), default=dict, blank=True)
 
     objects = FileQuerySet.as_manager()
@@ -137,6 +160,34 @@ class File(Named, Timestamped, Object):
     class Meta:
         verbose_name = _("File")
         verbose_name_plural = _("Files")
+
+    def on_save(self, fields=None):
+        """Ensure mime type and file validation."""
+        self.validate_node()
+
+        if not self.mime_type:
+            self.mime_type = self.registry.read_mime_type()
+
+    def validate_node(self):
+        """
+        Ensure file name is unique within folder.
+
+        :yield ValidationError: if file name is already present in folder (file or folder).
+        """
+        if self.folder_id and self.owner_id != self.folder.owner:
+            raise PermissionDenied("Owner of this file should be the same as its directory.")
+
+        kw = {"folder_id": self.folder_id, "name": self.name, "owner": self.owner}
+
+        query = File.objects.filter(**kw)
+        if self.pk:
+            query = query.exclude(pk=self.pk)
+
+        if query.exists():
+            raise ValidationError("Another file exists for this path.")
+
+        if Folder.objects.filter(**kw):
+            raise ValidationError("A folder exists for this path.")
 
     def get_processor(
         self, save: bool = True, registry: processors.FileProcessors = processors.registry
@@ -152,17 +203,30 @@ class File(Named, Timestamped, Object):
             self.mime_type = registry.read_mime_type(self.file.path)
         return registry.find(self.mime_type)
 
-    def delete_files(self, save=True):
-        """Delete files on storage.
+    def clear_files(self):
+        """Delete files from storage.
 
-        This method is used to clear storage when the model instance is deleted.
-
-        :param save: save model instance if True (default).
+        This method is used to clear storage when the model instance is deleted. It updates fields without saving model instance.
         """
-        try:
-            if self.preview:
-                self.preview.delete(False)
-            if self.file:
-                self.file.delete(False)
-        finally:
-            save and self.save()
+        if self.preview:
+            self.preview.delete(False)
+        if self.file:
+            self.file.delete(False)
+
+        self.preview = None
+        self.file = None
+
+    def delete(self, *args, clear_files: bool | None = None, **kwargs):
+        """
+        Ensure file deletion if ``OX_FILES['REMOVE_FILES_ON_DELETE']`` or
+        ``clear_files`` is True.
+
+        :param *args: forward to super's ``delete()``
+        :param clear_files: if True or False, overrides default settings.
+        :param **kwargs: forward to super's ``delete()``
+        """
+        if clear_files is None:
+            clear_files = ox_files_settings.REMOVE_FILES_ON_DELETE
+        if clear_files:
+            self.clear_files(save=False)
+        return super().delete(*args, **kwargs)

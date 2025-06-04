@@ -7,7 +7,7 @@ class Settings(conf.Settings):
     FILE_SIZE_LIMIT = 15 * 1024 * 1024
     """ Set maximum file size. """
 
-    REMOVE_FILES_ON_DELETE = True
+    CLEAR_FILES_ON_DELETE = True
     """ When a File is deleted from database, remove it from storage. """
 
     MAGIC_BUFFER = 2048

@@ -1,0 +1,16 @@
+{% extends "ox/core/app.html" %}
+{% load i18n %}
+
+{% block app %}
+{{ block.super }}
+<template #panels.files>
+    {% block files %}
+    {% include "ox/core/components/model_panel.html" with tag="ox-file-panel" name="files" %}
+    {% endblock %}
+</template>
+<template #panels.folders>
+    {% block folders %}
+    {% include "ox/core/components/model_panel.html" with tag="ox-folder-panel" name="folders" %}
+    {% endblock %}
+</template>
+{% endblock %}

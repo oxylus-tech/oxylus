@@ -116,13 +116,18 @@ export default class Panel<P extends IPanelProps = IPanelProps>
         else this.editions.delete(name)
     }
 
-    /** Show a view, providing optional value */
-    show({view=null, value=null, silent=false}: {view?: string, value?: any, silent?: boolean}={}) {
-        if((view != this.view || value != this.value) && this.onLeave()) {
+    /**
+     * Show a view, providing optional value.
+     * @return - true if view changed
+     */
+    show({view=null, value=null, silent=false, force=false}: {view?: string, value?: any, silent?: boolean, force?: boolean}={}) {
+        if((view != this.view || value != this.value) && (force || this.onLeave())) {
             this.view = view || this.index
             this.value = value
             !silent && this.updateLocation()
+            return true
         }
+        return false
     }
 
     /** Update current location using History api */

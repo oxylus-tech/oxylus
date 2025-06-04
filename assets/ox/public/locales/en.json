@@ -9,6 +9,8 @@
     "actions.delete": "Delete",
     "actions.delete.confirm": "Are you sure that you want to delete this item?",
     "actions.discard": "Discard",
+    "actions.download": "Download",
+    "actions.upload": "Upload",
 
     "nav.panels": "Applications",
 
@@ -40,6 +42,11 @@
     "fields.id": "Id",
     "fields.name": "Name | Names",
     "fields.color": "Color",
+    "fields.created": "Created at",
+    "fields.updated": "Updated at",
+    "fields.description": "Description",
+    "fields.ariaDescription": "ARIA Description",
+    "fields.ariaDescription.help": "Description for screen reader of visually impaired users.",
 
     "fields.username": "Username | Usernames",
     "fields.password": "Password | Passwords",
@@ -53,6 +60,7 @@
     "fields.permissions": "Permissions",
     "fields.group": "Group",
     "fields.groups": "Groups",
+
 
     "models.countries": "Country | Countries",
     "models.currencies": "Currency | Currencies",
@@ -68,13 +76,11 @@
     "fields.iban.invalid_checksum": "Invalid IBAN checksum",
     "fields.iban.too_short": "IBAN too short",
     "fields.iban.help": "Example for {name}: \"{sample}\"",
-    "fields.iban.country_without_iban": "The detected country {name} might not support IBAN",
+    "fields.iban.country_without_iban": "The detected country {name} might not support IBAN.",
     "fields.phone_prefix": "Phone Prefix | Phone Prefixes",
     "fields.numeric": "Numeric Code | Numeric Codes",
     "fields.is_iso": "Is ISO",
     "fields.valid_to": "Valid to",
-
-
 
     "enums.continent.1": "Africa",
     "enums.continent.2": "Antartica",
@@ -104,7 +110,7 @@
     "fields.country": "Country",
     "fields.vat": "VAT",
     "fields.company_form": "Company Form",
-    "fields.vat.rule": "Please provide a valid VAT number",
+    "fields.vat.rule": "Please provide a valid VAT number.",
     "fields.reference": "Reference",
     "fields.abbreviation": "Abbreviation",
     "fields.language_code": "Language Code",
@@ -114,6 +120,18 @@
     "enums.contactinfo_kind.2": "Home",
     "enums.contactinfo_kind.3": "Legal",
     "enums.contactinfo_kind.16": "Other",
+
+    "models.files": "File | Files",
+    "models.folders": "Folder | Folders",
+    "fields.folder": "Folder",
+    "fields.path": "Path",
+    "fields.preview": "Preview",
+    "fields.caption": "Caption",
+    "fields.caption.help": "Caption displayed below the file.",
+    "fields.alternate": "Alternative text",
+    "fields.alternate.help": "Alternative text displayed when file can not be displayed.",
+    "actions.select_file": "Select a file",
+    "actions.select_file.help": "Drop a file here or select a file",
 
     "empty": ""
 }

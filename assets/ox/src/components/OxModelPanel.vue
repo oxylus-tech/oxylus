@@ -1,8 +1,12 @@
 <template>
     <ox-panel :name="props.name" :title="panel.title" :icon="panel.icon"
             :state="list.state" :index="props.index">
-        <template #append-title>
-            <slot name="append-title" v-bind="bind"/>
+        <template #append-title v-if="slots['append-title']">
+            <slot name="append-title" v-bind="bind" />
+        </template>
+
+        <template #app-bar-right>
+            <slot name="app-bar-right" v-bind="bind"/>
 
             <template v-if="panel.view.startsWith('list.')">
                 <v-btn-group class="ml-3" color="secondary"
@@ -84,6 +88,8 @@
                 </v-btn>
                 <slot name="nav.views" v-bind="bind"/>
             </v-btn-toggle>
+
+            <slot name="app-bar-end" v-bind="bind"/>
         </template>
 
         <template #top>
@@ -123,7 +129,7 @@
     </ox-panel>
 </template>
 <script setup lang="ts">
-import { computed, defineProps, inject, useTemplateRef, useSlots, toRefs, withDefaults, watch } from 'vue'
+import { computed, defineProps, defineExpose, inject, useTemplateRef, useSlots, toRefs, withDefaults, watch } from 'vue'
 import { Teleport } from 'vue'
 
 import OxAction from './OxAction.vue'
@@ -179,4 +185,6 @@ const bind = computed(() => {
 })
 
 watch(() => Object.values(list.filters), () => list.load())
+
+defineExpose({list, panel, items, next, prev})
 </script>

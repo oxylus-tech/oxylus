@@ -4348,9 +4348,12 @@ class Eo {
   setEdition(t, n) {
     n ? this.editions.add(t) : this.editions.delete(t);
   }
-  /** Show a view, providing optional value */
-  show({ view: t = null, value: n = null, silent: r = !1 } = {}) {
-    (t != this.view || n != this.value) && this.onLeave() && (this.view = t || this.index, this.value = n, !r && this.updateLocation());
+  /**
+   * Show a view, providing optional value.
+   * @return - true if view changed
+   */
+  show({ view: t = null, value: n = null, silent: r = !1, force: s = !1 } = {}) {
+    return (t != this.view || n != this.value) && (s || this.onLeave()) ? (this.view = t || this.index, this.value = n, !r && this.updateLocation(), !0) : !1;
   }
   /** Update current location using History api */
   updateLocation() {
@@ -4525,6 +4528,10 @@ class To extends Lo {
   /** Get item by list index */
   get(n) {
     return n < this.items.length ? this.items[n] : null;
+  }
+  /** Reset list */
+  reset(n = []) {
+    this.items = n, this.nextUrl = null, this.prevUrl = null;
   }
   /** Get item index by id */
   findIndex(n) {

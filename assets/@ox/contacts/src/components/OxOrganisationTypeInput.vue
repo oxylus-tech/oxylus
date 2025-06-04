@@ -39,6 +39,9 @@ const repos = useModels([OrganisationType])
 
 function customFilter(title, text, item) {
     text = text.toUpperCase()
+    if(!item.raw.name) {
+        console.log(item.raw)
+    }
     return item.raw.name.toUpperCase().indexOf(text) != -1 ||
         item.raw.abbreviation.toUpperCase().indexOf(text) != -1
 }

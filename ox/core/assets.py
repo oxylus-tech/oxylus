@@ -192,7 +192,7 @@ class Assets(Owned):
         urls = [asset.css_url for asset in iter(self) if asset.css]
 
         app_output = self.output.format(ext="css")
-        app_url = f"{self.static_dir}/{app_output}."
+        app_url = f"{self.static_dir}/{app_output}"
         if finders.find(app_url):
             urls.append(static(app_url))
         return urls

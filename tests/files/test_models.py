@@ -52,7 +52,7 @@ class TestFolder:
             subdir.validate_node()
 
     def test_validate_node_file_name_collision(self, root_dir, agent, subdir):
-        file = File.objects.create(parent=root_dir, name="file-1", file="file.py", owner=agent, file_size=0)
+        file = File.objects.create(folder=root_dir, name="file-1", file="file.py", owner=agent, file_size=0)
         with pytest.raises(ValidationError):
             subdir.name = file.name
             subdir.validate_node()

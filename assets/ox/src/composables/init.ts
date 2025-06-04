@@ -124,7 +124,7 @@ export function createVuetify({components={}, defaults={}, ...opts}: ICreateVuet
             ...defaults,
             VTextField: { variant: 'underlined', },
             VSelect: { variant: 'underlined', },
-            VTextarea: { variant: 'underlined', },
+            VTextarea: { variant: 'outlined', },
             VCombobox: { variant: 'underlined', },
             VAutocomplete: { variant: 'underlined', },
         },

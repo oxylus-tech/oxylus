@@ -28,7 +28,11 @@
     "baseUrl": "./",
     "paths": {
         "ox": ["./ox/src/lib.ts"],
+        "ox/*": ["./ox/src/*"],
         "@ox/auth": ["./@ox/auth/src/index.ts"],
+        "@ox/auth/*": ["./@ox/auth/src/*"],
+        "@ox/location": ["./@ox/location/src/index.ts"],
+        "@ox/location/*": ["./@ox/location/src/*"],
         "*": ["node_modules/*"]
     },
     "include": [

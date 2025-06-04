@@ -79,7 +79,7 @@ class TreeNode(SaveHook):
             if self.pk:
                 query = query.exclude(pk=self.pk)
             if query.exists():
-                raise ValidationError(f"Another {cls._meta.verbose_name} exists for this path.")
+                raise ValidationError(f"Another {cls._meta.verbose_name} exists for this path ({path}).")
 
     def get_path(self) -> str:
         """Return path for self and the provided parent."""

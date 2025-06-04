@@ -10,7 +10,7 @@
     </v-autocomplete>
 </template>
 <script setup lang="ts">
-import { debounce } from 'lodash'
+import { debounce, throttle } from 'lodash'
 import { isEqual } from 'lodash'
 import { defineModel, inject, ref, onMounted, toRaw, useAttrs, useSlots, watch } from 'vue'
 import type {Repository} from 'pinia-orm'
@@ -66,37 +66,56 @@ async function getItem(id) {
     return item
 }
 
-const load = debounce(
-    async () => {
-        const resp = await list.load()
-        item.value && list.add(item.value)
-        return resp
-    },
-    200
-)
+
+let lastSearch = null
+const load = debounce(async ({reset=false}={}) => {
+    // Using debounce is tricky: it delays calling function
+    // This means:
+    // - we need to fetch the actual search value when function is run
+    // - we are delayed between search/filters update
+    //
+    // - we provides reset to:
+    //   - force loading even if search is the same as last one
+    //   - reset search (v-autocomplete resets search.value when items is updated.
+
+    const q = search.value != '<empty string>' && search.value || ''
+    if(!reset && q == lastSearch)
+        return
+    lastSearch = q
+
+    list.filters = {...props.filters}
+    list.filters[props.lookup] = q
+    console.log(list.filters)
+
+    let resp = await list.load()
+
+    // Ensure item is in the list
+    if(item.value)
+        list.add(item.value, 0)
+
+    if(!reset) {
+        // When item is not provided we ensure it is here
+        !item.value && await getItem(value.value)
+        if(!search.value || search.value == '<empty string>')
+            search.value = q
+    }
+    return resp
+}, 300)
 
 
 /** Called when filters are updated */
 function filtersUpdated(filters) {
-    filters[props.lookup] = search.value
-    if(!isEqual(toRaw(list.filters), toRaw(filters))) {
-        list.filters = {...props.filters}
-        list.filters[props.lookup] = search.value
-        load()
-    }
+    if(!isEqual(toRaw(list.filters), toRaw(filters)))
+        load({reset: true})
 }
 
 /** Called when search is updated */
 function searchUpdated(val) {
     // v-autocomplete set search to "<empty string>"
     // when items are updated, search is reset
-    const filter = list.filters[props.lookup]
-    if(val && val != '<empty string>' && val != filter) {
-        list.filters[props.lookup] = val
-        load().then(x => {
-            getItem(value.value)
-            search.value = val
-        })
+    if(val != '<empty string>' && val != lastSearch) {
+        console.log('search updated >', `"${val}"`, lastSearch)
+        load({q: val})
     }
 }
 
@@ -106,8 +125,7 @@ onMounted(() => {
     if(props.filters && Object.values(props.filters).length)
         filtersUpdated(props.filters)
     else
-        list.load()
-    getItem(value.value)
+        list.load()?.then(() => getItem(value.value))
 })
 
 watch(() => props.filters, (val) => filtersUpdated(val))

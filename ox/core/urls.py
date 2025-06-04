@@ -1,3 +1,14 @@
+"""
+Provides API endpoints:
+
+    - ``account``: user account edition
+    - ``content_type``: ``django.contrib.content_type.models.ContentType``
+    - ``user``: ``django.contrib.auth.models.User``
+    - ``group``: ``django.contrib.auth.models.Group``
+    - ``permission``: ``django.contrib.auth.models.Permission``
+    - ``agent``: ``caps.models.Agent``
+"""
+
 from django.urls import path
 from rest_framework.routers import DefaultRouter
 

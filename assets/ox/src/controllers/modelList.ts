@@ -83,6 +83,13 @@ export default class ModelList<M extends Model> extends ModelController<M, IMode
     /** Get item by list index */
     get(index: number): number { return index < this.items.length ? this.items[index] : null }
 
+    /** Reset list */
+    reset(items: M[] = []) {
+        this.items = items
+        this.nextUrl = null
+        this.prevUrl = null
+    }
+
     /** Get item index by id */
     findIndex(id: number): number { return this.items.findIndex((v) => v.id == id) }
 

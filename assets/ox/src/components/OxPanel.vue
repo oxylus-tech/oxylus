@@ -4,10 +4,11 @@
         <Teleport to="#app-bar-sheet-title" :disabled="!mounted || panels.panel != props.name">
             <v-icon v-if="props.icon" :icon="props.icon"/>
             {{ props.title }}
+            <slot name="append-title"/>
         </Teleport>
 
         <Teleport to="#app-bar-right" :disabled="!mounted || panels.panel != props.name">
-            <slot name="append-title"/>
+            <slot name="app-bar-right"/>
             <v-btn v-if="props.help" class="ml-3"
                 :href="props.help" panels="new"
                 icon="mdi-information-outline" />

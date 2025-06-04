@@ -49,7 +49,6 @@ function shouldShow(item) {
 
 function show() {
     const vals = { panel: props.name, href: props.url }
-    console.log(props, vals)
     panels.show(vals)
 }
 </script>

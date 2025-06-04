@@ -68,3 +68,9 @@ table tbody th {
 .ox-model-edit .v-field--disabled {
     opacity: 1 !important;
 }
+
+.ox-list-filters {
+    .v-input + .v-input {
+        margin-left: 0.6rem;
+    }
+}
