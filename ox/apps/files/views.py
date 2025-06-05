@@ -4,7 +4,8 @@ from django.utils.translation import gettext_lazy as _
 from ox.core.views import AppView, nav
 from caps.views import OwnedViewSet, AccessViewSet
 
-from . import serializers
+from . import serializers, filters
+from .conf import ox_files_settings
 from .models import Folder, File
 
 
@@ -45,12 +46,7 @@ class AppView(LoginRequiredMixin, AppView):
 class FolderViewSet(OwnedViewSet):
     queryset = Folder.objects.all()
     serializer_class = serializers.FolderSerializer
-    filterset_fields = {
-        "path": ["exact", "icontains"],
-        "owner__uuid": ["exact"],
-        "parent__uuid": ["exact"],
-        "name": ["exact", "icontains"],
-    }
+    filterset_class = filters.FolderFilterSet
     search_fields = ["path"]
 
 
@@ -63,6 +59,14 @@ class FileViewSet(OwnedViewSet):
     serializer_class = serializers.FileSerializer
     filterset_fields = {"owner__uuid": ["exact"], "folder__uuid": ["exact"], "name": ["exact", "icontains"]}
     search_fields = ["name", "folder__path"]
+
+    def perform_create(self, ser):
+        super().perform_create(ser)
+
+        if ox_files_settings.PREVIEW_ON_SAVE:
+            ser.instance.create_preview()
+        else:
+            ser.instance.read_mime_type()
 
 
 class FileAccessViewSet(AccessViewSet):

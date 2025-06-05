@@ -2,8 +2,8 @@ import { cloneDeep, isEqual, pick } from 'lodash'
 import type { Attribute, Repository } from 'pinia-orm'
 import type { Response } from '@pinia-orm/axios'
 
+import Config from '../config'
 import { assignNonEmpty, reset, State } from '../utils'
-import type { IObject } from '../utils'
 import type { Model } from '../models'
 
 
@@ -48,8 +48,6 @@ export interface IEditor<T,P extends IEditorProps<T>> extends IEditorProps<T> {
 }
 
 
-export interface IEditorSend extends IObject {}
-
 /**
  * An Editor handles data edition without changing original value.
  * It provides utilities in order to:
@@ -60,7 +58,7 @@ export interface IEditorSend extends IObject {}
  * Default implementation handles raw Object edition, but not saving data to the server.
  * Note: this might lead to errors due to reactivity when returned from composable.
  */
-export default class Editor<T extends IObject, P extends IEditorProps<T>> {
+export default class Editor<T extends Record, P extends IEditorProps<T>> {
     state = State.none()
     value: T & Record<string, any> = {} as T
 
@@ -109,19 +107,28 @@ export default class Editor<T extends IObject, P extends IEditorProps<T>> {
      * Note: default implementation does not provide `send()` method
      * and thus will raise an error.
      *
-     * @param [value] if provided use this instead of `this.value`.
+     * @param [value] if provided use this instead of `this.value`. When a form is provided, it will get
      * @return state.
      */
-    async save(value: T|null = null): Promise<State> {
+    async save(value: T|FormData|null = null, params:Record={}): Promise<State> {
         this.state.processing()
 
         if(this.valid === false)
             return this.state.error({
                 "_": "Some of the input values are invalid"
             })
-        value = this.serialize(value ?? this.value)
 
-        const state = await this.send(value)
+        value ??= this.value
+        if(value instanceof FormData)
+            params.headers = {
+                ...Config.axiosConfig.headers,
+                'Content-Type': 'multipart/form-data',
+                ...params.headers,
+            }
+        else
+            value = this.serialize(value)
+
+        const state = await this.send(value, params)
         if(state.isOk) {
             this.reset(state.data as T, true)
             // this.initial = cloneDeep(this.value)
@@ -146,7 +153,7 @@ export default class Editor<T extends IObject, P extends IEditorProps<T>> {
     serialize<R>(value: T): any { return value }
 
     /** Send value (not implemented, MUST BE in subclasses). */
-    send(_: IEditorSend): Promise<State> {
+    send(_: Record|FormData, params: Record): Promise<State> {
         throw "not implemented"
     }
 }

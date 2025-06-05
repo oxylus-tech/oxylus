@@ -13,7 +13,6 @@
             <v-app-bar-title id="app-bar-title">
                 <slot name="title" :context="context"/>
             </v-app-bar-title>
-            <v-spacer/>
             <slot name="app-bar-left" :context="context"></slot>
             <div id="app-bar-right" class="mr-3"></div>
             <slot name="app-bar-right" :context="context"></slot>

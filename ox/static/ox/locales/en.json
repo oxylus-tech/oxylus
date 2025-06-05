@@ -9,6 +9,8 @@
     "actions.delete": "Delete",
     "actions.delete.confirm": "Are you sure that you want to delete this item?",
     "actions.discard": "Discard",
+    "actions.save": "Save",
+    "actions.saving": "Saving",
     "actions.download": "Download",
     "actions.upload": "Upload",
 
@@ -120,7 +122,6 @@
     "enums.contactinfo_kind.2": "Home",
     "enums.contactinfo_kind.3": "Legal",
     "enums.contactinfo_kind.16": "Other",
-
 
     "models.files": "File | Files",
     "models.folders": "Folder | Folders",

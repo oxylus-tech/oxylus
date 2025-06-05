@@ -1,5 +1,12 @@
 <template>
     <ox-state-alert v-if="props.state" :state="props.state" delay/>
+
+    <template v-if="slots.side && panels.panel == panel.name">
+        <v-navigation-drawer persistent>
+            <slot name="side"/>
+        </v-navigation-drawer>
+    </template>
+
     <v-sheet class="ma-4">
         <Teleport to="#app-bar-sheet-title" :disabled="!mounted || panels.panel != props.name">
             <v-icon v-if="props.icon" :icon="props.icon"/>
@@ -32,6 +39,18 @@
     </v-sheet>
 </template>
 <script setup lang="ts">
+/**
+ * Base component for displaying a panel.
+ *
+ *
+ * Slots:
+ * - side: if provided create a navigation drawer in which slot is put.
+ * - top: at the top of all views
+ * - bottom: at the bottom of all views
+ * - views.[name]: a slot for each view
+ */
+
+
 import { defineProps, inject, onMounted, onUnmounted, ref, useSlots, watch } from 'vue'
 import {filterSlots} from 'ox'
 

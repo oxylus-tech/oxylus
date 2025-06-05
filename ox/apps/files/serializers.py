@@ -1,3 +1,5 @@
+from rest_framework import serializers
+
 from caps.serializers import OwnedSerializer
 from ox.core.serializers import RelatedField
 
@@ -16,7 +18,16 @@ class FolderSerializer(OwnedSerializer):
 
 
 class FileSerializer(OwnedSerializer):
+    folder = RelatedField(required=False, allow_null=True, queryset=models.Folder.objects.all())
+    created = serializers.DateTimeField(format="%Y-%m-%d, %H:%M %Z")
+    updated = serializers.DateTimeField(format="%Y-%m-%d, %H:%M %Z")
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if self.instance:
+            self.fields["file"].read_only = True
+
     class Meta:
         model = models.File
         fields = "__all__"
-        read_only_fields = ["mime_type", "preview", "preview_size", "file_size"]
+        read_only_fields = ["mime_type", "preview", "preview_size", "file_size", "created", "updated"]

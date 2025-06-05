@@ -1,4 +1,5 @@
 <template>
+    <input type="hidden" v-if="props.name" :name="props.name" :value="value"/>
     <v-autocomplete v-bind="attrs"
         :items="items" :loading="list.state.isProcessing"
         v-model="value"
@@ -29,6 +30,8 @@ interface IAutoCompleteProps extends IModelList {
     repo: Repository
     /** Search lookup */
     lookup: string
+    /** Field name */
+    name: string
 }
 
 
@@ -85,7 +88,6 @@ const load = debounce(async ({reset=false}={}) => {
 
     list.filters = {...props.filters}
     list.filters[props.lookup] = q
-    console.log(list.filters)
 
     let resp = await list.load()
 
@@ -105,7 +107,10 @@ const load = debounce(async ({reset=false}={}) => {
 
 /** Called when filters are updated */
 function filtersUpdated(filters) {
-    if(!isEqual(toRaw(list.filters), toRaw(filters)))
+    const listFilters = {...toRaw(list.filters)}
+    delete listFilters[props.lookup]
+
+    if(!isEqual(toRaw(listFilters), toRaw(filters)))
         load({reset: true})
 }
 
@@ -122,10 +127,7 @@ function searchUpdated(val) {
 
 // --- Watchers
 onMounted(() => {
-    if(props.filters && Object.values(props.filters).length)
-        filtersUpdated(props.filters)
-    else
-        list.load()?.then(() => getItem(value.value))
+    list.load()?.then(() => getItem(value.value))
 })
 
 watch(() => props.filters, (val) => filtersUpdated(val))

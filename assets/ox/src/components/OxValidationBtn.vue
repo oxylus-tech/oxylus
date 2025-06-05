@@ -3,29 +3,31 @@
         <v-btn color="error" class="me-2" :prepend-icon="props.resetIcon"
                 @click="emit('reset')"
                 :disabled="props.disabled">
-            <slot name="reset">{{ props.resetLabel }}</slot>
+            <slot name="discard">{{ props.resetLabel || t('actions.discard') }}</slot>
         </v-btn>
         <v-btn v-if="props.state.isSending || props.state.isProcessing"
-                color="primary" prepend-icon="mdi-content-save" disabled>
-            Saving
+                color="primary" :prepend-icon="props.processingIcon" disabled>
+            <slot name="processing">{{ props.processingLabel || t('actions.saving') }}</slot>
         </v-btn>
         <v-btn v-else color="primary" :prepend-icon="props.validateIcon"
                 @click="emit('validate')"
                 :disabled="props.disabled || props.validateDisabled">
-            <slot name="validate">{{ props.validateLabel }}</slot>
+            <slot name="validate">{{ props.validateLabel ||  t('actions.save') }}</slot>
         </v-btn>
         </div>
 </template>
 <script setup>
 import {defineEmits, defineProps} from 'vue'
-import {VBtn} from 'vuetify/components/VBtn'
+import { t } from '../composables'
 
 const emit = defineEmits(['validate', 'reset'])
 const props = defineProps({
-    resetLabel: {type: String, default: "Reset"},
+    resetLabel: String,
     resetIcon: {type: String, default: "mdi-close-circle"},
-    validateLabel: {type: String, default: "Save"},
+    validateLabel: String,
     validateIcon: {type: String, default: "mdi-content-save"},
+    processingLabel: String,
+    processingIcon: {type: String, default: "mdi-content-save"},
     disabled: {type: Boolean, default: false},
     state: {type: Object, default: () => State.none()},
     validateDisabled: {type: Boolean, default: false},

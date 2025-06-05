@@ -5,6 +5,10 @@
             <slot name="append-title" v-bind="bind" />
         </template>
 
+        <template #side v-if="slots['side']">
+            <slot name="side" v-bind="bind" />
+        </template>
+
         <template #app-bar-right>
             <slot name="app-bar-right" v-bind="bind"/>
 
@@ -56,35 +60,35 @@
                 >
                 <!-- TODO: permission check -->
                 <v-btn value="list.table"
-                        @click.stop="panel.show({view: 'list.table'})"
+                        @click.capture.stop="panel.show({view: 'list.table'})"
                         :title="t('panels.nav.table')"
                         :aria-label="t('panels.nav.table')">
                     <v-icon>mdi-table</v-icon>
                 </v-btn>
                 <v-btn value="list.cards" v-if="slots['views.list.cards']"
-                        @click.stop="panel.show({view: 'list.cards'})"
+                        @click.capture.stop="panel.show({view: 'list.cards'})"
                         :title="t('panels.nav.cards')"
                         :aria-label="t('panels.nav.cards')">
                     <v-icon>mdi-card-account-details</v-icon>
                 </v-btn>
                 <v-btn value="list.kanban" v-if="slots['views.list.kanban']"
-                        @click.stop="panel.show({view: 'list.kanban'})"
+                        @click.capture.stop="panel.show({view: 'list.kanban'})"
                         :title="t('panels.nav.kanban')"
                         :aria-label="t('panels.nav.kanban')">
                     <v-icon>mdi-view-column</v-icon>
                 </v-btn>
-                <v-btn value="detail.add" v-if="editSlots"
-                        @click.stop="panel.create()"
-                        :title="t('panels.nav.add')"
-                        :aria-label="t('panels.nav.add')">
-                    <v-icon>mdi-plus-box</v-icon>
-                </v-btn>
                 <v-btn value="detail.edit" v-if="slots['views.detail.edit'] || editSlots"
-                        @click.stop="panel.show({view: 'detail.edit', value: panel.value})"
-                        :disabled="!panel.value?.id"
+                        @click.capture.stop="panel.show({view: 'detail.edit', value: panel.value})"
+                        :disabled="!panel.value?.id && panel.view != 'detail.edit'"
                         :title="t('panels.nav.edit')"
                         :aria-label="t('panels.nav.edit')">
                     <v-icon>mdi-pencil</v-icon>
+                </v-btn>
+                <v-btn value="detail.add" v-if="editSlots"
+                        @click.capture.stop="panel.create()"
+                        :title="t('panels.nav.add')"
+                        :aria-label="t('panels.nav.add')">
+                    <v-icon>mdi-plus-box</v-icon>
                 </v-btn>
                 <slot name="nav.views" v-bind="bind"/>
             </v-btn-toggle>

@@ -37,7 +37,7 @@ const forwardSlots = Object.keys(slots).filter(x => !(['list.filters', 'top'].in
 const repos = useFilesModels()
 const props = withDefaults(defineProps<IModelPanelProps>(), {
     name: 'folders',
-    relations: ['$owner'],
-    headers: ['owner', 'name', 'path', 'created', 'updated'],
+    relations: [],
+    headers: ['path', 'name', 'created', 'updated'],
 })
 </script>

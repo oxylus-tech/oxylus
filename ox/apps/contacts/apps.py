@@ -19,4 +19,6 @@ class AppConfig(apps.AppConfig):
         dependencies = ("ox.auth", "ox.locations")
 
     def ready(self):
-        pass
+        from . import signals
+
+        signals.sync_user_to_contact

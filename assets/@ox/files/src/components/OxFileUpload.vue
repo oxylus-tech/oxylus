@@ -21,7 +21,7 @@
                     <div class="filename">{{ file?.name }}</div>
                 </template>
                 <template v-else>
-                    <v-icon>mdi-file-upload</v-icon>
+                    <v-icon size="x-large">mdi-cloud-upload</v-icon>
                     <div class="filename">{{ t('actions.select_file.help') }}</div>
                 </template>
             </div>
@@ -33,7 +33,7 @@
 </template>
 
 <script setup lang="ts">
-import { defineExpose, ref, defineModel, watch } from 'vue'
+import { defineExpose, defineEmits, ref, defineModel, watch } from 'vue'
 import { VIcon } from 'vuetify/components'
 import { t } from 'ox'
 
@@ -43,6 +43,8 @@ interface FilePreview {
     isImage: boolean
     icon: string
 }
+
+const emits = defineEmits(['change'])
 
 const props = defineProps({
     /** Input field name */
@@ -76,16 +78,19 @@ const triggerFileInput = () => fileInput.value?.click()
 
 const handleFileChange = (event: Event) => {
     const input = event.target as HTMLInputElement
-    if (input.files?.[0]) {
+    if (input.files?.[0])
         handleFile(input.files[0])
-        input.value = '' // reset
-    }
+    else
+        preview.value = null
 }
 
 const handleDrop = (event: DragEvent) => {
     isDragging.value = false
-    const droppedFile = event.dataTransfer?.files?.[0]
-    droppedFile && handleFile(droppedFile)
+    const files = event.dataTransfer?.files
+    if(files) {
+        fileInput.files = event.dataTransfer.files
+        // handleFile(droppedFile)
+    }
 }
 
 const handleFile = (newFile: File) => {
@@ -108,6 +113,8 @@ const handleFile = (newFile: File) => {
     }
     else
         preview.value = entry
+
+    emits("change", file.value)
 }
 
 

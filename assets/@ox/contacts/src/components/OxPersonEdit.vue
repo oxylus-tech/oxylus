@@ -1,6 +1,6 @@
 <template>
     <ox-model-edit v-bind="props" :repo="repos.persons">
-        <template #default="{editor, disabled}">
+        <template #default="{editor, editable, disabled}">
             <v-expansion-panels mandatory multiple :model-value="['info', 'emails', 'phones']">
                 <v-expansion-panel :title="t('views.edit.informations')" value="info">
                     <template #text>
@@ -32,7 +32,7 @@
                                 item-title="name" item-value="id"/>
                     </template>
                 </v-expansion-panel>
-                <ox-contact-infos v-model="editor.value" />
+                <ox-contact-infos v-model="editor.value" :editable="editable" />
             </v-expansion-panels>
         </template>
     </ox-model-edit>

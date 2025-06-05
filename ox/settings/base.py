@@ -127,8 +127,10 @@ LANGUAGE_COOKIE_NAME = "lang"
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 STATIC_URL = "/static/"
-STATICFILES_DIRS = [BASE_DIR / "ox" / "static", BASE_DIR / "ox" / "core" / "static"]
+STATICFILES_DIRS = [BASE_DIR / "static", BASE_DIR / "ox" / "static", BASE_DIR / "ox" / "core" / "static"]
 
+MEDIA_ROOT = BASE_DIR / "static" / "media"
+MEDIA_URL = "/media/"
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field

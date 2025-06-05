@@ -270,10 +270,16 @@ export class User extends Model {
      * - a string: permission codename
      * - a list of: `[ModelClass, "action string"]`
      *
+     * @param perm - Check for this permission ({@link Permission.getCodename} value)
+     * @param obj - a `django-caps` `Owned` object: if provided and the object has an `access`, check for object permissions
+     * @return whether user has permission or not.
      */
-    can(perm: IPermissionGetCodename): boolean {
+    can(perm: IPermissionGetCodename, obj?: Record): boolean {
         perm = Permission.getCodename(perm)
-        return this.all_permissions?.includes(perm) || false
+        const allowed = this.all_permissions?.includes(perm) || false
+        if(obj && obj.access)
+            return allowed && "perm" in obj.access.grants
+        return allowed
     }
 
     /**

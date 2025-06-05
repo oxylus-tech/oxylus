@@ -4,6 +4,7 @@ from pathlib import Path
 from uuid import uuid4
 
 from django.db import models
+from django.conf import settings
 from django.core.exceptions import PermissionDenied, ValidationError
 from django.utils.translation import gettext_lazy as _
 
@@ -15,12 +16,6 @@ from . import processors
 
 
 __all__ = ("file_upload_to", "FolderQuerySet", "Folder", "FileQuerySet", "File")
-
-
-def file_upload_to(instance, filename):
-    """Return target upload file."""
-    ext = filename.split(".")[-1]
-    return f"{ox_files_settings.UPLOAD_TO}/{uuid4()}.{ext}"
 
 
 class FolderQuerySet(OwnedQuerySet, TreeNodeQuerySet):
@@ -123,6 +118,12 @@ class FileQuerySet(SaveHookQuerySet, OwnedQuerySet):
             self.update(file=None, preview=None)
 
 
+def file_upload_to(instance, filename):
+    """Return target upload file."""
+    ext = filename.split(".")[-1]
+    return f"{ox_files_settings.UPLOAD_TO}/{uuid4()}.{ext}"
+
+
 class File(Described, Timestamped, SaveHook, Owned):
     """
     This class represent a file.
@@ -144,15 +145,21 @@ class File(Described, Timestamped, SaveHook, Owned):
     folder = models.ForeignKey(Folder, models.CASCADE, null=True, blank=True, related_name="files")
 
     file = models.FileField(_("File"), upload_to=file_upload_to, null=True)
-    preview = models.FileField(_("Preview"), upload_to=file_upload_to, null=True, blank=True)
+    preview = models.FileField(_("Preview"), null=True, blank=True)
     mime_type = models.CharField(_("Mime Type"), max_length=127, blank=True)
-    file_size = models.PositiveIntegerField(_("File Size"), blank=True)
+    file_size = models.PositiveIntegerField(_("File Size"), blank=True, default=0)
 
-    caption = models.TextField(_("Caption"), default="", help_text=_("Displayed below object when rendered."))
-    alternate = models.TextField(
-        _("Alternate text"), default="", help_text=_("Displayed as replacement text when object is not displayed.")
+    caption = models.TextField(
+        _("Caption"), default="", help_text=_("Displayed below object when rendered."), blank=True, null=True
     )
-    ariaDescription = models.TextField(_("ARIA Description"), default="")
+    alternate = models.TextField(
+        _("Alternate text"),
+        default="",
+        help_text=_("Displayed as replacement text when object is not displayed."),
+        blank=True,
+        null=True,
+    )
+    ariaDescription = models.TextField(_("ARIA Description"), default="", blank=True, null=True)
     metadata = models.JSONField(_("Metadata"), default=dict, blank=True)
 
     objects = FileQuerySet.as_manager()
@@ -165,8 +172,22 @@ class File(Described, Timestamped, SaveHook, Owned):
         """Ensure mime type and file validation."""
         self.validate_node()
 
-        if not self.mime_type:
-            self.mime_type = self.registry.read_mime_type()
+    def create_preview(self, save: bool = True):
+        """
+        Create preview for this file. If it already exists, skip.
+
+        :return True if preview has been created
+        """
+        if self.preview:
+            return False
+
+        processor = self.get_processor(save=False)
+        path = ox_files_settings.preview_to / Path(self.file.name).name
+        path.parent.mkdir(parents=True, exist_ok=True)
+        processor.create_preview(self.file.path, path)
+        self.preview.name = str(path.relative_to(settings.MEDIA_ROOT))
+        save and self.save()
+        return True
 
     def validate_node(self):
         """
@@ -174,20 +195,25 @@ class File(Described, Timestamped, SaveHook, Owned):
 
         :yield ValidationError: if file name is already present in folder (file or folder).
         """
-        if self.folder_id and self.owner_id != self.folder.owner:
+        if self.folder_id and self.owner_id != self.folder.owner_id:
             raise PermissionDenied("Owner of this file should be the same as its directory.")
 
-        kw = {"folder_id": self.folder_id, "name": self.name, "owner": self.owner}
+        kw = {"name": self.name, "owner": self.owner}
 
-        query = File.objects.filter(**kw)
+        query = File.objects.filter(folder_id=self.folder_id, **kw)
         if self.pk:
             query = query.exclude(pk=self.pk)
 
         if query.exists():
             raise ValidationError("Another file exists for this path.")
 
-        if Folder.objects.filter(**kw):
+        if Folder.objects.filter(parent_id=self.folder_id, **kw):
             raise ValidationError("A folder exists for this path.")
+
+    def read_mime_type(self, save: bool = True):
+        """Read mime-type from file"""
+        self.mime_type = processors.registry.read_mime_type(self.file.path)
+        save and self.save()
 
     def get_processor(
         self, save: bool = True, registry: processors.FileProcessors = processors.registry
@@ -200,8 +226,8 @@ class File(Described, Timestamped, SaveHook, Owned):
         :param registry: use this processors instead of :py:data:`.processors.processors`
         """
         if not self.mime_type:
-            self.mime_type = registry.read_mime_type(self.file.path)
-        return registry.find(self.mime_type)
+            self.read_mime_type(save)
+        return registry.get(self.mime_type)
 
     def clear_files(self):
         """Delete files from storage.

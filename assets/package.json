@@ -8,7 +8,7 @@
   "scripts": {
     "dev": "pnpm -r --sort run dev",
     "build": "pnpm -r --sort run build",
-    "watch": "pnpm -r --sort run watch",
+    "watch": "pnpm -r --parallel run watch",
     "preview": "pnpm -r --sort run preview"
   },
   "devDependencies": {

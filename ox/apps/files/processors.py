@@ -104,9 +104,9 @@ class FileProcessors:
     This is used to determine file type and provide a processor based on it.
     """
 
-    processors: list[FileProcessor] = []
+    processors: list[FileProcessor] = None
     """ List of processors """
-    default_processor = FileProcessor()
+    default_processor = None
     """ Default processor to use when file type is not supported by any other processor.  """
     mime_types: dict[str, FileProcessor] = None
     """ Processors by mime type """
@@ -114,6 +114,7 @@ class FileProcessors:
     def __init__(self, default_processor, processors: list[FileProcessor] = []):
         self.default_processor = default_processor
         self.mime_types = {}
+        self.processors = []
         for processor in processors:
             self.register(processor)
 
@@ -138,5 +139,5 @@ class FileProcessors:
         return self.mime_types.get(mime_type, self.default_processor)
 
 
-registry = FileProcessors(FileProcessor, [ImageProcessor()])
+registry = FileProcessors(FileProcessor(), [ImageProcessor()])
 """ This is the default Processors instance used for processing objects. """

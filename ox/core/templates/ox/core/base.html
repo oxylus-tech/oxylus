@@ -80,9 +80,9 @@ Blocks:
                 {% block app %}
                 <template #title="{context}">
                     {% block app-title %}
+                        {% if app_config.icon %}<i class="{{ app_config.icon }}"></i>{% endif %}
                         {% block title %}
                         {% if app_config %}
-                            {% if app_config.icon %}<i class="{{ app_config.icon }}"></i>{% endif %}
                             {{ app_config.verbose_name }}
                         {% endif %}
                         {% endblock %}
