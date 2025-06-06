@@ -1,10 +1,8 @@
 <template>
     <ox-state-alert v-if="props.state" :state="props.state" delay/>
 
-    <template v-if="slots.side && panels.panel == panel.name">
-        <v-navigation-drawer persistent>
-            <slot name="side"/>
-        </v-navigation-drawer>
+    <template v-if="slots.prepend && panels.panel == panel.name">
+        <slot name="prepend"/>
     </template>
 
     <v-sheet class="ma-4">
@@ -37,6 +35,10 @@
 
         <slot name="bottom"></slot>
     </v-sheet>
+
+    <template v-if="slots.append && panels.panel == panel.name">
+        <slot name="append"/>
+    </template>
 </template>
 <script setup lang="ts">
 /**

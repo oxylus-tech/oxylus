@@ -6,14 +6,14 @@
 
         <template #app-bar-right="{panel, list, ...bind}">
             <ox-agent-select ref="agent" v-model="list.filters.owner__uuid" :user="user"
-                menu :disabled="panel.view.startsWith('detail')"
-            />
+                menu :disabled="panel.view.startsWith('detail')" />
             <slot name="app-bar-right" :panel="panel" :list="list" :owner="agent?.item" v-bind="bind"/>
         </template>
     </ox-model-panel>
 </template>
 <script setup lang="ts">
-import { useAttrs, ref, inject, useSlots } from 'vue'
+import { useAttrs, ref, inject, useSlots, watch } from 'vue'
+import {reset} from 'ox'
 import {OxModelPanel} from 'ox/components'
 import OxAgentSelect from './OxAgentSelect'
 

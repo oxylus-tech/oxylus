@@ -11,6 +11,7 @@
     "actions.discard": "Discard",
     "actions.save": "Save",
     "actions.saving": "Saving",
+    "actions.list.reload": "Refresh items list",
     "actions.download": "Download",
     "actions.upload": "Upload",
 
@@ -126,6 +127,7 @@
     "models.files": "File | Files",
     "models.folders": "Folder | Folders",
     "fields.folder": "Folder",
+    "fields.folder.add_error": "Couldn't save folder. Check if a folder or file already exists with this name or that you have the permissions.",
     "fields.path": "Path",
     "fields.preview": "Preview",
     "fields.caption": "Caption",
@@ -134,6 +136,17 @@
     "fields.alternate.help": "Alternative text displayed when file can not be displayed.",
     "actions.select_file": "Select a file",
     "actions.select_file.help": "Drop a file here or select a file",
+
+
+    "models.tasks": "System Task | System Tasks",
+    "fields.status": "Status",
+    "fields.queue_name": "Queue",
+    "fields.task_path": "Path",
+    "fields.priority": "Priority",
+    "fields.enqueued_at": "Enqueued",
+    "fields.started_at": "Started",
+    "fields.finished_at": "Finished",
+    "fields.return_value": "Result",
 
     "empty": ""
 }

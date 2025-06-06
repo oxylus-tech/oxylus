@@ -80,6 +80,8 @@ const load = debounce(async ({reset=false}={}) => {
     // - we provides reset to:
     //   - force loading even if search is the same as last one
     //   - reset search (v-autocomplete resets search.value when items is updated.
+    if(list.state.isProcessing)
+        return
 
     const q = search.value != '<empty string>' && search.value || ''
     if(!reset && q == lastSearch)
@@ -118,10 +120,8 @@ function filtersUpdated(filters) {
 function searchUpdated(val) {
     // v-autocomplete set search to "<empty string>"
     // when items are updated, search is reset
-    if(val != '<empty string>' && val != lastSearch) {
-        console.log('search updated >', `"${val}"`, lastSearch)
+    if(val != '<empty string>' && val != lastSearch)
         load({q: val})
-    }
 }
 
 

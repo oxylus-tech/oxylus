@@ -52,6 +52,8 @@ django-caps = {git = "https://github.com/oxylus-tech/django-caps.git"}
 django-mptt = "^0.17.0"
 django-versatileimagefield = "^3.1"
 python-magic = "^0.4.27"
+django-tasks = "^0.7.0"
+pymupdf = "^1.26.0"
 
 
 [tool.poetry.group.dev.dependencies]

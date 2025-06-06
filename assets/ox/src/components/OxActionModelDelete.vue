@@ -3,7 +3,7 @@
         :item="props.item" :button="props.button"
         icon="mdi-delete" color="error"
         :title="t('actions.delete')" :confirm="t('actions.delete.confirm')"
-        :permissions="['delete', (u, o) => o.id]"
+        :permission="[props.item.constructor , 'delete']"
         :run="run" @completed="panel?.show({view:panel.index})"
     />
 </template>

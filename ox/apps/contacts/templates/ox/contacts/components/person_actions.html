@@ -4,7 +4,7 @@
 {% block actions %}
 <ox-action v-if="bind.value.user"
     icon="mdi-account" title="{% translate "User" %}"
-    :button="bind.button" :item="bind.value" :permissions="['auth.view_user']"
+    :button="bind.button" :item="bind.value" permission="auth.view_user"
     :href="`{% panel_url 'ox_auth:index' 'users' id="${bind.value.user}" %}`"></ox-action>
 {{ block.super }}
 {% endblock %}

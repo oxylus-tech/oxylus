@@ -29,6 +29,20 @@ def subchild(child):
     return TreeNode.objects.create(name="subchild", parent=child)
 
 
+class TestTreeNodeQuerySet:
+    def test_ancestors_with_root_not_inclusive(self, root_node):
+        assert not TreeNode.objects.ancestors(root_node, False)
+
+    def test_ancestors_with_root_inclusive(self, root_node):
+        assert list(TreeNode.objects.ancestors(root_node, True)) == [root_node]
+
+    def test_ancestors_not_inclusive(self, subchild, child, root_node, child_2, second_root):
+        assert list(TreeNode.objects.ancestors(subchild, False)) == [root_node, child]
+
+    def test_ancestors_inclusive(self, subchild, child, root_node, child_2, second_root):
+        assert list(TreeNode.objects.ancestors(subchild, True)) == [root_node, child, subchild]
+
+
 class TestTreeNode:
     def test_on_save_with_parent(self, root_node, child):
         assert child.parent == root_node

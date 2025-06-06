@@ -15,6 +15,14 @@
             <slot name="list.filters" :list="list" :filters="filters"/>
         </template>
 
+        <template #prepend="{list, owner, panel}">
+            <v-navigation-drawer v-if="panel.view.startsWith('list.')" persistent>
+                <ox-folder-nav
+                    :owner="owner" :folder="list.filters?.parent__uuid"
+                    @selected="list.filters.parent__uuid = $event?.id" v-if="panel.view"/>
+            </v-navigation-drawer>
+        </template>
+
         <template #views.detail.edit.default="{value, saved}">
             <ox-folder-edit :initial="value" :saved="saved"/>
         </template>
@@ -29,6 +37,7 @@ import {OxOwnedPanel} from '@ox/auth/components'
 
 import OxFolderEdit from './OxFolderEdit'
 import OxFolderInput from './OxFolderInput'
+import OxFolderNav from './OxFolderNav'
 import {useFilesModels} from '../composables'
 
 const slots = useSlots()

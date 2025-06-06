@@ -4,12 +4,12 @@ from pathlib import Path
 from uuid import uuid4
 
 from django.db import models
-from django.conf import settings
 from django.core.exceptions import PermissionDenied, ValidationError
 from django.utils.translation import gettext_lazy as _
 
 from caps.models import Owned, OwnedQuerySet
-from ox.utils.models import Named, Described, Timestamped, SaveHook, SaveHookQuerySet, TreeNode, TreeNodeQuerySet
+from ox.utils.models import Named, Described, Timestamped, SaveHook, SaveHookQuerySet
+from ox.utils.models.tree import TreeNode, TreeNodeQuerySet
 
 from .conf import ox_files_settings
 from . import processors
@@ -19,7 +19,9 @@ __all__ = ("file_upload_to", "FolderQuerySet", "Folder", "FileQuerySet", "File")
 
 
 class FolderQuerySet(OwnedQuerySet, TreeNodeQuerySet):
-    pass
+    def find_clone(self, node, **lookups) -> FolderQuerySet:
+        lookups["owner_id"] = node.owner_id
+        return super().find_clone(node, **lookups)
 
 
 class Folder(Named, Timestamped, Owned, TreeNode):
@@ -144,6 +146,7 @@ class File(Described, Timestamped, SaveHook, Owned):
     # When folder is null, it is at root
     folder = models.ForeignKey(Folder, models.CASCADE, null=True, blank=True, related_name="files")
 
+    name = models.CharField(_("Name"), max_length=128)
     file = models.FileField(_("File"), upload_to=file_upload_to, null=True)
     preview = models.FileField(_("Preview"), null=True, blank=True)
     mime_type = models.CharField(_("Mime Type"), max_length=127, blank=True)
@@ -171,23 +174,6 @@ class File(Described, Timestamped, SaveHook, Owned):
     def on_save(self, fields=None):
         """Ensure mime type and file validation."""
         self.validate_node()
-
-    def create_preview(self, save: bool = True):
-        """
-        Create preview for this file. If it already exists, skip.
-
-        :return True if preview has been created
-        """
-        if self.preview:
-            return False
-
-        processor = self.get_processor(save=False)
-        path = ox_files_settings.preview_to / Path(self.file.name).name
-        path.parent.mkdir(parents=True, exist_ok=True)
-        processor.create_preview(self.file.path, path)
-        self.preview.name = str(path.relative_to(settings.MEDIA_ROOT))
-        save and self.save()
-        return True
 
     def validate_node(self):
         """

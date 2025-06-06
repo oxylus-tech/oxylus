@@ -1,12 +1,11 @@
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 
 import type { ComputedRef, Ref } from 'vue'
 import type { Repository } from 'pinia-orm'
 import type { Response } from '@pinia-orm/axios'
 
-import { usePermissions, usePermissionsProps } from './models'
 import { User, Model } from '../models'
-import type { IPermissionItems, Permissions } from '../models'
+import type { IPermissionGetCodename } from '../models'
 
 
 export type ActionRun<M extends Model, R> = (user: User, item: M, ...args: any[]) => Promise<R>
@@ -42,7 +41,7 @@ export interface IActionProps<M extends Model, R>
     /**
      * Required permission to run the action
      */
-    permissions: IPermissionItems
+    permission: IPermissionGetCodename
     /**
      * The function to call when action is executed
      */
@@ -58,14 +57,6 @@ export interface IAction<M extends Model, R> {
      * Wether the action is running.
      */
     processing: Ref<boolean>
-    /**
-     * List of required {@link Permission} to run the action.
-     */
-    permissions: Permissions
-    /**
-     * Wether the user is allowed to run the action.
-     */
-    allowed: ComputedRef<boolean>
     /**
      * Action properties
      */
@@ -88,20 +79,17 @@ export interface IAction<M extends Model, R> {
 /**
  * Create a new action, returning:
  * - processing: ref to boolean indicating wether the action is processing
- * - permissions: Permissions instance
  * - allowed: computed ref indicating wether the action is allowed
  * - run: async function to call in order to run the method
  */
 export function useAction<M extends Model,R>({props, user, emits=null}: IAction<M,R>) {
     const processing = ref(false)
-    const {permissions, allowed} = usePermissions(user, props.permissions, props.item)
+    const allowed = computed(() => !props.permission || user.can(props.permission, props.item))
 
     /** Execute the action. */
     const run = async (...args: any[]): Promise<R> => {
         if(props.confirm && !confirm(props.confirm))
             return
-        if(!allowed.value)
-            throw Error(`You are not allowed to execute this action`)
 
         processing.value = true
         if(props.href) {
@@ -118,5 +106,5 @@ export function useAction<M extends Model,R>({props, user, emits=null}: IAction<
             emits('completed', props.item, ...args)
         return result
     }
-    return {processing, permissions, allowed, run}
+    return {processing, run, allowed}
 }

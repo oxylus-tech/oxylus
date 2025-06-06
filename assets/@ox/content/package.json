@@ -1,0 +1,21 @@
+{
+  "name": "@ox/content",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "pnpm exec vite",
+    "build": "pnpm exec vite build",
+    "watch": "pnpm exec vite build --watch",
+    "preview": "pnpm exec vite preview"
+  },
+  "exports": {
+    "./components": "./src/components/index.ts",
+    "./composables": "./src/composables.ts",
+    "./models": "./src/models.ts"
+  },
+  "dependencies": {
+    "ox": "workspace:*",
+    "vuetify": "^3.8.3"
+  }
+}

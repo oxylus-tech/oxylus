@@ -65,7 +65,7 @@ class Person(Contact):
     last_name = models.CharField(_("Last name"), default="", max_length=64)
     email = models.EmailField(_("Email"), unique=True, blank=True, null=True)
     """ When linked to user, this is User's email. """
-    organisations = models.ManyToManyField(Organisation, null=True, blank=True)
+    organisations = models.ManyToManyField(Organisation, blank=True)
 
     class Meta:
         verbose_name = _("Person")

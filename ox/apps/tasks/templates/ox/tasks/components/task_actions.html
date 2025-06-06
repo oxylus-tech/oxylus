@@ -1,0 +1,8 @@
+{% extends "ox/core/components/model_actions.html" %}
+{% load i18n ox %}
+
+{% block actions %}
+<ox-task-restart-action :button="bind.button" :item="bind.value">
+</ox-task-restart-action>
+{{ block.super }}
+{% endblock %}

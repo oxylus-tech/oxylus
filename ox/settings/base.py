@@ -21,16 +21,20 @@ SECRET_KEY = "django-insecure-bg*enkwcea%4xjcvkpbb_h@6#ue78#t1q(z^w@faagal7**^9i
 
 # Application definition
 INSTALLED_APPS = [
-    "django_filters",
-    "rest_framework",
-    "caps",
     # ox
     "ox.apps.files",
     "ox.apps.contacts",
     "ox.apps.locations",
+    "ox.apps.tasks",
     "ox.apps.auth",
     "ox.core",
-    # others
+    # dependencies
+    "django_tasks",
+    "django_tasks.backends.database",
+    "caps",
+    "django_filters",
+    "rest_framework",
+    # django
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -127,7 +131,7 @@ LANGUAGE_COOKIE_NAME = "lang"
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 STATIC_URL = "/static/"
-STATICFILES_DIRS = [BASE_DIR / "static", BASE_DIR / "ox" / "static", BASE_DIR / "ox" / "core" / "static"]
+STATICFILES_DIRS = [BASE_DIR / "static", BASE_DIR / "ox" / "static"]
 
 MEDIA_ROOT = BASE_DIR / "static" / "media"
 MEDIA_URL = "/media/"
@@ -147,6 +151,7 @@ REST_FRAMEWORK = {
         "rest_framework.renderers.JSONRenderer",
         "ox.core.renderers.AdminBrowsableAPIRenderer",
     ],
+    "DATETIME_FORMAT": "%Y-%m-%d %H:%M:%S %Z",
     "PAGE_SIZE": 50,
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
 }
@@ -160,3 +165,7 @@ SPECTACULAR_SETTINGS = {
     #    "drf_spectacular.hooks.postprocess_enum_name_with_choices"
     # ],
 }
+
+
+# ---- Task management
+TASKS = {"default": {"BACKEND": "django_tasks.backends.database.DatabaseBackend"}}

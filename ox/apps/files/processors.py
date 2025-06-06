@@ -3,8 +3,6 @@ from pathlib import Path
 from typing import IO
 
 import magic
-import PIL
-from PIL import Image
 from django.utils.translation import gettext_lazy as _
 
 
@@ -24,20 +22,29 @@ class FileProcessor:
     type = "file"
     display_type = _("File")
 
-    def create_preview(self, path: Path, out: Path, force: bool = False) -> bool:
+    def create_preview(
+        self,
+        path: Path,
+        out: Path,
+        size: tuple[int, int] = ox_files_settings.THUMBNAIL_SIZE,
+        force: bool = False,
+        **kwargs,
+    ) -> bool:
         """
         Create a preview for the file at provided path.
 
         :param path: path of the file to create a preview of
         :param out: output path to save preview
+        :param thumbnail size: defaults to configured settings.
         :param force: create file even if it exists
         :return boolean indicating wether file has been created
         """
         if not force and out.exists():
             return False
-        return self._create_preview(path, out)
+        print(">>> Create preview for ", path)
+        return self._create_preview(path, out, size, **kwargs)
 
-    def _create_preview(self, path: Path, out: Path) -> bool:
+    def _create_preview(self, path: Path, out: Path, size: tuple[int, int], **kwargs) -> bool:
         """
         To be implemented by processors: this is where the preview is actually
         created. Default implementation does not create preview.
@@ -81,20 +88,68 @@ class ImageProcessor(FileProcessor):
     type = "image"
     display_type = _("Image")
 
-    def _create_preview(self, path: Path, out: Path) -> bool:
+    def _create_preview(self, path: Path, out: Path, size: tuple[int, int]) -> bool:
         """
-        Create thumbnail for the input image. Thumbnails are saved as JPEG images.
-
+        Create thumbnail for the input image.
         :yield: :py:class:`.exceptions.FileTypeError` when file type is not supported.
         :yield: ``FileNotFound`` if file cannot be found
         """
+        import PIL
+        from PIL import Image
+
         try:
             with Image.open(path) as im:
-                im.thumbnail(ox_files_settings.THUMBNAIL_SIZE)
-                im.save(out, "JPEG")
+                im.thumbnail(size)
+                im.save(out)
                 return True
         except (PIL.UnidentifiedImageError, ValueError, TypeError):
             raise FileTypeError(f"File format invalid for {path}.")
+
+
+class PDFProcessor(FileProcessor):
+    mime_types = {
+        "application/pdf",
+        "application/epub+zip",
+        "application/vnd.ms-xpsdocument",
+        "application/vnd.comicbook+zip",
+        "application/vnd.comicbook-rar",
+        "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+        "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        "application/msword",
+        "application/vnd.ms-excel",
+        "application/vnd.ms-powerpoint",
+        "application/x-fictionbook+xml",
+        "application/xhtml+xml",
+        "text/html",
+        "text/plain",
+    }
+
+    def _create_preview(self, path: Path, out: Path, size: tuple[int, int]) -> bool:
+        """Create thumbnail for the input pdf file (on the first page.
+        Thumbnails are saved as JPEG images.
+        """
+        import pymupdf
+        from PIL import Image
+
+        doc = pymupdf.open(path)
+        pix = None
+        for page in doc:
+            if not self.is_empty(page):
+                pix = page.get_pixmap(dpi=150)
+                break
+
+        # default takes the first page
+        if not pix:
+            pix = doc[0].get_pixmap(dpi=150)
+
+        image = Image.frombytes("RGB", [pix.width, pix.height], pix.samples)
+        image.thumbnail(size)
+        image.save(out)
+        return True
+
+    def is_empty(self, page) -> bool:
+        return not page.get_text().strip() or not page.get_images(full=True) or not page.get_drawings()
 
 
 class FileProcessors:
@@ -139,5 +194,5 @@ class FileProcessors:
         return self.mime_types.get(mime_type, self.default_processor)
 
 
-registry = FileProcessors(FileProcessor(), [ImageProcessor()])
+registry = FileProcessors(FileProcessor(), [ImageProcessor(), PDFProcessor()])
 """ This is the default Processors instance used for processing objects. """

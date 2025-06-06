@@ -1,5 +1,3 @@
-from rest_framework import serializers
-
 from caps.serializers import OwnedSerializer
 from ox.core.serializers import RelatedField
 
@@ -15,12 +13,11 @@ class FolderSerializer(OwnedSerializer):
     class Meta:
         model = models.Folder
         exclude = ["tree_id", "level"]
+        read_only_fields = ["created", "updated"]
 
 
 class FileSerializer(OwnedSerializer):
     folder = RelatedField(required=False, allow_null=True, queryset=models.Folder.objects.all())
-    created = serializers.DateTimeField(format="%Y-%m-%d, %H:%M %Z")
-    updated = serializers.DateTimeField(format="%Y-%m-%d, %H:%M %Z")
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

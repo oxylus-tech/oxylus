@@ -25,6 +25,6 @@ const props = defineProps<IActionProps>()
 const emits = defineEmits<{
     completed: ActionCompleted
 }>()
-const context = inject('context')
-const {run, processing, allowed} = useAction({user: context.user, emits, props})
+const user = inject('user')
+const {run, processing, allowed} = useAction({user: user, emits, props})
 </script>

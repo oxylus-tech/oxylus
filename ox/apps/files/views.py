@@ -4,8 +4,7 @@ from django.utils.translation import gettext_lazy as _
 from ox.core.views import AppView, nav
 from caps.views import OwnedViewSet, AccessViewSet
 
-from . import serializers, filters
-from .conf import ox_files_settings
+from . import serializers, filters, tasks
 from .models import Folder, File
 
 
@@ -62,11 +61,8 @@ class FileViewSet(OwnedViewSet):
 
     def perform_create(self, ser):
         super().perform_create(ser)
-
-        if ox_files_settings.PREVIEW_ON_SAVE:
-            ser.instance.create_preview()
-        else:
-            ser.instance.read_mime_type()
+        ser.instance.read_mime_type()
+        tasks.create_preview.enqueue(file_id=str(ser.instance.uuid))
 
 
 class FileAccessViewSet(AccessViewSet):

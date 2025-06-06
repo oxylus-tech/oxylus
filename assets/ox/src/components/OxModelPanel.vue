@@ -5,8 +5,12 @@
             <slot name="append-title" v-bind="bind" />
         </template>
 
-        <template #side v-if="slots['side']">
-            <slot name="side" v-bind="bind" />
+        <template #prepend v-if="slots['prepend']">
+            <slot name="prepend" v-bind="bind" />
+        </template>
+
+        <template #append v-if="slots['append']">
+            <slot name="append" v-bind="bind" />
         </template>
 
         <template #app-bar-right>
@@ -16,6 +20,11 @@
                 <v-btn-group class="ml-3" color="secondary"
                         density="compact" variant="tonal">
                     <slot name="nav.list" v-bind="bind"/>
+                    <v-btn :title="t('actions.list.reload')"
+                        :aria-label="t('actions.list.reload')"
+                        @click="list.load()">
+                        <v-icon>mdi-reload</v-icon>
+                    </v-btn>
                     <v-btn v-if="filters"
                         :title="showFilters ? t('filters.hide') : t('filters.show')"
                         :aria-label="showFilters ? t('filters.hide') : t('filters.show')"

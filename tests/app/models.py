@@ -1,7 +1,10 @@
 from django.db import models
 
 from ox.core.models import Model
-from ox.utils.models import TreeNode as _TreeNode
+from ox.utils.tree.models import TreeNode as _TreeNode
+
+
+__all__ = ("Value", "TreeNode")
 
 
 class Value(Model):

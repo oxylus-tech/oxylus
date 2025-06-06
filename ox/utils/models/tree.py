@@ -1,11 +1,11 @@
 from __future__ import annotations
 from django.core.exceptions import ValidationError
 from django.db import models
-from django.db.models import Max, Value
+from django.db.models import Max, Value, Q
 from django.db.models.functions import Concat, Substr
 from django.utils.translation import gettext_lazy as _
 
-from .save_hook import SaveHook, SaveHookQuerySet
+from ox.utils.models.save_hook import SaveHook, SaveHookQuerySet
 
 
 class TreeNodeQuerySet(SaveHookQuerySet):
@@ -13,14 +13,54 @@ class TreeNodeQuerySet(SaveHookQuerySet):
         """Return root nodes."""
         return self.filter(level=0)
 
+    def find_clone(self, node, **lookups) -> TreeNodeQuerySet:
+        """
+        Search for a node that would be the same as this one.
+        This is used in order to search for colliding paths.
+
+        :param node: node to look.
+        :param **lookup: extra filters to add.
+        """
+        lookups.update(
+            {
+                "parent_id": node.parent,
+                "path": node.get_path(),
+            }
+        )
+        self = self.filter(**lookups)
+        if node.pk:
+            return self.exclude(pk=node.pk)
+        return self
+
     def descendants(self, node, inclusive: bool = False) -> TreeNodeQuerySet:
-        """Return all descendants of a node.
+        """Return all descendants of a node, order by default by level and path.
 
         :param node: the node to check on
         :param inclusive: if True, includes the node too
         """
         level = node.level if inclusive else node.level + 1
-        return self.filter(tree_id=node.tree_id, level__gte=level, path__startswith=node.path)
+        return self.filter(tree_id=node.tree_id, level__gte=level, path__startswith=node.path).order_by(
+            "level", self.model.path_part_attr
+        )
+
+    def ancestors(self, node, inclusive: bool = False) -> TreeNodeQuerySet:
+        """Return all ancestors of a node, order by default by level.
+
+        :param node: the node to check on
+        :param inclusive: if True, includes the node too
+        """
+        sep = self.model.path_sep
+        if node.level > 0:
+            parts = node.path.split(sep)[1:]
+            q = Q()
+            for i in range(0, len(parts) - 1):
+                q |= Q(tree_id=node.tree_id, level=i, path=sep + sep.join(parts[: i + 1]))
+
+            if inclusive:
+                q |= Q(pk=node.pk)
+            return self.filter(q).order_by("level")
+        # root node
+        return self.filter(pk=node.pk) if inclusive else self.none()
 
 
 class TreeNode(SaveHook):
@@ -42,6 +82,8 @@ class TreeNode(SaveHook):
     """ Path separator """
     path_unique = True
     """ If True, ensure path is unique for each parent. """
+
+    objects = TreeNodeQuerySet.as_manager()
 
     class Meta:
         abstract = True
@@ -67,7 +109,7 @@ class TreeNode(SaveHook):
             self.get_descendants().update(path=Concat(Value(self.path + "/"), Substr("path", old_len + 2)))
             self.path = path
 
-    def validate_node(self):
+    def validate_node(self, queryset=None):
         """Validate the node.
 
         :yield ValidationError: if a path exists for parent and should be unique.
@@ -75,7 +117,7 @@ class TreeNode(SaveHook):
         cls = type(self)
         if cls.path_unique:
             path = self.get_path()  # ensure to have actual path
-            query = cls.objects.filter(parent_id=self.parent_id, path=path)
+            query = cls.objects.find_clone(self)
             if self.pk:
                 query = query.exclude(pk=self.pk)
             if query.exists():
@@ -127,3 +169,10 @@ class TreeNode(SaveHook):
         :param inclusive: whether to include self.
         """
         return type(self).objects.descendants(self, inclusive)
+
+    def get_ancestors(self, inclusive: bool = False) -> TreeNodeQuerySet:
+        """Return a queryset to all ancestors (shortcut to :py:meth:`TreeNodeQuerySet.ancestors`).
+
+        :param inclusive: whether to include self.
+        """
+        return type(self).objects.ancestors(self, inclusive)

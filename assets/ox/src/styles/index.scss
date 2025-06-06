@@ -53,15 +53,20 @@ table tbody th {
 /**
  * Overload padding in navigation drawer for group items
  */
-.v-navigation-drawer .v-list-group__items {
-    --indent-padding: 0px !important;
-    border-bottom: 1px rgba(255, 255, 255, 0.1) solid;
-}
+.v-navigation-drawer {
+    .v-list-group__items {
+        --indent-padding: 0px !important;
+        border-bottom: 1px rgba(255, 255, 255, 0.1) solid;
 
-.v-navigation-drawer .v-list-group__items .v-list-item,
-.v-navigation-drawer .v-list-group__items .v-list-subheader
-{
-    background-color: rgba(255, 255, 255, 0.02) !important; /* or any lighter color */
+        .v-list-item, .v-list-subheader {
+            background-color: rgba(255, 255, 255, 0.02) !important; /* or any lighter color */
+        }
+    }
+
+    .v-navigation-drawer__content {
+        display: flex;
+        flex-direction: column;
+    }
 }
 
 .v-main {

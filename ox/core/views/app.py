@@ -9,7 +9,9 @@ from . import nav
 __all__ = ("BaseAppMixin", "UserAuthMixin", "AppMixin", "AppView")
 
 
-nav.app_nav.append(nav.NavGroup("settings", _("Settings"), order=100))
+nav.app_nav.append(
+    nav.NavGroup("settings", _("Settings"), order=100, items=[nav.NavSubGroup("system", _("System"), order=100)])
+)
 
 
 class BaseAppMixin(ContextMixin):

@@ -24,12 +24,12 @@ Block:
     </template>
     {% endif %}
 
-    {% if actions %}
     <template #item.actions="bind">
         {% block actions %}{% endblock %}
-        {% include actions|default:"ox/components/model_actions.html" with bind="bind" %}
+        {% if actions %}
+            {% include actions with bind="bind" %}
+        {% endif %}
     </template>
-    {% endif %}
     {% endblock %}
 
     <template #nav.detail="{panels,panel,list,item}">{% block nav-detail %}{% endblock %}</template>
