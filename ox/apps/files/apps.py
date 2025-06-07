@@ -14,3 +14,8 @@ class AppConfig(apps.AppConfig):
 
     root_url = "ox/files"
     index_urlname = "ox_files:index"
+
+    def ready(self):
+        from .processors import registry
+
+        registry.populate()

@@ -11,13 +11,12 @@
     </v-autocomplete>
 </template>
 <script setup lang="ts">
-import { debounce, throttle } from 'lodash'
-import { isEqual } from 'lodash'
+import { isEqual, debounce } from 'lodash'
 import { defineModel, inject, ref, onMounted, toRaw, useAttrs, useSlots, watch } from 'vue'
 import type {Repository} from 'pinia-orm'
 import { VAutocomplete } from 'vuetify/components/VAutocomplete'
 
-import { useModelList, query, splitValues, filterValues, excludeValues } from 'ox'
+import { useModelList, query, excludeValues } from 'ox'
 import type {IModelList} from 'ox'
 
 const slots = useSlots()
@@ -91,7 +90,9 @@ const load = debounce(async ({reset=false}={}) => {
     list.filters = {...props.filters}
     list.filters[props.lookup] = q
 
+    console.log(">>> load", q)
     let resp = await list.load()
+    console.log(">>> load", q, search.value)
 
     // Ensure item is in the list
     if(item.value)
@@ -100,11 +101,9 @@ const load = debounce(async ({reset=false}={}) => {
     if(!reset) {
         // When item is not provided we ensure it is here
         !item.value && await getItem(value.value)
-        if(!search.value || search.value == '<empty string>')
-            search.value = q
+        search.value = q
     }
-    return resp
-}, 300)
+}, 500)
 
 
 /** Called when filters are updated */

@@ -1,5 +1,5 @@
 <template>
-    <ox-owned-panel v-bind="props" :repo="repos.folders" icon="mdi-folder-outline">
+    <ox-model-panel v-bind="props" :repo="repos.folders" icon="mdi-folder-outline">
         <template v-for="name in forwardSlots" :key="name" #[name]="bind">
             <slot :name="name" v-bind="bind"/>
         </template>
@@ -15,30 +15,37 @@
             <slot name="list.filters" :list="list" :filters="filters"/>
         </template>
 
-        <template #prepend="{list, owner, panel}">
+        <template #prepend="{list, panel}">
             <v-navigation-drawer v-if="panel.view.startsWith('list.')" persistent>
                 <ox-folder-nav
-                    :owner="owner" :folder="list.filters?.parent__uuid"
-                    @selected="list.filters.parent__uuid = $event?.id" v-if="panel.view"/>
+                    v-model="list.filters.parent__uuid"
+                    v-model:owner="list.filters.owner__uuid"
+                    />
+
+                <template #append>
+                    <ox-folder-nav-edit
+                        :folder="list.filters.parent__uuid"
+                        :owner="list.filters.owner__uuid"/>
+                </template>
             </v-navigation-drawer>
         </template>
 
         <template #views.detail.edit.default="{value, saved}">
             <ox-folder-edit :initial="value" :saved="saved"/>
         </template>
-    </ox-owned-panel>
+    </ox-model-panel>
 </template>
 <script setup lang="ts">
 import { useSlots, withDefaults } from 'vue'
 
 import { query, t } from 'ox'
 import type {IModelPanelProps} from 'ox'
-import {OxOwnedPanel} from '@ox/auth/components'
+import {OxModelPanel} from 'ox/components'
 
 import OxFolderEdit from './OxFolderEdit'
 import OxFolderInput from './OxFolderInput'
 import OxFolderNav from './OxFolderNav'
-import {useFilesModels} from '../composables'
+import {useFilesModels, onFolderNav} from '../composables'
 
 const slots = useSlots()
 const forwardSlots = Object.keys(slots).filter(x => !(['list.filters', 'top'].includes(x)))

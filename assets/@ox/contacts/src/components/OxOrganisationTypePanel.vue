@@ -27,7 +27,7 @@
 import { defineProps, useSlots, withDefaults } from 'vue'
 
 import { useModels, query, t } from 'ox'
-import {OxModelPanel, OxListKanban} from 'ox/components'
+import {OxModelPanel} from 'ox/components'
 import type {IModelPanelProps} from 'ox'
 
 import {OxCountryInput} from '@ox/locations/components'

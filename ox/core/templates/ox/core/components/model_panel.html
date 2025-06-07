@@ -25,10 +25,9 @@ Block:
     {% endif %}
 
     <template #item.actions="bind">
-        {% block actions %}{% endblock %}
-        {% if actions %}
-            {% include actions with bind="bind" %}
-        {% endif %}
+        {% block actions %}
+        {% include actions|default:"./model_actions.html" with bind="bind" %}
+        {% endblock %}
     </template>
     {% endblock %}
 

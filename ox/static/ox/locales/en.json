@@ -63,6 +63,8 @@
     "fields.permissions": "Permissions",
     "fields.group": "Group",
     "fields.groups": "Groups",
+    "fields.agent": "Agent",
+    "fields.agent.select": "Select a user or a group",
 
 
     "models.countries": "Country | Countries",

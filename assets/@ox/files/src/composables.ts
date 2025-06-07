@@ -9,8 +9,16 @@ export function useFilesModels() : Object {
     ])
 }
 
+/** Use Folder model (load Folder and Agent) */
 export function useFolders() : Object {
     return useModels([
         Agent, models.Folder,
     ])
+}
+
+
+/** Update list filters based on {@link OxFolderNav} `selected` event. */
+export function onFolderNav(list, event) {
+    list.filters.folder__uuid = event.folder
+    list.filters.owner__uuid = event.owner
 }

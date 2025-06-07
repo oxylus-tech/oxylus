@@ -115,6 +115,11 @@ export function useModelPanel<M extends Model, P extends IModelPanelProps<M>>(
 export function useModelList<M extends Model>(options : IModelList<M>, cls: typeof ModelList = ModelList)
 {
     const list = reactive(new cls(options))
+    // FIXME:
+    // - we have items in order for them to be updated from repo
+    // - list stores items as items
+    // - we query items from db using list.ids (= maps of list.items)
+    // - this adds levels of indirections and extra layers
     const items = computed(() =>
         list.save && list.relations && list.length ?
             list.queryset(list.ids).orderBy((item) => list.ids.indexOf(item)).get() :

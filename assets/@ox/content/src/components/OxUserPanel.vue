@@ -35,7 +35,7 @@
 import { computed, defineProps, useSlots, withDefaults } from 'vue'
 
 import { useModels, query } from 'ox'
-import {OxModelPanel, OxListKanban} from 'ox/components'
+import {OxModelPanel} from 'ox/components'
 import type {IModelPanelProps} from 'ox'
 
 import {useAuthModels} from '../composables'

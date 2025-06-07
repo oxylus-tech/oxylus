@@ -27,6 +27,12 @@ class Settings(conf.Settings):
     THUMBNAIL_SIZE = (400, 800)
     """ Size for thumbnails """
 
+    PROCESSORS = [
+        "ox.apps.files.processors.ImageProcessor",
+        "ox.apps.files.processors.PDFProcessor",
+    ]
+    """ List of file processors. """
+
     @property
     def upload_to(self) -> Path:
         """Return full path to upload dir"""

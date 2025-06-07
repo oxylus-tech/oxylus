@@ -47,6 +47,6 @@ const props = defineProps({
 const tab = ref(null)
 
 const slots = useSlots()
-const tabs = filterSlots(slots, "tab.", {exclude: "tab.default"})
+const tabs = filterSlots(slots, "tab.", {exclude: ["tab.default"]})
 const windows = filterSlots(slots, "window.")
 </script>

@@ -1,74 +1,71 @@
 <template>
-    <ox-state-alert :state="editor.state"/>
+    <ox-state-alert v-if="modelEditor?.editor" :state="modelEditor.editor.state"/>
     <v-container class="ox-model-edit">
-        <div class="mb-3" v-if="!props.hideValidationBtn">
-            <slot name="prepend" v-bind="bind">
-                <ox-validation-btn v-if="editable && edited"
-                    @validate="save()" @reset="reset()" :state="editor.state" :validate-disabled="editor.valid === false"
-                    />
-            </slot>
-        </div>
-        <v-form ref="form" v-model="editor.valid" :disabled="!editable">
-            <template #default>
-                <slot name="default" v-bind="bind"/>
+        <ox-model-editor ref="modelEditor" v-bind="props">
+            <template #prepend="bind">
+                <div class="mb-3" v-if="!props.hideValidationBtn">
+                    <slot name="prepend" v-bind="bind" :save="save" :reset="reset">
+                        <ox-validation-btn v-if="bind.editable && bind.edited"
+                            @validate="save()" @reset="reset()" :state="bind.editor.state" :validate-disabled="bind.editor.valid === false"
+                            />
+                    </slot>
+                </div>
             </template>
-        </v-form>
-        <slot name="append" v-bind="bind"/>
+
+            <template #default="bind">
+                <slot name="default" v-bind="bind" :save="save" :reset="reset"/>
+            </template>
+
+            <template #append="bind">
+                <slot name="append" v-bind="bind" :save="save" :reset="reset"/>
+            </template>
+        </ox-model-editor>
     </v-container>
 </template>
 <script setup lang="ts">
-import { computed, defineExpose, inject, toRefs, watch, ref } from 'vue'
+/**
+ * This component is a wrapper around {@link OxModelEditor}, providing a more
+ * complete interface to handle object edition.
+ *
+ * It is used as standard edition component in edit views, and provides buttons
+ * for validation ({@link OxValidationBtn}) and an alert.
+ *
+ */
+import { defineExpose, watch, ref, onMounted } from 'vue'
 import { t, useModelEditor } from 'ox'
 
 import OxStateAlert from './OxStateAlert.vue'
 import OxValidationBtn from './OxValidationBtn.vue'
+import OxModelEditor from './OxModelEditor'
 
 import type {IModelEditorProps} from '../controllers/modelEditor'
-
-const form = ref(null)
-const context = inject('context')
 
 interface IModelEdit extends IModelEditorProps {
     /**
      * Send data using `multipart/form-data` and form's `FormData`.
      * The values will not be serialized into JSON before sending.
      **/
-    sendFormData: Boolean
+    sendFormData: boolean
     /**
      * If true, hide validation button
      */
-    hideValidationBtn: Boolean
+    hideValidationBtn: boolean
 }
 
 const props = defineProps<IModelEdit>()
-const {editor, edited} = useModelEditor({props})
-
-const editable = computed(() => context.user.can([editor.repo.use, 'change']))
-
-const bind = computed(() => ({
-    editor, edited,
-    save, reset,
-    form: form.value,
-    editable: editable.value,
-    disabled: !editable.value,
-    value: editor.value,
-    model: editor.repo.use
-}))
-
-
-watch(() => editor.errors && Object.values(editor.errors), () => form.value.validate())
-
+const modelEditor = ref(null)
 
 function reset() {
-    editor.reset()
+    modelEditor.value.editor.reset(props.initial)
 }
 
 function save() {
+    const me = modelEditor.value
     if(props.sendFormData)
-        return editor.save(new FormData(form.value.$el))
+        return me.editor.save(new FormData(me.form.value.$el))
     else
-        return editor.save()
+        return me.editor.save()
 }
 
-defineExpose({editor, edited, save, reset})
+defineExpose({modelEditor, save, reset})
 </script>

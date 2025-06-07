@@ -47,7 +47,7 @@
 <script setup lang="ts">
 import {inject} from 'vue'
 
-import {rules, t, useModelEditor} from 'ox'
+import {rules, t} from 'ox'
 import {OxModelEdit} from 'ox/components'
 import type {IModelEditorProps} from 'ox'
 

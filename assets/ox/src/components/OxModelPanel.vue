@@ -135,7 +135,7 @@
         <template #views.detail.edit v-if="slots['views.detail.edit'] || editSlots">
             <ox-view :title="t(`models.${panel.model.entity}`)">
                 <template v-for="(name, slot) in editSlots" #[name]>
-                    <slot :name="slot" :saved="saved" :value="panel.value"/>
+                    <slot :name="slot" v-bind="bind"/>
                 </template>
             </ox-view>
         </template>
@@ -190,12 +190,11 @@ function saved(item) {
     list.load()
 }
 
-const bind = computed(() => {
-    return ({
+const bind = computed(() => ({
         panel, panels, list, items, context,
+        saved,
         value: panel.value,
-    })
-})
+}))
 
 watch(() => Object.values(list.filters), () => list.load())
 

@@ -3,18 +3,21 @@
 Current dev
 ===========
 
+Files
+-----
+
+- FolderNavDrawer:
+
+    - drawer
+    - remove, rename folder
+
+- file & folder name validation ('/')
+
+
 Bugs
 ----
 
-- OxAutocomplete:
-
-    - bug when selecting a value: when the value is selected, the
-      list may be updated discarding the items, this hide the item
-      (since it is not more in the list).
-      Mitigation:
-
-      - keep the selected item in an separate variable from the list
-      - on list load (filter/search), ensure item is in the list (list.add)
+- rules.errors
 
 - OxModelEdit / modelEditor:
 

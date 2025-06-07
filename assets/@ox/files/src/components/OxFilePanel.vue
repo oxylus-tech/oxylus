@@ -1,22 +1,25 @@
 <template>
-    <ox-owned-panel v-bind="props" :repo="repos.files" icon="mdi-file-outline">
+    <ox-model-panel v-bind="props" :repo="repos.files" icon="mdi-file-outline">
         <template v-for="name in forwardSlots" :key="name" #[name]="bind">
             <slot :name="name" v-bind="bind"/>
         </template>
 
         <template #list.filters="{list,filters, owner}">
-            <!-- <ox-folder-input v-model="filters.folder__uuid" v-if="owner?.id"
-                :owner="owner?.id"
-                :label="t('fields.folder')"
-                density="compact" hide-details/> -->
             <slot name="list.filters" :list="list" :filters="filters"/>
         </template>
 
-        <template #prepend="{list, owner, panel}">
+        <template #prepend="{list, panel}">
             <v-navigation-drawer v-if="panel.view.startsWith('list.')" persistent>
                 <ox-folder-nav
-                    :owner="owner" :folder="list.filters?.folder__uuid"
-                    @selected="list.filters.folder__uuid = $event?.id" v-if="panel.view"/>
+                    v-model="list.filters.folder__uuid"
+                    v-model:owner="list.filters.owner__uuid"
+                    />
+
+                <template #append>
+                    <ox-folder-nav-edit
+                        :folder="list.filters.folder__uuid"
+                        :owner="list.filters.owner__uuid"/>
+                </template>
             </v-navigation-drawer>
         </template>
 
@@ -24,10 +27,12 @@
             <v-img :src="item.preview" class="preview"/>
         </template>
 
-        <template #views.detail.edit.default="{value, saved, owner}">
-            <ox-file-edit :initial="value" :saved="saved" :owner="owner" />
+        <template #views.detail.edit.default="{value, saved, list}">
+            <ox-file-edit :initial="value" :saved="saved"
+                :owner="list?.filters?.owner__uuid"
+                :folder="list?.filters.folder__uuid" />
         </template>
-    </ox-owned-panel>
+    </ox-model-panel>
 </template>
 <style scoped>
 .preview {
@@ -40,12 +45,12 @@ import { ref, useSlots, withDefaults, watch } from 'vue'
 
 import { query, t } from 'ox'
 import type {IModelPanelProps} from 'ox'
-import {OxOwnedPanel} from '@ox/auth/components'
+import {OxModelPanel} from 'ox/components'
 
 import OxFileEdit from './OxFileEdit'
 import OxFolderNav from './OxFolderNav'
-// import OxFolderInput from './OxFolderInput'
-import {useFilesModels} from '../composables'
+import OxFolderNavEdit from './OxFolderNavEdit'
+import {useFilesModels, onFolderNav} from '../composables'
 
 const slots = useSlots()
 const forwardSlots = Object.keys(slots).filter(x => !(['list.filters', 'top'].includes(x)))

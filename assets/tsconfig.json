@@ -35,8 +35,5 @@
         "@ox/location/*": ["./@ox/location/src/*"],
         "*": ["node_modules/*"]
     },
-    "include": [
-        "@ox", "ox"
-    ]
   }
 }

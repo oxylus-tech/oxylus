@@ -1,6 +1,10 @@
 <template>
     <template v-if="props.menu">
-        <v-menu>
+        <v-menu
+            :aria-label="t('fields.agent.select')"
+            :title="t('fields.agent.select')"
+            v-bind="attrs"
+        >
             <template #activator="{props: $props}">
                 <v-btn v-bind="$props" :prepend-icon="props.icon" :text="item?.name"  />
             </template>
@@ -12,6 +16,8 @@
     <template v-else>
         <v-select :items="items" item-title="name" item-value="id"
             :prepend-icon="props.icon"
+            :aria-label="t('fields.agent.select')"
+            :title="t('fields.agent.select')"
             v-model="value" v-bind="attrs"/>
     </template>
 </template>
@@ -22,7 +28,7 @@
  * current user.
  */
 import { computed, defineModel, defineExpose, inject, useAttrs, onMounted, ref, watch} from 'vue'
-import { query } from 'ox'
+import { query, t } from 'ox'
 import { useAgents } from '../composables'
 
 const attrs = useAttrs()
@@ -48,8 +54,12 @@ async function fetch(userId) {
         last = userId
         const resp = await query(repos.agents).fetch({path: '/user', params: {user: userId}})
         items.value = resp.response.data
-        item.value = items.value.find((v) => v.user == userId)
-        value.value = item.value.id
+        item.value = value.value
+            ? items.value.find((v) => v.id == value.value)
+            : items.value.find((v) => v.user == userId)
+
+        if(value.value != item.value.id)
+            value.value = item.value.id
     }
 }
 

@@ -60,7 +60,7 @@
 /**
  * This component provides simple list rendering and edition.
  */
-import {computed, defineModel, defineProps, inject, ref, reactive, provide, useTemplateRef, toRefs} from "vue"
+import {computed, defineModel, defineProps, inject, ref, reactive, provide, toRefs} from "vue"
 import {t} from "ox"
 
 /** v-model: the list of items. **/

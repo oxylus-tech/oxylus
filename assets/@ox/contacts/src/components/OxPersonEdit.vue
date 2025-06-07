@@ -38,7 +38,7 @@
     </ox-model-edit>
 </template>
 <script setup lang="ts">
-import {computed, defineProps, defineEmits, inject, toRefs, reactive, useTemplateRef, watch} from 'vue'
+import {computed, defineProps, defineEmits, inject, toRefs, reactive, watch} from 'vue'
 
 import { t, rules } from "ox"
 import type {User, IModelEditorProps} from 'ox'

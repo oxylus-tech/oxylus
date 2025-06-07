@@ -8,7 +8,7 @@
             :no-data-text="t('lists.empty')"
             class="align-top-table"
             @update:options="updateOptions">
-        <template v-slot:loading>
+        <template v-slot:loading v-if="!items.length">
             <v-skeleton-loader type="table-row@10"></v-skeleton-loader>
         </template>
 

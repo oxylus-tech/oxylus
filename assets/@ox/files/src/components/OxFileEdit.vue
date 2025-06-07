@@ -1,6 +1,6 @@
 <template>
     <ox-model-edit ref="modelEdit" v-bind="props" :repo="repos.files"
-            :initial="{...props.initial, owner: props.owner}"
+            :initial="initial"
             :hide-validation-btn="!props.initial?.id"
             :send-form-data="!props.initial?.id"
             >
@@ -81,7 +81,7 @@
 </template>
 <script setup lang="ts">
 // TODO: reset folder when owner changes
-import { ref, watch, onMounted } from 'vue'
+import { computed, ref, watch, onMounted } from 'vue'
 import { t, query, rules} from "ox"
 import type {IModelEditorProps} from 'ox'
 import {OxModelEdit, OxValidationBtn} from 'ox/components'
@@ -93,9 +93,15 @@ import OxFileUpload from './OxFileUpload'
 
 interface IFileEditProps extends IModelEditorProps {
     owner: Object
+    folder: Object
 }
 
 const repos = useFilesModels()
 const props = defineProps<IFileEditProps>()
 const modelEdit = ref(null)
+const initial = computed(() =>
+    (props.initial?.id) ? props.initial : {
+        ...props.initial, owner: props.owner, folder: props.folder
+    }
+)
 </script>

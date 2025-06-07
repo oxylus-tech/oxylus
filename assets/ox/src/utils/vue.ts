@@ -2,7 +2,7 @@ import {inject, provide, reactive as $reactive} from 'vue'
 
 
 export interface IFilterSlotOpts {
-    exclude?: string[]
+    exclude?: string[] | ((name: string) => bool)
 }
 
 export type IRFitlerSlot = {[k: string]: string}
@@ -20,7 +20,9 @@ export function filterSlots(slots: {[k: string]: Function}, prefix: string, {exc
     const dest : IRFitlerSlot = {}
     let names = Object.keys(slots).filter((k) => k.startsWith(prefix))
     if(exclude)
-        names = names.filter(k => !exclude.includes(k))
+        names = Array.isArray(exclude)
+            ? names.filter(k => !exclude.includes(k))
+            : names.filter(exclude)
     return names.reduce((d, k) => { d[k] = k.replace(prefix, ''); return d }, dest)
 }
 

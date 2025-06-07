@@ -3,7 +3,7 @@ import type { Attribute, Repository } from 'pinia-orm'
 import type { Response } from '@pinia-orm/axios'
 import {toRaw} from 'vue'
 
-import { reset, State } from '../utils'
+import { State } from '../utils'
 import Editor from './editor'
 import type { IObject } from '../utils'
 import type { Model } from '../models'
