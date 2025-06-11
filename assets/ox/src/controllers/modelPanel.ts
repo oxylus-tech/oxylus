@@ -133,17 +133,6 @@ export default class ModelPanel<
         else
             return super.show(params)
     }
-
-    onViewChange(val: string) {
-        super.onViewChange(val)
-        if(val.startsWith('list.'))
-            this.list.load()
-        //if(val.startsWith('detail.'))
-        //    this.detail.load()
-    }
-    onValueChange(val: string) {
-        //val && this.detail.load({id: val})
-    }
 }
 
 

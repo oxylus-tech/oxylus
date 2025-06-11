@@ -52,7 +52,7 @@ const user = inject('user')
 async function fetch(userId) {
     if(userId && userId != last) {
         last = userId
-        const resp = await query(repos.agents).fetch({path: '/user', params: {user: userId}})
+        const resp = await query(repos.agents).fetch({path: '/user', params: {user: userId}, dataKey: null})
         items.value = resp.response.data
         item.value = value.value
             ? items.value.find((v) => v.id == value.value)

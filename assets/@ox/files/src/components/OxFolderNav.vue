@@ -1,9 +1,8 @@
 <template>
     <v-list v-bind="attrs" selectable class="grow-1"
-            @update:selected="select($event[0])">
-        <v-list-item prepend-icon="mdi-account-key" :value="{}"
-                :active="!item">
-            <ox-agent-select ref="agent" icon="" :density="compact" v-model="owner" hide-details/>
+            @update:selected="load($event[0])">
+        <v-list-item prepend-icon="mdi-account-key"                :active="!item" @click.capture.stop="load()">
+            <ox-agent-select ref="agent" icon="" density="compact" v-model="owner" hide-details/>
         </v-list-item>
         <v-list-item v-for="item, id in parents" :key="item.id"
             :title="item.name" :value="item"
@@ -11,7 +10,7 @@
         <v-list-item v-if="item"
             :title="item.name" :value="item" active
             prepend-icon="mdi-folder-open"
-            @click.capture.stop="unselectCurrent()"/>
+            @click.capture.stop="unselect()"/>
         <v-list-item v-for="item in items" :key="item.id"
             :title="item.name" :value="item" class="ml-3"
             prepend-icon="mdi-folder" nav/>
@@ -25,16 +24,16 @@
  * - `selected({folder: string, owner: string})`: when a folder is selected
  *
  */
-import { computed, ref, reactive, defineModel, onMounted, watch } from 'vue'
+import { computed, ref, reactive, defineExpose, defineModel, onMounted, watch } from 'vue'
 
+import type { Model } from 'ox'
 import {query, t, useModelList} from 'ox'
 import {OxAgentSelect} from '@ox/auth/components'
 
 import { useFolders } from '../composables'
 
 const repos = useFolders()
-
-const {list, items} = useModelList({query: query(repos.folders)})
+const {list, items} = useModelList({ query: query(repos.folders, repos) })
 
 /** Current folder id **/
 const folder = defineModel()
@@ -47,15 +46,15 @@ const agent = ref(null)
 const parents = reactive([])
 
 /** Current folder */
-const item = computed(() => folder.value && repos.folders.whereId(folder.value).first())
+const item = ref(null)
 
 /** Helper function to get index of item from the list **/
 const findIndex = (list, id) => list.findIndex((v) => v.id == id)
 
 
 /** Unselect current item (go to parent) */
-function unselectCurrent() {
-    select(parents.length ? parents[parents.length-1] : null)
+function unselect() {
+    load(parents.length ? parents[parents.length-1] : null)
 }
 
 
@@ -63,33 +62,36 @@ function unselectCurrent() {
  * Select a folder, by object or uuid
  * It fetches parents and children from API when required.
  */
-async function select(obj) {
+async function load(obj: string|Model, force: boolean =false) {
     if(typeof obj == "string") {
         if(obj == item.value)
             return
-        const resp = await query(repos.folders).fetch({id: obj})
+        const resp = await list.query.fetch({id: obj, save: false})
         obj = resp.entities[0]
     }
-    else if(obj && obj.id == item.id)
-        return
 
-    if(item.value?.id != obj?.id)
-        folder.value = obj?.id
+    folder.value = obj?.id
+    item.value = obj
 
     if(obj) {
-        // remove obj from parents
+        // remove obj from parents if found
         const idx = findIndex(parents, obj.id)
         idx != -1 && parents.splice(idx)
     }
     await loadParents(obj)
 
-    list.filters = { owner__uuid: owner.value }
+    list.filters = { owner__uuid: owner.value, ordering: 'name' }
     if(obj?.id)
         list.filters.parent__uuid = obj.id
     else
         list.filters.root = "true"
 
-    list.load()
+    return await list.load()
+}
+
+/** Reload current opened folder */
+async function reload() {
+    return await load(item.value)
 }
 
 /**
@@ -106,7 +108,7 @@ async function loadParents(obj) {
         // load parents if not found
         if(idx == -1) {
             const params = { ancestors: obj.id }
-            const resp = await list.query.fetch({params})
+            const resp = await list.query.fetch({params, save: false})
             parents.splice(0, parents.length, ...resp.entities)
         }
         // otherwise, splice
@@ -115,7 +117,7 @@ async function loadParents(obj) {
     }
 }
 
-onMounted(() => owner.value && select(folder.value))
+onMounted(() => owner.value && load(folder.value))
 
 watch(owner, (val, old) => {
     if(val == old)
@@ -123,13 +125,13 @@ watch(owner, (val, old) => {
 
     parents.splice(0)
     folder.value = null
-    list.items = []
-    select()
+    list.ids = []
+    load()
 })
 watch(() => folder, (val, old) => {
     if(val != old)
-        select(folder.value)
+        load(folder.value)
 })
 
-// defineExpose({ owner, value, item, items })
+defineExpose({ load, reload, list, owner, item, parents })
 </script>

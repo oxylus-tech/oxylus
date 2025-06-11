@@ -1,13 +1,13 @@
 import {
     computed, inject, isRef, toRefs, unref, watch,
-    onMounted, onUnmounted, provide, reactive,
+    onMounted, onUnmounted, provide, reactive, toRaw
 } from 'vue'
+import { isEqual } from 'lodash'
 
 import type {ComputedRef, Reactive, Ref, WatchHandle} from 'vue'
 import type {Repository} from 'pinia-orm'
 
-import {injectOrProvide} from '../utils'
-import type {IObject} from '../utils'
+import {State} from '../utils'
 import type {Repos, Model} from '../models'
 
 import {
@@ -21,6 +21,7 @@ import type {
     IModelPanel, IModelPanelProps,
     IModelList,
     IEditor, IEditorProps, IModelEditorProps,
+    IQueryFetch
 } from '../controllers'
 
 
@@ -87,7 +88,7 @@ export function useModelPanel<M extends Model, P extends IModelPanelProps<M>>(
 )
 {
     repos ??= inject('repos')
-    query ??= useQuery(options.props.repo, inject('repos'))
+    query ??= new Query(options.props.repo, repos)
     options.panels ??= inject('panels')
 
     const {list, items} = useModelList({
@@ -115,27 +116,48 @@ export function useModelPanel<M extends Model, P extends IModelPanelProps<M>>(
 export function useModelList<M extends Model>(options : IModelList<M>, cls: typeof ModelList = ModelList)
 {
     const list = reactive(new cls(options))
+    const listId = list.repo.refs.acquireKey()
+
     // FIXME:
     // - we have items in order for them to be updated from repo
     // - list stores items as items
     // - we query items from db using list.ids (= maps of list.items)
     // - this adds levels of indirections and extra layers
-    const items = computed(() =>
-        list.save && list.relations && list.length ?
-            list.queryset(list.ids).orderBy((item) => list.ids.indexOf(item)).get() :
-            list.items
-    )
+    const items = computed(() => list.queryset(list.ids).orderBy(id => list.ids.indexOf(id)).get())
+
+    // release - acquire refs
+    watch(() => list.ids, (val, old) => {
+        if(!isEqual(toRaw(val), toRaw(old)))
+            list.repo.refs.releaseAcquire(listId, old, val)
+    })
+    onUnmounted(() => list.repo.refs.flush(listId))
 
     provide('list', list)
     provide('items', items)
-    return {list, items}
+    return {list, items, listId}
 }
 
-/** This composable return a new query from provided arguments. */
-export function useQuery<M extends Model>(repo: Repository<M>, repos: Repos|null=null): Query<M> {
-    const query = new Query(repo, repos)
-    provide('query', query)
-    return query
+/**
+ * This composable return a new {@link Query}, {@link State} and a fetch
+ * function that combines them.
+ */
+export function useQuery<M extends Model>(repo: Repository<M>, repos: Repos|null=null, opts: IQueryFetch<M>) {
+    const query = new Query(repo, repos, opts)
+    const state = State.none()
+
+    async function fetch(opts: IQueryFetch<M>) {
+        state.processing()
+        let resp = null
+        try {
+            resp = await query.fetch(opts)
+            state.none()
+        }
+        catch(error) {
+            state.error(error)
+        }
+        return resp
+    }
+    return {state, query, fetch}
 }
 
 

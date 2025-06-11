@@ -1,7 +1,7 @@
 <template>
     <input type="hidden" v-if="props.name" :name="props.name" :value="value"/>
     <v-autocomplete v-bind="attrs"
-        :items="items" :loading="list.state.isProcessing"
+        :items="items" :loading="state.isProcessing"
         v-model="value"
         v-model:search="search"
         >
@@ -11,26 +11,28 @@
     </v-autocomplete>
 </template>
 <script setup lang="ts">
-import { isEqual, debounce } from 'lodash'
-import { defineModel, inject, ref, onMounted, toRaw, useAttrs, useSlots, watch } from 'vue'
+import { isEqual, debounce, unionBy } from 'lodash'
+import { defineModel, inject, reactive, ref, onMounted, toRaw, useAttrs, useSlots, watch } from 'vue'
 import type {Repository} from 'pinia-orm'
 import { VAutocomplete } from 'vuetify/components/VAutocomplete'
 
-import { useModelList, query, excludeValues } from 'ox'
-import type {IModelList} from 'ox'
+import { useQuery } from 'ox'
+import type {IModelList, State} from 'ox'
 
 const slots = useSlots()
 const value = defineModel()
 const item = ref(null)
 const search = ref("")
 
-interface IAutoCompleteProps extends IModelList {
+interface IAutoCompleteProps {
     /** Model's repository */
     repo: Repository
     /** Search lookup */
     lookup: string
     /** Field name */
     name: string
+    /** Search filters */
+    filters: Object
 }
 
 
@@ -41,26 +43,26 @@ const attrs = useAttrs()
 const repos = inject('repos')
 
 // list props are not expected to change, only `filters`
-const listProps = excludeValues(props, ['repo', 'search'])
-const {list, items} = useModelList({
-        ...listProps.value?.[1],
-        filters: props.filters || {},
-        save: false,
-        query: query(props.repo, repos),
-})
+const {state, query, fetch} = useQuery(props.repo, repos, {save: false})
+const items = reactive([])
 
 
 var lastId = null
 async function getItem(id) {
     if(id) {
-        const idx = list.findIndex(id)
+        const idx = items.findIndex((v) => v.id == id)
         if(idx != -1)
-            item.value = list.items[idx]
+            item.value = items[idx]
         else if(lastId != id) {
             lastId = id
-            const resp = await list.load({id: id, append: 0})
+            const resp = await fetch({id: id})
             const value = resp.entities[0]
-            item.value = value.id == id ? value : null
+            if(value.id == id) {
+                items.splice(0, 0, value)
+                item.value = value
+            }
+            else
+                item.value = null
         }
     }
     else
@@ -79,7 +81,7 @@ const load = debounce(async ({reset=false}={}) => {
     // - we provides reset to:
     //   - force loading even if search is the same as last one
     //   - reset search (v-autocomplete resets search.value when items is updated.
-    if(list.state.isProcessing)
+    if(state.isProcessing)
         return
 
     const q = search.value != '<empty string>' && search.value || ''
@@ -87,16 +89,15 @@ const load = debounce(async ({reset=false}={}) => {
         return
     lastSearch = q
 
-    list.filters = {...props.filters}
-    list.filters[props.lookup] = q
-
-    console.log(">>> load", q)
-    let resp = await list.load()
-    console.log(">>> load", q, search.value)
+    const filters = {...props.filters, page_size: 20}
+    filters[props.lookup] = q
+    let resp = await fetch({params: filters})
 
     // Ensure item is in the list
     if(item.value)
-        list.add(item.value, 0)
+        items.splice(0, items.length, ...unionBy([item.value], resp.entities))
+    else
+        items.splice(0, items.length, ...resp.entities)
 
     if(!reset) {
         // When item is not provided we ensure it is here
@@ -108,11 +109,11 @@ const load = debounce(async ({reset=false}={}) => {
 
 /** Called when filters are updated */
 function filtersUpdated(filters) {
-    const listFilters = {...toRaw(list.filters)}
-    delete listFilters[props.lookup]
+    //const listFilters = {...toRaw(list.filters)}
+    //delete listFilters[props.lookup]
 
-    if(!isEqual(toRaw(listFilters), toRaw(filters)))
-        load({reset: true})
+    //if(!isEqual(toRaw(listFilters), toRaw(filters)))
+    load({reset: true})
 }
 
 /** Called when search is updated */
@@ -126,10 +127,13 @@ function searchUpdated(val) {
 
 // --- Watchers
 onMounted(() => {
-    list.load()?.then(() => getItem(value.value))
+    load() // ?.then(() => getItem(value.value))
 })
 
-watch(() => props.filters, (val) => filtersUpdated(val))
+watch(() => props.filters, (val, old) => {
+    if(!isEqual(toRaw(val), toRaw(old)))
+        filtersUpdated(val)
+})
 watch(search, searchUpdated)
 watch(value, (val, old) => val != old && getItem(val))
 </script>

@@ -153,12 +153,5 @@ export default class Panel<P extends IPanelProps = IPanelProps>
         const msg = t(this.confirmTKey)
         return confirm(msg)
     }
-
-    onViewChange(val: string) {
-        console.log('onViewChange', val)
-        if(!val)
-            this.view = this.index
-    }
-    onValueChange(val: string) {}
 }
 export default interface Panel<P extends IPanelProps=IPanelProps> extends IPanel<P> {}

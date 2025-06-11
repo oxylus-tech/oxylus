@@ -1,40 +1,17 @@
-var ge = Object.defineProperty;
-var pe = (n, e, t) => e in n ? ge(n, e, { enumerable: !0, configurable: !0, writable: !0, value: t }) : n[e] = t;
-var o = (n, e, t) => pe(n, typeof e != "symbol" ? e + "" : e, t);
-import { R as te, H as ye, a as we, b as De, B as ve, C as be, G as Me, M as Se, c as ke, P as xe, d as V, U as $, e as Te, g as Ae, u as ne, f as Ee, h as U, S as k, i as Oe, j as Ce, k as Pe, l as Re, m as re, s as Ie, n as Ve, o as I, r as Fe, p as D, t as v, q as j } from "./lodash-CPuQ84dU.js";
-import { E as An, v as En, A as On, L as Cn, N as Pn, K as Rn, y as In, z as Vn, D as Fn, O as Yn, x as Nn, F as Wn, w as $n, I as Bn, J as Un } from "./lodash-CPuQ84dU.js";
-import { inject as x, provide as p, computed as b, unref as C, reactive as M, ref as Ye, watch as P, effectScope as q, nextTick as Ne, createApp as We, onMounted as se, onUnmounted as $e, defineAsyncComponent as Be } from "vue";
-import Ue from "axios";
-import * as je from "ox/vendor";
-import { p as K, c as qe, m as ie, a as Ke, b as Le, d as He, e as ze, f as Ge, g as _e, h as Ze, D as L, i as H, T as z, I as G, L as _, G as Je, j as Qe, k as Xe } from "./theme-BrdPdMMA.js";
-function ae(n, e) {
-  var t;
-  if (typeof e == "string") {
-    const r = (t = n.use) == null ? void 0 : t.fields(), s = r && r[e] || null;
-    e = s instanceof te ? s : null;
-  }
-  return e;
-}
-function oe(n) {
-  return n instanceof ye || n instanceof we || n instanceof De || n instanceof ve ? n.foreignKey : null;
-}
-const fn = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
-  __proto__: null,
-  ContentType: be,
-  Group: Me,
-  Meta: Se,
-  Model: ke,
-  Permission: xe,
-  Permissions: V,
-  User: $,
-  asRelation: ae,
-  getSourceKey: oe
-}, Symbol.toStringTag, { value: "Module" }));
-class et {
+var we = Object.defineProperty;
+var De = (r, e, t) => e in r ? we(r, e, { enumerable: !0, configurable: !0, writable: !0, value: t }) : r[e] = t;
+var o = (r, e, t) => De(r, typeof e != "symbol" ? e + "" : e, t);
+import { R as ve, c as K, d as be, l as g, a as se, H as Me, b as xe, e as ke, B as Se, C as Ae, G as Te, M as Oe, f as Ee, P as Re, U as W, u as U, g as Pe, S as b, h as Ce, i as Fe, j as Ie, k as Ve, m as Ye, n as Ne, o as ie, s as $e, p as ae, q as F, r as We, t as v, v as j } from "./i18n-B0g_-nGW.js";
+import { F as Ar, w as Tr, D as Or, N as Er, O as Rr, L as Pr, z as Cr, A as Fr, E as Ir, Q as Vr, y as Yr, I as Nr, x as $r, J as Wr, K as qr } from "./i18n-B0g_-nGW.js";
+import { inject as P, provide as D, reactive as M, computed as k, ref as qe, watch as A, effectScope as L, nextTick as Be, createApp as Ke, onMounted as oe, onUnmounted as ue, unref as z, toRaw as H, defineAsyncComponent as Ue } from "vue";
+import je from "axios";
+import * as Le from "ox/vendor";
+import { p as _, c as ze, m as le, a as He, b as _e, d as Ge, e as Ze, f as Je, g as Qe, D as G, h as Z, T as J, I as Q, L as X, i as Xe, j as et } from "./theme-DfzFTMnZ.js";
+class tt {
   /**
    * Create a new response instance.
    */
-  constructor(e, t, r) {
+  constructor(e, t, n) {
     /**
      * The repository that called the request.
      */
@@ -55,7 +32,7 @@ class et {
      * Whether if response data is saved to the store or not.
      */
     o(this, "isSaved", !1);
-    this.repository = e, this.config = t, this.response = r;
+    this.repository = e, this.config = t, this.response = n;
   }
   /**
    * Save response data to the store.
@@ -72,8 +49,8 @@ class et {
     this.validatePersistAction(t) || (console.warn(
       '[Pinia ORM Axios] The "persistBy" option configured is not a recognized value. Response data will be persisted by the default `save` method.'
     ), t = "save");
-    const r = await this.repository[t](e);
-    this.entities = Array.isArray(r) ? r : [r], this.isSaved = !0;
+    const n = await this.repository[t](e);
+    this.entities = Array.isArray(n) ? n : [n], this.isSaved = !0;
   }
   /**
    * Delete the entity record where the `delete` option is configured.
@@ -125,7 +102,7 @@ class et {
     return ["save", "insert"].includes(e);
   }
 }
-class tt {
+class rt {
   /**
    * Create a new api instance.
    */
@@ -156,8 +133,8 @@ class tt {
    * Register actions from the repository config.
    */
   registerActions() {
-    var t, r, s;
-    const e = { ...(t = this.repository.config.axiosApi) == null ? void 0 : t.actions, ...(s = (r = this.repository.getModel().$config()) == null ? void 0 : r.axiosApi) == null ? void 0 : s.actions };
+    var t, n, s;
+    const e = { ...(t = this.repository.config.axiosApi) == null ? void 0 : t.actions, ...(s = (n = this.repository.getModel().$config()) == null ? void 0 : n.axiosApi) == null ? void 0 : s.actions };
     if (e)
       for (const i in e) {
         const a = e[i];
@@ -168,7 +145,7 @@ class tt {
    * Register the given object action.
    */
   registerObjectAction(e, t) {
-    this[e] = (r) => this.request({ ...t, ...r });
+    this[e] = (n) => this.request({ ...t, ...n });
   }
   /**
    * Register the given function action.
@@ -185,20 +162,20 @@ class tt {
   /**
    * Perform a post request.
    */
-  post(e, t = {}, r = {}) {
-    return this.request({ method: "post", url: e, data: t, ...r });
+  post(e, t = {}, n = {}) {
+    return this.request({ method: "post", url: e, data: t, ...n });
   }
   /**
    * Perform a put request.
    */
-  put(e, t = {}, r = {}) {
-    return this.request({ method: "put", url: e, data: t, ...r });
+  put(e, t = {}, n = {}) {
+    return this.request({ method: "put", url: e, data: t, ...n });
   }
   /**
    * Perform a patch request.
    */
-  patch(e, t = {}, r = {}) {
-    return this.request({ method: "patch", url: e, data: t, ...r });
+  patch(e, t = {}, n = {}) {
+    return this.request({ method: "patch", url: e, data: t, ...n });
   }
   /**
    * Perform a delete request.
@@ -210,8 +187,8 @@ class tt {
    * Perform an api request.
    */
   async request(e) {
-    const t = this.createConfig(e), r = await this.axios.request(t);
-    return this.createResponse(r, t);
+    const t = this.createConfig(e), n = await this.axios.request(t);
+    return this.createResponse(n, t);
   }
   /**
    * Create a new config by merging the global config, the repository config,
@@ -230,74 +207,154 @@ class tt {
    * For example, it saves response data if `save` option id set to `true`.
    */
   async createResponse(e, t) {
-    const r = new et(this.repository, t, e);
-    return t.delete !== void 0 ? (await r.delete(), r) : (t.save && await r.save(), r);
+    const n = new tt(this.repository, t, e);
+    return t.delete !== void 0 ? (await n.delete(), n) : (t.save && await n.save(), n);
   }
 }
-class Z extends Ee {
-  constructor(t, r) {
+class nt extends ve {
+  constructor(t, n) {
     var s, i, a;
-    super(t, r);
+    super(t, n);
     o(this, "axios");
     o(this, "globalApiConfig");
     o(this, "apiConfig");
-    this.axios = ((i = (s = U) == null ? void 0 : s.axiosApi) == null ? void 0 : i.axios) || null, this.globalApiConfig = ((a = U) == null ? void 0 : a.axiosApi) || {}, this.apiConfig = {};
+    this.axios = ((i = (s = K) == null ? void 0 : s.axiosApi) == null ? void 0 : i.axios) || null, this.globalApiConfig = ((a = K) == null ? void 0 : a.axiosApi) || {}, this.apiConfig = {};
   }
   api() {
-    return nt(this);
+    return st(this);
   }
   setAxios(t) {
     return this.axios = t, this;
   }
 }
-function nt(n) {
-  return new tt(n);
+function st(r) {
+  return new rt(r);
 }
-function rt(n) {
-  const e = Ae();
-  return Z.useModel = n, ne(Z, e);
+function it(r) {
+  return be((e) => (e.config.axiosApi = r, e));
 }
-function st(n) {
-  return Te((e) => (e.config.axiosApi = n, e));
-}
-function it(n, { useInject: e = !0, useDefaults: t = !0 } = {}) {
-  var r = e && (x("repos") || {});
-  const s = e && !!Object.keys(r).length;
-  Array.isArray(n) || (n = Object.values(n)), t && n.push($);
-  for (const i of n)
-    if (i && i.entity) {
-      if (i.entity in r)
-        continue;
-      ne(i), r[i.entity] = rt(i);
+class q {
+  constructor(e) {
+    o(this, "repo");
+    o(this, "items");
+    this.repo = e, this.items = {};
+  }
+  /** Acquire a unique context key */
+  acquireKey() {
+    return this.constructor._lastKey++;
+  }
+  /** Acquire provided ids for this key */
+  acquire(e, t) {
+    if (t != null && t.length)
+      for (var n of t)
+        if (n in this.items) {
+          const s = this.items[n];
+          !s.includes(e) && s.push(e);
+        } else
+          this.items[n] = [e];
+  }
+  /** Release provided ids for this key */
+  release(e, t) {
+    if (!(t != null && t.length))
+      return;
+    const n = [];
+    for (var s of t) {
+      const i = this.items[s];
+      g.pull(i, e), i != null && i.length || (n.push(s), delete this.items[s]);
     }
-  return !s && p("repos", r), r;
+    n.length && this.repo.destroy(n);
+  }
+  /**
+   * Release and acquire for this key.
+   *
+   * This optimizes out ids
+   */
+  releaseAcquire(e, t, n) {
+    this.release(e, g.difference(t, n)), this.acquire(e, g.difference(n, t));
+  }
+  /** Release all reference for the provided context key. */
+  flush(e) {
+    const t = [];
+    for (var n in this.refs) {
+      const s = this.refs[n], i = s.indexOf(e);
+      i != -1 && (s.splice(i, 1), s.length || (t.push(n), delete this.items[n]));
+    }
+    t.length && this.repo.destroy(t);
+  }
+  /** Clear reference counter without destroying items. **/
+  clear() {
+    this.refs = {};
+  }
 }
-function mn() {
-  return {
-    permissions: [String, Function, Object, Array]
-  };
+o(q, "_lastKey", 0);
+class I extends nt {
+  constructor(t, n) {
+    super(t, n);
+    o(this, "refs");
+    this.refs = new q(this);
+  }
+  flush() {
+    this.refs.clear(), super.flush();
+  }
 }
-function gn(n, e, t) {
-  const r = e instanceof V ? e : new V(e), s = b(() => r.can(C(n), C(t)));
-  return { permissions: r, allowed: s };
+function ce(r, e) {
+  var t;
+  if (typeof e == "string") {
+    const n = (t = r.use) == null ? void 0 : t.fields(), s = n && n[e] || null;
+    e = s instanceof se ? s : null;
+  }
+  return e;
 }
-class at {
+function he(r) {
+  return r instanceof Me || r instanceof xe || r instanceof ke || r instanceof Se ? r.foreignKey : null;
+}
+const fr = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+  __proto__: null,
+  ContentType: Ae,
+  Group: Te,
+  Meta: Oe,
+  Model: Ee,
+  Permission: Re,
+  RefCounter: q,
+  Repository: I,
+  User: W,
+  asRelation: ce,
+  getSourceKey: he
+}, Symbol.toStringTag, { value: "Module" }));
+function at(r) {
+  U(r);
+  const e = Pe();
+  return I.useModel = r, U(I, e);
+}
+function ot(r, { useInject: e = !0, useDefaults: t = !0, key: n = null } = {}) {
+  var s = e && (P("repos") || {});
+  const i = e && !!Object.keys(s).length;
+  Array.isArray(r) || (r = Object.values(r)), t && r.push(W);
+  for (const a of r)
+    if (a && a.entity) {
+      if (a.entity in s)
+        continue;
+      s[a.entity] = at(a);
+    }
+  return !i && D("repos", s), s;
+}
+class ut {
   static reactive(e) {
     const t = M(new this(e));
-    return t.user = b(() => {
-      var r;
-      return new $(((r = t.data) == null ? void 0 : r.user) || {});
+    return t.user = k(() => {
+      var n;
+      return new W(((n = t.data) == null ? void 0 : n.user) || {});
     }), t;
   }
   constructor(e = {}) {
-    Object.assign(this, e), this.state = k.none(), this.showState = !1;
+    Object.assign(this, e), this.state = b.none(), this.showState = !1;
   }
   /**
    * Load data into AppData. If no `value` is provided, read it from
    * source element.
    */
   load(e = void 0) {
-    this.dataEl !== void 0 && (e === void 0 && (e = this.readData(this.dataEl)), e.dataEl = this.dataEl, this.data = e), this.models !== void 0 && (this.repos = it(this.models));
+    this.dataEl !== void 0 && (e === void 0 && (e = this.readData(this.dataEl)), e.dataEl = this.dataEl, this.data = e), this.models !== void 0 && (this.repos = ot(this.models));
   }
   /**
    * Read data from the context of provided source element.
@@ -311,32 +368,31 @@ class at {
     return t.innerText ? JSON.parse(t.innerText) : {};
   }
 }
-function pn(n, e = !0) {
-  const t = at.reactive(n);
-  return e && t.dataEl && t.load(), p("context", t), p("user", t.user), t;
+function mr(r, e = !0) {
+  const t = ut.reactive(r);
+  return e && t.dataEl && t.load(), D("context", t), D("user", t.user), t;
 }
-function yn({ props: n, user: e, emits: t = null }) {
-  const r = Ye(!1), s = b(() => !n.permission || e.can(n.permission, n.item));
-  return { processing: r, run: async (...a) => {
-    if (n.confirm && !confirm(n.confirm))
+function pr({ props: r, user: e, emits: t = null }) {
+  const n = qe(!1), s = k(() => !r.permission || e.can(r.permission, r.item));
+  return { processing: n, run: async (...a) => {
+    if (r.confirm && !confirm(r.confirm))
       return;
-    if (r.value = !0, n.href) {
-      document.location.href = n.href;
-      return;
-    }
-    let u = n.run(e, n.item, ...a);
-    return u instanceof Promise && (u = await u), r.value = !1, t && t("completed", n.item, ...a), u;
+    if (r.href)
+      return window.open(r.href, "_blank");
+    n.value = !0;
+    let u = r.run(e, r.item, ...a);
+    return u instanceof Promise && (u = await u), n.value = !1, t && t("completed", r.item, ...a), u;
   }, allowed: s };
 }
-function A(n) {
-  const e = n.slice(-2).toUpperCase();
+function T(r) {
+  const e = r.slice(-2).toUpperCase();
   switch (!0) {
-    case n === "GB-alt-variant":
+    case r === "GB-alt-variant":
       return {
         firstDay: 0,
         firstWeekSize: 4
       };
-    case n === "001":
+    case r === "001":
       return {
         firstDay: 1,
         firstWeekSize: 1
@@ -379,74 +435,74 @@ function A(n) {
       return null;
   }
 }
-function ot(n, e, t) {
-  var m;
-  const r = [];
+function lt(r, e, t) {
+  var f;
+  const n = [];
   let s = [];
-  const i = ue(n), a = le(n), u = t ?? ((m = A(e)) == null ? void 0 : m.firstDay) ?? 0, l = (i.getDay() - u + 7) % 7, h = (a.getDay() - u + 7) % 7;
+  const i = de(r), a = fe(r), u = t ?? ((f = T(e)) == null ? void 0 : f.firstDay) ?? 0, l = (i.getDay() - u + 7) % 7, m = (a.getDay() - u + 7) % 7;
   for (let c = 0; c < l; c++) {
-    const d = new Date(i);
-    d.setDate(d.getDate() - (l - c)), s.push(d);
+    const h = new Date(i);
+    h.setDate(h.getDate() - (l - c)), s.push(h);
   }
   for (let c = 1; c <= a.getDate(); c++) {
-    const d = new Date(n.getFullYear(), n.getMonth(), c);
-    s.push(d), s.length === 7 && (r.push(s), s = []);
+    const h = new Date(r.getFullYear(), r.getMonth(), c);
+    s.push(h), s.length === 7 && (n.push(s), s = []);
   }
-  for (let c = 1; c < 7 - h; c++) {
-    const d = new Date(a);
-    d.setDate(d.getDate() + c), s.push(d);
+  for (let c = 1; c < 7 - m; c++) {
+    const h = new Date(a);
+    h.setDate(h.getDate() + c), s.push(h);
   }
-  return s.length > 0 && r.push(s), r;
+  return s.length > 0 && n.push(s), n;
 }
-function F(n, e, t) {
+function V(r, e, t) {
   var i;
-  const r = t ?? ((i = A(e)) == null ? void 0 : i.firstDay) ?? 0, s = new Date(n);
-  for (; s.getDay() !== r; )
+  const n = t ?? ((i = T(e)) == null ? void 0 : i.firstDay) ?? 0, s = new Date(r);
+  for (; s.getDay() !== n; )
     s.setDate(s.getDate() - 1);
   return s;
 }
-function ut(n, e) {
+function ct(r, e) {
   var s;
-  const t = new Date(n), r = ((((s = A(e)) == null ? void 0 : s.firstDay) ?? 0) + 6) % 7;
-  for (; t.getDay() !== r; )
+  const t = new Date(r), n = ((((s = T(e)) == null ? void 0 : s.firstDay) ?? 0) + 6) % 7;
+  for (; t.getDay() !== n; )
     t.setDate(t.getDate() + 1);
   return t;
 }
-function ue(n) {
-  return new Date(n.getFullYear(), n.getMonth(), 1);
+function de(r) {
+  return new Date(r.getFullYear(), r.getMonth(), 1);
 }
-function le(n) {
-  return new Date(n.getFullYear(), n.getMonth() + 1, 0);
+function fe(r) {
+  return new Date(r.getFullYear(), r.getMonth() + 1, 0);
 }
-function lt(n) {
-  const e = n.split("-").map(Number);
+function ht(r) {
+  const e = r.split("-").map(Number);
   return new Date(e[0], e[1] - 1, e[2]);
 }
-const ct = /^([12]\d{3}-([1-9]|0[1-9]|1[0-2])-([1-9]|0[1-9]|[12]\d|3[01]))$/;
-function ce(n) {
-  if (n == null) return /* @__PURE__ */ new Date();
-  if (n instanceof Date) return n;
-  if (typeof n == "string") {
+const dt = /^([12]\d{3}-([1-9]|0[1-9]|1[0-2])-([1-9]|0[1-9]|[12]\d|3[01]))$/;
+function me(r) {
+  if (r == null) return /* @__PURE__ */ new Date();
+  if (r instanceof Date) return r;
+  if (typeof r == "string") {
     let e;
-    if (ct.test(n))
-      return lt(n);
-    if (e = Date.parse(n), !isNaN(e)) return new Date(e);
+    if (dt.test(r))
+      return ht(r);
+    if (e = Date.parse(r), !isNaN(e)) return new Date(e);
   }
   return null;
 }
-const J = new Date(2e3, 0, 2);
-function ht(n, e) {
-  var r;
-  const t = e ?? ((r = A(n)) == null ? void 0 : r.firstDay) ?? 0;
-  return qe(7).map((s) => {
-    const i = new Date(J);
-    return i.setDate(J.getDate() + t + s), new Intl.DateTimeFormat(n, {
+const ee = new Date(2e3, 0, 2);
+function ft(r, e) {
+  var n;
+  const t = e ?? ((n = T(r)) == null ? void 0 : n.firstDay) ?? 0;
+  return ze(7).map((s) => {
+    const i = new Date(ee);
+    return i.setDate(ee.getDate() + t + s), new Intl.DateTimeFormat(r, {
       weekday: "narrow"
     }).format(i);
   });
 }
-function dt(n, e, t, r) {
-  const s = ce(n) ?? /* @__PURE__ */ new Date(), i = r == null ? void 0 : r[e];
+function mt(r, e, t, n) {
+  const s = me(r) ?? /* @__PURE__ */ new Date(), i = n == null ? void 0 : n[e];
   if (typeof i == "function")
     return i(s, e, t);
   let a = {};
@@ -635,291 +691,291 @@ function dt(n, e, t, r) {
   }
   return new Intl.DateTimeFormat(t, a).format(s);
 }
-function ft(n, e) {
-  const t = n.toJsDate(e), r = t.getFullYear(), s = K(String(t.getMonth() + 1), 2, "0"), i = K(String(t.getDate()), 2, "0");
-  return `${r}-${s}-${i}`;
+function pt(r, e) {
+  const t = r.toJsDate(e), n = t.getFullYear(), s = _(String(t.getMonth() + 1), 2, "0"), i = _(String(t.getDate()), 2, "0");
+  return `${n}-${s}-${i}`;
 }
-function mt(n) {
-  const [e, t, r] = n.split("-").map(Number);
-  return new Date(e, t - 1, r);
+function gt(r) {
+  const [e, t, n] = r.split("-").map(Number);
+  return new Date(e, t - 1, n);
 }
-function gt(n, e) {
-  const t = new Date(n);
+function yt(r, e) {
+  const t = new Date(r);
   return t.setMinutes(t.getMinutes() + e), t;
 }
-function pt(n, e) {
-  const t = new Date(n);
+function wt(r, e) {
+  const t = new Date(r);
   return t.setHours(t.getHours() + e), t;
 }
-function O(n, e) {
-  const t = new Date(n);
+function R(r, e) {
+  const t = new Date(r);
   return t.setDate(t.getDate() + e), t;
 }
-function yt(n, e) {
-  const t = new Date(n);
+function Dt(r, e) {
+  const t = new Date(r);
   return t.setDate(t.getDate() + e * 7), t;
 }
-function wt(n, e) {
-  const t = new Date(n);
+function vt(r, e) {
+  const t = new Date(r);
   return t.setDate(1), t.setMonth(t.getMonth() + e), t;
 }
-function Y(n) {
-  return n.getFullYear();
+function Y(r) {
+  return r.getFullYear();
 }
-function Dt(n) {
-  return n.getMonth();
+function bt(r) {
+  return r.getMonth();
 }
-function vt(n, e, t, r) {
-  const s = A(e), i = t ?? (s == null ? void 0 : s.firstDay) ?? 0, a = r ?? (s == null ? void 0 : s.firstWeekSize) ?? 1;
+function Mt(r, e, t, n) {
+  const s = T(e), i = t ?? (s == null ? void 0 : s.firstDay) ?? 0, a = n ?? (s == null ? void 0 : s.firstWeekSize) ?? 1;
   function u(y) {
     const w = new Date(y, 0, 1);
-    return 7 - N(w, F(w, e, i), "days");
+    return 7 - N(w, V(w, e, i), "days");
   }
-  let l = Y(n);
-  const h = O(F(n, e, i), 6);
-  l < Y(h) && u(l + 1) >= a && l++;
-  const m = new Date(l, 0, 1), c = u(l), d = c >= a ? O(m, c - 7) : O(m, c);
-  return 1 + N(n, d, "weeks");
+  let l = Y(r);
+  const m = R(V(r, e, i), 6);
+  l < Y(m) && u(l + 1) >= a && l++;
+  const f = new Date(l, 0, 1), c = u(l), h = c >= a ? R(f, c - 7) : R(f, c);
+  return 1 + N(r, h, "weeks");
 }
-function bt(n) {
-  return n.getDate();
+function xt(r) {
+  return r.getDate();
 }
-function Mt(n) {
-  return new Date(n.getFullYear(), n.getMonth() + 1, 1);
+function kt(r) {
+  return new Date(r.getFullYear(), r.getMonth() + 1, 1);
 }
-function St(n) {
-  return new Date(n.getFullYear(), n.getMonth() - 1, 1);
+function St(r) {
+  return new Date(r.getFullYear(), r.getMonth() - 1, 1);
 }
-function kt(n) {
-  return n.getHours();
+function At(r) {
+  return r.getHours();
 }
-function xt(n) {
-  return n.getMinutes();
+function Tt(r) {
+  return r.getMinutes();
 }
-function Tt(n) {
-  return new Date(n.getFullYear(), 0, 1);
+function Ot(r) {
+  return new Date(r.getFullYear(), 0, 1);
 }
-function At(n) {
-  return new Date(n.getFullYear(), 11, 31);
+function Et(r) {
+  return new Date(r.getFullYear(), 11, 31);
 }
-function Et(n, e) {
-  return R(n, e[0]) && Pt(n, e[1]);
+function Rt(r, e) {
+  return C(r, e[0]) && Ft(r, e[1]);
 }
-function Ot(n) {
-  const e = new Date(n);
+function Pt(r) {
+  const e = new Date(r);
   return e instanceof Date && !isNaN(e.getTime());
 }
-function R(n, e) {
-  return n.getTime() > e.getTime();
+function C(r, e) {
+  return r.getTime() > e.getTime();
 }
-function Ct(n, e) {
-  return R(W(n), W(e));
+function Ct(r, e) {
+  return C($(r), $(e));
 }
-function Pt(n, e) {
-  return n.getTime() < e.getTime();
+function Ft(r, e) {
+  return r.getTime() < e.getTime();
 }
-function Q(n, e) {
-  return n.getTime() === e.getTime();
+function te(r, e) {
+  return r.getTime() === e.getTime();
 }
-function Rt(n, e) {
-  return n.getDate() === e.getDate() && n.getMonth() === e.getMonth() && n.getFullYear() === e.getFullYear();
+function It(r, e) {
+  return r.getDate() === e.getDate() && r.getMonth() === e.getMonth() && r.getFullYear() === e.getFullYear();
 }
-function It(n, e) {
-  return n.getMonth() === e.getMonth() && n.getFullYear() === e.getFullYear();
+function Vt(r, e) {
+  return r.getMonth() === e.getMonth() && r.getFullYear() === e.getFullYear();
 }
-function Vt(n, e) {
-  return n.getFullYear() === e.getFullYear();
+function Yt(r, e) {
+  return r.getFullYear() === e.getFullYear();
 }
-function N(n, e, t) {
-  const r = new Date(n), s = new Date(e);
+function N(r, e, t) {
+  const n = new Date(r), s = new Date(e);
   switch (t) {
     case "years":
-      return r.getFullYear() - s.getFullYear();
+      return n.getFullYear() - s.getFullYear();
     case "quarters":
-      return Math.floor((r.getMonth() - s.getMonth() + (r.getFullYear() - s.getFullYear()) * 12) / 4);
+      return Math.floor((n.getMonth() - s.getMonth() + (n.getFullYear() - s.getFullYear()) * 12) / 4);
     case "months":
-      return r.getMonth() - s.getMonth() + (r.getFullYear() - s.getFullYear()) * 12;
+      return n.getMonth() - s.getMonth() + (n.getFullYear() - s.getFullYear()) * 12;
     case "weeks":
-      return Math.floor((r.getTime() - s.getTime()) / (1e3 * 60 * 60 * 24 * 7));
+      return Math.floor((n.getTime() - s.getTime()) / (1e3 * 60 * 60 * 24 * 7));
     case "days":
-      return Math.floor((r.getTime() - s.getTime()) / (1e3 * 60 * 60 * 24));
+      return Math.floor((n.getTime() - s.getTime()) / (1e3 * 60 * 60 * 24));
     case "hours":
-      return Math.floor((r.getTime() - s.getTime()) / (1e3 * 60 * 60));
+      return Math.floor((n.getTime() - s.getTime()) / (1e3 * 60 * 60));
     case "minutes":
-      return Math.floor((r.getTime() - s.getTime()) / (1e3 * 60));
+      return Math.floor((n.getTime() - s.getTime()) / (1e3 * 60));
     case "seconds":
-      return Math.floor((r.getTime() - s.getTime()) / 1e3);
+      return Math.floor((n.getTime() - s.getTime()) / 1e3);
     default:
-      return r.getTime() - s.getTime();
+      return n.getTime() - s.getTime();
   }
 }
-function Ft(n, e) {
-  const t = new Date(n);
+function Nt(r, e) {
+  const t = new Date(r);
   return t.setHours(e), t;
 }
-function Yt(n, e) {
-  const t = new Date(n);
+function $t(r, e) {
+  const t = new Date(r);
   return t.setMinutes(e), t;
 }
-function Nt(n, e) {
-  const t = new Date(n);
+function Wt(r, e) {
+  const t = new Date(r);
   return t.setMonth(e), t;
 }
-function Wt(n, e) {
-  const t = new Date(n);
+function qt(r, e) {
+  const t = new Date(r);
   return t.setDate(e), t;
 }
-function $t(n, e) {
-  const t = new Date(n);
+function Bt(r, e) {
+  const t = new Date(r);
   return t.setFullYear(e), t;
 }
-function W(n) {
-  return new Date(n.getFullYear(), n.getMonth(), n.getDate(), 0, 0, 0, 0);
+function $(r) {
+  return new Date(r.getFullYear(), r.getMonth(), r.getDate(), 0, 0, 0, 0);
 }
-function Bt(n) {
-  return new Date(n.getFullYear(), n.getMonth(), n.getDate(), 23, 59, 59, 999);
+function Kt(r) {
+  return new Date(r.getFullYear(), r.getMonth(), r.getDate(), 23, 59, 59, 999);
 }
 class Ut {
   constructor(e) {
     this.locale = e.locale, this.formats = e.formats;
   }
   date(e) {
-    return ce(e);
+    return me(e);
   }
   toJsDate(e) {
     return e;
   }
   toISO(e) {
-    return ft(this, e);
+    return pt(this, e);
   }
   parseISO(e) {
-    return mt(e);
+    return gt(e);
   }
   addMinutes(e, t) {
-    return gt(e, t);
-  }
-  addHours(e, t) {
-    return pt(e, t);
-  }
-  addDays(e, t) {
-    return O(e, t);
-  }
-  addWeeks(e, t) {
     return yt(e, t);
   }
-  addMonths(e, t) {
+  addHours(e, t) {
     return wt(e, t);
   }
+  addDays(e, t) {
+    return R(e, t);
+  }
+  addWeeks(e, t) {
+    return Dt(e, t);
+  }
+  addMonths(e, t) {
+    return vt(e, t);
+  }
   getWeekArray(e, t) {
-    const r = t !== void 0 ? Number(t) : void 0;
-    return ot(e, this.locale, r);
+    const n = t !== void 0 ? Number(t) : void 0;
+    return lt(e, this.locale, n);
   }
   startOfWeek(e, t) {
-    const r = t !== void 0 ? Number(t) : void 0;
-    return F(e, this.locale, r);
+    const n = t !== void 0 ? Number(t) : void 0;
+    return V(e, this.locale, n);
   }
   endOfWeek(e) {
-    return ut(e, this.locale);
+    return ct(e, this.locale);
   }
   startOfMonth(e) {
-    return ue(e);
+    return de(e);
   }
   endOfMonth(e) {
-    return le(e);
+    return fe(e);
   }
   format(e, t) {
-    return dt(e, t, this.locale, this.formats);
+    return mt(e, t, this.locale, this.formats);
   }
   isEqual(e, t) {
-    return Q(e, t);
+    return te(e, t);
   }
   isValid(e) {
-    return Ot(e);
+    return Pt(e);
   }
   isWithinRange(e, t) {
-    return Et(e, t);
+    return Rt(e, t);
   }
   isAfter(e, t) {
-    return R(e, t);
+    return C(e, t);
   }
   isAfterDay(e, t) {
     return Ct(e, t);
   }
   isBefore(e, t) {
-    return !R(e, t) && !Q(e, t);
+    return !C(e, t) && !te(e, t);
   }
   isSameDay(e, t) {
-    return Rt(e, t);
-  }
-  isSameMonth(e, t) {
     return It(e, t);
   }
-  isSameYear(e, t) {
+  isSameMonth(e, t) {
     return Vt(e, t);
   }
-  setMinutes(e, t) {
+  isSameYear(e, t) {
     return Yt(e, t);
   }
-  setHours(e, t) {
-    return Ft(e, t);
-  }
-  setMonth(e, t) {
-    return Nt(e, t);
-  }
-  setDate(e, t) {
-    return Wt(e, t);
-  }
-  setYear(e, t) {
+  setMinutes(e, t) {
     return $t(e, t);
   }
-  getDiff(e, t, r) {
-    return N(e, t, r);
+  setHours(e, t) {
+    return Nt(e, t);
+  }
+  setMonth(e, t) {
+    return Wt(e, t);
+  }
+  setDate(e, t) {
+    return qt(e, t);
+  }
+  setYear(e, t) {
+    return Bt(e, t);
+  }
+  getDiff(e, t, n) {
+    return N(e, t, n);
   }
   getWeekdays(e) {
     const t = e !== void 0 ? Number(e) : void 0;
-    return ht(this.locale, t);
+    return ft(this.locale, t);
   }
   getYear(e) {
     return Y(e);
   }
   getMonth(e) {
-    return Dt(e);
-  }
-  getWeek(e, t, r) {
-    const s = t !== void 0 ? Number(t) : void 0;
-    return vt(e, this.locale, s, r);
-  }
-  getDate(e) {
     return bt(e);
   }
+  getWeek(e, t, n) {
+    const s = t !== void 0 ? Number(t) : void 0;
+    return Mt(e, this.locale, s, n);
+  }
+  getDate(e) {
+    return xt(e);
+  }
   getNextMonth(e) {
-    return Mt(e);
+    return kt(e);
   }
   getPreviousMonth(e) {
     return St(e);
   }
   getHours(e) {
-    return kt(e);
-  }
-  getMinutes(e) {
-    return xt(e);
-  }
-  startOfDay(e) {
-    return W(e);
-  }
-  endOfDay(e) {
-    return Bt(e);
-  }
-  startOfYear(e) {
-    return Tt(e);
-  }
-  endOfYear(e) {
     return At(e);
   }
+  getMinutes(e) {
+    return Tt(e);
+  }
+  startOfDay(e) {
+    return $(e);
+  }
+  endOfDay(e) {
+    return Kt(e);
+  }
+  startOfYear(e) {
+    return Ot(e);
+  }
+  endOfYear(e) {
+    return Et(e);
+  }
 }
-const jt = Symbol.for("vuetify:date-options"), X = Symbol.for("vuetify:date-adapter");
-function qt(n, e) {
-  const t = ie({
+const jt = Symbol.for("vuetify:date-options"), re = Symbol.for("vuetify:date-adapter");
+function Lt(r, e) {
+  const t = le({
     adapter: Ut,
     locale: {
       af: "af-ZA",
@@ -964,101 +1020,101 @@ function qt(n, e) {
       zhHans: "zh-CN",
       zhHant: "zh-TW"
     }
-  }, n);
+  }, r);
   return {
     options: t,
-    instance: Kt(t, e)
+    instance: zt(t, e)
   };
 }
-function Kt(n, e) {
-  const t = M(typeof n.adapter == "function" ? new n.adapter({
-    locale: n.locale[e.current.value] ?? e.current.value,
-    formats: n.formats
-  }) : n.adapter);
-  return P(e.current, (r) => {
-    t.locale = n.locale[r] ?? r ?? t.locale;
+function zt(r, e) {
+  const t = M(typeof r.adapter == "function" ? new r.adapter({
+    locale: r.locale[e.current.value] ?? e.current.value,
+    formats: r.formats
+  }) : r.adapter);
+  return A(e.current, (n) => {
+    t.locale = r.locale[n] ?? n ?? t.locale;
   }), t;
 }
-function he() {
-  let n = arguments.length > 0 && arguments[0] !== void 0 ? arguments[0] : {};
+function pe() {
+  let r = arguments.length > 0 && arguments[0] !== void 0 ? arguments[0] : {};
   const {
     blueprint: e,
     ...t
-  } = n, r = ie(e, t), {
+  } = r, n = le(e, t), {
     aliases: s = {},
     components: i = {},
     directives: a = {}
-  } = r, u = q();
+  } = n, u = L();
   return u.run(() => {
-    const l = Ke(r.defaults), h = Le(r.display, r.ssr), m = He(r.theme), c = ze(r.icons), d = Ge(r.locale), y = qt(r.date, d), w = _e(r.goTo, d);
-    function E(f) {
-      for (const g in a)
-        f.directive(g, a[g]);
-      for (const g in i)
-        f.component(g, i[g]);
-      for (const g in s)
-        f.component(g, Ze({
-          ...s[g],
-          name: g,
-          aliasName: s[g].name
+    const l = He(n.defaults), m = _e(n.display, n.ssr), f = Ge(n.theme), c = Ze(n.icons), h = Je(n.locale), y = Lt(n.date, h), w = Ce(n.goTo, h);
+    function O(d) {
+      for (const p in a)
+        d.directive(p, a[p]);
+      for (const p in i)
+        d.component(p, i[p]);
+      for (const p in s)
+        d.component(p, Qe({
+          ...s[p],
+          name: p,
+          aliasName: s[p].name
         }));
-      const B = q();
+      const B = L();
       if (B.run(() => {
-        m.install(f);
-      }), f.onUnmount(() => B.stop()), f.provide(L, l), f.provide(H, h), f.provide(z, m), f.provide(G, c), f.provide(_, d), f.provide(jt, y.options), f.provide(X, y.instance), f.provide(Je, w), Qe && r.ssr)
-        if (f.$nuxt)
-          f.$nuxt.hook("app:suspense:resolve", () => {
-            h.update();
+        f.install(d);
+      }), d.onUnmount(() => B.stop()), d.provide(G, l), d.provide(Z, m), d.provide(J, f), d.provide(Q, c), d.provide(X, h), d.provide(jt, y.options), d.provide(re, y.instance), d.provide(Fe, w), Xe && n.ssr)
+        if (d.$nuxt)
+          d.$nuxt.hook("app:suspense:resolve", () => {
+            m.update();
           });
         else {
           const {
-            mount: g
-          } = f;
-          f.mount = function() {
-            const me = g(...arguments);
-            return Ne(() => h.update()), f.mount = g, me;
+            mount: p
+          } = d;
+          d.mount = function() {
+            const ye = p(...arguments);
+            return Be(() => m.update()), d.mount = p, ye;
           };
         }
-      f.mixin({
+      d.mixin({
         computed: {
           $vuetify() {
             return M({
-              defaults: S.call(this, L),
-              display: S.call(this, H),
-              theme: S.call(this, z),
-              icons: S.call(this, G),
-              locale: S.call(this, _),
-              date: S.call(this, X)
+              defaults: x.call(this, G),
+              display: x.call(this, Z),
+              theme: x.call(this, J),
+              icons: x.call(this, Q),
+              locale: x.call(this, X),
+              date: x.call(this, re)
             });
           }
         }
       });
     }
-    function fe() {
+    function E() {
       u.stop();
     }
     return {
-      install: E,
-      unmount: fe,
+      install: O,
+      unmount: E,
       defaults: l,
-      display: h,
-      theme: m,
+      display: m,
+      theme: f,
       icons: c,
-      locale: d,
+      locale: h,
       date: y,
       goTo: w
     };
   });
 }
-const Lt = "3.8.4";
-he.version = Lt;
-function S(n) {
-  var r, s;
-  const e = this.$, t = ((r = e.parent) == null ? void 0 : r.provides) ?? ((s = e.vnode.appContext) == null ? void 0 : s.provides);
-  if (t && n in t)
-    return t[n];
+const Ht = "3.8.4";
+pe.version = Ht;
+function x(r) {
+  var n, s;
+  const e = this.$, t = ((n = e.parent) == null ? void 0 : n.provides) ?? ((s = e.vnode.appContext) == null ? void 0 : s.provides);
+  if (t && r in t)
+    return t[r];
 }
-const Ht = {
+const _t = {
   defaults: {
     VAppBar: {
       flat: !0
@@ -1152,7 +1208,7 @@ const Ht = {
   icons: {
     defaultSet: "mdi",
     sets: {
-      mdi: Xe
+      mdi: et
     }
   },
   theme: {
@@ -1168,15 +1224,15 @@ const Ht = {
       }
     }
   }
-}, zt = {
+}, Gt = {
   lighten4: "#c8e6c9",
   darken1: "#43a047"
-}, ee = {
-  green: zt
+}, ne = {
+  green: Gt
 };
-function wn({ App: n = null, el: e = "#app", onLoad: t = !0, ...r } = {}) {
+function gr({ App: r = null, el: e = "#app", onLoad: t = !0, ...n } = {}) {
   function s() {
-    const i = Gt(n, r), a = e ? i.mount(e) : null;
+    const i = Zt(r, n), a = e ? i.mount(e) : null;
     return document.body.classList.remove("loading"), { app: i, el: e, vm: a };
   }
   return new Promise((i) => {
@@ -1188,22 +1244,22 @@ function wn({ App: n = null, el: e = "#app", onLoad: t = !0, ...r } = {}) {
     i(s());
   });
 }
-function Gt(n, { props: e = {}, vuetify: t = {}, plugins: r = null } = {}) {
-  return n = We(n, e), n.config.globalProperties.window = window, n.use(_t(t)), n.use(Oe), Ce(), r && r.forEach((s) => n.use(s)), n;
+function Zt(r, { props: e = {}, vuetify: t = {}, plugins: n = null } = {}) {
+  return r = Ke(r, e), r.config.globalProperties.window = window, r.use(Jt(t)), r.use(Ie), Ve(), n && n.forEach((s) => r.use(s)), r;
 }
-function _t({ components: n = {}, defaults: e = {}, ...t }) {
+function Jt({ components: r = {}, defaults: e = {}, ...t }) {
   return t.components = {
-    ...je,
-    ...n
-  }, he({
-    blueprint: Ht,
+    ...Le,
+    ...r
+  }, pe({
+    blueprint: _t,
     theme: {
       themes: {
         light: {
           dark: !1,
           colors: {
-            primary: ee.green.darken1,
-            secondary: ee.green.lighten4
+            primary: ne.green.darken1,
+            secondary: ne.green.lighten4
           }
         }
       }
@@ -1219,26 +1275,26 @@ function _t({ components: n = {}, defaults: e = {}, ...t }) {
     ...t
   });
 }
-function Dn({ axiosConfig: n = null, baseURL: e = null } = {}) {
+function yr({ axiosConfig: r = null, baseURL: e = null } = {}) {
   e || (e = document.body.dataset.apiUrl);
-  const t = Pe(), r = Re({
+  const t = Ye(), n = Ne({
     plugins: [
-      st({
-        axios: Ue,
-        ...n || re.axiosConfig,
+      it({
+        axios: je,
+        ...r || ie.axiosConfig,
         baseURL: e
       })
     ]
   });
-  return Ie(t), t.use(r);
+  return $e(t), t.use(n);
 }
-class T {
+class S {
   /**
   * @param {Repos} [repos] all models repositories
   * @param {Repository<M>} [repo] the main repository
   */
-  constructor(e, t = null) {
-    this.repo = e, this.repos = t;
+  constructor(e, t = null, n) {
+    this.repo = e, this.repos = t, this.opts = n;
   }
   /**
    * Fetch items from api.
@@ -1253,15 +1309,22 @@ class T {
    * @param [options.params] extra GET parameters
    * @param [options.opts] options passed down to ``repo.api.get``
    */
-  async fetch({ url: e, id: t = null, ids: r = null, repo: s = null, lookup: i = "id__in", params: a = void 0, relations: u = null, path: l = null, ...h } = {}) {
-    var c, d, y, w, E;
-    if (s ?? (s = this.repo), (r == null ? void 0 : r.length) === 1 && (t = r[0], r = null), e || (e = (d = (c = s.use) == null ? void 0 : c.meta) == null ? void 0 : d.getUrl({ path: l, id: t })), t ? h.dataKey = null : h.dataKey ?? (h.dataKey = (E = (w = (y = s.use) == null ? void 0 : y.config) == null ? void 0 : w.axiosApi) == null ? void 0 : E.dataKey), r && i !== void 0) {
-      if (t)
+  async fetch(e = {}) {
+    var h, y, w, O, E;
+    e = { ...this.opts, ...e };
+    let { url: t, id: n, ids: s, repo: i, lookup: a, params: u, relations: l, path: m, ...f } = e;
+    if (a ?? (a = "id__in"), i ?? (i = this.repo), (s == null ? void 0 : s.length) === 1 && (n = s[0], s = null), t || (t = (y = (h = i.use) == null ? void 0 : h.meta) == null ? void 0 : y.getUrl({ path: m, id: n })), n ? f.dataKey = null : "dataKey" in f || (f.dataKey = (E = (O = (w = i.use) == null ? void 0 : w.config) == null ? void 0 : O.axiosApi) == null ? void 0 : E.dataKey), s && a !== void 0) {
+      if (n)
         throw Error("Both `ids` and `id` are provided while only one of those arguments is accepted.");
-      a = { ...a || {} }, a[i] = [...r];
+      u = { ...u || {} }, u[a] = [...s];
     }
-    const m = await s.api().get(e, { ...h, params: a });
-    return u && (m.relations = await this.relations(m.entities, u, { ...h, params: {} })), m;
+    const c = await i.api().get(t, { ...f, params: u });
+    return f.save === !1 && (c.entities = this.getEntities(c)), l && (c.relations = await this.relations(c.entities, l, { ...f, params: {} })), c;
+  }
+  /** Get entities from response **/
+  getEntities(e) {
+    const t = e.getDataFromResponse();
+    return Array.isArray(t) ? t.map((n) => this.repo.make(n)) : [this.repo.make(t)];
   }
   /**
    * Fetch all items from api.
@@ -1271,14 +1334,14 @@ class T {
    * @return Response of the first request, whoses ``entities`` has \
    * model instances of all requests.
    */
-  async all({ nextKey: e = "next", limit: t = -1, ...r } = {}) {
-    const s = await this.fetch(r);
-    let i = s.response.data[e];
-    for (; i; ) {
-      const a = await this.fetch({ ...r, url: i });
-      if (a.entities && (s.entities = s.entities !== null ? s.entities.concat(a.entities) : a.entities), i = a.response.data[e], t > 0 && t--, !t) break;
+  async all({ nextKey: e = "next", limit: t = -1, flush: n = !1, ...s } = {}) {
+    const i = await this.fetch({ flush: n, ...s });
+    let a = i.response.data[e];
+    for (; a; ) {
+      const u = await this.fetch({ ...s, url: a });
+      if (u.entities && (i.entities = i.entities !== null ? i.entities.concat(u.entities) : u.entities), a = u.response.data[e], t > 0 && t--, !t) break;
     }
-    return s;
+    return i;
   }
   /**
    * Fetch all from API if repository is empty (see {@link Query.all}).
@@ -1298,15 +1361,15 @@ class T {
    * @param options.opts - options to pass down to {@link Quey.relation}.
    * @return the resulting entities.
    */
-  async relations(e, t, r = {}) {
+  async relations(e, t, n = {}) {
     var a;
     this._ensureRepos("relations");
     const s = {}, i = (a = this.repo.use) == null ? void 0 : a.fields();
     if (i)
       for (const u of t) {
         const l = i[u];
-        if (l instanceof te)
-          s[u] = await this.relation(e, l, r);
+        if (l instanceof se)
+          s[u] = await this.relation(e, l, n);
         else
           throw Error(`Field ${u} is not a relation`);
       }
@@ -1324,34 +1387,34 @@ class T {
    * @param relation - objects' field or field name.
    * @param options - options to pass down to `all()`.
    */
-  async relation(e, t, r = {}) {
+  async relation(e, t, n = {}) {
     this._ensureRepos("relations");
-    const s = ae(this.repo, t);
+    const s = ce(this.repo, t);
     if (!s)
       throw Error(`No Relation found for field ${t}.`);
     const i = s.related.constructor.entity, a = this.repos[i];
     if (!a)
       throw Error(`No repository "${i}" found.`);
-    const u = oe(s);
+    const u = he(s);
     if (!u)
       throw Error(`No source ids attributes for ${t}.`);
-    const l = [...new Set(Ve(e, u))];
-    return new T(a, this.repos).all({ ...r, ids: l, repo: a });
+    const l = [...new Set(ae(e, u))];
+    return new S(a, this.repos).all({ ...n, ids: l, repo: a });
   }
 }
-function Zt(n, e) {
-  if (typeof n == "string") {
-    if (!(n in e))
-      throw Error(`Repository "${n}" is not present in provided repositories.`);
-    return new T(e[n], e);
+function Qt(r, e, t = null) {
+  if (typeof r == "string") {
+    if (!(r in e))
+      throw Error(`Repository "${r}" is not present in provided repositories.`);
+    return new S(e[r], e, t);
   }
-  return new T(n, e);
+  return new S(r, e, t);
 }
-class de {
+class ge {
   constructor(e) {
-    o(this, "state", k.none());
+    o(this, "state", b.none());
     o(this, "value", {});
-    e && I(this, e), this.state || (this.state = new k()), this.value ?? (this.value = {}), this.empty ?? (this.empty = {}), this.initial ?? (this.initial = this.props.initial || this.empty), this.valid = !0, this.reset(this.initial);
+    e && F(this, e), this.state || (this.state = new b()), this.value ?? (this.value = {}), this.empty ?? (this.empty = {}), this.initial ?? (this.initial = this.props.initial || this.empty), this.valid = !0, this.reset(this.initial);
   }
   get name() {
     return this.props.name;
@@ -1371,11 +1434,11 @@ class de {
    * When value is provided, reset initial to this value.
    */
   reset(e = null) {
-    Fe(this.value, e ?? this.empty), this.state.none();
+    We(this.value, e ?? this.empty), this.state.none();
   }
   /** Return wether value has been edited or not */
   isEdited() {
-    return !D.isEqual(this.value, this.initial);
+    return !g.isEqual(this.value, this.initial);
   }
   /**
    * Save data. It will `serialize()` value then `send()` it.
@@ -1393,12 +1456,12 @@ class de {
         _: "Some of the input values are invalid"
       });
     e ?? (e = this.value), e instanceof FormData ? t.headers = {
-      ...re.axiosConfig.headers,
+      ...ie.axiosConfig.headers,
       "Content-Type": "multipart/form-data",
       ...t.headers
     } : e = this.serialize(e);
-    const r = await this.send(e, t);
-    return r.isOk ? (this.reset(r.data, !0), (s = this.saved) == null || s.call(this, this.value)) : this.state = r, this.state;
+    const n = await this.send(e, t);
+    return n.isOk ? (this.reset(n.data, !0), (s = this.saved) == null || s.call(this, this.value)) : this.state = n, this.state;
   }
   /**
    * This method is called when editor successfully saved the
@@ -1407,8 +1470,8 @@ class de {
    * By default, it will call {@link Editor.props.saved} if provided.
    */
   saved(e) {
-    var t, r;
-    (r = (t = this.props).saved) == null || r.call(t, e, this);
+    var t, n;
+    (n = (t = this.props).saved) == null || n.call(t, e, this);
   }
   /** Serialize value before sending. */
   serialize(e) {
@@ -1419,7 +1482,7 @@ class de {
     throw "not implemented";
   }
 }
-class Jt {
+class Xt {
   constructor(e = null) {
     o(this, "index", "list.table");
     o(this, "view", "");
@@ -1431,7 +1494,7 @@ class Jt {
      * changes.
      */
     o(this, "confirmTKey", "panel.confirm");
-    e && I(this, e), this.view ?? (this.view = this.index || "");
+    e && F(this, e), this.view ?? (this.view = this.index || "");
   }
   /** Panel name (based on props) **/
   get name() {
@@ -1466,8 +1529,8 @@ class Jt {
    * Show a view, providing optional value.
    * @return - true if view changed
    */
-  show({ view: e = null, value: t = null, silent: r = !1, force: s = !1 } = {}) {
-    return (e != this.view || t != this.value) && (s || this.onLeave()) ? (this.view = e || this.index, this.value = t, !r && this.updateLocation(), !0) : !1;
+  show({ view: e = null, value: t = null, silent: n = !1, force: s = !1 } = {}) {
+    return (e != this.view || t != this.value) && (s || this.onLeave()) ? (this.view = e || this.index, this.value = t, !n && this.updateLocation(), !0) : !1;
   }
   /** Update current location using History api */
   updateLocation() {
@@ -1490,28 +1553,23 @@ class Jt {
     const e = v(this.confirmTKey);
     return confirm(e);
   }
-  onViewChange(e) {
-    console.log("onViewChange", e), e || (this.view = this.index);
-  }
-  onValueChange(e) {
-  }
 }
-class Qt {
+class er {
   constructor(e = null) {
     o(this, "panel", "");
     o(this, "params", {});
     o(this, "paramsString", "");
     o(this, "children", {});
     o(this, "current");
-    e && I(this, e);
+    e && F(this, e);
   }
   /**
    * Set {@link Panels.params based on current document location.
    */
   readDocumentLocation() {
     this.paramsString = document.location.search.substring(1);
-    const e = new URLSearchParams(this.paramsString), { panel: t, ...r } = Object.fromEntries(e.entries());
-    this.panel = t, this.params = r || {};
+    const e = new URLSearchParams(this.paramsString), { panel: t, ...n } = Object.fromEntries(e.entries());
+    this.panel = t, this.params = n || {};
   }
   /** Read provided path and return current panel and view */
   static readPath(e) {
@@ -1533,27 +1591,27 @@ class Qt {
    * When there is already a panel displayed, it will call {@link Panel.onLeave} in order to eventually prevent
    * unwanted page change.
    */
-  show({ force: e = !1, href: t = null, ...r }) {
+  show({ force: e = !1, href: t = null, ...n }) {
     if (e || !this.current || this.current.onLeave()) {
       if (t && window.location.pathname != t) {
-        if (!r.panel)
+        if (!n.panel)
           throw Error("The attribute `href` requires`panel`.");
-        t = `${t}?panel=${r.panel}`, r.view && (t = `${t}&view=${r.view || ""}`), window.location.href = t;
+        t = `${t}?panel=${n.panel}`, n.view && (t = `${t}&view=${n.view || ""}`), window.location.href = t;
         return;
       }
-      this.reset(r);
+      this.reset(n);
     }
   }
-  reset({ panel: e, silent: t = !1, ...r }) {
+  reset({ panel: e, silent: t = !1, ...n }) {
     var i;
-    e && e != this.panel && this.current && !this.current.onLeave() || (this.panel = e || this.panel, this.params = r, this.current = this.children[this.panel], (i = this.current) == null || i.show({ ...this.params, silent: t }));
+    e && e != this.panel && this.current && !this.current.onLeave() || (this.panel = e || this.panel, this.params = n, this.current = this.children[this.panel], (i = this.current) == null || i.show({ ...this.params, silent: t }));
   }
 }
-class Xt {
+class tr {
   constructor(e = null) {
-    o(this, "state", k.none());
+    o(this, "state", b.none());
     o(this, "save", !0);
-    e && I(this, e);
+    e && F(this, e);
   }
   /** The repository of contained items. */
   get repo() {
@@ -1570,11 +1628,11 @@ class Xt {
    *   @return orm's query
    */
   queryset(e = null, t = !1) {
-    let r = this.repo.query();
+    let n = this.repo.query();
     if (this.relations)
       for (const s of this.relations)
-        r = r.with(s);
-    return e ? r.whereId(e) : r;
+        n = n.with(s);
+    return e !== null && (n = n.whereId(e)), t ? n.first() : n;
   }
   /**
    * Fetch model instance from the server and select them.
@@ -1593,8 +1651,8 @@ class Xt {
     let t = null;
     try {
       t = await this.fetch(e), t = await this.handleResponse(e, t);
-    } catch (r) {
-      this.state.error(r);
+    } catch (n) {
+      console.log(n), this.state.error(n);
     }
     return this.state.isError || this.state.none(), t;
   }
@@ -1617,53 +1675,52 @@ class Xt {
     return !e.relations && this.relations && this.fetchRelations && (e.relations = this.relations), e.url || (e.url = this.url), "save" in e || (e.save = this.save), e;
   }
 }
-class en extends Xt {
-  constructor() {
-    super(...arguments);
-    // ids: number[] = []
-    o(this, "items", []);
+class rr extends tr {
+  constructor(...t) {
+    super(...t);
+    // /** Reference counter key **/
+    // $id: number
+    o(this, "ids", []);
     o(this, "filters", {});
     o(this, "nextUrl", null);
     o(this, "prevUrl", null);
     o(this, "count", null);
+    o(this, "page_size", null);
     o(this, "dataKey", "results");
     o(this, "nextKey", "next");
     o(this, "prevKey", "previous");
     o(this, "countKey", "count");
   }
-  /** Get items count. */
-  get length() {
-    return this.items.length;
+  get refs() {
+    return this.repo.refs;
   }
-  /** Get ids **/
-  get ids() {
-    return this.items.map((t) => t.id);
+  /** Return index for id */
+  indexOf(t) {
+    return this.ids.indexOf(t);
   }
-  /** Get item by list index */
-  get(t) {
-    return t < this.items.length ? this.items[t] : null;
+  /** Destroy list, ensuring cleaning behind the scenes */
+  drop() {
+    this.ids = [];
   }
   /** Reset list */
   reset(t = []) {
-    this.items = t, this.nextUrl = null, this.prevUrl = null;
+    this.ids = t, this.nextUrl = null, this.prevUrl = null, this.count = this.ids.length;
   }
   /** Get item index by id */
-  findIndex(t) {
-    return this.items.findIndex((r) => r.id == t);
-  }
-  /** Return True if item is in list */
-  contains(t) {
-    return this.findIndex(t) != -1;
-  }
+  //findIndex(id: number): number { return this.items.findIndex((v) => v.id == id) }
   /** Add item if not present in list.
   *
-  * @param item - item to insert
+  * @param id - item id to insert
   * @param index - if provided insert at this position
   * @return item index if already in the list, else insertion one
   */
-  add(t, r = null) {
-    const s = this.findIndex(t.id);
-    return s != -1 ? s : r !== null ? (this.items.splice(r, 1, t), r) : (this.items.push(t), this.items.length - 1);
+  add(t, n = null) {
+    const s = this.ids.indexOf(t);
+    return s != -1 ? s : n !== null ? (this.ids.splice(n, 0, t), n) : (this.ids.push(t), this.ids.length - 1);
+  }
+  /** Remove item by id from list if present. */
+  remove(t) {
+    this.ids.indexOf(t) != -1 && this.ids.splice(index, 1);
   }
   /**
    * Get item id next to provided one at the specified direction.
@@ -1672,11 +1729,11 @@ class en extends Xt {
    * @param step - increment or decrement item index by this value.
    * @return the target item id or null if not found.
    */
-  getSiblingIndex(t, r) {
+  getSiblingIndex(t, n) {
     if (t === null)
       return -1;
-    const s = this.findIndex(t.id), i = s >= 0 ? s + r : -1;
-    return i >= 0 && i < this.items.length ? i : -1;
+    const s = this.ids.indexOf(t.id), i = s >= 0 ? s + n : -1;
+    return i >= 0 && i < this.ids.length ? i : -1;
   }
   /**
    * Fetch next items from API, override `url` using {@link ModelList.nextUrl}.
@@ -1691,17 +1748,24 @@ class en extends Xt {
     return await this.load({ ...t, url: this.prevUrl });
   }
   getQueryOptions(t) {
-    return this.filters && (t.params = { ...this.filters, ...t.params ?? [] }), super.getQueryOptions(t);
+    return this.filters && (t.params = { ...this.filters, ...t.params ?? [] }), this.page_size && (t.params = { ...t.params, page_size: this.page_size }), super.getQueryOptions(t);
   }
   /**
    * Handle response from API.
    * Reset list and context information such as next/prev url, total count.
    */
-  async handleResponse({ append: t = !1, ...r }, s) {
-    return s = await super.handleResponse(r, s), this.state.isError || (typeof t == "number" ? this.items.splice(t, 0, ...s.entities) : this.items = t ? this.items.concat(s.entities) : s.entities, this.items = D.uniqWith(this.items, (i, a) => i.id == a.id), this.nextUrl = s.response.data[this.nextKey] || null, this.prevUrl = s.response.data[this.prevKey] || null, this.count = s.response.data[this.countKey] || this.length), s;
+  async handleResponse({ append: t = !1, ...n }, s) {
+    if (s = await super.handleResponse(n, s), !this.state.isError) {
+      const i = ae(s.entities, "id");
+      this.resetIds([...i]), this.nextUrl = s.response.data[this.nextKey] || null, this.prevUrl = s.response.data[this.prevKey] || null, this.count = s.response.data[this.countKey] || this.ids.length;
+    }
+    return s;
+  }
+  resetIds(t, n = !1) {
+    typeof n == "number" ? this.ids.splice(n, 0, ...t) : n ? this.ids = g.union([this.ids, t]) : this.ids = t;
   }
 }
-class tn extends de {
+class nr extends ge {
   constructor(e) {
     e.fields = Object.keys(e.props.repo.use.fields()), e.empty ?? (e.empty = new e.props.repo.use()), super(e);
   }
@@ -1712,38 +1776,38 @@ class tn extends de {
     return this.props.name || `${this.repo.use.entity}-edit`;
   }
   isEdited() {
-    return !D.isEqual(D.pick(this.value, this.fields), D.pick(this.initial, this.fields));
+    return !g.isEqual(g.pick(this.value, this.fields), g.pick(this.initial, this.fields));
   }
   get url() {
-    var t, r;
-    const e = super.url || ((r = (t = this.repo.use) == null ? void 0 : t.meta) == null ? void 0 : r.url);
+    var t, n;
+    const e = super.url || ((n = (t = this.repo.use) == null ? void 0 : t.meta) == null ? void 0 : n.url);
     if (!e)
       throw Error("No url specified as parameter or in Model.meta.");
     return e;
   }
   reset(e) {
     (!e || !Object.keys(e).length) && (e = this.empty);
-    const t = this.fields.filter((r) => r in e);
-    this.value = D.cloneDeep(D.pick(e, t)) || {}, this.state.none();
+    const t = this.fields.filter((n) => n in e);
+    this.value = g.cloneDeep(g.pick(e, t)) || {}, this.state.none();
   }
   serialize(e) {
     const t = this.repo.use;
     return new t({ ...this.value }).$toJson(null, { relations: !1 });
   }
   send(e, t = {}) {
-    let [r, s] = ["post", this.url];
-    return e.id && (s = `${s}${e.id}/`, r = "put"), this.repo.api()[r](s, e, t).then(
-      (i) => k.ok(i.entities[0]),
-      (i) => k.error(i.response.data)
+    let [n, s] = ["post", this.url];
+    return e.id && (s = `${s}${e.id}/`, n = "put"), this.repo.api()[n](s, e, t).then(
+      (i) => b.ok(i.entities[0]),
+      (i) => b.error(i.response.data)
     );
   }
 }
-class nn extends Jt {
+class sr extends Xt {
   constructor(t) {
-    var r;
+    var n;
     super(t);
     o(this, "showFilters", !1);
-    this.showFilters = ((r = this.props) == null ? void 0 : r.showFilters) || !1;
+    this.showFilters = ((n = this.props) == null ? void 0 : n.showFilters) || !1;
   }
   /** Current model's repository. */
   get repo() {
@@ -1765,22 +1829,22 @@ class nn extends Jt {
   /** Return panel's title based on view and current item. */
   get title() {
     var i, a, u, l;
-    const { props: t, list: r } = this, s = this.repo.use;
+    const { props: t, list: n } = this, s = this.repo.use;
     if (s) {
       if ((i = this.view) != null && i.startsWith("list."))
         return v(j.model(s), 3);
       if ((a = this.view) != null && a.startsWith("detail.")) {
         if ((u = this.value) != null && u.$title)
           return this.value.$title;
-        const h = v(j.model(s));
-        return (l = this.value) != null && l.id ? v("models._.title", { model: h, id: this.value.id }) : v("models._.title.new", { model: h });
+        const m = v(j.model(s));
+        return (l = this.value) != null && l.id ? v("models._.title", { model: m, id: this.value.id }) : v("models._.title.new", { model: m });
       }
     }
     return super.title;
   }
   getUrlParams() {
-    const { value: t = null, ...r } = super.getUrlParams();
-    return t != null && t.id && (r.id = t.id), r;
+    const { value: t = null, ...n } = super.getUrlParams();
+    return t != null && t.id && (n.id = t.id), n;
   }
   /**
    * Edit a new item.
@@ -1791,93 +1855,98 @@ class nn extends Jt {
     this.show({ view: t, value: null });
   }
   /** Called when an item has been created. By default, show edit view. */
-  created(t, r = "detail.edit") {
-    this.show({ view: r, value: t });
+  created(t, n = "detail.edit") {
+    this.show({ view: n, value: t });
   }
-  show({ id: t = null, ...r }) {
+  show({ id: t = null, ...n }) {
     if (t)
-      Zt(this.repo).fetch({ id: t, relations: this.relations }).then((s) => (super.show({ ...r, value: s.entities[0] }), s));
+      Qt(this.repo).fetch({ id: t, relations: this.relations }).then((s) => (super.show({ ...n, value: s.entities[0] }), s));
     else
-      return super.show(r);
-  }
-  onViewChange(t) {
-    super.onViewChange(t), t.startsWith("list.") && this.list.load();
-  }
-  onValueChange(t) {
+      return super.show(n);
   }
 }
-function vn(n) {
-  const e = M(new Qt(n));
-  p("panels", e), se(() => {
+function wr(r) {
+  const e = M(new er(r));
+  D("panels", e), oe(() => {
     e.readDocumentLocation(), e.panel && e.show({
       panel: e.panel,
       silent: !0,
       ...e.params
     });
-  }), window.addEventListener("popstate", (r) => {
-    r.state && e.show({ ...r.state, silent: !0 });
+  }), window.addEventListener("popstate", (n) => {
+    n.state && e.show({ ...n.state, silent: !0 });
   });
   const t = document.title;
-  return P(() => {
-    var r;
-    return (r = e.current) == null ? void 0 : r.title;
-  }, (r) => {
-    r ? document.title = `${r} | ${t}` : document.title = t;
+  return A(() => {
+    var n;
+    return (n = e.current) == null ? void 0 : n.title;
+  }, (n) => {
+    n ? document.title = `${n} | ${t}` : document.title = t;
   }), e;
 }
-function rn(n, e) {
-  const t = M(new e(n));
-  return p("panel", t), se(() => t.panels.register(t.name, t)), $e(() => t.panels.unregister(t.name)), { panel: t };
+function ir(r, e) {
+  const t = M(new e(r));
+  return D("panel", t), oe(() => t.panels.register(t.name, t)), ue(() => t.panels.unregister(t.name)), { panel: t };
 }
-function bn({ query: n, repos: e, ...t }) {
-  e ?? (e = x("repos")), n ?? (n = an(t.props.repo, x("repos"))), t.panels ?? (t.panels = x("panels"));
-  const { list: r, items: s } = sn({
-    query: n,
+function Dr({ query: r, repos: e, ...t }) {
+  e ?? (e = P("repos")), r ?? (r = new S(t.props.repo, e)), t.panels ?? (t.panels = P("panels"));
+  const { list: n, items: s } = ar({
+    query: r,
     relations: t.props.relations,
     fetchRelations: t.props.fetchRelations
-  }), { panel: i } = rn({ list: r, ...t }, nn), a = b(() => {
-    const l = r.getSiblingIndex(C(i.value), 1);
+  }), { panel: i } = ir({ list: n, ...t }, sr), a = k(() => {
+    const l = n.getSiblingIndex(z(i.value), 1);
     return s.value[l] ?? null;
-  }), u = b(() => {
-    const l = r.getSiblingIndex(C(i.value), -1);
+  }), u = k(() => {
+    const l = n.getSiblingIndex(z(i.value), -1);
     return s.value[l] ?? null;
   });
-  return { panels: i.panels, panel: i, list: r, items: s, next: a, prev: u };
+  return { panels: i.panels, panel: i, list: n, items: s, next: a, prev: u };
 }
-function sn(n, e = en) {
-  const t = M(new e(n)), r = b(
-    () => t.save && t.relations && t.length ? t.queryset(t.ids).orderBy((s) => t.ids.indexOf(s)).get() : t.items
-  );
-  return p("list", t), p("items", r), { list: t, items: r };
+function ar(r, e = rr) {
+  const t = M(new e(r)), n = t.repo.refs.acquireKey(), s = k(() => t.queryset(t.ids).orderBy((i) => t.ids.indexOf(i)).get());
+  return A(() => t.ids, (i, a) => {
+    g.isEqual(H(i), H(a)) || t.repo.refs.releaseAcquire(n, a, i);
+  }), ue(() => t.repo.refs.flush(n)), D("list", t), D("items", s), { list: t, items: s, listId: n };
 }
-function an(n, e = null) {
-  const t = new T(n, e);
-  return p("query", t), t;
+function vr(r, e = null, t) {
+  const n = new S(r, e, t), s = b.none();
+  async function i(a) {
+    s.processing();
+    let u = null;
+    try {
+      u = await n.fetch(a), s.none();
+    } catch (l) {
+      s.error(l);
+    }
+    return u;
+  }
+  return { state: s, query: n, fetch: i };
 }
-function on(n, e = de) {
-  n.initial || n.props.initial;
-  const t = M(new e(n));
-  p("editor", t);
-  const r = b(() => t.isEdited());
-  P(() => t.props.initial, (i) => {
+function or(r, e = ge) {
+  r.initial || r.props.initial;
+  const t = M(new e(r));
+  D("editor", t);
+  const n = k(() => t.isEdited());
+  A(() => t.props.initial, (i) => {
     t.initial = i || t.empty, t.reset(i || t.empty);
   });
-  const s = x("panel");
-  return s && P(() => t.edited, (i) => s.setEdition(t.name, i)), { editor: t, edited: r };
+  const s = P("panel");
+  return s && A(() => t.edited, (i) => s.setEdition(t.name, i)), { editor: t, edited: n };
 }
-function Mn(n, e = tn) {
-  return on(n, e);
+function br(r, e = nr) {
+  return or(r, e);
 }
-const Sn = {
+const Mr = {
   /** Field is required */
-  required(n) {
-    return n ? !0 : v("fields._.required");
+  required(r) {
+    return r ? !0 : v("fields._.required");
   },
   /**
    * Validate field errors returned from the server.
    */
-  errors(n) {
-    return () => n != null && n.length ? n.join("<br>") || !1 : !0;
+  errors(r) {
+    return () => r != null && r.length ? r.join("<br>") || !1 : !0;
   },
   /**
    * Return a rule whose validating value is optional.
@@ -1885,74 +1954,73 @@ const Sn = {
    * By default rules require value to be provided. This returns a new
    * rule whose value can either be empty or must match provided rule.
    */
-  optional(n) {
-    return (e) => !e || n(e);
+  optional(r) {
+    return (e) => !e || r(e);
   },
   /** Rule validating email */
-  email(n) {
-    return /^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i.test(n) || v("fields.email.rule");
+  email(r) {
+    return /^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i.test(r) || v("fields.email.rule");
   },
   /** Rule validating username */
-  username(n) {
-    return /^[A-Za-z0-9@.+\-_]+$/.test(n) || "Username must not be empty. It only can contain letters, numbers and @/+/./- special characters";
+  username(r) {
+    return /^[A-Za-z0-9@.+\-_]+$/.test(r) || "Username must not be empty. It only can contain letters, numbers and @/+/./- special characters";
   }
 };
-function kn(n, e) {
-  return Be(() => import(n).then((t) => e ? (console.log(t, t.components, Object.keys(t)), Object.values(t).filter((s) => s.__name == e)[0]) : t));
+function xr(r, e) {
+  return Ue(() => import(r).then((t) => e ? (console.log(t, t.components, Object.keys(t)), Object.values(t).filter((s) => s.__name == e)[0]) : t));
 }
 export {
-  at as AppContext,
-  de as Editor,
-  Xt as ModelController,
-  tn as ModelEditor,
-  en as ModelList,
-  nn as ModelPanel,
-  Jt as Panel,
-  Qt as Panels,
-  T as Query,
-  k as State,
-  An as States,
-  I as assignNonEmpty,
-  Ve as collectAttr,
-  re as config,
-  Gt as createApp,
-  En as createI18n,
-  Dn as createPinia,
-  _t as createVuetify,
-  On as csrfToken,
-  kn as defineAsyncComponent,
-  Cn as excludeValues,
-  Pn as filterSlots,
-  Rn as filterValues,
-  In as getCookie,
-  Vn as getCookieList,
-  Fn as getCsrf,
-  Oe as i18n,
-  wn as init,
-  Yn as injectOrProvide,
-  Nn as loadedLocalePaths,
-  Wn as mapToObject,
-  fn as models,
-  Zt as query,
-  Fe as reset,
-  Sn as rules,
-  $n as setLocale,
-  Bn as shallowCopy,
-  Un as splitValues,
+  ut as AppContext,
+  ge as Editor,
+  tr as ModelController,
+  nr as ModelEditor,
+  rr as ModelList,
+  sr as ModelPanel,
+  Xt as Panel,
+  er as Panels,
+  S as Query,
+  b as State,
+  Ar as States,
+  F as assignNonEmpty,
+  ae as collectAttr,
+  ie as config,
+  Zt as createApp,
+  Tr as createI18n,
+  yr as createPinia,
+  Jt as createVuetify,
+  Or as csrfToken,
+  xr as defineAsyncComponent,
+  Er as excludeValues,
+  Rr as filterSlots,
+  Pr as filterValues,
+  Cr as getCookie,
+  Fr as getCookieList,
+  Ir as getCsrf,
+  Ie as i18n,
+  gr as init,
+  Vr as injectOrProvide,
+  Yr as loadedLocalePaths,
+  Nr as mapToObject,
+  fr as models,
+  Qt as query,
+  We as reset,
+  Mr as rules,
+  $r as setLocale,
+  Wr as shallowCopy,
+  qr as splitValues,
   v as t,
   j as tKeys,
-  yn as useAction,
-  pn as useAppContext,
-  on as useEditor,
-  Ce as useI18n,
-  Mn as useModelEditor,
-  sn as useModelList,
-  bn as useModelPanel,
-  it as useModels,
-  rn as usePanel,
-  vn as usePanels,
-  gn as usePermissions,
-  mn as usePermissionsProps,
-  an as useQuery
+  pr as useAction,
+  mr as useAppContext,
+  or as useEditor,
+  Ve as useI18n,
+  br as useModelEditor,
+  ar as useModelList,
+  Dr as useModelPanel,
+  ot as useModels,
+  ir as usePanel,
+  wr as usePanels,
+  vr as useQuery,
+  at as useRepo
 };
 //# sourceMappingURL=ox.js.map

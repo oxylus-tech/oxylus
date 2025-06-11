@@ -1,20 +1,16 @@
-import {uniqWith} from 'lodash'
-import {unref} from 'vue'
-import type {Ref} from 'vue'
 import type {Response} from '@pinia-orm/axios'
+import {union} from 'lodash'
 
+import type {Model, ModelId} from '../models'
 import {collectAttr} from '../utils'
-import type {Model} from '../models'
-import type {IObject} from '../utils'
 
-import Query from './query'
-import ModelController from './modelController'
 import type {IQueryFetch} from './query'
 import type {IModelController, IModelFetch} from './modelController'
+import ModelController from './modelController'
 
 
 export type FilterValue = number | string
-export type Filters = IObject<FilterValue>
+export type Filters = Record<string,FilterValue>
 
 
 /** Base interface of a ModelList */
@@ -43,12 +39,13 @@ export interface IModelListFetch<M extends Model> extends IModelFetch<M> {
 }
 
 
-
 /**
  * Handle a list of model instances fetched using Rest Api. It is
  * used in model's panels.
  *
  * It uses {@link Query} object in order to fetch items and relations.
+ *
+ * Items references are tracked using repo's {@link RefCounter}.
  *
  *
  * @example
@@ -62,57 +59,76 @@ export interface IModelListFetch<M extends Model> extends IModelFetch<M> {
  * await list.load({url: '/users'})
  */
 export default class ModelList<M extends Model> extends ModelController<M, IModelList<M>> {
-    // ids: number[] = []
-    items: M[] = []
+    // /** Reference counter key **/
+    // $id: number
+
+    ids: ModelId[] = []
     filters: Filters = {}
     nextUrl: string|null = null
     prevUrl: string|null = null
     count: number|null = null
+    page_size: number|null = null
 
     dataKey = "results"
     nextKey = "next"
     prevKey = "previous"
     countKey = "count"
 
-    /** Get items count. */
-    get length(): number { return this.items.length }
+    get refs() { return this.repo.refs }
 
-    /** Get ids **/
-    get ids(): number[] { return this.items.map(v => v.id) }
+    constructor(...args) {
+        super(...args)
+        // this.$id = this.refs.acquireKey()
+    }
 
-    /** Get item by list index */
-    get(index: number): number { return index < this.items.length ? this.items[index] : null }
+    /** Return index for id */
+    indexOf(id: number) { return this.ids.indexOf(id) }
+
+    /** Destroy list, ensuring cleaning behind the scenes */
+    drop() {
+        // this.refs.flush(this.$id)
+        this.ids = []
+    }
 
     /** Reset list */
-    reset(items: M[] = []) {
-        this.items = items
+    reset(ids: ModelId[] = []) {
+        // this.refs.releaseAcquire(this.$id, this.ids, ids)
+        this.ids = ids
         this.nextUrl = null
         this.prevUrl = null
+        this.count = this.ids.length
     }
 
     /** Get item index by id */
-    findIndex(id: number): number { return this.items.findIndex((v) => v.id == id) }
-
-    /** Return True if item is in list */
-    contains(id: number): boolean { return this.findIndex(id) != -1 }
+    //findIndex(id: number): number { return this.items.findIndex((v) => v.id == id) }
 
     /** Add item if not present in list.
     *
-    * @param item - item to insert
+    * @param id - item id to insert
     * @param index - if provided insert at this position
     * @return item index if already in the list, else insertion one
     */
-    add(item: M, index?: number = null): boolean {
-        const idx = this.findIndex(item.id)
+    add(id: ModelId, index?: number = null): number {
+        const idx = this.ids.indexOf(id)
         if(idx != -1)
             return idx
 
+        // this.refs.acquire(this.$id, id)
         if(index !== null) {
-            this.items.splice(index, 1, item)
+            this.ids.splice(index, 0 , id)
             return index
         }
-        this.items.push(item)
-        return this.items.length-1
+        this.ids.push(id)
+        return this.ids.length-1
+    }
+
+    /** Remove item by id from list if present. */
+    remove(id: ModelId) {
+        const idx = this.ids.indexOf(id)
+        if(idx != -1) {
+            this.ids.splice(index, 1)
+            // this.refs.release(this.$id, id)
+        }
     }
 
     /**
@@ -126,9 +142,9 @@ export default class ModelList<M extends Model> extends ModelController<M, IMode
         if(item === null)
             return -1
 
-        const index = this.findIndex(item.id)
+        const index = this.ids.indexOf(item.id)
         const sibling = index >= 0 ? index+step : -1
-        return sibling >= 0 && sibling < this.items.length ? sibling : -1
+        return sibling >= 0 && sibling < this.ids.length ? sibling : -1
     }
 
     /**
@@ -148,6 +164,8 @@ export default class ModelList<M extends Model> extends ModelController<M, IMode
     protected getQueryOptions(options: IModelFetch<M>): IQueryFetch<M> {
         if(this.filters)
             options.params = {...this.filters, ...(options.params ?? [])}
+        if(this.page_size)
+            options.params = {...options.params, page_size: this.page_size}
         return super.getQueryOptions(options)
     }
 
@@ -158,29 +176,33 @@ export default class ModelList<M extends Model> extends ModelController<M, IMode
     async handleResponse({append=false, ...options}: IModelListFetch<M>, response: Response): Promise<Response> {
         response = await super.handleResponse(options, response)
         if(!this.state.isError) {
-            /*const ids = [...collectAttr(response.entities, 'id')]
-            if(typeof append == "number")
-                this.ids.splice(append, 0, ...ids)
-            else
-                this.ids = append ? this.ids.concat(ids) : ids
-                */
-            if(typeof append == "number")
-                this.items.splice(append, 0, ...response.entities)
-            else
-                this.items = append ? this.items.concat(response.entities) : response.entities
-
-            this.items = uniqWith(this.items, (a, b) => a.id == b.id)
+            const ids = collectAttr(response.entities, 'id')
+            this.resetIds([...ids])
             this.nextUrl = response.response.data[this.nextKey] || null
             this.prevUrl = response.response.data[this.prevKey] || null
-            this.count = response.response.data[this.countKey] || this.length
+            this.count = response.response.data[this.countKey] || this.ids.length
         }
         return response
+    }
+
+    resetIds(ids?: ModelId[], append=false) {
+        if(typeof append == "number") {
+            this.ids.splice(append, 0, ...ids)
+            // ids && this.refs.acquire(this.$id, ids)
+        }
+        else if(append) {
+            this.ids = union([this.ids, ids])
+            // ids && this.refs.acquire(this.$id, ids)
+        }
+        else {
+            // this.refs.releaseAcquire(this.$id, this.ids, ids)
+            this.ids = ids
+        }
     }
 }
 
 export default interface ModelList<M extends Model> extends IModelList<M> {
-    //ids: number[]
-    items: M[]
+    ids: number[]
     nextUrl: string|null
     prevUrl: string|null
     count: number|null

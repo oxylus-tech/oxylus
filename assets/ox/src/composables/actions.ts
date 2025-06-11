@@ -91,11 +91,10 @@ export function useAction<M extends Model,R>({props, user, emits=null}: IAction<
         if(props.confirm && !confirm(props.confirm))
             return
 
+        if(props.href)
+            return window.open(props.href, '_blank')
+
         processing.value = true
-        if(props.href) {
-            document.location.href = props.href
-            return
-        }
 
         let result : R = props.run(user, props.item, ...args)
         if(result instanceof Promise)

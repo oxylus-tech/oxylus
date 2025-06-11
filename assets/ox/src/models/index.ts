@@ -5,6 +5,8 @@ import type { ClassType } from '../utils'
 
 export * from './model'
 export * from './auth'
+export * from './repository'
+
 import type { Model } from './model'
 
 /** Shortcut to an object of repositories by model entity. */
@@ -12,7 +14,6 @@ export type Repos={[s: string]: Repository<Model>}
 
 /** Generic type for typing model classes. **/
 export type ModelType<T extends Model> = ClassType<T>
-
 
 /** Return relation based on field name or Relation field. */
 export function asRelation<M extends $Model>(repo: Repository<M>, relation: string|Relation): Relation|null {

@@ -1,12 +1,12 @@
 <template>
-    <v-list v-if="owner || folder" class="mt-6">
-        <v-list-group v-if="folder && user.can('ox_files.change_folder', folder)" >
+    <v-list v-if="props.owner || props.item" class="mt-6">
+        <v-list-group v-if="props.item && user.can('ox_files.change_folder', props.item)" >
             <template #activator="{props: props_}">
-                <v-list-item v-if="folder" :title="folder.name" prepend-icon="mdi-folder" v-bind="props_"/>
+                <v-list-item v-if="props.item" :title="props.item.name" prepend-icon="mdi-folder" v-bind="props_"/>
             </template>
-            <ox-model-editor :repo="repos.folders" :initial="folder">
+            <ox-model-editor :repo="repos.folders" :initial="props.item">
                 <template #default="{editor, edited}">
-                    <v-list-item v-if="folder">
+                    <v-list-item v-if="props.item">
                         <v-text-field :label="t('fields.name')"
                             v-model="editor.value.name"/>
                         <div class="text-right mb-1" v-if="edited">
@@ -36,34 +36,23 @@
     </v-list>
 </template>
 <script setup lang="ts">
-import {computed, inject, reactive, onMounted} from 'vue'
+import {computed, inject, reactive, defineEmits} from 'vue'
 import {query, t} from 'ox'
 import {OxModelEditor} from 'ox/components'
 
 import {useFolders} from '../composables'
 import OxFolderInput from './OxFolderInput'
 
+const emits = defineEmits(['updated'])
+
 const props = defineProps({
-    owner: String,
-    folder: String,
+    owner: Object,
+    item: Object,
+    list: Object,
 })
 
 const repos = useFolders()
 const user = inject('user')
-const owner = computed(() => {
-    if(props.owner) {
-        const res = repos.agents.whereId(props.owner).first()
-        if(!res)
-            query(repos.agents).fetch({id: props.owner})
-        return res
-    }
-})
-const folder = computed(() => props.folder && repos.folders.whereId(props.folder).first())
-
-onMounted(() => {
-    if(!owner.value && props.owner)
-        query(repos.agents).fetch({id: props.owner})
-})
 
 const newFolder = reactive({
     name: '',
@@ -71,13 +60,14 @@ const newFolder = reactive({
     async save() {
         try {
             const resp = await repos.folders.api().post(repos.folders.use.meta.url, {
-                parent: props.folder, name: this.name,
-                owner: props.owner
-            })
-            newFolder.value = null;
-            items.push(resp.entities[0])
+                parent: props.item?.id, name: this.name,
+                owner: props.owner.id
+            }, {save: false})
+            newFolder.name = '';
+            emits('updated')
         }
         catch(err) {
+            console.log(err)
             throw t("fields.folder.add_error")
         }
     }

@@ -41,6 +41,8 @@ const slots = useSlots()
 const forwardSlots = Object.keys(slots).filter(x => !(['list.filters', 'top'].includes(x)))
 
 const repos = useLocationModels()
+
+// FIXME: acquire/release
 query(repos.currencies).allOnce()
 
 const props = withDefaults(defineProps<IModelPanelProps>(), {

@@ -15,10 +15,3 @@ export function useFolders() : Object {
         Agent, models.Folder,
     ])
 }
-
-
-/** Update list filters based on {@link OxFolderNav} `selected` event. */
-export function onFolderNav(list, event) {
-    list.filters.folder__uuid = event.folder
-    list.filters.owner__uuid = event.owner
-}

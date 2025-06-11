@@ -94,9 +94,14 @@ const headers = computed(() => {
 
 
 function updateOptions(event) {
-    list.filters.page = event.page,
-    list.filters.page_size = event.itemsPerPage,
-    list.filters.ordering = event.sortBy.map(({key, order}) => order == 'asc' ? key : `-${key}`)
+    const params = {
+        ...list.filters,
+        page: event.page,
+        page_size: event.itemsPerPage,
+        ordering: event.sortBy.map(({key, order}) => order == 'asc' ? key : `-${key}`)
+    }
+    list.page_size = event.itemsPerPage
+    list.load({params})
 }
 
 function show(user, item) {

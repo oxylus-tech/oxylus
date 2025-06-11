@@ -68,7 +68,10 @@ export default class ModelController<M extends Model, O=IModelController<M>> {
             for(const relation of this.relations)
                 query = query.with(relation)
 
-        return ids ? query.whereId(ids) : query
+        if(ids !== null)
+            query = query.whereId(ids)
+
+        return first ? query.first() : query
     }
 
     /**
@@ -91,6 +94,7 @@ export default class ModelController<M extends Model, O=IModelController<M>> {
             response = await this.handleResponse(options, response)
         }
         catch(error) {
+            console.log(error)
             this.state.error(error)
         }
         if(!this.state.isError)

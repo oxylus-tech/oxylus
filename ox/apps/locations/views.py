@@ -60,6 +60,8 @@ class CurrencyViewSet(ModelViewSet):
         "name",
     ]
     filterset_fields = {
+        # TODO
+        # "uuid": ["exact", "in"],
         "code": ["exact"],
         "name": ["exact", "icontains"],
         "numeric": ["exact"],

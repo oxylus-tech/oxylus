@@ -5,9 +5,9 @@ from ox.core import conf
 
 
 class Settings(conf.Settings):
-    UPLOAD_TO = "uploads"
+    UPLOAD_TO = "ox_files/uploads"
     """ Subdirectory in media where to upload files. """
-    PREVIEW_TO = "previews"
+    PREVIEW_TO = "ox_files/previews"
     """ Directory in which to save previews. """
 
     FILE_SIZE_LIMIT = 15 * 1024 * 1024

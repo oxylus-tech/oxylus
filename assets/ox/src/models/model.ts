@@ -1,6 +1,10 @@
 import { Model as PModel, Relation } from 'pinia-orm'
 
 
+/** A model instance id **/
+export type ModelId = string|number
+
+
 export interface IMeta {
     /** Django application name providing the model. */
     app: string

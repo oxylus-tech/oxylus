@@ -19,6 +19,8 @@ export interface IQuery<M extends Model> {
      * relations.
      */
     repos: Repos
+    /** Default options to set to all {@link Query.fetch} calls */
+    opts: IQueryFetch<M>
 }
 
 /** {@link Query.fetch} parameters. */
@@ -89,9 +91,10 @@ export default class Query<M extends Model> {
     * @param {Repos} [repos] all models repositories
     * @param {Repository<M>} [repo] the main repository
     */
-    constructor(repo: Repository<M>, repos: Repos|null=null) {
+    constructor(repo: Repository<M>, repos: Repos|null=null, opts: IQueryFetch<M>) {
         this.repo = repo
         this.repos = repos
+        this.opts = opts
     }
 
     /**
@@ -107,7 +110,11 @@ export default class Query<M extends Model> {
      * @param [options.params] extra GET parameters
      * @param [options.opts] options passed down to ``repo.api.get``
      */
-    async fetch({url, id=null, ids=null, repo=null, lookup="id__in", params=undefined, relations=null, path=null, ...opts}: IQueryFetch<M> = {}) : Promise<Response> {
+    async fetch(options: IQueryFetch<M> = {}) : Promise<Response> {
+        options = {...this.opts, ...options}
+        let {url, id, ids, repo, lookup, params, relations, path, ...opts} = options
+
+        lookup ??= "id__in"
         repo ??= this.repo
 
         if(ids?.length === 1) {
@@ -118,8 +125,10 @@ export default class Query<M extends Model> {
         if(!url)
             url = repo.use?.meta?.getUrl({path, id})
 
-        if(!id)
-            opts.dataKey ??= repo.use?.config?.axiosApi?.dataKey
+        if(!id) {
+            if(!("dataKey" in opts))
+                opts.dataKey = repo.use?.config?.axiosApi?.dataKey
+        }
         else
             opts.dataKey = null
 
@@ -130,10 +139,21 @@ export default class Query<M extends Model> {
             params[lookup] = [...ids]
         }
         const response = await repo.api().get(url, {...opts, params})
+        if(opts.save === false)
+            response.entities = this.getEntities(response)
 
         if(relations)
             response.relations = await this.relations(response.entities, relations, {...opts, params: {}})
         return response
+    }
+
+    /** Get entities from response **/
+    getEntities(response) {
+        const data = response.getDataFromResponse()
+        if(Array.isArray(data))
+            return data.map((dat) => this.repo.make(dat))
+        else
+            return [this.repo.make(data)]
     }
 
     /**
@@ -144,8 +164,8 @@ export default class Query<M extends Model> {
      * @return Response of the first request, whoses ``entities`` has \
      * model instances of all requests.
      */
-    async all({nextKey='next', limit=-1, ...opts} : IQueryAll<M> ={}) : Promise<Response> {
-        const result = await this.fetch(opts)
+    async all({nextKey='next', limit=-1, flush=false, ...opts} : IQueryAll<M> ={}) : Promise<Response> {
+        const result = await this.fetch({flush, ...opts})
 
         let url = result.response.data[nextKey]
         while(url) {
@@ -235,11 +255,11 @@ export default interface Query<M extends Model> extends IQuery<M> {}
 
 
 /** Return a new {@link Query} based on repo's entity. */
-export function query<M extends Model>(repo: string|Repository<M>, repos?: Repos): Query<M> {
+export function query<M extends Model>(repo: string|Repository<M>, repos?: Repos, opts?: IQueryFetch<M>=null): Query<M> {
     if(typeof repo == "string") {
         if(!(repo in repos))
             throw Error(`Repository "${repo}" is not present in provided repositories.`)
-        return new Query(repos[repo] as unknown as Repository<M>, repos)
+        return new Query(repos[repo] as unknown as Repository<M>, repos, opts)
     }
-    return new Query(repo, repos)
+    return new Query(repo, repos, opts)
 }

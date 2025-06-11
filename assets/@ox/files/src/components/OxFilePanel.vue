@@ -9,22 +9,27 @@
         </template>
 
         <template #prepend="{list, panel}">
-            <v-navigation-drawer v-if="panel.view.startsWith('list.')" persistent>
-                <ox-folder-nav
-                    v-model="list.filters.folder__uuid"
-                    v-model:owner="list.filters.owner__uuid"
-                    />
-
-                <template #append>
-                    <ox-folder-nav-edit
-                        :folder="list.filters.folder__uuid"
-                        :owner="list.filters.owner__uuid"/>
-                </template>
-            </v-navigation-drawer>
+            <ox-folder-drawer
+                v-if="panel.view.startsWith('list.')"
+                v-model="list.filters.folder__uuid"
+                v-model:owner="list.filters.owner__uuid"
+                />
         </template>
 
         <template #item.preview="{item}" v-if="!slots['item.preview']">
             <v-img :src="item.preview" class="preview"/>
+        </template>
+
+        <template #item.name="{item}">
+            {{ item.name }}<br/>
+            <small v-if="item.$folder">{{ item.$folder.path }}</small>
+        </template>
+
+        <template #item.actions="{value, ...bind}">
+            <ox-action :href="value.file" icon="mdi-download"
+                :button="bind.button"
+                :title="t('actions.download')"/>
+            <slot name="item.actions" :value="value" v-bind="bind"/>
         </template>
 
         <template #views.detail.edit.default="{value, saved, list}">
@@ -45,20 +50,21 @@ import { ref, useSlots, withDefaults, watch } from 'vue'
 
 import { query, t } from 'ox'
 import type {IModelPanelProps} from 'ox'
-import {OxModelPanel} from 'ox/components'
+import {OxModelPanel, OxAction} from 'ox/components'
 
 import OxFileEdit from './OxFileEdit'
-import OxFolderNav from './OxFolderNav'
-import OxFolderNavEdit from './OxFolderNavEdit'
-import {useFilesModels, onFolderNav} from '../composables'
+import OxFolderDrawer from './OxFolderDrawer'
+import {useFilesModels} from '../composables'
+
+const drawer = ref(true)
 
 const slots = useSlots()
-const forwardSlots = Object.keys(slots).filter(x => !(['list.filters', 'top'].includes(x)))
+const forwardSlots = Object.keys(slots).filter(x => !(['list.filters', 'top', 'item.actions'].includes(x)))
 
 const repos = useFilesModels()
 const props = withDefaults(defineProps<IModelPanelProps>(), {
     name: 'files',
     relations: ['$folder'],
-    headers: ['preview', 'name', {title: 'fields.folder', key: "$folder.path"}, 'created', 'updated'],
+    headers: ['preview', 'name', 'updated'],
 })
 </script>

@@ -1,12 +1,10 @@
-import { inject, provide, computed, unref } from 'vue'
+import type {Constructor, Model} from 'pinia-orm'
+import { inject, provide } from 'vue'
 import { getActivePinia } from 'pinia'
-import { useRepo } from 'pinia-orm'
-import { useAxiosRepo } from '@pinia-orm/axios'
-import type {Ref} from 'vue'
-import type {Repository} from 'pinia-orm'
+import { useRepo as $useRepo } from 'pinia-orm'
 
-import { Model, User, Permissions } from '../models'
-import type {Repos, IPermissionItem} from '../models'
+import type {Repos} from '../models'
+import { Model, User, Repository } from '../models'
 
 
 export type Models = (typeof Model)[] | {[name: string]: (typeof Model)}
@@ -19,6 +17,18 @@ export interface IUseModelOpts {
     useInject?: boolean
     /** Use default models */
     useDefaults?: boolean
+    /** Store subkey (see {@link useModel}) **/
+}
+
+
+/**
+ * Use repository for the provided model.
+ */
+export function useRepo<M extends Model>(model: Constructor<M>): Repository<M> {
+    $useRepo(model)
+    const pinia = getActivePinia()
+    Repository.useModel = model as unknown as typeof Model
+    return $useRepo(Repository<Model>, pinia)
 }
 
 /**
@@ -31,7 +41,8 @@ export interface IUseModelOpts {
  *
  * `provide()` those values if not already provided.
  */
-export function useModels(models: Models, {useInject=true, useDefaults=true}: IUseModelOpts = {}) {
+export function useModels(models: Models, {useInject=true, useDefaults=true, key=null}: IUseModelOpts = {}): Record<str, Repository<Model>>
+{
     var repos : Repos = useInject && (inject('repos') || {}) as Repos
     const injected = (useInject && !!Object.keys(repos).length)
 
@@ -46,26 +57,10 @@ export function useModels(models: Models, {useInject=true, useDefaults=true}: IU
             if(model.entity in repos)
                 continue
 
-            // there might be a bug here, without useRepo, axios is
-            // null on repositories
-            useRepo(model)
-            repos[model.entity] = useAxiosRepo(model) as Repository<Model>
+            // there might be a bug here, without useRepo, axios is null on repositories
+            repos[model.entity] = useRepo(model)
         }
 
     !injected && provide("repos", repos)
     return repos
-}
-
-
-export function usePermissionsProps() {
-    return {
-        permissions: [String, Function, Object, Array],
-    }
-}
-
-
-export function usePermissions(user: User|Ref<User>, perms: IPermissionItem[], value: Model) {
-    const permissions = perms instanceof Permissions ? perms : new Permissions(perms)
-    const allowed = computed(() => permissions.can(unref(user), unref(value)))
-    return { permissions, allowed }
 }

@@ -43,7 +43,7 @@ class AppView(LoginRequiredMixin, AppView):
 
 
 class FolderViewSet(OwnedViewSet):
-    queryset = Folder.objects.all()
+    queryset = Folder.objects.all().order_by("-updated")
     serializer_class = serializers.FolderSerializer
     filterset_class = filters.FolderFilterSet
     search_fields = ["path"]
