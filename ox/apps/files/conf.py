@@ -30,6 +30,7 @@ class Settings(conf.Settings):
     PROCESSORS = [
         "ox.apps.files.processors.ImageProcessor",
         "ox.apps.files.processors.PDFProcessor",
+        "ox.apps.files.processors.LibreOfficeProcessor",
     ]
     """ List of file processors. """
 

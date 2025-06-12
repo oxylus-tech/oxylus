@@ -4,16 +4,12 @@
         <v-list-item prepend-icon="mdi-account-key"                :active="!item" @click.capture.stop="load()">
             <ox-agent-select ref="agent" icon="" density="compact" v-model="owner" hide-details/>
         </v-list-item>
-        <v-list-item v-for="item, id in parents" :key="item.id"
-            :title="item.name" :value="item"
-            prepend-icon="mdi-folder-upload" nav/>
-        <v-list-item v-if="item"
-            :title="item.name" :value="item" active
-            prepend-icon="mdi-folder-open"
-            @click.capture.stop="unselect()"/>
-        <v-list-item v-for="item in items" :key="item.id"
-            :title="item.name" :value="item" class="ml-3"
-            prepend-icon="mdi-folder" nav/>
+        <v-list-item v-for="obj in items" :key="obj.id"
+            :title="obj.name" :value="obj"
+            :class="item && obj.level > item.level ? 'ml-3' : ''"
+            :prepend-icon="getIcon(obj)" nav
+            />
+        <!-- @click.capture.stop="item.id == folder && unselect()" -->
     </v-list>
 </template>
 <script setup lang="ts">
@@ -54,67 +50,50 @@ const findIndex = (list, id) => list.findIndex((v) => v.id == id)
 
 /** Unselect current item (go to parent) */
 function unselect() {
-    load(parents.length ? parents[parents.length-1] : null)
+    load(obj.parent)
 }
 
+
+function getIcon(obj) {
+    if(!item.value)
+        return 'mdi-folder'
+    return obj.level < item.value.level ? 'mdi-folder-upload' :
+           obj.id == item.value.id ? 'mdi-folder-open' : 'mdi-folder'
+}
 
 /**
  * Select a folder, by object or uuid
  * It fetches parents and children from API when required.
  */
 async function load(obj: string|Model, force: boolean =false) {
-    if(typeof obj == "string") {
-        if(obj == item.value)
-            return
-        const resp = await list.query.fetch({id: obj, save: false})
-        obj = resp.entities[0]
+    list.filters = { owner__uuid: owner.value, ordering: 'name' }
+
+    if(obj) {
+        if(obj.parent) {
+            await list.load({ params: { ancestors: obj.id }})
+            list.ids.push(obj.id)
+        }
+        else
+            list.ids = [obj.id]
     }
+    else
+        list.ids = []
 
     folder.value = obj?.id
     item.value = obj
 
-    if(obj) {
-        // remove obj from parents if found
-        const idx = findIndex(parents, obj.id)
-        idx != -1 && parents.splice(idx)
-    }
-    await loadParents(obj)
-
-    list.filters = { owner__uuid: owner.value, ordering: 'name' }
+    const params = {}
     if(obj?.id)
-        list.filters.parent__uuid = obj.id
+        params.parent__uuid = obj.id
     else
-        list.filters.root = "true"
+        params.root = "true"
 
-    return await list.load()
+    await list.load({append: true, params})
 }
 
 /** Reload current opened folder */
 async function reload() {
     return await load(item.value)
-}
-
-/**
- * Sync folder's ancestors to parents list.
- */
-async function loadParents(obj) {
-    if(!obj?.parent)
-        return parents.splice(0)
-
-    if(obj.parent == item.value?.id)
-        parents.push(item.value)
-    else {
-        const idx = findIndex(parents, obj.parent)
-        // load parents if not found
-        if(idx == -1) {
-            const params = { ancestors: obj.id }
-            const resp = await list.query.fetch({params, save: false})
-            parents.splice(0, parents.length, ...resp.entities)
-        }
-        // otherwise, splice
-        else if(idx < parents.length-1)
-            parents.splice(idx+1)
-    }
 }
 
 onMounted(() => owner.value && load(folder.value))

@@ -14,6 +14,7 @@ export class Folder extends Owned {
     static fields() {
         return {
             ...super.fields(),
+            level: this.number(),
             parent: this.string(),
             name: this.string(),
             path: this.string(),

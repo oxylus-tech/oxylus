@@ -133,6 +133,7 @@
     "fields.path": "Path",
     "fields.preview": "Preview",
     "fields.caption": "Caption",
+    "fields.file_size": "File Size",
     "fields.caption.help": "Caption displayed below the file.",
     "fields.alternate": "Alternative text",
     "fields.alternate.help": "Alternative text displayed when file can not be displayed.",

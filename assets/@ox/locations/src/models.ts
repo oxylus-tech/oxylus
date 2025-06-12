@@ -1,5 +1,4 @@
 import { models, t } from "ox"
-import type { IModel } from "ox"
 
 
 export class Currency extends models.Model {
@@ -33,6 +32,8 @@ export class Country extends models.Model {
         url: "ox/locations/country/",
         title: "name"
     })
+
+    static _continentItems : Record<string, string>
 
     static fields() {
         return {

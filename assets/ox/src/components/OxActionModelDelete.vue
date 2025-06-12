@@ -1,6 +1,5 @@
 <template>
-    <ox-action
-        :item="props.item" :button="props.button"
+    <ox-action v-bind="attrs" :item="props.item"
         icon="mdi-delete" color="error"
         :title="t('actions.delete')" :confirm="t('actions.delete.confirm')"
         :permission="[props.item.constructor , 'delete']"
@@ -8,7 +7,7 @@
     />
 </template>
 <script setup lang="ts">
-import { defineProps, inject } from 'vue'
+import { defineProps, inject, useAttrs } from 'vue'
 import { t } from 'ox'
 
 import OxAction from './OxAction.vue'
@@ -16,9 +15,9 @@ import OxAction from './OxAction.vue'
 const panel = inject('panel')
 const repos = inject('repos')
 
+const attrs = useAttrs()
 const props = defineProps<{
     item: Object
-    button?: boolean
 }>()
 
 async function run(user, item) {

@@ -13,6 +13,9 @@ export type IObjectKey = string|number
 export type IObject<V=any> = {[k: IObjectKey]: V}
 
 
+export type RecordKey = string|number
+
+
 /**
  * From list of objects and attribute name, return a Set with all values
  * taken from them.
@@ -21,7 +24,7 @@ export type IObject<V=any> = {[k: IObjectKey]: V}
  * @param attr - attribute name to look for.
  * @return a `Set` of collected values.
  */
-export function collectAttr(objs: Record[], attr: string): Set<any> {
+export function collectAttr(objs: Record<string, any>[], attr: string): Set<any> {
     let dest : Set<any> = new Set()
     for(const obj of objs) {
         const vals = obj[attr]
@@ -40,7 +43,7 @@ export function collectAttr(objs: Record[], attr: string): Set<any> {
  * Either a function returning the created value or an object to take values from
  * @name MapKeysPred
  */
-export type MapKeysPred = Record | ((key: RecordKey) => any)
+export type MapKeysPred = Record<string, any> | ((key: RecordKey) => any)
 
 
 /**
@@ -50,7 +53,7 @@ export type MapKeysPred = Record | ((key: RecordKey) => any)
  * @property map - take value from this object or calling this function.
  * @return newly created object.
  */
-export function mapToObject(keys: Record | Array<RecordKey>, map: MapKeysPred | Record) : Record<RecordKey> {
+export function mapToObject(keys: Record<string, any> | Array<RecordKey>, map: MapKeysPred | Record<string, any>) : Record<RecordKey> {
     if(!Array.isArray(keys))
         keys = Object.keys(keys)
     return keys.reduce((dest: Record, key: RecordKey) => {
@@ -62,7 +65,7 @@ export function mapToObject(keys: Record | Array<RecordKey>, map: MapKeysPred | 
 /**
  * Same as `Object.assign`, but skipping empty values
  */
-export function assignNonEmpty(target: Record, source: Record) {
+export function assignNonEmpty(target: Record<string, any>, source: Record<string, any>) {
     if(!source)
         return
 
@@ -79,7 +82,7 @@ export function assignNonEmpty(target: Record, source: Record) {
  * @param [assign] assign using this object
  * @return the object passed as target.
  */
-export function reset(target: Record, assign: Record|undefined=undefined) : Record {
+export function reset(target: Record<string, any>, assign: Record<string, any>|undefined=undefined) : Record {
     for(const key of Object.keys(target)) {
         const val = assign?.[key]
         if(!assign || val === undefined)
@@ -99,7 +102,7 @@ export function reset(target: Record, assign: Record|undefined=undefined) : Reco
  * Shallow copy of a class instance
  * Assign extra `attrs` attributes.
  */
-export function shallowCopy(source: Record, attrs: Record={}) {
+export function shallowCopy(source: Record<string, any>, attrs: Record<string, any>={}) {
     const clone = Object.create(Object.getPrototypeOf(source))
     return Object.assign(clone, {...source, ...attrs})
 }
@@ -109,7 +112,7 @@ export function shallowCopy(source: Record, attrs: Record={}) {
  * Return two objects from the provided one with the first one having
  * values specified by keys, other with what's left.
  */
-export function splitValues(source: Record, keys: Record|string[]) {
+export function splitValues(source: Record<string, any>, keys: Record<string, any>|string[]) {
     if(!Array.isArray(keys))
         keys = Object.keys(keys)
     return Object.keys(source).reduce((dst, key) => {
@@ -125,7 +128,7 @@ export function splitValues(source: Record, keys: Record|string[]) {
 /**
  * Return a new object from provided one with only specified values.
  */
-export function filterValues(source: Record, keys: string[]) {
+export function filterValues(source: Record<string, any>, keys: string[]) {
     return Object.keys(source).reduce((dst, key) => {
         if(keys.indexOf(key) != -1)
             dst[key] = source[key]
@@ -136,7 +139,7 @@ export function filterValues(source: Record, keys: string[]) {
 /**
  * Return a new object from provided one with specified values excluded.
  */
-export function excludeValues(source: Record, keys: string[]) {
+export function excludeValues(source: Record<string, any>, keys: string[]) {
     return Object.keys(source).reduce((dst, key) => {
         if(keys.indexOf(key) == -1)
             dst[key] = source[key]

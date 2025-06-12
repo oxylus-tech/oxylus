@@ -6,7 +6,7 @@
 </template>
 <script setup lang="ts">
 import { inject, useAttrs } from "vue"
-import { t, reset } from "ox"
+import { t } from "ox"
 import {OxAction} from "ox/components"
 
 import {useTasksModels} from "../composables"

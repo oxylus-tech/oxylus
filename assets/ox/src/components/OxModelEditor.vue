@@ -36,7 +36,8 @@ const {editor, edited} = useModelEditor({props})
 const editable = computed(() => user.can([editor.repo.use, 'change', props.initial]))
 
 const bind = computed(() => ({
-    editor, edited,
+    editor,
+    edited: edited.value,
     form: form.value,
     editable: editable.value,
     disabled: !editable.value,

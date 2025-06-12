@@ -68,7 +68,7 @@ ox_assets = Assets(
     Asset("axios", "esm/axios.min.js"),
     Asset("vue", "vue.esm-browser.prod.js", dev_js="vue.esm-browser.js"),
     Asset("@mdi/font", css="css/materialdesignicons.min.css", dist=""),
-    # Asset("vuetify", css="vuetify.min.css"),
+    Asset("vuetify", css="vuetify.min.css"),
     # note:
     Asset("ox", "ox.js", css="style.css", static_dir="ox"),
     Asset("ox/components", "components.js", static_dir="ox"),

@@ -62,7 +62,7 @@ function reset() {
 function save() {
     const me = modelEditor.value
     if(props.sendFormData)
-        return me.editor.save(new FormData(me.form.value.$el))
+        return me.editor.save(new FormData(me.form.$el))
     else
         return me.editor.save()
 }

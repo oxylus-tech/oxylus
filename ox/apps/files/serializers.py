@@ -12,8 +12,8 @@ class FolderSerializer(OwnedSerializer):
 
     class Meta:
         model = models.Folder
-        exclude = ["tree_id", "level"]
-        read_only_fields = ["created", "updated"]
+        exclude = ["tree_id"]
+        read_only_fields = ["created", "updated", "level"]
 
 
 class FileSerializer(OwnedSerializer):

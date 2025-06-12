@@ -1,19 +1,24 @@
 <template>
     <v-list v-if="props.owner || props.item" class="mt-6">
-        <v-list-group v-if="props.item && user.can('ox_files.change_folder', props.item)" >
+        <v-list-group v-if="props.item && user.can('ox_files.change_folder', props.item)" class="mb-1">
             <template #activator="{props: props_}">
                 <v-list-item v-if="props.item" :title="props.item.name" prepend-icon="mdi-folder" v-bind="props_"/>
             </template>
             <ox-model-editor :repo="repos.folders" :initial="props.item">
                 <template #default="{editor, edited}">
-                    <v-list-item v-if="props.item">
+                    <v-list-item>
                         <v-text-field :label="t('fields.name')"
                             v-model="editor.value.name"/>
-                        <div class="text-right mb-1" v-if="edited">
-                            <v-btn :text="t('actions.save')" size="small"
-                                prepend-icon="mdi-content-save"
-                                @click.stop="editor.save()"/>
-                        </div>
+                        <v-row>
+                            <v-col cols="auto">
+                                <ox-action-model-delete :item="props.item" button density="compact"/>
+                            </v-col>
+                            <v-col v-if="edited" class="text-right">
+                                <v-btn :text="t('actions.save')" size="small"
+                                    prepend-icon="mdi-content-save"
+                                    @click.stop="editor.save()"/>
+                            </v-col>
+                        </v-row>
                     </v-list-item>
                 </template>
             </ox-model-editor>
@@ -25,9 +30,8 @@
             </template>
             <v-list-item>
                 <v-text-field :placeholder="t('fields.name')" v-model="newFolder.name"/>
-                <div class="text-right">
+                <div class="text-right" v-if="newFolder.name">
                     <v-btn prepend-icon="mdi-plus" size="small"
-                        :disabled="!newFolder.name"
                         :text="t('actions.add')"
                         @click="newFolder.save()"/>
                 </div>
@@ -38,7 +42,7 @@
 <script setup lang="ts">
 import {computed, inject, reactive, defineEmits} from 'vue'
 import {query, t} from 'ox'
-import {OxModelEditor} from 'ox/components'
+import {OxModelEditor, OxActionModelDelete} from 'ox/components'
 
 import {useFolders} from '../composables'
 import OxFolderInput from './OxFolderInput'
@@ -46,9 +50,8 @@ import OxFolderInput from './OxFolderInput'
 const emits = defineEmits(['updated'])
 
 const props = defineProps({
-    owner: Object,
+    owner: String,
     item: Object,
-    list: Object,
 })
 
 const repos = useFolders()

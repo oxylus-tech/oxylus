@@ -4,7 +4,6 @@ import type { Response } from '@pinia-orm/axios'
 
 import Config from '../config'
 import { assignNonEmpty, reset, State } from '../utils'
-import type { Model } from '../models'
 
 
 export interface IEditorProps<T> {

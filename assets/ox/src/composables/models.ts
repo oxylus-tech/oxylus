@@ -1,4 +1,4 @@
-import type {Constructor, Model} from 'pinia-orm'
+import type {Constructor, Model as $Model} from 'pinia-orm'
 import { inject, provide } from 'vue'
 import { getActivePinia } from 'pinia'
 import { useRepo as $useRepo } from 'pinia-orm'
@@ -27,7 +27,7 @@ export interface IUseModelOpts {
 export function useRepo<M extends Model>(model: Constructor<M>): Repository<M> {
     $useRepo(model)
     const pinia = getActivePinia()
-    Repository.useModel = model as unknown as typeof Model
+    Repository.useModel = model as unknown as typeof $Model
     return $useRepo(Repository<Model>, pinia)
 }
 

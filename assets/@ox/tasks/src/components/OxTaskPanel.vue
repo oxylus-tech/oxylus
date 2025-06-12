@@ -7,7 +7,7 @@
     </ox-model-panel>
 </template>
 <script setup lang="ts">
-import { ref, useSlots, withDefaults, onMounted } from 'vue'
+import { ref, useSlots, withDefaults } from 'vue'
 
 import { t } from 'ox'
 import {OxModelPanel} from 'ox/components'

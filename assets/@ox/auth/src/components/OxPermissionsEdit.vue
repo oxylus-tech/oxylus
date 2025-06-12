@@ -11,7 +11,10 @@
         <tbody>
             <template v-for="(cts, label) in contentTypes">
                 <tr>
-                   <th colspan="6">{{ label }}</th>
+                   <th>{{ label }}</th>
+                   <th v-for="action in crudActions">
+                       <v-checkbox-btn @click="selectAll(action, cts, $event)" />
+                   </th>
                 </tr>
                 <template v-for="ct in cts">
                     <tr>
@@ -76,10 +79,7 @@ tbody td:not(:first-child) {
 </style>
 <script setup>
 import { inject, computed, ref, defineProps, defineModel, toRefs } from 'vue'
-import { VChip } from 'vuetify/components/VChip'
-import { VTable } from 'vuetify/components/VTable'
-import { VCheckboxBtn } from 'vuetify/components/VCheckbox'
-import { VSpacer } from 'vuetify/components'
+import { union, without } from 'lodash'
 
 const repos = inject("repos")
 const $user = inject("user")
@@ -137,5 +137,15 @@ const ctPermissions = computed(() => {
     return result
 })
 
+
+function selectAll(action, cts, event) {
+    const checked = event.target.checked
+    const perms = cts.map(ct => ct.getPermission(action).id)
+
+    if(checked)
+        model.value = union(model.value, perms)
+    else
+        model.value = without(model.value, ...perms)
+}
 
 </script>

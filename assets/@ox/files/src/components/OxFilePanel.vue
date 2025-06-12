@@ -25,6 +25,8 @@
             <small v-if="item.$folder">{{ item.$folder.path }}</small>
         </template>
 
+        <template #item.file_size="{item}">{{ formatBytes(item.file_size) }}</template>
+
         <template #item.actions="{value, ...bind}">
             <ox-action :href="value.file" icon="mdi-download"
                 :button="bind.button"
@@ -55,6 +57,7 @@ import {OxModelPanel, OxAction} from 'ox/components'
 import OxFileEdit from './OxFileEdit'
 import OxFolderDrawer from './OxFolderDrawer'
 import {useFilesModels} from '../composables'
+import { formatBytes } from '../utils'
 
 const drawer = ref(true)
 
@@ -65,6 +68,6 @@ const repos = useFilesModels()
 const props = withDefaults(defineProps<IModelPanelProps>(), {
     name: 'files',
     relations: ['$folder'],
-    headers: ['preview', 'name', 'updated'],
+    headers: ['preview', 'name', 'file_size', 'updated'],
 })
 </script>

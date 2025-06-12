@@ -1,8 +1,7 @@
 import type {Response} from '@pinia-orm/axios'
-import {union} from 'lodash'
+import {union, map} from 'lodash'
 
 import type {Model, ModelId} from '../models'
-import {collectAttr} from '../utils'
 
 import type {IQueryFetch} from './query'
 import type {IModelController, IModelFetch} from './modelController'
@@ -74,7 +73,7 @@ export default class ModelList<M extends Model> extends ModelController<M, IMode
     prevKey = "previous"
     countKey = "count"
 
-    get refs() { return this.repo.refs }
+    get length() { return this.ids.length }
 
     constructor(...args) {
         super(...args)
@@ -162,7 +161,7 @@ export default class ModelList<M extends Model> extends ModelController<M, IMode
     }
 
     protected getQueryOptions(options: IModelFetch<M>): IQueryFetch<M> {
-        if(this.filters)
+        if(!("filters" in options) && this.filters)
             options.params = {...this.filters, ...(options.params ?? [])}
         if(this.page_size)
             options.params = {...options.params, page_size: this.page_size}
@@ -170,14 +169,16 @@ export default class ModelList<M extends Model> extends ModelController<M, IMode
     }
 
     /**
-     * Handle response from API.
-     * Reset list and context information such as next/prev url, total count.
+     * Handle response from API: update owned items list and related information (next/prev url, total count).
+     *
+     * Theses informations will not be set if `options.save == false`. You
+     * can however call this method later if you need to defer persistence.
      */
     async handleResponse({append=false, ...options}: IModelListFetch<M>, response: Response): Promise<Response> {
         response = await super.handleResponse(options, response)
-        if(!this.state.isError) {
-            const ids = collectAttr(response.entities, 'id')
-            this.resetIds([...ids])
+        if(!this.state.isError && options.save !== false) {
+            const ids = map(response.entities, 'id')
+            this.setIds(ids, append)
             this.nextUrl = response.response.data[this.nextKey] || null
             this.prevUrl = response.response.data[this.prevKey] || null
             this.count = response.response.data[this.countKey] || this.ids.length
@@ -185,19 +186,16 @@ export default class ModelList<M extends Model> extends ModelController<M, IMode
         return response
     }
 
-    resetIds(ids?: ModelId[], append=false) {
-        if(typeof append == "number") {
+    /**
+     * Update ids with the provided ones.
+     */
+    setIds(ids?: ModelId[], append: boolean|number =false) {
+        if(typeof append == "number")
             this.ids.splice(append, 0, ...ids)
-            // ids && this.refs.acquire(this.$id, ids)
-        }
-        else if(append) {
-            this.ids = union([this.ids, ids])
-            // ids && this.refs.acquire(this.$id, ids)
-        }
-        else {
-            // this.refs.releaseAcquire(this.$id, this.ids, ids)
+        else if(append && this.ids.length)
+            this.ids = union(this.ids, ids)
+        else
             this.ids = ids
-        }
     }
 }
 

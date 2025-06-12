@@ -13,7 +13,6 @@
 </template>
 <script setup lang="ts">
 import { useAttrs, ref, inject, useSlots, watch } from 'vue'
-import {reset} from 'ox'
 import {OxModelPanel} from 'ox/components'
 import OxAgentSelect from './OxAgentSelect'
 
