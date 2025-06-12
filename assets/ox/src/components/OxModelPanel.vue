@@ -91,9 +91,10 @@
                         :disabled="!panel.value?.id && panel.view != 'detail.edit'"
                         :title="t('panels.nav.edit')"
                         :aria-label="t('panels.nav.edit')">
-                    <v-icon>mdi-pencil</v-icon>
+                    <v-icon v-if="user.can([panel.model, 'change'])">mdi-pencil</v-icon>
+                    <v-icon v-else>mdi-eye</v-icon>
                 </v-btn>
-                <v-btn value="detail.add" v-if="editSlots"
+                <v-btn value="detail.add" v-if="editSlots && user.can([panel.model, 'add'])"
                         @click.capture.stop="panel.create()"
                         :title="t('panels.nav.add')"
                         :aria-label="t('panels.nav.add')">
@@ -168,6 +169,7 @@ const props = withDefaults(defineProps<IModelPanelProps>(), {
 })
 
 const context = inject('context')
+const user = inject('user')
 const {panel, list, items, next, prev} = inject('panel') ?? useModelPanel({props})
 const panels = panel.panels
 
