@@ -19,11 +19,6 @@ class FolderSerializer(OwnedSerializer):
 class FileSerializer(OwnedSerializer):
     folder = RelatedField(required=False, allow_null=True, queryset=models.Folder.objects.all())
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        if self.instance:
-            self.fields["file"].read_only = True
-
     class Meta:
         model = models.File
         fields = "__all__"

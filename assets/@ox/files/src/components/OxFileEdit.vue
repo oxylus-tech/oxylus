@@ -2,21 +2,42 @@
     <ox-model-edit ref="modelEdit" v-bind="props" :repo="repos.files"
             :initial="initial"
             :hide-validation-btn="!props.initial?.id"
-            :send-form-data="!props.initial?.id"
+            send-form-data
+            @saved="onSaved"
             >
         <template #default="{editor, editable, edited, save}">
+            <input v-if="editor.value.id" type="hidden" name="id" :value="editor.value.id"/>
             <v-row class="mb-3">
-                <v-col cols="3" v-if="editor.value?.preview" class="text-center">
+                <v-col cols="3" v-if="editor.value?.id && !openUpload" class="text-center">
                     <figure class="mb-3">
-                        <v-img :src="editor.value.preview" aria-hidden="true"/>
+                        <v-img min-height="400" :src="editor.value.preview" aria-hidden="true">
+                            <template v-slot:placeholder>
+                                <div class="d-flex align-center justify-center fill-height">
+                                    <v-progress-circular
+                                    color="grey-lighten-4"
+                                    indeterminate/>
+                                    >
+                                </div>
+                            </template>
+                        </v-img>
                     </figure>
 
                     <v-btn :href="editor.value.file" target="_blank"
                         prepend-icon="mdi-download" :text="t('actions.download')" />
+                    <v-btn target="_blank" class="ml-1"
+                        size="small" color="secondary"
+                        @click="openUpload=true"
+                        icon="mdi-upload" :title="t('actions.upload_new_file')" />
                 </v-col>
                 <v-col cols="3" v-else>
-                    <ox-file-upload name="file" v-model="editor.value.file"
-                        @change="editor.value.name = $event.name"/>
+                    <v-btn v-if="editor.value.id" class="float-right"
+                        icon="mdi-close" size="small" color="secondary"
+                        :title="t('actions.close')"
+                        :aria-label="t('actions.close')"
+                        @click="openUpload=false"
+                        />
+                    <ox-file-upload name="file"
+                        @change="onFileChange($event, editor)"/>
                 </v-col>
                 <v-col>
                     <v-text-field name="name"
@@ -41,7 +62,7 @@
 
                     <div class="text-right">
                         <v-btn v-if="!editor.value?.id" color="primary"
-                            :disabled="!editor.value?.file"
+                            :disabled="!editor.valid"
                             :text="t('actions.upload')" prepend-icon="mdi-upload"
                             @click="save()"/>
                     </div>
@@ -99,9 +120,37 @@ interface IFileEditProps extends IModelEditorProps {
 const repos = useFilesModels()
 const props = defineProps<IFileEditProps>()
 const modelEdit = ref(null)
+const openUpload = ref(false)
 const initial = computed(() =>
     (props.initial?.id) ? props.initial : {
         ...props.initial, owner: props.owner, folder: props.folder
     }
 )
+
+
+function onFileChange(event, editor) {
+    editor.value.file = event
+    if(editor.value.name && !confirm(t('fields.name.update_filename')))
+        return
+    event?.name && (editor.value.name = event.name)
+}
+
+
+function onSaved(editor) {
+    openUpload.value = false
+    refresh(editor, editor.initial)
+}
+
+
+function refresh(editor, item) {
+    if(item.id && !item.preview)
+        query(repos.files).fetch({id: item.id}).then(r => {
+            const obj = r.entities?.[0]
+            if(!obj.preview)
+                window.setTimeout(() => refresh(editor, obj), 2000)
+            else
+                editor.value.preview = obj.preview
+        })
+}
+
 </script>

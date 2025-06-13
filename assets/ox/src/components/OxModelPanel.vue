@@ -86,7 +86,7 @@
                         :aria-label="t('panels.nav.kanban')">
                     <v-icon>mdi-view-column</v-icon>
                 </v-btn>
-                <v-btn value="detail.edit" v-if="slots['views.detail.edit'] || editSlots"
+                <v-btn value="detail.edit" v-if="hasEdit"
                         @click.capture.stop="panel.show({view: 'detail.edit', value: panel.value})"
                         :disabled="!panel.value?.id && panel.view != 'detail.edit'"
                         :title="t('panels.nav.edit')"
@@ -94,7 +94,7 @@
                     <v-icon v-if="user.can([panel.model, 'change'])">mdi-pencil</v-icon>
                     <v-icon v-else>mdi-eye</v-icon>
                 </v-btn>
-                <v-btn value="detail.add" v-if="editSlots && user.can([panel.model, 'add'])"
+                <v-btn value="detail.add" v-if="hasEdit && user.can([panel.model, 'add'])"
                         @click.capture.stop="panel.create()"
                         :title="t('panels.nav.add')"
                         :aria-label="t('panels.nav.add')">
@@ -121,7 +121,7 @@
 
         <!-- list.table is always provided -->
         <template #views.list.table v-if="!slots['views.list.table']">
-            <ox-list-table :headers="headers">
+            <ox-list-table :headers="headers" :edit="hasEdit">
                 <template v-for="(_, name) in itemSlots" v-slot:[name]="bind" :key="name">
                     <slot :name="name" v-bind="bind"/>
                 </template>
@@ -133,7 +133,7 @@
         </template>
 
         <!-- FIXME: views.detail.edit shall be sloted too, not only nested ones? -->
-        <template #views.detail.edit v-if="slots['views.detail.edit'] || editSlots">
+        <template #views.detail.edit v-if="hasEdit">
             <ox-view :title="t(`models.${panel.model.entity}`)">
                 <template v-for="(name, slot) in editSlots" #[name]>
                     <slot :name="slot" v-bind="bind"/>
@@ -160,6 +160,7 @@ const slots = useSlots()
 const viewsListSlots = filterSlots(slots, 'views.list.')
 const itemSlots = filterSlots(slots, 'item.')
 const editSlots = filterSlots(slots, 'views.detail.edit.')
+const hasEdit = computed(() => !!Object.keys(editSlots).length)
 
 const filters = useTemplateRef('filters')
 const props = withDefaults(defineProps<IModelPanelProps>(), {
@@ -185,10 +186,8 @@ const headers = computed(() => [
 
 /** This is called by editors once object has been saved */
 function saved(item) {
-    if(item?.id)
-        panel.value = panel.repo.whereId(item.id).first()
-    else
-        panel.value = item
+    item = new props.repo.use(item)
+    panel.show({view: panel.view, value: item})
     list.load()
 }
 

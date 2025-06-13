@@ -1,7 +1,0 @@
-export { VAlert } from 'vuetify/components/VAlert';
-export { VBtn } from 'vuetify/components/VBtn';
-export { VContainer, VSpacer, VCol, VRow } from 'vuetify/components/VGrid';
-export { VDivider } from 'vuetify/components/VDivider';
-export { VIcon } from 'vuetify/components/VIcon';
-export { VList, VListItem, VListGroup, VListSubheader } from 'vuetify/components/VList';
-export { VSheet } from 'vuetify/components/VSheet';

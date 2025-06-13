@@ -1,9 +1,9 @@
 from __future__ import annotations
 
-from pathlib import Path
 from uuid import uuid4
 
 from django.db import models
+from django.conf import settings
 from django.core.exceptions import PermissionDenied, ValidationError
 from django.utils.translation import gettext_lazy as _
 
@@ -73,7 +73,7 @@ class Folder(Named, Timestamped, Owned, TreeNode):
             raise PermissionDenied(f"Owner of `{self.name}` directory should be the same.")
 
         if File.objects.filter(folder=self.parent, name=self.name):
-            raise ValidationError(f"A file `{self.name}` already exists in {self.parent.name}.")
+            raise ValidationError({"name": f"A file `{self.name}` already exists in {self.parent.name}."})
 
     def rename(self, name: str, save: bool = True):
         """Rename folder."""
@@ -113,8 +113,8 @@ class FileQuerySet(SaveHookQuerySet, OwnedQuerySet):
         :param update: if True (default), update queryset fields.
         """
         for file, preview in self.values_list("file", "preview"):
-            Path(file).unlink(missing_ok=True)
-            preview and Path(preview).unlink(missing_ok=True)
+            (settings.MEDIA_ROOT / file).unlink(missing_ok=True)
+            preview and (settings.MEDIA_ROOT / preview).unlink(missing_ok=True)
 
         if update:
             self.update(file=None, preview=None)
@@ -191,15 +191,20 @@ class File(Described, Timestamped, SaveHook, Owned):
             query = query.exclude(pk=self.pk)
 
         if query.exists():
-            raise ValidationError("Another file exists for this path.")
+            raise ValidationError({"name": "Another file exists for this path."})
 
         if Folder.objects.filter(parent_id=self.folder_id, **kw):
-            raise ValidationError("A folder exists for this path.")
+            raise ValidationError({"name": "A folder exists for this path."})
 
-    def read_mime_type(self, save: bool = True):
-        """Read mime-type from file"""
+    def read_mime_type(self, save: bool = True) -> str:
+        """Read mime-type from file and update corresponding field.
+
+        :param save: save object instance
+        :return the mime type
+        """
         self.mime_type = processors.registry.read_mime_type(self.file.path)
         save and self.save()
+        return self.mime_type
 
     def get_processor(
         self, save: bool = True, registry: processors.FileProcessors = processors.registry
@@ -230,7 +235,7 @@ class File(Described, Timestamped, SaveHook, Owned):
 
     def delete(self, *args, clear_files: bool | None = None, **kwargs):
         """
-        Ensure file deletion if ``OX_FILES['REMOVE_FILES_ON_DELETE']`` or
+        Ensure file deletion if ``OX_FILES['CLEAR_FILES_ON_DELETE']`` or
         ``clear_files`` is True.
 
         :param *args: forward to super's ``delete()``
@@ -238,7 +243,7 @@ class File(Described, Timestamped, SaveHook, Owned):
         :param **kwargs: forward to super's ``delete()``
         """
         if clear_files is None:
-            clear_files = ox_files_settings.REMOVE_FILES_ON_DELETE
+            clear_files = ox_files_settings.CLEAR_FILES_ON_DELETE
         if clear_files:
-            self.clear_files(save=False)
+            self.clear_files()
         return super().delete(*args, **kwargs)

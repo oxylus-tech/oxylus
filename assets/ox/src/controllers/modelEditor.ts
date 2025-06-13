@@ -66,13 +66,13 @@ export default class ModelEditor<T extends Model, P extends IModelEditorProps<T>
         return obj.$toJson(null, {relations: false})
     }
 
-    send(value: IModelEditorSend|FormData, params: Record = {}) : Promise<State> {
+    async send(value: IModelEditorSend|FormData, params: Record = {}) : State {
         let [func, url] = ["post", this.url]
-        if(value.id) {
-            url = `${url}${value.id}/`
+        if(this.value.id) {
+            url = `${url}${this.value.id}/`
             func = "put"
         }
-        return this.repo.api()[func](url, value, params).then(
+        return await this.repo.api()[func](url, value, params).then(
             (result: Response) => State.ok(result.entities[0]),
             (error: Response) => State.error(error.response.data)
         )

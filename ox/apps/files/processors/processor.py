@@ -1,10 +1,14 @@
 from __future__ import annotations
+import logging
 from pathlib import Path
 
 from django.utils.translation import gettext_lazy as _
 
 
 from ..conf import ox_files_settings
+
+
+logger = logging.getLogger()
 
 
 __all__ = ("Processor",)
@@ -38,7 +42,7 @@ class Processor:
         """
         if not force and out.exists():
             return False
-        print(">>> Create preview for ", path)
+        logger.info(f"ox.files: create preview for {path} using {self.__class__.__name__}")
         return self._create_preview(path, out, size, **kwargs)
 
     def _create_preview(self, path: Path, out: Path, size: tuple[int, int], **kwargs) -> bool:

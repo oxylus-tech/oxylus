@@ -2,10 +2,11 @@
     <ox-model-edit ref="model-editor" v-bind="props" :repo="repos.folders">
         <template #default="{editor, editable}">
             <v-text-field :label="t('fields.name')"
-                :rules="[rules.errors(editor.errors?.name), rules.required]"
+                :error-messages="editor.error('name')"
+                :rules="[rules.required]"
                 v-model="editor.value.name" />
             <ox-folder-input v-model="editor.value.parent"
-                :rules="[rules.errors(editor.errors?.parent)]"
+                :error-messages="editor.error('parent')"
                 :label="t('fields.folder')" />
             <v-text-field disabled
                 :label="t('fields.path')"

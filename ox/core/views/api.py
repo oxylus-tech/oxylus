@@ -3,7 +3,7 @@ from rest_framework.response import Response
 from rest_framework import viewsets
 
 
-__all__ = ("ModelViewSet", "AutocompleteMixin", "ListCommitMixin")
+__all__ = ("ModelViewSet", "ListCommitMixin")
 
 
 class ModelViewSet(viewsets.ModelViewSet):
@@ -13,31 +13,6 @@ class ModelViewSet(viewsets.ModelViewSet):
     """
 
     lookup_field = "uuid"
-
-
-class AutocompleteMixin:
-    """Viewset mixin providing ``autocomplete`` action, using provided
-    filterset and serializer.
-
-    Url ``GET`` parameters:
-        - `field` (many): if provided, only return provided field names
-        - filterset's lookups.
-
-    Return a list of values if ``field`` is provided, result of `list()` otherwise.
-    """
-
-    autocomplete_result_count = 10
-    """Returned result count."""
-
-    @action(name="autocomplete", detail=False)
-    def autocomplete(self, request):
-        field = request.GET.get("field", None)
-        if field:
-            queryset = self.filter_queryset(self.get_queryset())
-            values = queryset.values_list(field, flat=True).distinct()
-            values = values[: self.autocomplete_result_count]
-            return Response(values)
-        return self.list(request)
 
 
 class ListCommitMixin:

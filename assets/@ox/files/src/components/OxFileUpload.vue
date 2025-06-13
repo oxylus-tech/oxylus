@@ -125,7 +125,7 @@ const getIconForFile = (file: File): string => {
     )
 }
 
-watch(file, (val) => (val != preview?.file) && handleFile(val))
+// watch(file, (val) => (val != preview?.file) && handleFile(val))
 
 defineExpose({file, preview})
 </script>
@@ -152,10 +152,10 @@ defineExpose({file, preview})
 }
 .preview {
     text-align: center;
-    max-width: 200px;
+    max-width: 90%;
 }
 .preview img {
-    max-height: 200px;
+    max-height: 400px;
     width: 100%;
     object-fit: contain;
     border-radius: 6px;

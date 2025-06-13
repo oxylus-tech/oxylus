@@ -24,7 +24,7 @@ class Settings(conf.Settings):
 
     MAGIC_BUFFER = 2048
     """ Buffer size used by Python-Magic to read mime types. """
-    THUMBNAIL_SIZE = (400, 800)
+    THUMBNAIL_SIZE = (600, 800)
     """ Size for thumbnails """
 
     PROCESSORS = [

@@ -118,10 +118,10 @@ class TreeNode(SaveHook):
         if cls.path_unique:
             path = self.get_path()  # ensure to have actual path
             query = cls.objects.find_clone(self)
-            if self.pk:
-                query = query.exclude(pk=self.pk)
             if query.exists():
-                raise ValidationError(f"Another {cls._meta.verbose_name} exists for this path ({path}).")
+                raise ValidationError(
+                    {self.path_part_attr: f"Another {cls._meta.verbose_name} exists for this path `{path}`."}
+                )
 
     def get_path(self) -> str:
         """Return path for self and the provided parent."""

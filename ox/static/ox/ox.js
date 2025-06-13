@@ -1,8 +1,8 @@
 var we = Object.defineProperty;
 var De = (r, e, t) => e in r ? we(r, e, { enumerable: !0, configurable: !0, writable: !0, value: t }) : r[e] = t;
 var o = (r, e, t) => De(r, typeof e != "symbol" ? e + "" : e, t);
-import { R as ve, c as K, d as be, l as g, a as se, H as Me, b as xe, e as ke, B as Se, C as Ae, G as Te, M as Oe, f as Ee, P as Re, U as W, u as U, g as Pe, S as b, h as Ce, i as Fe, j as Ie, k as Ve, m as Ye, n as Ne, o as ie, s as $e, p as We, q as I, r as qe, t as v, v as j } from "./i18n-LUmMpxv0.js";
-import { F as Ar, w as Tr, D as Or, N as Er, O as Rr, L as Pr, z as Cr, A as Fr, E as Ir, Q as Vr, y as Yr, I as Nr, x as $r, J as Wr, K as qr } from "./i18n-LUmMpxv0.js";
+import { R as ve, c as K, d as be, l as g, a as se, H as Me, b as xe, e as ke, B as Se, C as Ae, G as Te, M as Ee, f as Oe, P as Re, U as W, u as U, g as Pe, S as b, h as Ce, i as Fe, j as Ie, k as Ve, m as Ye, n as Ne, o as ie, s as $e, p as We, q as I, r as qe, t as v, v as j } from "./i18n-DgOvJIH0.js";
+import { F as Ar, w as Tr, D as Er, N as Or, O as Rr, L as Pr, z as Cr, A as Fr, E as Ir, Q as Vr, y as Yr, I as Nr, x as $r, J as Wr, K as qr } from "./i18n-DgOvJIH0.js";
 import { inject as P, provide as D, reactive as M, computed as k, ref as Be, watch as A, effectScope as L, nextTick as Ke, createApp as Ue, onMounted as ae, onUnmounted as oe, unref as z, toRaw as H, defineAsyncComponent as je } from "vue";
 import Le from "axios";
 import * as ze from "ox/vendor";
@@ -312,8 +312,8 @@ const fr = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
   ContentType: Ae,
   Group: Te,
-  Meta: Oe,
-  Model: Ee,
+  Meta: Ee,
+  Model: Oe,
   Permission: Re,
   RefCounter: q,
   Repository: V,
@@ -749,10 +749,10 @@ function At(r) {
 function Tt(r) {
   return r.getHours();
 }
-function Ot(r) {
+function Et(r) {
   return r.getMinutes();
 }
-function Et(r) {
+function Ot(r) {
   return new Date(r.getFullYear(), 0, 1);
 }
 function Rt(r) {
@@ -958,7 +958,7 @@ class Ut {
     return Tt(e);
   }
   getMinutes(e) {
-    return Ot(e);
+    return Et(e);
   }
   startOfDay(e) {
     return F(e);
@@ -967,7 +967,7 @@ class Ut {
     return me(e);
   }
   startOfYear(e) {
-    return Et(e);
+    return Ot(e);
   }
   endOfYear(e) {
     return Rt(e);
@@ -1047,7 +1047,7 @@ function pe() {
   } = n, u = L();
   return u.run(() => {
     const l = _e(n.defaults), m = Ge(n.display, n.ssr), f = Ze(n.theme), c = Je(n.icons), h = Qe(n.locale), y = Lt(n.date, h), w = Ce(n.goTo, h);
-    function O(d) {
+    function E(d) {
       for (const p in a)
         d.directive(p, a[p]);
       for (const p in i)
@@ -1090,12 +1090,12 @@ function pe() {
         }
       });
     }
-    function E() {
+    function O() {
       u.stop();
     }
     return {
-      install: O,
-      unmount: E,
+      install: E,
+      unmount: O,
       defaults: l,
       display: m,
       theme: f,
@@ -1237,7 +1237,10 @@ function gr({ App: r = null, el: e = "#app", onLoad: t = !0, ...n } = {}) {
   }
   return new Promise((i) => {
     if (t)
-      return window.addEventListener("load", () => i(s()));
+      return window.addEventListener(
+        "load",
+        () => i(s())
+      );
     i(s());
   });
 }
@@ -1307,10 +1310,10 @@ class S {
    * @param [options.opts] options passed down to ``repo.api.get``
    */
   async fetch(e = {}) {
-    var h, y, w, O, E;
+    var h, y, w, E, O;
     e = { ...this.opts, ...e };
     let { url: t, id: n, ids: s, repo: i, lookup: a, params: u, relations: l, path: m, ...f } = e;
-    if (a ?? (a = "id__in"), i ?? (i = this.repo), (s == null ? void 0 : s.length) === 1 && (n = s[0], s = null), t || (t = (y = (h = i.use) == null ? void 0 : h.meta) == null ? void 0 : y.getUrl({ path: m, id: n })), n ? f.dataKey = null : "dataKey" in f || (f.dataKey = (E = (O = (w = i.use) == null ? void 0 : w.config) == null ? void 0 : O.axiosApi) == null ? void 0 : E.dataKey), s && a !== void 0) {
+    if (a ?? (a = "id__in"), i ?? (i = this.repo), (s == null ? void 0 : s.length) === 1 && (n = s[0], s = null), t || (t = (y = (h = i.use) == null ? void 0 : h.meta) == null ? void 0 : y.getUrl({ path: m, id: n })), n ? f.dataKey = null : "dataKey" in f || (f.dataKey = (O = (E = (w = i.use) == null ? void 0 : w.config) == null ? void 0 : E.axiosApi) == null ? void 0 : O.dataKey), s && a !== void 0) {
       if (n)
         throw Error("Both `ids` and `id` are provided while only one of those arguments is accepted.");
       u = { ...u || {} }, u[a] = [...s];
@@ -1336,8 +1339,7 @@ class S {
     let a = i.response.data[e];
     for (; a; ) {
       const u = await this.fetch({ ...s, url: a });
-      if (u.entities && (i.entities = i.entities !== null ? i.entities.concat(u.entities) : u.entities), a = u.response.data[e], t > 0 && t--, !t)
-        break;
+      if (u.entities && (i.entities = i.entities !== null ? i.entities.concat(u.entities) : u.entities), a = u.response.data[e], t > 0 && t--, !t) break;
     }
     return i;
   }
@@ -1423,6 +1425,12 @@ class ge {
   get errors() {
     return this.state.isError && this.state.data || null;
   }
+  error(e) {
+    var n;
+    const t = this.state.isError && ((n = this.state.data) == null ? void 0 : n[e]);
+    return t && this.initial[e] != this.value[e] && t.join(`
+`) || "";
+  }
   /** Discard changes, resetting to initial value. */
   discard() {
     this.reset(this.initial);
@@ -1459,7 +1467,7 @@ class ge {
       ...t.headers
     } : e = this.serialize(e);
     const n = await this.send(e, t);
-    return n.isOk ? (this.reset(n.data, !0), (s = this.saved) == null || s.call(this, this.value)) : this.state = n, this.state;
+    return n.isOk ? (this.reset(n.data, !0), this.initial = g.cloneDeep(this.value), (s = this.saved) == null || s.call(this, this.value)) : this.state = n, this.state;
   }
   /**
    * This method is called when editor successfully saved the
@@ -1476,7 +1484,7 @@ class ge {
     return e;
   }
   /** Send value (not implemented, MUST BE in subclasses). */
-  send(e, t) {
+  async send(e, t) {
     throw "not implemented";
   }
 }
@@ -1797,9 +1805,12 @@ class nr extends ge {
     const t = this.repo.use;
     return new t({ ...this.value }).$toJson(null, { relations: !1 });
   }
-  send(e, t = {}) {
+  async send(e, t = {}) {
     let [n, s] = ["post", this.url];
-    return e.id && (s = `${s}${e.id}/`, n = "put"), this.repo.api()[n](s, e, t).then((i) => b.ok(i.entities[0]), (i) => b.error(i.response.data));
+    return this.value.id && (s = `${s}${this.value.id}/`, n = "put"), await this.repo.api()[n](s, e, t).then(
+      (i) => b.ok(i.entities[0]),
+      (i) => b.error(i.response.data)
+    );
   }
 }
 class sr extends Xt {
@@ -1988,9 +1999,9 @@ export {
   Tr as createI18n,
   yr as createPinia,
   Jt as createVuetify,
-  Or as csrfToken,
+  Er as csrfToken,
   xr as defineAsyncComponent,
-  Er as excludeValues,
+  Or as excludeValues,
   Rr as filterSlots,
   Pr as filterValues,
   Cr as getCookie,

@@ -13,12 +13,12 @@
         </template>
 
         <template #item.actions="{item}">
-            <ox-action v-if="user.can([item.constructor, 'change'], item)"
+            <ox-action v-if="props.edit && user.can([item.constructor, 'change'], item)"
                 icon="mdi-pencil" button
                 :title="t('actions.edit')"
                 :item="item"
                 :run="show"/>
-            <ox-action v-else-if="user.can([item.constructor, 'view'], item)"
+            <ox-action v-else-if="props.edit && user.can([item.constructor, 'view'], item)"
                 icon="mdi-eye-outline" button
                 :title="t('actions.edit')"
                 :item="item"
@@ -72,7 +72,7 @@ const props = defineProps({
     // list: Object,
     /** Table headers */
     headers: Array,
-    /** If True, allow user to edit (display edit button) */
+    /** If True, display edit/view button */
     edit: Boolean,
 })
 

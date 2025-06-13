@@ -1,8 +1,0 @@
-export { default as OxPersonEdit } from './OxPersonEdit.vue';
-export { default as OxPersonPanel } from './OxPersonPanel.vue';
-export { default as OxOrganisationEdit } from './OxOrganisationEdit.vue';
-export { default as OxOrganisationPanel } from './OxOrganisationPanel.vue';
-export { default as OxOrganisationTypePanel } from './OxOrganisationTypePanel.vue';
-//export { default as OxGroupEdit} from './OxGroupEdit.vue'
-//export { default as OxGroupUsers} from './OxGroupUsers.vue'
-//export { default as OxGroupPanel} from './OxGroupPanel.vue'

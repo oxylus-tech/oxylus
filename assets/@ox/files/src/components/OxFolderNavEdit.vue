@@ -16,7 +16,7 @@
                             <v-col v-if="edited" class="text-right">
                                 <v-btn :text="t('actions.save')" size="small"
                                     prepend-icon="mdi-content-save"
-                                    @click.stop="editor.save()"/>
+                                    @click.stop="save(editor)"/>
                             </v-col>
                         </v-row>
                     </v-list-item>
@@ -56,6 +56,16 @@ const props = defineProps({
 
 const repos = useFolders()
 const user = inject('user')
+const context = inject('context')
+
+
+/** Save editor's values, returning editor's state. */
+async function save(editor) {
+    const state = await editor.save()
+    if(state.isError)
+        context.state.error(state.data)
+    return state
+}
 
 const newFolder = reactive({
     name: '',
@@ -66,6 +76,7 @@ const newFolder = reactive({
                 parent: props.item?.id, name: this.name,
                 owner: props.owner.id
             }, {save: false})
+
             newFolder.name = '';
             emits('updated')
         }

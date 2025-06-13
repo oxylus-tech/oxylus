@@ -1,7 +1,7 @@
 <template>
     <v-app>
         <v-snackbar v-model="context.showState" :color="context.state.color" multi-line>
-            {{ context.state.data }}
+            {{ context.state.toString() }}
         </v-snackbar>
         <v-app-bar color="primary">
             <template v-slot:prepend>

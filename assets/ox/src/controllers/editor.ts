@@ -81,6 +81,13 @@ export default class Editor<T extends Record, P extends IEditorProps<T>> {
         return this.state.isError && this.state.data || null
     }
 
+    error(field: string): string|string[] {
+        const data = this.state.isError && this.state.data?.[field]
+        if(data)
+            return this.initial[field] != this.value[field] && data.join('\n') || ''
+        return ''
+    }
+
     /** Discard changes, resetting to initial value. */
     discard() {
         this.reset(this.initial)
@@ -130,7 +137,7 @@ export default class Editor<T extends Record, P extends IEditorProps<T>> {
         const state = await this.send(value, params)
         if(state.isOk) {
             this.reset(state.data as T, true)
-            // this.initial = cloneDeep(this.value)
+            this.initial = cloneDeep(this.value)
             this.saved?.(this.value)
         }
         else
@@ -152,7 +159,7 @@ export default class Editor<T extends Record, P extends IEditorProps<T>> {
     serialize<R>(value: T): any { return value }
 
     /** Send value (not implemented, MUST BE in subclasses). */
-    send(_: Record|FormData, params: Record): Promise<State> {
+    async send(_: Record|FormData, params: Record): State {
         throw "not implemented"
     }
 }

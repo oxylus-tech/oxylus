@@ -11,6 +11,7 @@
     "actions.discard": "Discard",
     "actions.save": "Save",
     "actions.saving": "Saving",
+    "actions.close": "Close",
     "actions.list.reload": "Refresh items list",
     "actions.download": "Download",
     "actions.upload": "Upload",
@@ -130,6 +131,7 @@
     "models.folders": "Folder | Folders",
     "fields.folder": "Folder",
     "fields.folder.add_error": "Couldn't save folder. Check if a folder or file already exists with this name or that you have the permissions.",
+    "fields.name.update_filename": "Do you want to update the file name?",
     "fields.path": "Path",
     "fields.preview": "Preview",
     "fields.caption": "Caption",
@@ -137,6 +139,7 @@
     "fields.caption.help": "Caption displayed below the file.",
     "fields.alternate": "Alternative text",
     "fields.alternate.help": "Alternative text displayed when file can not be displayed.",
+    "actions.upload_new_file": "Upload another file",
     "actions.select_file": "Select a file",
     "actions.select_file.help": "Drop a file here or select a file",
 

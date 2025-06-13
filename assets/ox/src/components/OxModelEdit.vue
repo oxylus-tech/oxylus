@@ -31,7 +31,8 @@
  * for validation ({@link OxValidationBtn}) and an alert.
  *
  */
-import { defineExpose, watch, ref, onMounted } from 'vue'
+import { defineExpose, defineEmits, watch, ref, onMounted } from 'vue'
+import type { State } from 'ox'
 import { t, useModelEditor } from 'ox'
 
 import OxStateAlert from './OxStateAlert.vue'
@@ -46,25 +47,31 @@ interface IModelEdit extends IModelEditorProps {
      * The values will not be serialized into JSON before sending.
      **/
     sendFormData: boolean
-    /**
-     * If true, hide validation button
-     */
+    /** If true, hide validation buttons */
     hideValidationBtn: boolean
 }
 
+const emits = defineEmits('saved')
 const props = defineProps<IModelEdit>()
 const modelEditor = ref(null)
 
+/**
+ * Reset editor to initial values (provided by component's props).
+ */
 function reset() {
     modelEditor.value.editor.reset(props.initial)
 }
 
-function save() {
+/**
+ * Save changes to the server, returning editor state once completed.
+ */
+async function save(): State {
     const me = modelEditor.value
-    if(props.sendFormData)
-        return me.editor.save(new FormData(me.form.$el))
-    else
-        return me.editor.save()
+    const resp = (props.sendFormData) ?
+        await me.editor.save(new FormData(me.form.$el)) :
+        await me.editor.save()
+    emits('saved', modelEditor.value.editor)
+    return resp
 }
 
 defineExpose({modelEditor, save, reset})

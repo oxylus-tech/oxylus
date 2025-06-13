@@ -152,8 +152,9 @@ REST_FRAMEWORK = {
         "ox.core.renderers.AdminBrowsableAPIRenderer",
     ],
     "DATETIME_FORMAT": "%Y-%m-%d %H:%M:%S %Z",
-    "PAGE_SIZE": 50,
+    "PAGE_SIZE": 20,
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
+    "EXCEPTION_HANDLER": "ox.core.exceptions.exception_handler",
 }
 
 SPECTACULAR_SETTINGS = {

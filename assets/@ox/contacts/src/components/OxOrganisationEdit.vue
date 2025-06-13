@@ -1,45 +1,43 @@
 <template>
     <ox-model-edit ref="model-editor" v-bind="props" :repo="repos.organisations">
         <template #default="{editor, editable}">
-            <v-expansion-panels mandatory multiple :model-value="['info', 'emails', 'phones']">
-                <v-expansion-panel :title="t('views.edit.informations')" value="info">
-                    <template #text>
-                        <v-row>
-                            <v-col cols="2">
-                                <v-text-field :label="t('fields.color')" type="color"
-                                    v-model="editor.value.color"
-                                    :error-messages="editor.errors?.color" />
-                            </v-col>
-                            <v-col>
-                                <v-text-field :label="t('fields.name')"
-                                    v-model="editor.value.name"
-                                    :error-messages="editor.errors?.name"
-                                    :rules="[rules.required]" />
-                                <v-text-field :label="t('fields.short_name')"
-                                    v-model="editor.value.short_name"
-                                    :error-messages="editor.errors?.short_name" />
-                            </v-col>
-                        </v-row>
-                        <v-text-field :label="t('fields.reference')"
-                            v-model="editor.value.reference"
-                            :error-messages="editor.errors?.reference" />
-                        <ox-country-input v-model="editor.value.country"
-                            @update:modelValue="countryUpdated(editor)"
-                            :label="t('fields.country')"
-                            :error-messages="editor.errors?.country"/>
-                        <v-text-field :label="t('fields.vat')"
-                            v-model="editor.value.vat"
-                            :disabled="!editable || !editor.value.country"
-                            :error-messages="editor.errors?.vat"
-                            :rules="[rules.optional(vatRule)]"/>
-                        <ox-organisation-type-input
-                            v-model="editor.value.type"
-                            :country="editor.value.country"
-                            :disabled="!editor.value.country"
-                            :error-messages="editor.errors?.type"
-                            :label="t('fields.company_form')"/>
-                    </template>
-                </v-expansion-panel>
+            <v-container>
+                <v-row>
+                    <v-col cols="2">
+                        <v-text-field :label="t('fields.color')" type="color"
+                            v-model="editor.value.color"
+                            :error-messages="editor.error('color')" />
+                    </v-col>
+                    <v-col>
+                        <v-text-field :label="t('fields.name')"
+                            v-model="editor.value.name"
+                            :error-messages="editor.error('name')"
+                            :rules="[rules.required]" />
+                        <v-text-field :label="t('fields.short_name')"
+                            v-model="editor.value.short_name"
+                            :error-messages="editor.error('short_name')" />
+                    </v-col>
+                </v-row>
+                <v-text-field :label="t('fields.reference')"
+                    v-model="editor.value.reference"
+                    :error-messages="editor.error('reference')" />
+                <ox-country-input v-model="editor.value.country"
+                    @update:modelValue="countryUpdated(editor)"
+                    :label="t('fields.country')"
+                    :error-messages="editor.error('country')"/>
+                <v-text-field :label="t('fields.vat')"
+                    v-model="editor.value.vat"
+                    :disabled="!editable || !editor.value.country"
+                    :error-messages="editor.error('vat')"
+                    :rules="[rules.optional(vatRule)]"/>
+                <ox-organisation-type-input
+                    v-model="editor.value.type"
+                    :country="editor.value.country"
+                    :disabled="!editor.value.country"
+                    :error-messages="editor.error('type')"
+                    :label="t('fields.company_form')"/>
+            </v-container>
+            <v-expansion-panels multiple :model-value="['emails', 'phones']">
                 <ox-contact-infos v-model="editor.value" :editable="editable" />
             </v-expansion-panels>
         </template>

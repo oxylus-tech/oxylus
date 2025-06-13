@@ -3,7 +3,6 @@ import pytest
 from django.test import RequestFactory
 from django.contrib.auth.models import AnonymousUser, User
 
-from caps.models import Agent
 
 req_factory = RequestFactory()
 
@@ -36,12 +35,12 @@ def anon_user():
 # ----  Agents
 @pytest.fixture
 def agent(user):
-    return Agent.objects.create(user=user)
+    return user.agent
 
 
 @pytest.fixture
 def agent_2(user_2):
-    return Agent.objects.create(user=user_2)
+    return user_2.agent
 
 
 # ---- Simple GET requests

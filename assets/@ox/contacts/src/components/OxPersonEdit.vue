@@ -1,53 +1,45 @@
 <template>
-    <ox-model-edit v-bind="props" :repo="repos.persons">
+    <ox-model-edit v-bind="attrs" :repo="repos.persons">
         <template #default="{editor, editable, disabled}">
-            <v-expansion-panels mandatory multiple :model-value="['info', 'emails', 'phones']">
-                <v-expansion-panel :title="t('views.edit.informations')" value="info">
-                    <template #text>
-                            <v-text-field :label="t('fields.first_name')"
-                                v-model="editor.value.first_name" >
-                                <template #details>
-                                    <ox-field-details :errors="editor.errors?.first_name"/>
-                                </template>
-                            </v-text-field>
-                            <v-text-field :label="t('fields.last_name')"
-                                v-model="editor.value.last_name" >
-                                <template #details>
-                                    <ox-field-details :errors="editor.errors?.last_name"/>
-                                </template>
-                            </v-text-field>
-                            <v-text-field
-                                v-model="editor.value.email"
-                                :label="t('fields.email')"
-                                :rules="[rules.email]"
-                                :disabled="disabled || editor.value.user">
-                                <template #details v-if="editor.value.user">
-                                    {{ t('fields._.from_user') }}
-                                </template>
-                            </v-text-field>
-                            <v-select multiple
-                                :label="t('fields.organisations')"
-                                v-model="editor.value.organisations"
-                                :items="organisations"
-                                item-title="name" item-value="id"/>
+            <v-container>
+                <v-text-field :label="t('fields.first_name')"
+                    :error-messages="editor.error('first_name')"
+                    v-model="editor.value.first_name" />
+                <v-text-field :label="t('fields.last_name')"
+                    :error-messages="editor.error('last_name')"
+                    v-model="editor.value.last_name" />
+                <v-text-field
+                    v-model="editor.value.email"
+                    :label="t('fields.email')"
+                    :error-messages="editor.error('email')"
+                    :rules="[rules.email]"
+                    :disabled="disabled || editor.value.user" >
+                    <template #details v-if="editor.value.user">
+                        {{ t('fields._.from_user') }}
                     </template>
-                </v-expansion-panel>
+                </v-text-field>
+                <v-select multiple
+                    :label="t('fields.organisations')"
+                    :error-messages="editor.error('organisations')"
+                    v-model="editor.value.organisations"
+                    :items="organisations"
+                    item-title="name" item-value="id"/>
+            </v-container>
+            <v-expansion-panels multiple :model-value="['emails', 'phones']">
                 <ox-contact-infos v-model="editor.value" :editable="editable" />
             </v-expansion-panels>
         </template>
     </ox-model-edit>
 </template>
 <script setup lang="ts">
-import {computed, defineProps, defineEmits, inject, toRefs, reactive, watch} from 'vue'
-
+import {computed, useAttrs} from 'vue'
 import { t, rules } from "ox"
-import type {User, IModelEditorProps} from 'ox'
-import {OxFieldDetails, OxModelEdit} from 'ox/components'
+import {OxModelEdit} from 'ox/components'
 
+import { useContactModels } from '../composables'
 import OxContactInfos from './OxContactInfos'
 
-const repos = inject('repos')
-const props = defineProps<IModelEditorProps>()
-
+const repos = useContactModels()
+const attrs = useAttrs()
 const organisations = computed(() => repos.organisations.all())
 </script>

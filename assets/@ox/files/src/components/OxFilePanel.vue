@@ -1,4 +1,18 @@
 <template>
+    <!-- Simple preview dialog -->
+    <v-dialog v-model="dialog.isActive" max-width="600">
+        <v-card :title="dialog.item?.name">
+          <v-card-text>
+              <v-img :src="dialog.item?.preview"/>
+          </v-card-text>
+
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn :text="t('actions.close')" @click="dialog.close()"></v-btn>
+          </v-card-actions>
+        </v-card>
+    </v-dialog>
+
     <ox-model-panel v-bind="props" :repo="repos.files" icon="mdi-file-outline">
         <template v-for="name in forwardSlots" :key="name" #[name]="bind">
             <slot :name="name" v-bind="bind"/>
@@ -17,7 +31,9 @@
         </template>
 
         <template #item.preview="{item}" v-if="!slots['item.preview']">
-            <v-img :src="item.preview" class="preview"/>
+            <v-img v-if="item.preview" :src="item.preview" class="preview"
+                cover max-height="200"
+                @click="dialog.show(item)" style="cursor: pointer"/>
         </template>
 
         <template #item.name="{item}">
@@ -44,11 +60,10 @@
 <style scoped>
 .preview {
     max-width: 200px;
-    max-height: 400px;
 }
 </style>
 <script setup lang="ts">
-import { ref, useSlots, withDefaults, watch } from 'vue'
+import { ref, reactive, useSlots, withDefaults, watch } from 'vue'
 
 import { query, t } from 'ox'
 import type {IModelPanelProps} from 'ox'
@@ -60,6 +75,19 @@ import {useFilesModels} from '../composables'
 import { formatBytes } from '../utils'
 
 const drawer = ref(true)
+const dialog = reactive({
+    isActive: false,
+    item: null,
+
+    show(item) {
+        this.item = item
+        this.isActive = true
+    },
+
+    close() {
+        this.isActive = false
+    },
+})
 
 const slots = useSlots()
 const forwardSlots = Object.keys(slots).filter(x => !(['list.filters', 'top', 'item.actions'].includes(x)))
