@@ -29,13 +29,13 @@ class Migration(migrations.Migration):
                 ("updated", models.DateTimeField(auto_now=True, verbose_name="Updated")),
                 (
                     "file",
-                    models.FileField(null=True, upload_to=ox.apps.files.models.file_upload_to, verbose_name="File"),
+                    models.FileField(
+                        null=True, upload_to=ox.apps.files.models.file.file_upload_to, verbose_name="File"
+                    ),
                 ),
                 (
                     "preview",
-                    models.FileField(
-                        blank=True, null=True, upload_to=ox.apps.files.models.file_upload_to, verbose_name="Preview"
-                    ),
+                    models.FileField(blank=True, null=True, verbose_name="Preview"),
                 ),
                 ("mime_type", models.CharField(blank=True, max_length=127, verbose_name="Mime Type")),
                 ("file_size", models.PositiveIntegerField(blank=True, verbose_name="File Size")),

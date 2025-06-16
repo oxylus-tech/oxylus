@@ -1,6 +1,5 @@
 from pathlib import Path
 
-from django.conf import settings
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
@@ -51,7 +50,7 @@ class TemplatePack(PackageInfo):
     If not provided, use model's ``label_lower``.
     """
     template_files = [
-        ("index.html", _("Default")),
+        ("index.html", _("Index")),
     ]
     """
     [class attribute] Allowed template files that user can select.
@@ -77,12 +76,12 @@ class TemplatePack(PackageInfo):
     @classmethod
     def get_template_dir(cls) -> Path:
         """Return template directory used for this model class."""
-        return Path(settings.BASE_DIR) / "templates" / ox_content_settings.TEMPLATE_DIR / cls.get_source_dirname()
+        return ox_content_settings.template_dir / cls.get_source_dirname()
 
     @classmethod
     def get_static_dir(cls) -> Path:
         """Return static directory used for this model class."""
-        return Path(settings.STATIC_DIR) / ox_content_settings.STATIC_DIR / cls.get_source_dirname()
+        return ox_content_settings.static_dir / cls.get_source_dirname()
 
     @classmethod
     def get_source_dirname(cls) -> str:

@@ -25,7 +25,7 @@ def app_nav(nav_group):
 
 class TestBaseNavItem:
     def test_serialize(self, base_nav_item):
-        assert base_nav_item.serialize({"extra": 123}) == {
+        assert base_nav_item.serialize(extra=123) == {
             "name": "name",
             "type": "",
             "order": 100,
@@ -68,11 +68,7 @@ class TestAppNav:
 
     def test_append(self, app_nav, nav_group):
         data = app_nav.data
-        group_2 = app_nav.append(nav.NavGroup("group_2", "Group 2"), "group_1")
+        group_2 = app_nav.append(nav.NavGroup("group_2", "Group 2"))
         data_2 = app_nav.data
-        assert nav_group.items["group_2"] is group_2
+        assert app_nav.items["group_2"] is group_2
         assert data != data_2
-
-        item = app_nav["group_1"].append(nav.BaseNavItem("item", "item 3"))
-        assert group_2.items["item"] is item
-        assert app_nav.data != data_2

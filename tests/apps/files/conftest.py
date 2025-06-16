@@ -4,8 +4,18 @@ import pytest
 
 from django.conf import settings
 
-from ox.apps.files.models import Folder, File
 from ox.apps.files import processors
+from ox.apps.files.models import Folder, File
+from ox.apps.files.conf import ox_files_settings
+
+
+@pytest.fixture(scope="session", autouse=True)
+def teardown():
+    yield
+    path = ox_files_settings.sync_dir
+    path.exists() and shutil.rmtree(str(path))
+    path = ox_files_settings.preview_dir
+    path.exists() and shutil.rmtree(str(path))
 
 
 @pytest.fixture

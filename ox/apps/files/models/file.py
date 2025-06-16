@@ -8,93 +8,14 @@ from django.core.exceptions import PermissionDenied, ValidationError
 from django.utils.translation import gettext_lazy as _
 
 from caps.models import Owned, OwnedQuerySet
-from ox.utils.models import Named, Described, Timestamped, SaveHook, SaveHookQuerySet
-from ox.utils.models.tree import TreeNode, TreeNodeQuerySet
+from ox.utils.models import Described, Timestamped, SaveHook, SaveHookQuerySet
 
-from .conf import ox_files_settings
-from . import processors
-
-
-__all__ = ("file_upload_to", "FolderQuerySet", "Folder", "FileQuerySet", "File")
+from ..conf import ox_files_settings
+from .. import processors
+from .folder import Folder, validate_name
 
 
-class FolderQuerySet(OwnedQuerySet, TreeNodeQuerySet):
-    def find_clone(self, node, **lookups) -> FolderQuerySet:
-        lookups["owner_id"] = node.owner_id
-        return super().find_clone(node, **lookups)
-
-
-class Folder(Named, Timestamped, Owned, TreeNode):
-    """
-    Represent a virtual File folder. This is how they are addressed and
-    organised from user point of view.
-
-    Internally it is stored in obfuscated way.
-
-    Important Notes
-    ---------------
-
-    Updating :py:attr:`parent`, :py:attr:`name` and :py:attr:`path` should not be done manually. Instead use
-    :py:meth:`rename` and :py:meth:`move_to` methods to ensure that these values are correctly set.
-
-    When those values raises a ValidationError, user should assume that values of the model are invalid.
-    """
-
-    objects = FolderQuerySet.as_manager()
-
-    root_grants = {
-        "ox_files.view_folder": 3,
-        "ox_files.add_folder": 1,
-        "ox_files.change_folder": 1,
-        "ox_files.delete_folder": 1,
-        "ox_files.view_file": 3,
-        "ox_files.add_file": 1,
-        "ox_files.change_file": 1,
-        "ox_files.delete_file": 1,
-    }
-
-    class Meta:
-        verbose_name = _("Folder")
-        verbose_name_plural = _("Folders")
-        constraints = [models.UniqueConstraint("parent", "name", "owner", name="unique_folder_name")]
-
-    def validate_node(self):
-        """
-        Validate node for name collision (folder & file) and owner.
-
-        :yield PermissionDenied: owner is not the same as parent's.
-        :yield ValidationError: a file or folder already exists with this name in parent.
-        """
-        super().validate_node()
-
-        # This rule ensure that any child will be owned by the same
-        # agent than the parents.
-        if self.parent and self.parent.owner_id != self.owner.id:
-            raise PermissionDenied(f"Owner of `{self.name}` directory should be the same.")
-
-        if File.objects.filter(folder=self.parent, name=self.name):
-            raise ValidationError({"name": f"A file `{self.name}` already exists in {self.parent.name}."})
-
-    def rename(self, name: str, save: bool = True):
-        """Rename folder."""
-        if name != self.name:
-            self.name = name
-            if save:
-                self.save()
-            else:
-                self.on_save()
-
-    def move_to(self, parent: Folder | None = None, name: str | None = None, save: bool = True):
-        """Move folder into provided parent folder or root.
-
-        :param parent: parent folder
-        :param name: if provided rename folder
-        :param save: save node
-        """
-        if (name and name != self.name) or parent.id != self.parent_id:
-            if name:
-                self.name = name
-            super().move_to(parent, save)
+__all__ = ("FileQuerySet", "File", "file_upload_to", "get_obfuscated_path")
 
 
 class FileQuerySet(SaveHookQuerySet, OwnedQuerySet):
@@ -120,10 +41,25 @@ class FileQuerySet(SaveHookQuerySet, OwnedQuerySet):
             self.update(file=None, preview=None)
 
 
-def file_upload_to(instance, filename):
-    """Return target upload file."""
-    ext = filename.split(".")[-1]
-    return f"{ox_files_settings.UPLOAD_TO}/{uuid4()}.{ext}"
+def file_upload_to(instance, filename) -> str:
+    """Return target upload file depending on whether the folder is synchronized or not."""
+    if instance.folder and instance.folder.is_sync:
+        path = instance.folder.get_sync_path(f"{instance.folder.path}/{filename}")
+        return str(path.relative_to(settings.MEDIA_ROOT))
+
+    path = get_obfuscated_path(filename.split(".")[-1])
+    return f"{ox_files_settings.UPLOAD_DIR}/{path}"
+
+
+def get_obfuscated_path(ext) -> str:
+    """
+    Return an obfuscated file path with provided extension.
+
+    There is no base dir prefix such as :py:attr:`..conf.Settings.UPLOAD_DIR`, only sub-dir and path.
+    """
+    name = str(uuid4())
+    path = f"{name[0:2]}/{name[2:4]}"
+    return f"{path}/{name}.{ext}"
 
 
 class File(Described, Timestamped, SaveHook, Owned):
@@ -146,7 +82,7 @@ class File(Described, Timestamped, SaveHook, Owned):
     # When folder is null, it is at root
     folder = models.ForeignKey(Folder, models.CASCADE, null=True, blank=True, related_name="files")
 
-    name = models.CharField(_("Name"), max_length=128)
+    name = models.CharField(_("Name"), max_length=128, validators=[validate_name])
     file = models.FileField(_("File"), upload_to=file_upload_to, null=True)
     preview = models.FileField(_("Preview"), null=True, blank=True)
     mime_type = models.CharField(_("Mime Type"), max_length=127, blank=True)

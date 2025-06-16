@@ -20,7 +20,7 @@
                 :run="show"/>
             <ox-action v-else-if="props.edit && user.can([item.constructor, 'view'], item)"
                 icon="mdi-eye-outline" button
-                :title="t('actions.edit')"
+                :title="t('actions.view')"
                 :item="item"
                 :run="show"/>
             <slot name="item.actions" :value="item" :dense="true" :button="true"/>

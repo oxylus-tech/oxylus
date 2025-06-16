@@ -9370,7 +9370,7 @@ const Uu = U({
             key: 1,
             icon: "mdi-eye-outline",
             button: "",
-            title: k(ie)("actions.edit"),
+            title: k(ie)("actions.view"),
             item: m,
             run: u
           }, null, 8, ["title", "item"])) : ce("", !0),
