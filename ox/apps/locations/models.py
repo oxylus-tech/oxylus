@@ -32,7 +32,7 @@ class Country(Model):
     name = models.CharField(_("Name"), max_length=128)
     code = models.CharField(_("Code"), max_length=2, db_index=True)
     code_3 = models.CharField(_("Code 3"), max_length=3, db_index=True)
-    continent = models.PositiveSmallIntegerField(_("Continent"), choices=Continent.choices)
+    continent = models.PositiveSmallIntegerField(_("Continent"), choices=Continent)
     phone = models.PositiveIntegerField(_("Phone prefix"))
 
     # no money in Antarctica

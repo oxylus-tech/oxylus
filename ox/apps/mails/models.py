@@ -44,7 +44,7 @@ class MailAccount(Named, Owned):
     smtp_username = EncryptedCharField(_("SMTP: Username"), max_length=255)
     smtp_password = EncryptedCharField(_("SMTP: Password"), max_length=128)
     smtp_encryption = models.PositiveSmallIntegerField(
-        _("SMTP: Encryption"), choices=Encryption.choices, default=Encryption.SSL
+        _("SMTP: Encryption"), choices=Encryption, default=Encryption.SSL
     )
 
     # IMAP Configuration (optional)
