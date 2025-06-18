@@ -51,7 +51,7 @@ By convention the navigation items are registered inside ``views.py`` module, su
 
 """
 
-from typing import Any, Iterable, TypeAlias
+from typing import Any, Generator, Iterable, TypeAlias
 from functools import cached_property
 
 from django.urls import reverse
@@ -65,6 +65,8 @@ class BaseNavItem:
     """ Menu item type: "group", "subheader", "item". """
     name: str = ""
     """ Item name or panel. """
+    component: str = ""
+    """ Vue component used to render panel. """
     order: int = 0
     """ Menu sort order """
     icon: str = ""
@@ -129,6 +131,15 @@ class NavGroupMixin:
         """
         self.items[item.name] = item
         return item
+
+    def iter(self) -> Generator[NavItem]:
+        """Yield over all nested items using DFS order."""
+        for item in self.items:
+            if issubclass(item, NavGroup):
+                for item_ in item.iter():
+                    yield item_
+            else:
+                yield item
 
     def serialize_items(self) -> list[dict[str, Any]]:
         items = [item.serialize() for item in self.items.values()]

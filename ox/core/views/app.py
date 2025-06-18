@@ -1,4 +1,5 @@
 from django.apps import apps
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import ImproperlyConfigured
 from django.views.generic.base import ContextMixin, TemplateView
 from django.utils.translation import gettext_lazy as _
@@ -6,7 +7,7 @@ from django.utils.translation import gettext_lazy as _
 from ..serializers.auth import UserSerializer, GroupSerializer
 from . import nav
 
-__all__ = ("BaseAppMixin", "UserAuthMixin", "AppMixin", "AppView")
+__all__ = ("AppMixin", "UserAuthMixin", "AppView", "UserAppView")
 
 
 nav.app_nav.append(
@@ -14,7 +15,7 @@ nav.app_nav.append(
 )
 
 
-class BaseAppMixin(ContextMixin):
+class AppMixin(ContextMixin):
     """Base mixin for applications."""
 
     title: str = ""
@@ -69,11 +70,7 @@ class UserAuthMixin:
         return super().get_app_data(**kwargs)
 
 
-class AppMixin(UserAuthMixin, BaseAppMixin):
-    public: bool = False
-
-
-class AppView(AppMixin, TemplateView):
+class AppView(AppMixin, UserAuthMixin, TemplateView):
     """Base view used for ox based applications."""
 
     def get_template_names(self):
@@ -89,3 +86,9 @@ class AppView(AppMixin, TemplateView):
     def get(self, *args, service=None, **kwargs):
         context = self.get_context_data(**kwargs)
         return self.render_to_response(context)
+
+
+class UserAppView(LoginRequiredMixin, AppView):
+    """Application view requiring user to be authenticed."""
+
+    pass

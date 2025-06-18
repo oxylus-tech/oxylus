@@ -14,12 +14,13 @@ class RichTextFieldMixin:
     It uses bleach, and provided attributes reflects bleach's ``clean()`` settings.
     """
 
-    allowed_tags = ox_content_settings.OX_CONTENT["ALLOWED_TAGS"]
+    allowed_tags = ox_content_settings.ALLOWED_TAGS
     """ Allowed HTML tags inside the content. """
-    allowed_attributes = ox_content_settings.OX_CONTENT["ALLOWED_ATTRIBUTES"]
+    allowed_attributes = ox_content_settings.ALLOWED_ATTRIBUTES
     """ Allowed tags attributes. """
-    allowed_protocols = ox_content_settings.OX_CONTENT["ALLOWED_PROTOCOLS"]
+    allowed_protocols = ox_content_settings.ALLOWED_PROTOCOLS
     """ Allowed protocols. """
+    allowed_styles = ox_content_settings.ALLOWED_STYLES
 
     def __init__(self, *args, allowed_tags=None, allowed_attributes=None, allowed_protocols=None, **kwargs):
         if allowed_tags is not None:
@@ -34,8 +35,8 @@ class RichTextFieldMixin:
         return super().to_python(
             bleach.clean(
                 value,
-                tags=self.ALLOWED_TAGS,
-                attributes=self.ALLOWED_ATTRIBUTES,
-                protocols=self.ALLOWED_PROTOCOLS,
+                tags=self.allowed_tags,
+                attributes=self.allowed_attributes,
+                protocols=self.allowed_protocols,
             )
         )

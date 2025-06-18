@@ -16,6 +16,7 @@
   },
   "dependencies": {
     "ox": "workspace:*",
+    "tinymce-vue": "^1.0.0",
     "vuetify": "^3.8.3"
   }
 }

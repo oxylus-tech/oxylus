@@ -1,0 +1,16 @@
+{% extends "ox/core/app.html" %}
+{% load i18n %}
+
+{% block app %}
+{{ block.super }}
+<template #panels.mailaccounts>
+    {% block mailaccounts %}
+    {% include "ox/core/components/model_panel.html" with tag="ox-mail-account-panel" name="mailaccounts" %}
+    {% endblock %}
+</template>
+<template #panels.mailtemplates>
+    {% block mailtemplates %}
+    {% include "ox/core/components/model_panel.html" with tag="ox-mail-template-panel" name="mailtemplates" %}
+    {% endblock %}
+</template>
+{% endblock %}

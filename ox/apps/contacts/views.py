@@ -1,9 +1,8 @@
-from django.contrib.auth.mixins import LoginRequiredMixin
 from django.utils.translation import gettext_lazy as _
 
 from rest_framework.permissions import DjangoModelPermissions, DjangoModelPermissionsOrAnonReadOnly
 
-from ox.core.views import AppView, ModelViewSet, nav
+from ox.core.views import UserAppView, ModelViewSet, nav
 from . import models, serializers
 
 
@@ -49,7 +48,7 @@ nav.app_nav.append(
 )
 
 
-class AppView(LoginRequiredMixin, AppView):
+class AppView(UserAppView):
     """Application view used to handle users and groups."""
 
     template_name = "ox/contacts/app.html"

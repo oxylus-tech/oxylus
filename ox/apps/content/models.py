@@ -9,7 +9,7 @@ from . import mixins
 from .conf import ox_content_settings
 
 
-__all__ = ("RichTextField", "TemplatePack", "Content")
+__all__ = ("RichTextField", "TemplatePack")
 
 
 class RichTextField(mixins.RichTextFieldMixin, models.CharField):
@@ -95,31 +95,3 @@ class TemplatePack(PackageInfo):
         if not update_fields or "is_active" in update_fields:
             type(self).objects.filter(is_active=True).update(is_active=False)
         super().save(*args, update_fields=update_fields, **kwargs)
-
-
-class ContentBase(models.ModelBase):
-    def __new__(mcls, name, bases, attrs):
-        cls = super(ContentBase, mcls).__new__(mcls, name, bases, attrs)
-        mcls.init_field(cls)
-        return cls
-
-    @classmethod
-    def init_fields(mcls, cls):
-        should = not cls._meta.abstract and not cls._meta.proxy
-        if should:
-            field = cls.get_field("template_pack")
-            if not field:
-                raise ValueError(f"{cls.__name__} class misses foreign key `template_pack` foreign key.")
-
-            choices = field.remote_field.model.template_files
-            cls.get_field("template").choices = choices
-
-
-class Content(models.Model, metaclass=ContentBase):
-    template = models.CharField(_("Template file"), max_length=64, default="index.html")
-
-    content = RichTextField(_("Content"), default="")
-    """ Content's body. """
-
-    class Meta:
-        abstract = True

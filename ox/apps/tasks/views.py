@@ -1,4 +1,3 @@
-from django.contrib.auth.mixins import LoginRequiredMixin
 from django.utils.translation import gettext_lazy as _
 
 from rest_framework import viewsets
@@ -8,7 +7,7 @@ from rest_framework.decorators import action
 from django_tasks.task import ResultStatus
 from django_tasks.backends.database.models import DBTaskResult
 
-from ox.core.views import AppView, nav
+from ox.core.views import UserAppView, nav
 
 from . import serializers
 
@@ -27,7 +26,7 @@ nav.app_nav["settings"]["system"].append(
 )
 
 
-class AppView(LoginRequiredMixin, AppView):
+class AppView(UserAppView):
     """Application view used to handle users and groups."""
 
     template_name = "ox/tasks/app.html"

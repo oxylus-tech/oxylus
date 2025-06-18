@@ -53,7 +53,7 @@ export class Country extends models.Model {
         }
     }
 
-    static Continent = {
+    static Continent = models.Enum('continent', {
         AFRICA: 1,
         ANTARCTICA: 2,
         ASIA: 3,
@@ -61,20 +61,7 @@ export class Country extends models.Model {
         NORTH_AMERICA: 5,
         OCEANIA: 6,
         SOUTH_AMERICA: 7,
-
-        display(value) {
-            return t(`enums.continent.${value}`)
-        }
-    }
-
-    static get continentItems() {
-        // we need to delay because title needs to be translated.
-        if(!this._continentItems) {
-            this._continentItems = Object.values(this.Continent).filter(v => (typeof v == "number"))
-            this._continentItems.sort((a, b) => a.value - b.value)
-        }
-        return this._continentItems
-    }
+    })
 
     get flag() {
         if (typeof this.code !== 'string' || this.code.length !== 2)

@@ -1,7 +1,6 @@
-from django.contrib.auth.mixins import LoginRequiredMixin
 from django.utils.translation import gettext_lazy as _
 
-from ox.core.views import AppView, nav
+from ox.core.views import UserAppView, nav
 
 
 __all__ = ("AppView",)
@@ -31,7 +30,7 @@ nav.app_nav["settings"].append(
 )
 
 
-class AppView(LoginRequiredMixin, AppView):
+class AppView(UserAppView):
     """Application view used to handle users and groups."""
 
     template_name = "ox/auth/app.html"

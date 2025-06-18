@@ -4,11 +4,10 @@ from pathlib import Path
 import shutil
 
 from django.db import models
-from django.core.exceptions import PermissionDenied, ValidationError
+from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 
-from caps.models import Owned, OwnedQuerySet
-from ox.utils.models import Named, Timestamped
+from ox.utils.models import Named, Timestamped, ChildOwned, ChildOwnedQuerySet
 from ox.utils.models.tree import TreeNode, TreeNodeQuerySet
 
 from ..conf import ox_files_settings
@@ -27,13 +26,13 @@ def validate_name(value):
         raise ValidationError(_("The character `/` is forbidden in name."))
 
 
-class FolderQuerySet(OwnedQuerySet, TreeNodeQuerySet):
+class FolderQuerySet(ChildOwnedQuerySet, TreeNodeQuerySet):
     def find_clone(self, node, **lookups) -> FolderQuerySet:
         lookups["owner_id"] = node.owner_id
         return super().find_clone(node, **lookups)
 
 
-class Folder(Named, Timestamped, Owned, TreeNode):
+class Folder(Named, Timestamped, ChildOwned, TreeNode):
     """
     Represent a folder in which files are stored.
 
@@ -74,6 +73,7 @@ class Folder(Named, Timestamped, Owned, TreeNode):
 
     objects = FolderQuerySet.as_manager()
 
+    parent_attr = "parent"
     root_grants = {
         "ox_files.view_folder": 3,
         "ox_files.add_folder": 1,
@@ -127,11 +127,6 @@ class Folder(Named, Timestamped, Owned, TreeNode):
             self.is_sync = self.parent.is_sync
 
         super().validate_node()
-
-        # This rule ensure that any child will be owned by the same
-        # agent than the parents.
-        if self.parent and self.parent.owner_id != self.owner.id:
-            raise PermissionDenied(f"Owner of `{self.name}` directory should be the same.")
 
         if File.objects.filter(folder=self.parent, name=self.name):
             raise ValidationError({"name": f"A file `{self.name}` already exists in {self.parent.name}."})

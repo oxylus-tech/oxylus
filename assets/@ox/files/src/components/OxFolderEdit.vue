@@ -6,6 +6,7 @@
                 :rules="[rules.required]"
                 v-model="editor.value.name" />
             <ox-folder-input v-model="editor.value.parent"
+                :owner="props.owner"
                 :error-messages="editor.error('parent')"
                 :label="t('fields.folder')" />
             <v-text-field disabled

@@ -33,6 +33,8 @@
         "@ox/auth/*": ["./@ox/auth/src/*"],
         "@ox/location": ["./@ox/location/src/index.ts"],
         "@ox/location/*": ["./@ox/location/src/*"],
+        "@ox/contacts": ["./@ox/contacts/src/index.ts"],
+        "@ox/contacts/*": ["./@ox/contacts/src/*"],
         "*": ["node_modules/*"]
     },
   }

@@ -76,11 +76,18 @@ Blocks:
         {% if app_data %}{{ app_data|json_script:"app-data" }}{% endif %}
         <div id="app">
             {% block app-container %}
-            <ox-app api-url="{% url "api-index" %}" logo="{% static "ox-logo.png" %}">
+            <ox-app api-url="{% url "api-index" %}" logo="{% static "imgs/ox-logo.png" %}" {{ app_attr }}>
                 {% block app %}
                 <template #title="{context}">
                     {% block app-title %}
-                        {% if app_config.icon %}<i class="{{ app_config.icon }}"></i>{% endif %}
+                        {% block app-icon %}
+                        {% if view.icon %}
+                            <v-icon>{{ view.icon }}</v-icon>
+                        {% elif app_config.icon %}
+                            <v-icon>{{ app_config.icon }}</v-icon>
+                        {% endif %}
+                        {% endblock %}
+
                         {% block title %}
                         {% if app_config %}
                             {{ app_config.verbose_name }}

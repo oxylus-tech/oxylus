@@ -1,0 +1,20 @@
+{% extends "./app.html" %}
+{% load i18n static %}
+
+{% block app-main %}
+<v-container class="mt-6 ml-6">
+    {% with view.request.user.get_short_name|default:view.request.user.username as username %}
+    <h2>
+        {% blocktranslate %}
+        Hi {{ username }}, welcome to Oxylus!
+        {% endblocktranslate %}
+    </h2>
+    <p>
+        {% blocktranslate %}
+        You can select any application on the left in order to start using it.
+        {% endblocktranslate %}
+    </p>
+    {% endwith %}
+    <img src="{% static "imgs/arrow-left.png" %}" style="max-width:200px;">
+</v-container>
+{% endblock %}

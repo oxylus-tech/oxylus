@@ -6,6 +6,7 @@
     "actions.add": "Add",
     "actions.add_item": "Add an item",
     "actions.edit": "Edit",
+    "actions.view": "View",
     "actions.delete": "Delete",
     "actions.delete.confirm": "Are you sure that you want to delete this item?",
     "actions.discard": "Discard",
@@ -88,13 +89,13 @@
     "fields.is_iso": "Is ISO",
     "fields.valid_to": "Valid to",
 
-    "enums.continent.1": "Africa",
-    "enums.continent.2": "Antartica",
-    "enums.continent.3": "Asia",
-    "enums.continent.4": "Europe",
-    "enums.continent.5": "North America",
-    "enums.continent.6": "Oceania",
-    "enums.continent.7": "South America",
+    "enums.continent.AFRICA": "Africa",
+    "enums.continent.ANTARCTICA": "Antarctica",
+    "enums.continent.ASIA": "Asia",
+    "enums.continent.EUROPE": "Europe",
+    "enums.continent.NORTH_AMERICA": "North America",
+    "enums.continent.OCEANIA": "Oceania",
+    "enums.continent.SOUTH_AMERICA": "South America",
 
 
     "models.persons": "Person | Persons",
@@ -143,7 +144,6 @@
     "actions.select_file": "Select a file",
     "actions.select_file.help": "Drop a file here or select a file",
 
-
     "models.tasks": "System Task | System Tasks",
     "fields.status": "Status",
     "fields.queue_name": "Queue",
@@ -153,6 +153,18 @@
     "fields.started_at": "Started",
     "fields.finished_at": "Finished",
     "fields.return_value": "Result",
+
+    "models.mailAccounts": "Mail Account | Mail Accounts",
+    "models.mailTemplates": "Mail Template | Mail Templates",
+    "models.outMails": "Outgoing Mail | Outgoing Mails",
+    "views.edit.smtp": "SMTP Account",
+    "fields.host": "Host",
+    "fields.port": "Port",
+    "fields.encryption": "Encryption",
+
+    "enums.encryption.NONE": "No encryption",
+    "enums.encryption.TLS": "StartTLS",
+    "enums.encryption.SSL": "SSL/TLS",
 
     "empty": ""
 }

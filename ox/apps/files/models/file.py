@@ -4,11 +4,10 @@ from uuid import uuid4
 
 from django.db import models
 from django.conf import settings
-from django.core.exceptions import PermissionDenied, ValidationError
+from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 
-from caps.models import Owned, OwnedQuerySet
-from ox.utils.models import Described, Timestamped, SaveHook, SaveHookQuerySet
+from ox.utils.models import Described, Timestamped, ChildOwned, ChildOwnedQuerySet
 
 from ..conf import ox_files_settings
 from .. import processors
@@ -18,7 +17,7 @@ from .folder import Folder, validate_name
 __all__ = ("FileQuerySet", "File", "file_upload_to", "get_obfuscated_path")
 
 
-class FileQuerySet(SaveHookQuerySet, OwnedQuerySet):
+class FileQuerySet(ChildOwnedQuerySet):
     def delete(self, clear_files: bool | None = None):
         if clear_files is None:
             clear_files = ox_files_settings.CLEAR_FILES_ON_DELETE
@@ -62,7 +61,7 @@ def get_obfuscated_path(ext) -> str:
     return f"{path}/{name}.{ext}"
 
 
-class File(Described, Timestamped, SaveHook, Owned):
+class File(Described, Timestamped, ChildOwned):
     """
     This class represent a file.
 
@@ -101,6 +100,8 @@ class File(Described, Timestamped, SaveHook, Owned):
     ariaDescription = models.TextField(_("ARIA Description"), default="", blank=True, null=True)
     metadata = models.JSONField(_("Metadata"), default=dict, blank=True)
 
+    parent_attr = "folder"
+
     objects = FileQuerySet.as_manager()
 
     class Meta:
@@ -109,6 +110,7 @@ class File(Described, Timestamped, SaveHook, Owned):
 
     def on_save(self, fields=None):
         """Ensure mime type and file validation."""
+        super().on_save(fields)
         self.validate_node()
 
     def validate_node(self):
@@ -117,9 +119,6 @@ class File(Described, Timestamped, SaveHook, Owned):
 
         :yield ValidationError: if file name is already present in folder (file or folder).
         """
-        if self.folder_id and self.owner_id != self.folder.owner_id:
-            raise PermissionDenied("Owner of this file should be the same as its directory.")
-
         kw = {"name": self.name, "owner": self.owner}
 
         query = File.objects.filter(folder_id=self.folder_id, **kw)

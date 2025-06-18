@@ -121,10 +121,10 @@ class AppConfig(apps.AppConfig):
 class CoreAppConfig(AppConfig):
     name = "ox.core"
     label = "ox_core"
-    verbose_name = _("Oxylus Core")
+    verbose_name = _("Oxylus")
     default = True
-    verbose_name = _("Oxylus Core")
-    icon = "mdi-hammer-wrench"
+    verbose_name = _("Oxylus")
+    icon = "mdi-weather-sunny"
 
     root_url = "ox/core"
     index_urlname = "ox_core:index"

@@ -7,6 +7,7 @@ from .color import HexColorValidator, ColorField, Colored
 from .common import Named, Described, Created, Updated, Timestamped, Versioned, PackageInfo
 from .class_field import ClassField
 from .save_hook import SaveHook, SaveHookQuerySet
+from .owned import ChildOwned, ChildOwnedQuerySet
 
 __all__ = (
     "HexColorValidator",
@@ -22,4 +23,6 @@ __all__ = (
     "ClassField",
     "SaveHookQuerySet",
     "SaveHook",
+    "ChildOwned",
+    "ChildOwnedQuerySet",
 )

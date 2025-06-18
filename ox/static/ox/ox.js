@@ -1,13 +1,27 @@
-var we = Object.defineProperty;
-var De = (r, e, t) => e in r ? we(r, e, { enumerable: !0, configurable: !0, writable: !0, value: t }) : r[e] = t;
-var o = (r, e, t) => De(r, typeof e != "symbol" ? e + "" : e, t);
-import { R as ve, c as K, d as be, l as g, a as se, H as Me, b as xe, e as ke, B as Se, C as Ae, G as Te, M as Ee, f as Oe, P as Re, U as W, u as U, g as Pe, S as b, h as Ce, i as Fe, j as Ie, k as Ve, m as Ye, n as Ne, o as ie, s as $e, p as We, q as I, r as qe, t as v, v as j } from "./i18n-DgOvJIH0.js";
-import { F as Ar, w as Tr, D as Er, N as Or, O as Rr, L as Pr, z as Cr, A as Fr, E as Ir, Q as Vr, y as Yr, I as Nr, x as $r, J as Wr, K as qr } from "./i18n-DgOvJIH0.js";
-import { inject as P, provide as D, reactive as M, computed as k, ref as Be, watch as A, effectScope as L, nextTick as Ke, createApp as Ue, onMounted as ae, onUnmounted as oe, unref as z, toRaw as H, defineAsyncComponent as je } from "vue";
-import Le from "axios";
-import * as ze from "ox/vendor";
-import { p as _, c as He, m as ue, a as _e, b as Ge, d as Ze, e as Je, f as Qe, g as Xe, D as G, h as Z, T as J, I as Q, L as X, i as et, j as tt } from "./theme-BVAWnHOc.js";
-class rt {
+var ve = Object.defineProperty;
+var be = (r, e, t) => e in r ? ve(r, e, { enumerable: !0, configurable: !0, writable: !0, value: t }) : r[e] = t;
+var o = (r, e, t) => be(r, typeof e != "symbol" ? e + "" : e, t);
+import { t as D, R as Me, c as K, d as xe, l as g, a as ie, H as Se, b as ke, e as Ae, B as Te, C as Ee, G as Oe, M as Re, f as Pe, P as Ce, U as W, u as j, g as Fe, S as b, h as Ie, i as Ve, j as Ye, k as $e, m as Ne, n as We, o as ae, s as qe, p as Be, q as I, r as Ke, v as U } from "./index-zDmba_tR.js";
+import { F as Or, w as Rr, D as Pr, N as Cr, O as Fr, L as Ir, z as Vr, A as Yr, E as $r, Q as Nr, y as Wr, I as qr, x as Br, J as Kr, K as jr } from "./index-zDmba_tR.js";
+import { inject as P, provide as v, reactive as M, computed as S, ref as je, watch as A, effectScope as _, nextTick as Ue, createApp as _e, onMounted as oe, onUnmounted as ue, unref as L, toRaw as z, defineAsyncComponent as Le } from "vue";
+import ze from "axios";
+import * as He from "ox/vendor";
+import { p as H, c as Ge, m as le, a as Ze, b as Je, d as Qe, e as Xe, f as et, g as tt, D as G, h as Z, T as J, I as Q, L as X, i as rt, j as nt } from "./theme-BVAWnHOc.js";
+function ee(r, e) {
+  return D(`enums.${r}.${e}`);
+}
+const ce = {
+  get(r, e, t) {
+    return e == "items" ? Object.keys(r).filter((n) => n[0] != "_").map((n) => ({
+      value: r[n],
+      title: ee(r.__prefix, n)
+    })) : e == "toString" ? (n) => ee(t.__prefix, n) : Reflect.get(...arguments);
+  }
+};
+function st(r, e) {
+  return e.__prefix = r, new Proxy(e, ce);
+}
+class it {
   /**
    * Create a new response instance.
    */
@@ -102,7 +116,7 @@ class rt {
     return ["save", "insert"].includes(e);
   }
 }
-class nt {
+class at {
   /**
    * Create a new api instance.
    */
@@ -207,11 +221,11 @@ class nt {
    * For example, it saves response data if `save` option id set to `true`.
    */
   async createResponse(e, t) {
-    const n = new rt(this.repository, t, e);
+    const n = new it(this.repository, t, e);
     return t.delete !== void 0 ? (await n.delete(), n) : (t.save && await n.save(), n);
   }
 }
-class st extends ve {
+class ot extends Me {
   constructor(t, n) {
     var s, i, a;
     super(t, n);
@@ -221,17 +235,17 @@ class st extends ve {
     this.axios = ((i = (s = K) == null ? void 0 : s.axiosApi) == null ? void 0 : i.axios) || null, this.globalApiConfig = ((a = K) == null ? void 0 : a.axiosApi) || {}, this.apiConfig = {};
   }
   api() {
-    return it(this);
+    return ut(this);
   }
   setAxios(t) {
     return this.axios = t, this;
   }
 }
-function it(r) {
-  return new nt(r);
+function ut(r) {
+  return new at(r);
 }
-function at(r) {
-  return be((e) => (e.config.axiosApi = r, e));
+function lt(r) {
+  return xe((e) => (e.config.axiosApi = r, e));
 }
 class q {
   constructor(e) {
@@ -287,7 +301,7 @@ class q {
   }
 }
 o(q, "_lastKey", 0);
-class V extends st {
+class V extends ot {
   constructor(t, n) {
     super(t, n);
     o(this, "refs");
@@ -297,36 +311,38 @@ class V extends st {
     this.refs.clear(), super.flush();
   }
 }
-function le(r, e) {
+function he(r, e) {
   var t;
   if (typeof e == "string") {
     const n = (t = r.use) == null ? void 0 : t.fields(), s = n && n[e] || null;
-    e = s instanceof se ? s : null;
+    e = s instanceof ie ? s : null;
   }
   return e;
 }
-function ce(r) {
-  return r instanceof Me || r instanceof xe || r instanceof ke || r instanceof Se ? r.foreignKey : null;
+function de(r) {
+  return r instanceof Se || r instanceof ke || r instanceof Ae || r instanceof Te ? r.foreignKey : null;
 }
-const fr = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+const gr = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
-  ContentType: Ae,
-  Group: Te,
-  Meta: Ee,
-  Model: Oe,
-  Permission: Re,
+  ContentType: Ee,
+  Enum: st,
+  Group: Oe,
+  Meta: Re,
+  Model: Pe,
+  Permission: Ce,
   RefCounter: q,
   Repository: V,
   User: W,
-  asRelation: le,
-  getSourceKey: ce
+  asRelation: he,
+  enumProxy: ce,
+  getSourceKey: de
 }, Symbol.toStringTag, { value: "Module" }));
-function ot(r) {
-  U(r);
-  const e = Pe();
-  return V.useModel = r, U(V, e);
+function ct(r) {
+  j(r);
+  const e = Fe();
+  return V.useModel = r, j(V, e);
 }
-function ut(r, { useInject: e = !0, useDefaults: t = !0, key: n = null } = {}) {
+function ht(r, { useInject: e = !0, useDefaults: t = !0, key: n = null } = {}) {
   var s = e && (P("repos") || {});
   const i = e && !!Object.keys(s).length;
   Array.isArray(r) || (r = Object.values(r)), t && r.push(W);
@@ -334,14 +350,14 @@ function ut(r, { useInject: e = !0, useDefaults: t = !0, key: n = null } = {}) {
     if (a && a.entity) {
       if (a.entity in s)
         continue;
-      s[a.entity] = ot(a);
+      s[a.entity] = ct(a);
     }
-  return !i && D("repos", s), s;
+  return !i && v("repos", s), s;
 }
-class lt {
+class dt {
   static reactive(e) {
     const t = M(new this(e));
-    return t.user = k(() => {
+    return t.user = S(() => {
       var n;
       return new W(((n = t.data) == null ? void 0 : n.user) || {});
     }), t;
@@ -354,7 +370,7 @@ class lt {
    * source element.
    */
   load(e = void 0) {
-    this.dataEl !== void 0 && (e === void 0 && (e = this.readData(this.dataEl)), e.dataEl = this.dataEl, this.data = e), this.models !== void 0 && (this.repos = ut(this.models));
+    this.dataEl !== void 0 && (e === void 0 && (e = this.readData(this.dataEl)), e.dataEl = this.dataEl, this.data = e), this.models !== void 0 && (this.repos = ht(this.models));
   }
   /**
    * Read data from the context of provided source element.
@@ -368,12 +384,12 @@ class lt {
     return t.innerText ? JSON.parse(t.innerText) : {};
   }
 }
-function mr(r, e = !0) {
-  const t = lt.reactive(r);
-  return e && t.dataEl && t.load(), D("context", t), D("user", t.user), t;
+function yr(r, e = !0) {
+  const t = dt.reactive(r);
+  return e && t.dataEl && t.load(), v("context", t), v("user", t.user), t;
 }
-function pr({ props: r, user: e, emits: t = null }) {
-  const n = Be(!1), s = k(() => !r.permission || e.can(r.permission, r.item));
+function wr({ props: r, user: e, emits: t = null }) {
+  const n = je(!1), s = S(() => !r.permission || e.can(r.permission, r.item));
   return { processing: n, run: async (...a) => {
     if (r.confirm && !confirm(r.confirm))
       return;
@@ -435,11 +451,11 @@ function T(r) {
       return null;
   }
 }
-function ct(r, e, t) {
+function ft(r, e, t) {
   var f;
   const n = [];
   let s = [];
-  const i = he(r), a = de(r), u = t ?? ((f = T(e)) == null ? void 0 : f.firstDay) ?? 0, l = (i.getDay() - u + 7) % 7, m = (a.getDay() - u + 7) % 7;
+  const i = fe(r), a = me(r), u = t ?? ((f = T(e)) == null ? void 0 : f.firstDay) ?? 0, l = (i.getDay() - u + 7) % 7, m = (a.getDay() - u + 7) % 7;
   for (let c = 0; c < l; c++) {
     const h = new Date(i);
     h.setDate(h.getDate() - (l - c)), s.push(h);
@@ -461,48 +477,48 @@ function Y(r, e, t) {
     s.setDate(s.getDate() - 1);
   return s;
 }
-function ht(r, e) {
+function mt(r, e) {
   var s;
   const t = new Date(r), n = ((((s = T(e)) == null ? void 0 : s.firstDay) ?? 0) + 6) % 7;
   for (; t.getDay() !== n; )
     t.setDate(t.getDate() + 1);
   return t;
 }
-function he(r) {
+function fe(r) {
   return new Date(r.getFullYear(), r.getMonth(), 1);
 }
-function de(r) {
+function me(r) {
   return new Date(r.getFullYear(), r.getMonth() + 1, 0);
 }
-function dt(r) {
+function pt(r) {
   const e = r.split("-").map(Number);
   return new Date(e[0], e[1] - 1, e[2]);
 }
-const ft = /^([12]\d{3}-([1-9]|0[1-9]|1[0-2])-([1-9]|0[1-9]|[12]\d|3[01]))$/;
-function fe(r) {
+const gt = /^([12]\d{3}-([1-9]|0[1-9]|1[0-2])-([1-9]|0[1-9]|[12]\d|3[01]))$/;
+function pe(r) {
   if (r == null) return /* @__PURE__ */ new Date();
   if (r instanceof Date) return r;
   if (typeof r == "string") {
     let e;
-    if (ft.test(r))
-      return dt(r);
+    if (gt.test(r))
+      return pt(r);
     if (e = Date.parse(r), !isNaN(e)) return new Date(e);
   }
   return null;
 }
-const ee = new Date(2e3, 0, 2);
-function mt(r, e) {
+const te = new Date(2e3, 0, 2);
+function yt(r, e) {
   var n;
   const t = e ?? ((n = T(r)) == null ? void 0 : n.firstDay) ?? 0;
-  return He(7).map((s) => {
-    const i = new Date(ee);
-    return i.setDate(ee.getDate() + t + s), new Intl.DateTimeFormat(r, {
+  return Ge(7).map((s) => {
+    const i = new Date(te);
+    return i.setDate(te.getDate() + t + s), new Intl.DateTimeFormat(r, {
       weekday: "narrow"
     }).format(i);
   });
 }
-function pt(r, e, t, n) {
-  const s = fe(r) ?? /* @__PURE__ */ new Date(), i = n == null ? void 0 : n[e];
+function wt(r, e, t, n) {
+  const s = pe(r) ?? /* @__PURE__ */ new Date(), i = n == null ? void 0 : n[e];
   if (typeof i == "function")
     return i(s, e, t);
   let a = {};
@@ -691,19 +707,19 @@ function pt(r, e, t, n) {
   }
   return new Intl.DateTimeFormat(t, a).format(s);
 }
-function gt(r, e) {
-  const t = r.toJsDate(e), n = t.getFullYear(), s = _(String(t.getMonth() + 1), 2, "0"), i = _(String(t.getDate()), 2, "0");
+function Dt(r, e) {
+  const t = r.toJsDate(e), n = t.getFullYear(), s = H(String(t.getMonth() + 1), 2, "0"), i = H(String(t.getDate()), 2, "0");
   return `${n}-${s}-${i}`;
 }
-function yt(r) {
+function vt(r) {
   const [e, t, n] = r.split("-").map(Number);
   return new Date(e, t - 1, n);
 }
-function wt(r, e) {
+function bt(r, e) {
   const t = new Date(r);
   return t.setMinutes(t.getMinutes() + e), t;
 }
-function Dt(r, e) {
+function Mt(r, e) {
   const t = new Date(r);
   return t.setHours(t.getHours() + e), t;
 }
@@ -711,82 +727,82 @@ function R(r, e) {
   const t = new Date(r);
   return t.setDate(t.getDate() + e), t;
 }
-function vt(r, e) {
+function xt(r, e) {
   const t = new Date(r);
   return t.setDate(t.getDate() + e * 7), t;
 }
-function bt(r, e) {
+function St(r, e) {
   const t = new Date(r);
   return t.setDate(1), t.setMonth(t.getMonth() + e), t;
 }
-function N(r) {
+function $(r) {
   return r.getFullYear();
 }
-function Mt(r) {
+function kt(r) {
   return r.getMonth();
 }
-function xt(r, e, t, n) {
+function At(r, e, t, n) {
   const s = T(e), i = t ?? (s == null ? void 0 : s.firstDay) ?? 0, a = n ?? (s == null ? void 0 : s.firstWeekSize) ?? 1;
   function u(y) {
     const w = new Date(y, 0, 1);
-    return 7 - $(w, Y(w, e, i), "days");
+    return 7 - N(w, Y(w, e, i), "days");
   }
-  let l = N(r);
+  let l = $(r);
   const m = R(Y(r, e, i), 6);
-  l < N(m) && u(l + 1) >= a && l++;
+  l < $(m) && u(l + 1) >= a && l++;
   const f = new Date(l, 0, 1), c = u(l), h = c >= a ? R(f, c - 7) : R(f, c);
-  return 1 + $(me(r), F(h), "weeks");
-}
-function kt(r) {
-  return r.getDate();
-}
-function St(r) {
-  return new Date(r.getFullYear(), r.getMonth() + 1, 1);
-}
-function At(r) {
-  return new Date(r.getFullYear(), r.getMonth() - 1, 1);
+  return 1 + N(ge(r), F(h), "weeks");
 }
 function Tt(r) {
-  return r.getHours();
+  return r.getDate();
 }
 function Et(r) {
-  return r.getMinutes();
+  return new Date(r.getFullYear(), r.getMonth() + 1, 1);
 }
 function Ot(r) {
-  return new Date(r.getFullYear(), 0, 1);
+  return new Date(r.getFullYear(), r.getMonth() - 1, 1);
 }
 function Rt(r) {
-  return new Date(r.getFullYear(), 11, 31);
+  return r.getHours();
 }
-function Pt(r, e) {
-  return C(r, e[0]) && It(r, e[1]);
+function Pt(r) {
+  return r.getMinutes();
 }
 function Ct(r) {
+  return new Date(r.getFullYear(), 0, 1);
+}
+function Ft(r) {
+  return new Date(r.getFullYear(), 11, 31);
+}
+function It(r, e) {
+  return C(r, e[0]) && $t(r, e[1]);
+}
+function Vt(r) {
   const e = new Date(r);
   return e instanceof Date && !isNaN(e.getTime());
 }
 function C(r, e) {
   return r.getTime() > e.getTime();
 }
-function Ft(r, e) {
+function Yt(r, e) {
   return C(F(r), F(e));
 }
-function It(r, e) {
+function $t(r, e) {
   return r.getTime() < e.getTime();
 }
-function te(r, e) {
+function re(r, e) {
   return r.getTime() === e.getTime();
 }
-function Vt(r, e) {
+function Nt(r, e) {
   return r.getDate() === e.getDate() && r.getMonth() === e.getMonth() && r.getFullYear() === e.getFullYear();
 }
-function Yt(r, e) {
+function Wt(r, e) {
   return r.getMonth() === e.getMonth() && r.getFullYear() === e.getFullYear();
 }
-function Nt(r, e) {
+function qt(r, e) {
   return r.getFullYear() === e.getFullYear();
 }
-function $(r, e, t) {
+function N(r, e, t) {
   const n = new Date(r), s = new Date(e);
   switch (t) {
     case "years":
@@ -809,174 +825,174 @@ function $(r, e, t) {
       return n.getTime() - s.getTime();
   }
 }
-function $t(r, e) {
+function Bt(r, e) {
   const t = new Date(r);
   return t.setHours(e), t;
 }
-function Wt(r, e) {
+function Kt(r, e) {
   const t = new Date(r);
   return t.setMinutes(e), t;
 }
-function qt(r, e) {
+function jt(r, e) {
   const t = new Date(r);
   return t.setMonth(e), t;
 }
-function Bt(r, e) {
+function Ut(r, e) {
   const t = new Date(r);
   return t.setDate(e), t;
 }
-function Kt(r, e) {
+function _t(r, e) {
   const t = new Date(r);
   return t.setFullYear(e), t;
 }
 function F(r) {
   return new Date(r.getFullYear(), r.getMonth(), r.getDate(), 0, 0, 0, 0);
 }
-function me(r) {
+function ge(r) {
   return new Date(r.getFullYear(), r.getMonth(), r.getDate(), 23, 59, 59, 999);
 }
-class Ut {
+class Lt {
   constructor(e) {
     this.locale = e.locale, this.formats = e.formats;
   }
   date(e) {
-    return fe(e);
+    return pe(e);
   }
   toJsDate(e) {
     return e;
   }
   toISO(e) {
-    return gt(this, e);
+    return Dt(this, e);
   }
   parseISO(e) {
-    return yt(e);
+    return vt(e);
   }
   addMinutes(e, t) {
-    return wt(e, t);
+    return bt(e, t);
   }
   addHours(e, t) {
-    return Dt(e, t);
+    return Mt(e, t);
   }
   addDays(e, t) {
     return R(e, t);
   }
   addWeeks(e, t) {
-    return vt(e, t);
+    return xt(e, t);
   }
   addMonths(e, t) {
-    return bt(e, t);
+    return St(e, t);
   }
   getWeekArray(e, t) {
     const n = t !== void 0 ? Number(t) : void 0;
-    return ct(e, this.locale, n);
+    return ft(e, this.locale, n);
   }
   startOfWeek(e, t) {
     const n = t !== void 0 ? Number(t) : void 0;
     return Y(e, this.locale, n);
   }
   endOfWeek(e) {
-    return ht(e, this.locale);
+    return mt(e, this.locale);
   }
   startOfMonth(e) {
-    return he(e);
+    return fe(e);
   }
   endOfMonth(e) {
-    return de(e);
+    return me(e);
   }
   format(e, t) {
-    return pt(e, t, this.locale, this.formats);
+    return wt(e, t, this.locale, this.formats);
   }
   isEqual(e, t) {
-    return te(e, t);
+    return re(e, t);
   }
   isValid(e) {
-    return Ct(e);
+    return Vt(e);
   }
   isWithinRange(e, t) {
-    return Pt(e, t);
+    return It(e, t);
   }
   isAfter(e, t) {
     return C(e, t);
   }
   isAfterDay(e, t) {
-    return Ft(e, t);
-  }
-  isBefore(e, t) {
-    return !C(e, t) && !te(e, t);
-  }
-  isSameDay(e, t) {
-    return Vt(e, t);
-  }
-  isSameMonth(e, t) {
     return Yt(e, t);
   }
-  isSameYear(e, t) {
+  isBefore(e, t) {
+    return !C(e, t) && !re(e, t);
+  }
+  isSameDay(e, t) {
     return Nt(e, t);
   }
-  setMinutes(e, t) {
+  isSameMonth(e, t) {
     return Wt(e, t);
   }
-  setHours(e, t) {
-    return $t(e, t);
-  }
-  setMonth(e, t) {
+  isSameYear(e, t) {
     return qt(e, t);
   }
-  setDate(e, t) {
-    return Bt(e, t);
-  }
-  setYear(e, t) {
+  setMinutes(e, t) {
     return Kt(e, t);
   }
+  setHours(e, t) {
+    return Bt(e, t);
+  }
+  setMonth(e, t) {
+    return jt(e, t);
+  }
+  setDate(e, t) {
+    return Ut(e, t);
+  }
+  setYear(e, t) {
+    return _t(e, t);
+  }
   getDiff(e, t, n) {
-    return $(e, t, n);
+    return N(e, t, n);
   }
   getWeekdays(e) {
     const t = e !== void 0 ? Number(e) : void 0;
-    return mt(this.locale, t);
+    return yt(this.locale, t);
   }
   getYear(e) {
-    return N(e);
+    return $(e);
   }
   getMonth(e) {
-    return Mt(e);
+    return kt(e);
   }
   getWeek(e, t, n) {
     const s = t !== void 0 ? Number(t) : void 0;
-    return xt(e, this.locale, s, n);
+    return At(e, this.locale, s, n);
   }
   getDate(e) {
-    return kt(e);
-  }
-  getNextMonth(e) {
-    return St(e);
-  }
-  getPreviousMonth(e) {
-    return At(e);
-  }
-  getHours(e) {
     return Tt(e);
   }
-  getMinutes(e) {
+  getNextMonth(e) {
     return Et(e);
+  }
+  getPreviousMonth(e) {
+    return Ot(e);
+  }
+  getHours(e) {
+    return Rt(e);
+  }
+  getMinutes(e) {
+    return Pt(e);
   }
   startOfDay(e) {
     return F(e);
   }
   endOfDay(e) {
-    return me(e);
+    return ge(e);
   }
   startOfYear(e) {
-    return Ot(e);
+    return Ct(e);
   }
   endOfYear(e) {
-    return Rt(e);
+    return Ft(e);
   }
 }
-const jt = Symbol.for("vuetify:date-options"), re = Symbol.for("vuetify:date-adapter");
-function Lt(r, e) {
-  const t = ue({
-    adapter: Ut,
+const zt = Symbol.for("vuetify:date-options"), ne = Symbol.for("vuetify:date-adapter");
+function Ht(r, e) {
+  const t = le({
+    adapter: Lt,
     locale: {
       af: "af-ZA",
       // ar: '', # not the same value for all variants
@@ -1023,10 +1039,10 @@ function Lt(r, e) {
   }, r);
   return {
     options: t,
-    instance: zt(t, e)
+    instance: Gt(t, e)
   };
 }
-function zt(r, e) {
+function Gt(r, e) {
   const t = M(typeof r.adapter == "function" ? new r.adapter({
     locale: r.locale[e.current.value] ?? e.current.value,
     formats: r.formats
@@ -1035,33 +1051,33 @@ function zt(r, e) {
     t.locale = r.locale[n] ?? n ?? t.locale;
   }), t;
 }
-function pe() {
+function ye() {
   let r = arguments.length > 0 && arguments[0] !== void 0 ? arguments[0] : {};
   const {
     blueprint: e,
     ...t
-  } = r, n = ue(e, t), {
+  } = r, n = le(e, t), {
     aliases: s = {},
     components: i = {},
     directives: a = {}
-  } = n, u = L();
+  } = n, u = _();
   return u.run(() => {
-    const l = _e(n.defaults), m = Ge(n.display, n.ssr), f = Ze(n.theme), c = Je(n.icons), h = Qe(n.locale), y = Lt(n.date, h), w = Ce(n.goTo, h);
+    const l = Ze(n.defaults), m = Je(n.display, n.ssr), f = Qe(n.theme), c = Xe(n.icons), h = et(n.locale), y = Ht(n.date, h), w = Ie(n.goTo, h);
     function E(d) {
       for (const p in a)
         d.directive(p, a[p]);
       for (const p in i)
         d.component(p, i[p]);
       for (const p in s)
-        d.component(p, Xe({
+        d.component(p, tt({
           ...s[p],
           name: p,
           aliasName: s[p].name
         }));
-      const B = L();
+      const B = _();
       if (B.run(() => {
         f.install(d);
-      }), d.onUnmount(() => B.stop()), d.provide(G, l), d.provide(Z, m), d.provide(J, f), d.provide(Q, c), d.provide(X, h), d.provide(jt, y.options), d.provide(re, y.instance), d.provide(Fe, w), et && n.ssr)
+      }), d.onUnmount(() => B.stop()), d.provide(G, l), d.provide(Z, m), d.provide(J, f), d.provide(Q, c), d.provide(X, h), d.provide(zt, y.options), d.provide(ne, y.instance), d.provide(Ve, w), rt && n.ssr)
         if (d.$nuxt)
           d.$nuxt.hook("app:suspense:resolve", () => {
             m.update();
@@ -1071,8 +1087,8 @@ function pe() {
             mount: p
           } = d;
           d.mount = function() {
-            const ye = p(...arguments);
-            return Ke(() => m.update()), d.mount = p, ye;
+            const De = p(...arguments);
+            return Ue(() => m.update()), d.mount = p, De;
           };
         }
       d.mixin({
@@ -1084,7 +1100,7 @@ function pe() {
               theme: x.call(this, J),
               icons: x.call(this, Q),
               locale: x.call(this, X),
-              date: x.call(this, re)
+              date: x.call(this, ne)
             });
           }
         }
@@ -1106,15 +1122,15 @@ function pe() {
     };
   });
 }
-const Ht = "3.8.9";
-pe.version = Ht;
+const Zt = "3.8.9";
+ye.version = Zt;
 function x(r) {
   var n, s;
   const e = this.$, t = ((n = e.parent) == null ? void 0 : n.provides) ?? ((s = e.vnode.appContext) == null ? void 0 : s.provides);
   if (t && r in t)
     return t[r];
 }
-const _t = {
+const Jt = {
   defaults: {
     VAppBar: {
       flat: !0
@@ -1208,7 +1224,7 @@ const _t = {
   icons: {
     defaultSet: "mdi",
     sets: {
-      mdi: tt
+      mdi: nt
     }
   },
   theme: {
@@ -1224,15 +1240,15 @@ const _t = {
       }
     }
   }
-}, Gt = {
+}, Qt = {
   lighten4: "#c8e6c9",
   darken1: "#43a047"
-}, ne = {
-  green: Gt
+}, se = {
+  green: Qt
 };
-function gr({ App: r = null, el: e = "#app", onLoad: t = !0, ...n } = {}) {
+function Dr({ App: r = null, el: e = "#app", onLoad: t = !0, ...n } = {}) {
   function s() {
-    const i = Zt(r, n), a = e ? i.mount(e) : null;
+    const i = Xt(r, n), a = e ? i.mount(e) : null;
     return document.body.classList.remove("loading"), { app: i, el: e, vm: a };
   }
   return new Promise((i) => {
@@ -1244,22 +1260,22 @@ function gr({ App: r = null, el: e = "#app", onLoad: t = !0, ...n } = {}) {
     i(s());
   });
 }
-function Zt(r, { props: e = {}, vuetify: t = {}, plugins: n = null } = {}) {
-  return r = Ue(r, e), r.config.globalProperties.window = window, r.use(Jt(t)), r.use(Ie), Ve(), n && n.forEach((s) => r.use(s)), r;
+function Xt(r, { props: e = {}, vuetify: t = {}, plugins: n = null } = {}) {
+  return r = _e(r, e), r.config.globalProperties.window = window, r.use(er(t)), r.use(Ye), $e(), n && n.forEach((s) => r.use(s)), r;
 }
-function Jt({ components: r = {}, defaults: e = {}, ...t }) {
+function er({ components: r = {}, defaults: e = {}, ...t }) {
   return t.components = {
-    ...ze,
+    ...He,
     ...r
-  }, pe({
-    blueprint: _t,
+  }, ye({
+    blueprint: Jt,
     theme: {
       themes: {
         light: {
           dark: !1,
           colors: {
-            primary: ne.green.darken1,
-            secondary: ne.green.lighten4
+            primary: se.green.darken1,
+            secondary: se.green.lighten4
           }
         }
       }
@@ -1275,20 +1291,20 @@ function Jt({ components: r = {}, defaults: e = {}, ...t }) {
     ...t
   });
 }
-function yr({ axiosConfig: r = null, baseURL: e = null } = {}) {
+function vr({ axiosConfig: r = null, baseURL: e = null } = {}) {
   e || (e = document.body.dataset.apiUrl);
-  const t = Ye(), n = Ne({
+  const t = Ne(), n = We({
     plugins: [
-      at({
-        axios: Le,
-        ...r || ie.axiosConfig,
+      lt({
+        axios: ze,
+        ...r || ae.axiosConfig,
         baseURL: e
       })
     ]
   });
-  return $e(t), t.use(n);
+  return qe(t), t.use(n);
 }
-class S {
+class k {
   /**
   * @param {Repos} [repos] all models repositories
   * @param {Repository<M>} [repo] the main repository
@@ -1368,7 +1384,7 @@ class S {
     if (i)
       for (const u of t) {
         const l = i[u];
-        if (l instanceof se)
+        if (l instanceof ie)
           s[u] = await this.relation(e, l, n);
         else
           throw Error(`Field ${u} is not a relation`);
@@ -1389,28 +1405,28 @@ class S {
    */
   async relation(e, t, n = {}) {
     this._ensureRepos("relations");
-    const s = le(this.repo, t);
+    const s = he(this.repo, t);
     if (!s)
       throw Error(`No Relation found for field ${t}.`);
     const i = s.related.constructor.entity, a = this.repos[i];
     if (!a)
       throw Error(`No repository "${i}" found.`);
-    const u = ce(s);
+    const u = de(s);
     if (!u)
       throw Error(`No source ids attributes for ${t}.`);
-    const l = [...new Set(We(e, u))];
-    return new S(a, this.repos).all({ ...n, ids: l, repo: a });
+    const l = [...new Set(Be(e, u))];
+    return new k(a, this.repos).all({ ...n, ids: l, repo: a });
   }
 }
-function Qt(r, e, t = null) {
+function tr(r, e, t = null) {
   if (typeof r == "string") {
     if (!(r in e))
       throw Error(`Repository "${r}" is not present in provided repositories.`);
-    return new S(e[r], e, t);
+    return new k(e[r], e, t);
   }
-  return new S(r, e, t);
+  return new k(r, e, t);
 }
-class ge {
+class we {
   constructor(e) {
     o(this, "state", b.none());
     o(this, "value", {});
@@ -1440,7 +1456,7 @@ class ge {
    * When value is provided, reset initial to this value.
    */
   reset(e = null) {
-    qe(this.value, e ?? this.empty), this.state.none();
+    Ke(this.value, e ?? this.empty), this.state.none();
   }
   /** Return wether value has been edited or not */
   isEdited() {
@@ -1462,7 +1478,7 @@ class ge {
         _: "Some of the input values are invalid"
       });
     e ?? (e = this.value), e instanceof FormData ? t.headers = {
-      ...ie.axiosConfig.headers,
+      ...ae.axiosConfig.headers,
       "Content-Type": "multipart/form-data",
       ...t.headers
     } : e = this.serialize(e);
@@ -1488,7 +1504,7 @@ class ge {
     throw "not implemented";
   }
 }
-class Xt {
+class rr {
   constructor(e = null) {
     o(this, "index", "list.table");
     o(this, "view", "");
@@ -1556,11 +1572,11 @@ class Xt {
   onLeave() {
     if (!this.edited)
       return !0;
-    const e = v(this.confirmTKey);
+    const e = D(this.confirmTKey);
     return confirm(e);
   }
 }
-class er {
+class nr {
   constructor(e = null) {
     o(this, "panel", "");
     o(this, "params", {});
@@ -1613,7 +1629,7 @@ class er {
     e && e != this.panel && this.current && !this.current.onLeave() || (this.panel = e || this.panel, this.params = n, this.current = this.children[this.panel], (i = this.current) == null || i.show({ ...this.params, silent: t }));
   }
 }
-class tr {
+class sr {
   constructor(e = null) {
     o(this, "state", b.none());
     o(this, "save", !0);
@@ -1681,7 +1697,7 @@ class tr {
     return !e.relations && this.relations && this.fetchRelations && (e.relations = this.relations), e.url || (e.url = this.url), "save" in e || (e.save = this.save), e;
   }
 }
-class rr extends tr {
+class ir extends sr {
   constructor(...t) {
     super(...t);
     // /** Reference counter key **/
@@ -1776,7 +1792,7 @@ class rr extends tr {
     typeof n == "number" ? this.ids.splice(n, 0, ...t) : n && this.ids.length ? this.ids = g.union(this.ids, t) : this.ids = t;
   }
 }
-class nr extends ge {
+class ar extends we {
   constructor(e) {
     e.fields = Object.keys(e.props.repo.use.fields()), e.empty ?? (e.empty = new e.props.repo.use()), super(e);
   }
@@ -1813,7 +1829,7 @@ class nr extends ge {
     );
   }
 }
-class sr extends Xt {
+class or extends rr {
   constructor(t) {
     var n;
     super(t);
@@ -1843,12 +1859,12 @@ class sr extends Xt {
     const { props: t, list: n } = this, s = this.repo.use;
     if (s) {
       if ((i = this.view) != null && i.startsWith("list."))
-        return v(j.model(s), 3);
+        return D(U.model(s), 3);
       if ((a = this.view) != null && a.startsWith("detail.")) {
         if ((u = this.value) != null && u.$title)
           return this.value.$title;
-        const m = v(j.model(s));
-        return (l = this.value) != null && l.id ? v("models._.title", { model: m, id: this.value.id }) : v("models._.title.new", { model: m });
+        const m = D(U.model(s));
+        return (l = this.value) != null && l.id ? D("models._.title", { model: m, id: this.value.id }) : D("models._.title.new", { model: m });
       }
     }
     return super.title;
@@ -1871,14 +1887,14 @@ class sr extends Xt {
   }
   show({ id: t = null, ...n }) {
     if (t)
-      Qt(this.repo).fetch({ id: t, relations: this.relations }).then((s) => (super.show({ ...n, value: s.entities[0] }), s));
+      tr(this.repo).fetch({ id: t, relations: this.relations }).then((s) => (super.show({ ...n, value: s.entities[0] }), s));
     else
       return super.show(n);
   }
 }
-function wr(r) {
-  const e = M(new er(r));
-  D("panels", e), ae(() => {
+function br(r) {
+  const e = M(new nr(r));
+  v("panels", e), oe(() => {
     e.readDocumentLocation(), e.panel && e.show({
       panel: e.panel,
       silent: !0,
@@ -1895,33 +1911,33 @@ function wr(r) {
     n ? document.title = `${n} | ${t}` : document.title = t;
   }), e;
 }
-function ir(r, e) {
+function ur(r, e) {
   const t = M(new e(r));
-  return D("panel", t), ae(() => t.panels.register(t.name, t)), oe(() => t.panels.unregister(t.name)), { panel: t };
+  return v("panel", t), oe(() => t.panels.register(t.name, t)), ue(() => t.panels.unregister(t.name)), { panel: t };
 }
-function Dr({ query: r, repos: e, ...t }) {
-  e ?? (e = P("repos")), r ?? (r = new S(t.props.repo, e)), t.panels ?? (t.panels = P("panels"));
-  const { list: n, items: s } = ar({
+function Mr({ query: r, repos: e, ...t }) {
+  e ?? (e = P("repos")), r ?? (r = new k(t.props.repo, e)), t.panels ?? (t.panels = P("panels"));
+  const { list: n, items: s } = lr({
     query: r,
     relations: t.props.relations,
     fetchRelations: t.props.fetchRelations
-  }), { panel: i } = ir({ list: n, ...t }, sr), a = k(() => {
-    const l = n.getSiblingIndex(z(i.value), 1);
+  }), { panel: i } = ur({ list: n, ...t }, or), a = S(() => {
+    const l = n.getSiblingIndex(L(i.value), 1);
     return s.value[l] ?? null;
-  }), u = k(() => {
-    const l = n.getSiblingIndex(z(i.value), -1);
+  }), u = S(() => {
+    const l = n.getSiblingIndex(L(i.value), -1);
     return s.value[l] ?? null;
   });
   return { panels: i.panels, panel: i, list: n, items: s, next: a, prev: u };
 }
-function ar(r, e = rr) {
-  const t = M(new e(r)), n = t.repo.refs.acquireKey(), s = k(() => t.queryset(t.ids).orderBy((i) => t.ids.indexOf(i)).get());
+function lr(r, e = ir) {
+  const t = M(new e(r)), n = t.repo.refs.acquireKey(), s = S(() => t.queryset(t.ids).orderBy((i) => t.ids.indexOf(i)).get());
   return A(() => t.ids, (i, a) => {
-    g.isEqual(H(i), H(a)) || t.repo.refs.releaseAcquire(n, a, i);
-  }), oe(() => t.repo.refs.flush(n)), D("list", t), D("items", s), { list: t, items: s, listId: n };
+    g.isEqual(z(i), z(a)) || t.repo.refs.releaseAcquire(n, a, i);
+  }), ue(() => t.repo.refs.flush(n)), v("list", t), v("items", s), { list: t, items: s, listId: n };
 }
-function vr(r, e = null, t) {
-  const n = new S(r, e, t), s = b.none();
+function xr(r, e = null, t) {
+  const n = new k(r, e, t), s = b.none();
   async function i(a) {
     s.processing();
     let u = null;
@@ -1934,24 +1950,24 @@ function vr(r, e = null, t) {
   }
   return { state: s, query: n, fetch: i };
 }
-function or(r, e = ge) {
+function cr(r, e = we) {
   r.initial || r.props.initial;
   const t = M(new e(r));
-  D("editor", t);
-  const n = k(() => t.isEdited());
+  v("editor", t);
+  const n = S(() => t.isEdited());
   A(() => t.props.initial, (i) => {
     t.initial = i || t.empty, t.reset(i || t.empty);
   });
   const s = P("panel");
   return s && A(() => t.edited, (i) => s.setEdition(t.name, i)), { editor: t, edited: n };
 }
-function br(r, e = nr) {
-  return or(r, e);
+function Sr(r, e = ar) {
+  return cr(r, e);
 }
-const Mr = {
+const kr = {
   /** Field is required */
   required(r) {
-    return r ? !0 : v("fields._.required");
+    return r ? !0 : D("fields._.required");
   },
   /**
    * Validate field errors returned from the server.
@@ -1970,68 +1986,68 @@ const Mr = {
   },
   /** Rule validating email */
   email(r) {
-    return /^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i.test(r) || v("fields.email.rule");
+    return /^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i.test(r) || D("fields.email.rule");
   },
   /** Rule validating username */
   username(r) {
     return /^[A-Za-z0-9@.+\-_]+$/.test(r) || "Username must not be empty. It only can contain letters, numbers and @/+/./- special characters";
   }
 };
-function xr(r, e) {
-  return je(() => import(r).then((t) => e ? (console.log(t, t.components, Object.keys(t)), Object.values(t).filter((s) => s.__name == e)[0]) : t));
+function Ar(r, e) {
+  return Le(() => import(r).then((t) => e ? (console.log(t, t.components, Object.keys(t)), Object.values(t).filter((s) => s.__name == e)[0]) : t));
 }
 export {
-  lt as AppContext,
-  ge as Editor,
-  tr as ModelController,
-  nr as ModelEditor,
-  rr as ModelList,
-  sr as ModelPanel,
-  Xt as Panel,
-  er as Panels,
-  S as Query,
+  dt as AppContext,
+  we as Editor,
+  sr as ModelController,
+  ar as ModelEditor,
+  ir as ModelList,
+  or as ModelPanel,
+  rr as Panel,
+  nr as Panels,
+  k as Query,
   b as State,
-  Ar as States,
+  Or as States,
   I as assignNonEmpty,
-  We as collectAttr,
-  ie as config,
-  Zt as createApp,
-  Tr as createI18n,
-  yr as createPinia,
-  Jt as createVuetify,
-  Er as csrfToken,
-  xr as defineAsyncComponent,
-  Or as excludeValues,
-  Rr as filterSlots,
-  Pr as filterValues,
-  Cr as getCookie,
-  Fr as getCookieList,
-  Ir as getCsrf,
-  Ie as i18n,
-  gr as init,
-  Vr as injectOrProvide,
-  Yr as loadedLocalePaths,
-  Nr as mapToObject,
-  fr as models,
-  Qt as query,
-  qe as reset,
-  Mr as rules,
-  $r as setLocale,
-  Wr as shallowCopy,
-  qr as splitValues,
-  v as t,
-  j as tKeys,
-  pr as useAction,
-  mr as useAppContext,
-  or as useEditor,
-  Ve as useI18n,
-  br as useModelEditor,
-  ar as useModelList,
-  Dr as useModelPanel,
-  ut as useModels,
-  ir as usePanel,
-  wr as usePanels,
-  vr as useQuery,
-  ot as useRepo
+  Be as collectAttr,
+  ae as config,
+  Xt as createApp,
+  Rr as createI18n,
+  vr as createPinia,
+  er as createVuetify,
+  Pr as csrfToken,
+  Ar as defineAsyncComponent,
+  Cr as excludeValues,
+  Fr as filterSlots,
+  Ir as filterValues,
+  Vr as getCookie,
+  Yr as getCookieList,
+  $r as getCsrf,
+  Ye as i18n,
+  Dr as init,
+  Nr as injectOrProvide,
+  Wr as loadedLocalePaths,
+  qr as mapToObject,
+  gr as models,
+  tr as query,
+  Ke as reset,
+  kr as rules,
+  Br as setLocale,
+  Kr as shallowCopy,
+  jr as splitValues,
+  D as t,
+  U as tKeys,
+  wr as useAction,
+  yr as useAppContext,
+  cr as useEditor,
+  $e as useI18n,
+  Sr as useModelEditor,
+  lr as useModelList,
+  Mr as useModelPanel,
+  ht as useModels,
+  ur as usePanel,
+  br as usePanels,
+  xr as useQuery,
+  ct as useRepo
 };
 //# sourceMappingURL=ox.js.map

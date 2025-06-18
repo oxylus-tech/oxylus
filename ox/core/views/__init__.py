@@ -1,12 +1,12 @@
 from . import nav
 from .api import ModelViewSet
-from .app import AppMixin, AppView
+from .app import AppView, UserAppView
 from .generic import ListView, DetailView, UpdateView, DeleteView
 
 __all__ = (
     "ModelViewSet",
-    "AppMixin",
     "AppView",
+    "UserAppView",
     "register_nav",
     "ListView",
     "DetailView",

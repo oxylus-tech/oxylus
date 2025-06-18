@@ -101,6 +101,7 @@ class TreeNode(SaveHook):
             self.tree_id = tree_id + 1
             self.level = 0
 
+        super().on_save(fields)
         self.validate_node()
 
         path = self.get_path()

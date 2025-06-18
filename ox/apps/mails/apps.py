@@ -7,13 +7,13 @@ __all__ = ("AppConfig",)
 
 
 class AppConfig(apps.AppConfig):
-    name = "ox.apps.contacts"
-    label = "ox_contacts"
-    verbose_name = _("Contacts")
-    icon = "mdi-card-account-mail"
+    name = "ox.apps.mails"
+    label = "ox_mails"
+    verbose_name = _("Mails")
+    icon = "mdi-mail"
 
-    root_url = "ox/contacts"
-    index_urlname = "ox_contacts:index"
+    root_url = "ox/mails"
+    index_urlname = "ox_mails:index"
 
     class Meta:
-        dependencies = ("ox.auth", "ox.locations")
+        dependencies = ("ox.auth", "ox.contacts", "ox.content")

@@ -42,7 +42,8 @@
                 <v-col>
                     <v-text-field name="name"
                         :label="t('fields.name')"
-                        :rules="[rules.errors(editor.errors?.name), rules.required]"
+                        :rules="[rules.required]"
+                        :error-messages="editor.error('name')"
                         v-model="editor.value.name" />
                     <v-row>
                         <v-col cols="4">
@@ -55,7 +56,7 @@
                                 v-model="editor.value.folder"
                                 :disabled="!editor.value.owner"
                                 :owner="editor.value.owner"
-                                :rules="[rules.errors(editor.errors?.folder)]"
+                                :error-messages="editor.error('folder')"
                                 :label="t('fields.folder')" />
                         </v-col>
                     </v-row>
@@ -75,24 +76,24 @@
                             name="caption"
                             :label="t('fields.caption')"
                             :hint="t('fields.caption.help')"
-                            :rules="[rules.errors(editor.errors?.caption)]"
+                            :message-errors="editor.error('caption')"
                             v-model="editor.value.caption"/>
                         <v-text-field
                             name="alternate"
                             :label="t('fields.alternate')"
                             :hint="t('fields.alternate.help')"
-                            :rules="[rules.errors(editor.errors?.alternate)]"
+                            :message-errors="editor.error('alternate')"
                             v-model="editor.value.alternate"/>
                         <v-textarea variant="outlined"
                             name="description"
                             :label="t('fields.description')"
-                            :rules="[rules.errors(editor.errors?.description)]"
+                            :message-errors="editor.error('description')"
                             v-model="editor.value.description"/>
                         <v-textarea variant="outlined"
                             name="ariaDescription"
                             :label="t('fields.ariaDescription')"
                             :hint="t('fields.ariaDescription.help')"
-                            :rules="[rules.errors(editor.errors?.ariaDescription)]"
+                            :message-errors="editor.error('ariaDescription')"
                             v-model="editor.value.ariaDescription"/>
                     </template>
                 </v-expansion-panel>

@@ -3,6 +3,7 @@ import type {Repository, PrimaryKey, Model as $Model} from 'pinia-orm'
 
 import type { ClassType } from '../utils'
 
+export * from './enum'
 export * from './model'
 export * from './auth'
 export * from './repository'

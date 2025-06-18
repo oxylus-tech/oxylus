@@ -1,4 +1,5 @@
 from django.contrib.auth import authenticate, login
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import User
 from django.shortcuts import redirect
 from django.utils.translation import gettext_lazy as _
@@ -54,6 +55,7 @@ class AccountViewSet(LoginMixin, viewsets.GenericViewSet):
 
 class LoginView(LoginMixin, AppView):
     template_name = "ox/core/login.html"
+    icon = "mdi-login"
     app_config_name = "ox_core"
     queryset = User.objects.filter(is_active=True)
 
@@ -85,8 +87,15 @@ class LoginView(LoginMixin, AppView):
 
 class AccountView(AppView):
     template_name = "ox/core/account.html"
+    app_config_name = "ox_core"
     title = _("My Account")
 
     def get(self, request, **kwargs):
         context = self.get_context_data(**kwargs)
         return self.render_to_response(context)
+
+
+class DashboardView(LoginRequiredMixin, AppView):
+    template_name = "ox/core/dashboard.html"
+    app_config_name = "ox_core"
+    title = _("Dashboard")

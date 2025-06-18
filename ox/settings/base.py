@@ -22,6 +22,7 @@ SECRET_KEY = "django-insecure-bg*enkwcea%4xjcvkpbb_h@6#ue78#t1q(z^w@faagal7**^9i
 # Application definition
 INSTALLED_APPS = [
     # ox
+    "ox.apps.mails",
     "ox.apps.files",
     "ox.apps.contacts",
     "ox.apps.locations",

@@ -1,18 +1,45 @@
 from pathlib import Path
 
 from django.conf import settings
-from bleach import sanitizer
 
 from ox.core import conf
 
 
 class Settings(conf.Settings):
-    ALLOWED_TAGS = [*sanitizer.ALLOWED_TAGS, "br", "p", "h1", "h2", "h3", "h4", "h5", "h6"]
-    """ Allowed tags for the richtext sanitizer (as used by :py:class:`~.models.RichTextField`). """
-    ALLOWED_ATTRIBUTES = [*sanitizer.ALLOWED_ATTRIBUTES]
-    """ Allowed tag attributes for the richtext sanitizer (as used by :py:class:`~.models.RichTextField`). """
-    ALLOWED_PROTOCOLS = [*sanitizer.ALLOWED_PROTOCOLS]
-    """ Allowed url protocols for the richtext sanitizer (as used by :py:class:`~.models.RichTextField`). """
+    ALLOWED_TAGS = [
+        "p",
+        "br",
+        "strong",
+        "em",
+        "ul",
+        "ol",
+        "li",
+        "table",
+        "thead",
+        "tbody",
+        "tr",
+        "th",
+        "td",
+        "span",
+        "div",
+        "h1",
+        "h2",
+        "h3",
+        "h4",
+        "h5",
+        "h6",
+        "a",
+        "pre",
+        "code",
+    ]
+    ALLOWED_ATTRIBUTES = {
+        "*": ["style"],
+        "a": ["href", "title", "target"],
+        "td": ["colspan", "rowspan"],
+        "th": ["colspan", "rowspan"],
+    }
+    ALLOWED_STYLES = ["text-align", "font-weight", "font-style", "color"]
+    ALLOWED_PROTOCOLS = ["https", "mailto", "tel"]
 
     STATIC_DIR = "ox_content/bundles"
     """ Directory in static where to store bundles. """

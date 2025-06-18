@@ -92,6 +92,7 @@ router = Router()
 
 
 urlpatterns = [
+    path("", accounts.DashboardView.as_view(), name="index"),
     path("api/", (lambda *a, **kw: {}), name="api-index"),
     *router.get_urls(),
     path("api/schema/", SpectacularAPIView.as_view(), name="schema"),
