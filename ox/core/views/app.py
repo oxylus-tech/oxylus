@@ -70,7 +70,7 @@ class UserAuthMixin:
         return super().get_app_data(**kwargs)
 
 
-class AppView(AppMixin, UserAuthMixin, TemplateView):
+class AppView(UserAuthMixin, AppMixin, TemplateView):
     """Base view used for ox based applications."""
 
     def get_template_names(self):

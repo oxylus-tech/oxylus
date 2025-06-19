@@ -60,7 +60,10 @@ class MailTemplateViewSet(OwnedViewSet):
     queryset = models.MailTemplate.objects.all().order_by("name")
     serializer_class = serializers.MailTemplateSerializer
 
-    filterset_fields = {"account__uuid": ["in", "exact"]}
+    filterset_fields = {
+        "owner__uuid": ["in", "exact"],
+        "account__uuid": ["in", "exact"],
+    }
 
 
 class OutMailViewSet(OwnedViewSet):

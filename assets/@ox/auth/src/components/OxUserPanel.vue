@@ -15,7 +15,7 @@
         </template>
 
         <template #item.groups="{item}" v-if="!slots['item.groups']">
-             <v-chip color="primary" v-for="group of item.groups" variant="tonal" class="mr-2">
+             <v-chip color="primary" v-for="group of item.$groups" variant="tonal" class="mr-2">
                  {{ group.name }}
              </v-chip>
         </template>
@@ -57,7 +57,7 @@ const kanbanHeaders = computed(() => {
 
 const props = withDefaults(defineProps<IModelPanelProps>(), {
     name: 'users',
-    relations: ['groups'],
+    relations: ['$groups'],
     headers: ['id', 'username', 'first_name', 'last_name', 'email', 'groups'],
 })
 </script>

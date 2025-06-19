@@ -1,16 +1,7 @@
 <template>
     <v-select v-model="value"
         :placeholder="t('fields.kind')"
-        :items="ContactInfo.kindItems">
-        <template #item="{item, props}">
-            <v-list-item v-bind="props"
-                :title="t(ContactInfo.Kind.display(item.raw))"
-                :value="item.raw"/>
-        </template>
-        <template #selection="{item}">
-            {{ t(ContactInfo.Kind.display(item.value)) }}
-        </template>
-    </v-select>
+        :items="ContactInfo.Kind.items" />
 </template>
 <script setup lang="ts">
 import { defineModel } from 'vue'

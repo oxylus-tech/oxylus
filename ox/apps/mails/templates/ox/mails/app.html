@@ -3,6 +3,11 @@
 
 {% block app %}
 {{ block.super }}
+<template #panels.outmails>
+    {% block outmails %}
+    {% include "ox/core/components/model_panel.html" with tag="ox-out-mail-panel" name="outmails" %}
+    {% endblock %}
+</template>
 <template #panels.mailaccounts>
     {% block mailaccounts %}
     {% include "ox/core/components/model_panel.html" with tag="ox-mail-account-panel" name="mailaccounts" %}

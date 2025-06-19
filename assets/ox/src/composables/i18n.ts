@@ -38,6 +38,7 @@ export const i18n = createI18n()
  * Shortcut to {@link i18n} `t()` function.
  */
 export const t = i18n.global.t
+export const te = i18n.global.te
 
 export interface IUseI18n {
     composer?: Composer,
@@ -55,82 +56,14 @@ export interface IUseI18n {
  */
 export function useI18n({path="./", fallback=true, composer=null}: IUseI18n={}) {
     composer ??= i18n.global
-    loadLocale({composer, path, fallback})
-    watch(() => composer.locale, () => loadLocale({composer, path, fallback}))
+    composer.messages.value[composer.locale.value] = window.__i18n_messages
+    watch(composer.locale, (locale) => {
+        composer.messages.value[locale] = window.__i18n_messages
+    })
     return composer
 }
 
-
-/**
- * Set locale (load it if required).
- * FIXME
- */
-export function setLocale(i18n: Composer, path: string, locale: string) {
-    if(!(locale in config.locales))
-        throw Error("Locale is not provided by config.")
-
-    i18n.global.locale.value = locale
-    loadLocaleFrom(i18n, path, locale)
-
-    // FIXME: axios.defaults.headers.common['Accept-Language'] support?
-
-    document.querySelector('html').setAttribute('lang', locale)
-}
-
-/**
- * Keeps track of already loaded locales (by path)
- */
-export const loadedLocalePaths = new Set()
-
-
-/**
- * Load locale using provided path and i18n locale composer.
- *
- * @param i18n - vue-i18n locale Composer;
- * @param [options.path] path to parent directory of locale dir;
- * @param [options.fallback] if True, use fallback locale whenever required.
- */
-function loadLocale({path="./", fallback=true, composer=null}: IUseI18n ={}): Promise<void> {
-    composer ??= i18n.global
-    if(!path.startsWith('/'))
-        path = import.meta.resolve(path)
-    if(!path.endsWith('/'))
-        path += '/'
-
-    let promise = loadLocaleFrom(composer, path, unref(composer.locale))
-    if(fallback && composer.fallbackLocale.value)
-        promise = promise.catch((error) => loadLocaleFrom(composer, path, unref(composer.fallbackLocale) as string))
-            .catch((error) => {
-                throw Error(
-                    `Could not load locale ${composer.locale.value} nor its fallback ${composer.fallbackLocale.value} (path: ${path}). Error: ${error}`
-                )
-            })
-    return promise
-}
-
-
-/**
- * Load locale of specific name and add it to composer's messages.
- */
-async function loadLocaleFrom(i18n: Composer, path: string, locale: string) {
-    const locale2 = locale.replace(/[_-](\w+)/, '')
-    path = `${path}locales/${locale2}.json`
-    if(loadedLocalePaths.has(path))
-        return
-
-    loadedLocalePaths.add(path)
-
-    const messages = await fetch(path).then(r => r.json())
-    // we don't use setLocaleMessage, because we merge locales
-    // from different apps
-    i18n.messages.value[locale] = {
-        ...(i18n.messages.value as Record<string, any>)[locale],
-        ...messages
-    }
-}
-
-
 export const tKeys = {
-    model: (model: typeof Model) => `models.${model.entity}`,
+    model: (model: typeof Model) => `models.${model.meta.model}`,
     field: (field: string) => `fields.${field}`
 }

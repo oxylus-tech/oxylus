@@ -18,7 +18,17 @@ class MailAccountSerializer(OwnedSerializer):
     class Meta:
         model = models.MailAccount
         fields = "__all__"
-        extra_kwargs = {"smtp_password": {"write_only": True}, "imap_password": {"write_only": True}}
+        extra_kwargs = {
+            "smtp_password": {"write_only": True, "required": False, "allow_null": True},
+            "imap_password": {"write_only": True, "required": False, "allow_null": True},
+        }
+
+    def validate(self, data):
+        if "smtp_password" in data and data.get("smtp_password") is None:
+            del data["smtp_password"]
+        if "imap_password" in data and data.get("imap_password") is None:
+            del data["imap_password"]
+        return super().validate(data)
 
 
 class MailTemplateSerializer(OwnedSerializer):

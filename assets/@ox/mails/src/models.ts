@@ -11,7 +11,7 @@ export class MailAccount extends Owned {
         title: "name",
     })
 
-    static Encryption = models.Enum('encryption', {
+    static Encryption = models.Enum('mailaccount.encryption', {
         NONE: 0,
         TLS: 1,
         SSL: 2,
@@ -53,7 +53,9 @@ export class MailTemplate extends Owned {
             account: this.string(),
             subject: this.string(),
             content: this.string(),
-            $folder: this.belongsTo(MailAccount, "account")
+            created: this.string(),
+            updated: this.string(),
+            $account: this.belongsTo(MailAccount, "account")
         }
     }
 }
@@ -67,6 +69,12 @@ export class OutMail extends Owned {
         title: "subject",
     })
 
+    static Status = models.Enum("outmail.", {
+        DRAFT: 0,
+        SENDING: 1,
+        SENT: 2
+    })
+
     static fields() {
         return {
             ...super.fields(),
@@ -74,7 +82,7 @@ export class OutMail extends Owned {
             contacts: this.attr(null),
             status: this.number(),
             content: this.string(),
-            $folder: this.belongsTo(MailAccount, "account")
+            $template: this.belongsTo(MailTemplate, "template")
         }
     }
 }

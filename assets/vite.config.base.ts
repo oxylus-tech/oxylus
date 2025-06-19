@@ -25,7 +25,6 @@ export default defineConfig({
 
         rollupOptions: {
             external: ['vue', 'vuex', 'axios', 'ox', 'ox/app', 'ox/components', 'ox/vendor'],
-            format: 'esm',
             input: {
                 index: "src/index.ts",
                 // sfc: "src/sfc.ts",

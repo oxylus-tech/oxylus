@@ -23,8 +23,8 @@
     </ox-autocomplete>
 </template>
 <script setup lang="ts">
-import {useAttrs, useSlots, defineModel, defineProps} from 'vue'
-import {query, useModels} from 'ox'
+import {useAttrs, useSlots, defineModel} from 'vue'
+import {useModels} from 'ox'
 import {OxAutocomplete} from 'ox/components'
 import {OrganisationType} from '../models'
 

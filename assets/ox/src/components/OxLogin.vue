@@ -6,10 +6,11 @@
         <template #ok-detail="{state}">
             <p v-if="props.next">You soon will be redirected to <i>{{ props.next }}</i></p>
         </template>
+        <!--
         <template #error="{state}">
             <ox-field-details :errors="state.data?.username"/>
             <ox-field-details :errors="state.data?.password"/>
-        </template>
+        </template>-->
     </ox-state-alert>
     <template v-if="!state.isOk">
         <v-text-field variant="underlined"
@@ -40,7 +41,6 @@ import {computed, inject, ref, reactive, defineModel, defineProps, useTemplateRe
 
 import OxStateAlert from './OxStateAlert'
 import OxValidationBtn from './OxValidationBtn.vue'
-import OxFieldDetails from './OxFieldDetails.vue'
 import config from '../config'
 
 import State from '../utils/state'

@@ -31,7 +31,7 @@ export class ContentType extends Model {
             model: this.string(''),
             app_verbose: this.string(''),
             model_verbose: this.string(''),
-            permissions: this.hasMany(Permission, "content_type_id"),
+            $permissions: this.hasMany(Permission, "content_type"),
         }
     }
 
@@ -46,7 +46,7 @@ export class ContentType extends Model {
     * @return Permission or null if not found
     */
     getPermission(action: string) {
-        const perm = this.permissions.filter(p => p.action == action)
+        const perm = this.$permissions.filter(p => p.action == action)
         return perm && perm[0] || null
     }
 }
@@ -82,8 +82,8 @@ export class Permission extends Model {
             name: this.string(''),
             label: this.string(''),
             codename: this.string(''),
-            content_type_id: this.attr(null),
-            content_type: this.belongsTo(ContentType, "content_type_id"),
+            content_type: this.attr(null),
+            $content_type: this.belongsTo(ContentType, "content_type"),
         }
     }
 
@@ -134,8 +134,8 @@ export class Group extends Model {
         return {
             id: this.attr(null),
             name: this.string(''),
-            permissions_id: this.attr([]),
-            permissions: this.hasManyBy(Permission, "permissions_id"),
+            permissions: this.attr([]),
+            $permissions: this.hasManyBy(Permission, "permissions"),
         }
     }
 }
@@ -190,10 +190,10 @@ export class User extends Model {
             email: this.string(''),
             is_superuser: this.boolean(false),
             all_permissions: this.attr([]),
-            permissions_id: this.attr([]),
-            permissions: this.hasManyBy(Permission, "permissions_id"),
-            groups_id: this.attr([]),
-            groups: this.hasManyBy(Group, "groups_id"),
+            permissions: this.attr([]),
+            groups: this.attr([]),
+            $permissions: this.hasManyBy(Permission, "permissions"),
+            $groups: this.hasManyBy(Group, "groups"),
         }
     }
 

@@ -25,7 +25,7 @@
         </v-list-group>
         <v-list-group v-if="user.can('ox_files.add_folder', folder)">
             <template #activator="{props}">
-                <v-list-item :title="t('models._.title.new', {model: t('models.folders')})"
+                <v-list-item :title="t('models._.title.new', {model: t('models.folder')})"
                         prepend-icon="mdi-plus" v-bind="props"/>
             </template>
             <v-list-item>

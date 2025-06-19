@@ -99,7 +99,7 @@ const {user, group} = defineProps({
 
 const disabled = computed(() => !$user.can("auth.change_permission"))
 
-const cts = repos.contentTypes.with("permissions").get()
+const cts = repos.contentTypes.with("$permissions").get()
 
 /**
  * All models that are linked to permissions grouped by application `verbose_name`.
@@ -116,9 +116,9 @@ const groupPermissions = computed(() => {
         return null
 
     const results = {}
-    const groups = repos.groups.whereId(user.groups_id).get()
+    const groups = repos.groups.whereId(user.groups).get()
     for(var group of groups)
-        for(var id of group.permissions_id)
+        for(var id of group.permissions)
             results[id] = [...(results[id] || []), group]
     return results
 })
@@ -130,8 +130,7 @@ const ctPermissions = computed(() => {
     const result = []
     for(var ct of cts) {
         const crud = crudActions.map(a => ct.getPermission(a))
-        const extra = ct.permissions.filter(p => !crudActions.includes(p.action))
-
+        const extra = ct.$permissions.filter(p => !crudActions.includes(p.action))
         result[ct.id] = {crud, extra}
     }
     return result

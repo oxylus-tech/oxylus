@@ -3,7 +3,7 @@
         <template #item.title="{item}">
             <v-row>
                 <v-col>{{ item.email }}</v-col>
-                <v-col cols="4">{{ ContactInfo.Kind.display(item.kind) }}</v-col>
+                <v-col cols="4">{{ ContactInfo.Kind.toString(item.kind) }}</v-col>
             </v-row>
         </template>
         <template #item="{item,index}">

@@ -13,14 +13,13 @@ import * as vendorComponents from 'ox/vendor'
 import config from '../config'
 import {i18n, useI18n} from './i18n'
 
-import type {IObject} from '../utils'
 
 
 /**
  * {@link createVuetify} parameters. Theses are passed down to Vuetify's
  * plugin initialization.
  */
-export interface ICreateVuetifyOpts extends IObject {
+export interface ICreateVuetifyOpts extends Record<string, any> {
     components?: Record<string,any>
 }
 
@@ -32,7 +31,7 @@ export interface ICreateAppOpts {
     /**
      * Vue's `createApp` `props` arguments
      */
-    props?: IObject
+    props?: Record<string, any>
     /**
      *  Vuetify plugin's parameters (passed to {@link createVuetify})
      */
@@ -40,12 +39,12 @@ export interface ICreateAppOpts {
     /**
      * Plugins to add to Vue application.
      */
-    plugins?: IObject[]
+    plugins?: Record<string, any>[]
 }
 
 export interface IInitOpts extends ICreateAppOpts {
     /** Vue's App config. */
-    App?: IObject
+    App?: any
     /** Element selector to mount application on. */
     el?: string
     /**
@@ -84,7 +83,7 @@ export function init({App=null, el='#app', onLoad=true, ...options}: IInitOpts={
  * It also provide app's global property `window` in order to allow components
  * access to this object.
  */
-export function createApp(app: IObject, {props={}, vuetify={}, plugins=null}: ICreateAppOpts={}) {
+export function createApp(app: Record<string, any>, {props={}, vuetify={}, plugins=null}: ICreateAppOpts={}) {
     app = $createApp(app, props)
     app.config.globalProperties.window = window
 
@@ -138,7 +137,7 @@ export function createVuetify({components={}, defaults={}, ...opts}: ICreateVuet
  * Create Pinia and PiniaOrm plugins instances.
  * If no `baseURL` is provided, get it from `document.body.dataset.apiUrl`.
  */
-export function createPinia({axiosConfig=null, baseURL=null}: IObject={}) {
+export function createPinia({axiosConfig=null, baseURL=null}: Record<string, any>={}) {
     if(!baseURL)
         baseURL = document.body.dataset.apiUrl
 

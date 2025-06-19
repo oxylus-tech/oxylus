@@ -1,33 +1,34 @@
 <template>
-    <ox-model-edit ref="model-editor" v-bind="props" :repo="repos.folders">
+    <ox-model-edit ref="model-editor" v-bind="attrs" :repo="repos.mailTemplates">
         <template #default="{editor, editable}">
-            <v-text-field :label="t('fields.name')"
-                :error-messages="editor.error('name')"
-                :rules="[rules.required]"
-                v-model="editor.value.name" />
-            <ox-folder-input v-model="editor.value.parent"
-                :error-messages="editor.error('parent')"
-                :label="t('fields.folder')" />
-            <v-text-field disabled
-                :label="t('fields.path')"
-                v-model="editor.value.path"/>
+            <ox-field :editor="editor" name="name" type="text" required/>
+            <ox-field :editor="editor" name="account" required>
+                <template #default="{props: props_}">
+                    <ox-autocomplete v-bind="props_"
+                        :filters="{owner__uuid: props.owner}"
+                        :repo="repos.mailAccounts"
+                        item-title="name" item-value="id"
+                        v-model="editor.value.account"
+                        />
+                </template>
+            </ox-field>
+            <ox-field :editor="editor" name="subject" required/>
+            <ox-rich-editor v-model="editor.value.content"/>
         </template>
     </ox-model-edit>
 </template>
 <script setup lang="ts">
-import { computed } from 'vue'
+import { useAttrs, computed } from 'vue'
 import { t, rules } from "ox"
-import type {IModelEditorProps} from 'ox'
-import {OxModelEdit} from 'ox/components'
-import {OxAgentSelect} from '@ox/auth/components'
+import {OxModelEdit, OxField, OxAutocomplete} from 'ox/components'
+import {OxRichEditor} from '@ox/content/components';
 
-import OxFolderInput from './OxFolderInput'
-import {useFilesModels} from '../composables'
+import {useMailModels} from '../composables'
 
-interface IFolderEditProps extends IModelEditorProps {
-    owner: string
-}
-
-const repos = useFilesModels()
-const props = defineProps<IFolderEditProps>()
+const repos = useMailModels()
+const attrs = useAttrs()
+const props = defineProps({
+    /** Owner uuid **/
+    owner: String
+})
 </script>

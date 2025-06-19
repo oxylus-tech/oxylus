@@ -65,6 +65,11 @@ Blocks:
             {% endfor %}
         {% endwith %}
         {% endif %}
+
+        {# Localisation: provide 'en' fallback for frontend specific #}
+        <script src="{% static "locales" %}/{{ LANGUAGE_CODE }}/django.js"></script>
+        <script src="{% static "locales" %}/en/vue.js"></script>
+        <script src="{% static "locales" %}/{{ LANGUAGE_CODE }}/vue.js"></script>
         {% endblock %}
         {% endspaceless %}
     {% endblock %}

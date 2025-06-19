@@ -28,32 +28,30 @@ class ContentTypeSerializer(serializers.ModelSerializer):
 
 class PermissionSerializer(serializers.ModelSerializer):
     label = serializers.SerializerMethodField()
-    content_type_id = serializers.PrimaryKeyRelatedField(source="content_type", queryset=ContentType.objects.all())
+    content_type = serializers.PrimaryKeyRelatedField(queryset=ContentType.objects.all())
 
     class Meta:
         model = Permission
-        fields = ["id", "name", "codename", "content_type_id", "label"]
+        fields = ["id", "name", "codename", "content_type", "label"]
 
     def get_label(self, obj):
         return f"{obj.content_type.app_label}.{obj.codename}"
 
 
 class GroupSerializer(serializers.ModelSerializer):
-    permissions_id = serializers.PrimaryKeyRelatedField(
-        source="permissions", many=True, queryset=Permission.objects.all()
-    )
+    permissions = serializers.PrimaryKeyRelatedField(many=True, queryset=Permission.objects.all())
 
     class Meta:
         model = Group
-        fields = ["id", "name", "permissions_id"]
+        fields = ["id", "name", "permissions"]
 
 
 class UserSerializer(serializers.ModelSerializer):
-    permissions_id = serializers.PrimaryKeyRelatedField(
+    permissions = serializers.PrimaryKeyRelatedField(
         source="user_permissions", many=True, queryset=Permission.objects.all()
     )
     all_permissions = serializers.SerializerMethodField()
-    groups_id = serializers.PrimaryKeyRelatedField(source="groups", many=True, queryset=Group.objects.all())
+    groups = serializers.PrimaryKeyRelatedField(many=True, queryset=Group.objects.all())
 
     class Meta:
         model = User
@@ -64,9 +62,9 @@ class UserSerializer(serializers.ModelSerializer):
             "first_name",
             "email",
             "is_superuser",
-            "permissions_id",
+            "permissions",
             "all_permissions",
-            "groups_id",
+            "groups",
         ]
 
     def get_all_permissions(self, obj):

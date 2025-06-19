@@ -51,9 +51,11 @@ var lastId = null
 async function getItem(id) {
     if(id) {
         const idx = items.findIndex((v) => v.id == id)
+        console.log(id, idx)
         if(idx != -1)
             item.value = items[idx]
         else if(lastId != id) {
+            console.log('fetch item...')
             lastId = id
             const resp = await fetch({id: id})
             const value = resp.entities[0]
@@ -93,15 +95,14 @@ const load = debounce(async ({reset=false}={}) => {
     filters[props.lookup] = q
     let resp = await fetch({params: filters})
 
-    // Ensure item is in the list
-    if(item.value)
-        items.splice(0, items.length, ...unionBy([item.value], resp.entities))
-    else
-        items.splice(0, items.length, ...resp.entities)
+    items.splice(0, items.length, ...resp.entities)
 
     if(!reset) {
+        item.value = null
+
+        console.log('item...', item.value, value.value)
         // When item is not provided we ensure it is here
-        !item.value && await getItem(value.value)
+        await getItem(value.value)
         search.value = q
     }
 }, 500)

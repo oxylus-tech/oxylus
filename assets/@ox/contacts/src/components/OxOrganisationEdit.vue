@@ -1,41 +1,35 @@
 <template>
-    <ox-model-edit ref="model-editor" v-bind="props" :repo="repos.organisations">
+    <ox-model-edit ref="model-editor" v-bind="attrs" :repo="repos.organisations">
         <template #default="{editor, editable}">
             <v-container>
                 <v-row>
                     <v-col cols="2">
-                        <v-text-field :label="t('fields.color')" type="color"
-                            v-model="editor.value.color"
-                            :error-messages="editor.error('color')" />
+                        <ox-field :editor="editor" name="color" type="color"/>
                     </v-col>
                     <v-col>
-                        <v-text-field :label="t('fields.name')"
-                            v-model="editor.value.name"
-                            :error-messages="editor.error('name')"
-                            :rules="[rules.required]" />
-                        <v-text-field :label="t('fields.short_name')"
-                            v-model="editor.value.short_name"
-                            :error-messages="editor.error('short_name')" />
+                        <ox-field :editor="editor" name="name" required/>
+                        <ox-field :editor="editor" name="short_name" />
                     </v-col>
                 </v-row>
-                <v-text-field :label="t('fields.reference')"
-                    v-model="editor.value.reference"
-                    :error-messages="editor.error('reference')" />
-                <ox-country-input v-model="editor.value.country"
-                    @update:modelValue="countryUpdated(editor)"
-                    :label="t('fields.country')"
-                    :error-messages="editor.error('country')"/>
-                <v-text-field :label="t('fields.vat')"
-                    v-model="editor.value.vat"
+                <ox-field :editor="editor" name="reference" />
+                <ox-field :editor="editor" name="country">
+                    <template #default="{props}">
+                        <ox-country-input v-bind="props"
+                            v-model="editor.value.country"
+                            @update:modelValue="countryUpdated(editor)" />
+                    </template>
+                </ox-field>
+                <ox-field :editor="editor" name="vat"
                     :disabled="!editable || !editor.value.country"
-                    :error-messages="editor.error('vat')"
                     :rules="[rules.optional(vatRule)]"/>
-                <ox-organisation-type-input
-                    v-model="editor.value.type"
-                    :country="editor.value.country"
-                    :disabled="!editor.value.country"
-                    :error-messages="editor.error('type')"
-                    :label="t('fields.company_form')"/>
+                <ox-field :editor="editor" name="type">
+                    <template #default="{props}">
+                        <ox-organisation-type-input v-bind="props"
+                            v-model="editor.value.type"
+                            :country="editor.value.country"
+                            :disabled="!editor.value.country"/>
+                    </template>
+                </ox-field>
             </v-container>
             <v-expansion-panels multiple :model-value="['emails', 'phones']">
                 <ox-contact-infos v-model="editor.value" :editable="editable" />
@@ -44,17 +38,17 @@
     </ox-model-edit>
 </template>
 <script setup lang="ts">
-import { t, query, rules} from "ox"
-import type {User, IModelEditorProps} from 'ox'
-import {OxModelEdit} from 'ox/components'
-import {OxCountryInput, OxIbanInput} from '@ox/locations/components'
+import { useAttrs } from 'vue'
+import { query, rules} from "ox"
+import {OxModelEdit, OxField} from 'ox/components'
+import {OxCountryInput} from '@ox/locations/components'
 
 import {vatRule, useContactModels} from '../composables'
 import OxContactInfos from './OxContactInfos'
 import OxOrganisationTypeInput from './OxOrganisationTypeInput'
 
 const repos = useContactModels()
-const props = defineProps<IModelEditorProps>()
+const attrs = useAttrs()
 
 // --- Organisation type
 var tried = null // used by types to avoid looping

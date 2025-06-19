@@ -1,34 +1,30 @@
 <template>
-    <ox-model-edit ref="model-editor" v-bind="props" :repo="repos.folders">
+    <ox-model-edit ref="model-editor" v-bind="attrs" :repo="repos.folders">
         <template #default="{editor, editable}">
-            <v-text-field :label="t('fields.name')"
-                :error-messages="editor.error('name')"
-                :rules="[rules.required]"
-                v-model="editor.value.name" />
-            <ox-folder-input v-model="editor.value.parent"
-                :owner="props.owner"
-                :error-messages="editor.error('parent')"
-                :label="t('fields.folder')" />
-            <v-text-field disabled
-                :label="t('fields.path')"
-                v-model="editor.value.path"/>
+            <ox-field :editor="editor" name="name" required />
+            <ox-field :editor="editor" name="parent">
+                <template #default="{props}">
+                    <ox-folder-input v-bind="props"
+                        v-model="editor.value.parent"
+                        :owner="props.owner" />
+                </template>
+            </ox-field>
+            <ox-field :editor="editor" name="path" disabled/>
         </template>
     </ox-model-edit>
 </template>
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, useAttrs } from 'vue'
 import { t, rules } from "ox"
-import type {IModelEditorProps} from 'ox'
-import {OxModelEdit} from 'ox/components'
+import {OxModelEdit, OxField} from 'ox/components'
 import {OxAgentSelect} from '@ox/auth/components'
 
 import OxFolderInput from './OxFolderInput'
 import {useFilesModels} from '../composables'
 
-interface IFolderEditProps extends IModelEditorProps {
-    owner: string
-}
-
 const repos = useFilesModels()
-const props = defineProps<IFolderEditProps>()
+const props = defineProps({
+    owner: String
+})
+const attrs = useAttrs()
 </script>

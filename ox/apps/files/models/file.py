@@ -88,7 +88,11 @@ class File(Described, Timestamped, ChildOwned):
     file_size = models.PositiveIntegerField(_("File Size"), blank=True, default=0)
 
     caption = models.TextField(
-        _("Caption"), default="", help_text=_("Displayed below object when rendered."), blank=True, null=True
+        _("Caption"),
+        default="",
+        help_text=_("Displayed below object when rendered in page or documents."),
+        blank=True,
+        null=True,
     )
     alternate = models.TextField(
         _("Alternate text"),
@@ -97,7 +101,13 @@ class File(Described, Timestamped, ChildOwned):
         blank=True,
         null=True,
     )
-    ariaDescription = models.TextField(_("ARIA Description"), default="", blank=True, null=True)
+    ariaDescription = models.TextField(
+        _("ARIA Description"),
+        default="",
+        blank=True,
+        null=True,
+        help_text=_("Provide a description of the content for visually impaired people."),
+    )
     metadata = models.JSONField(_("Metadata"), default=dict, blank=True)
 
     parent_attr = "folder"

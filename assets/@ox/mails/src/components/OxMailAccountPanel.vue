@@ -22,7 +22,7 @@
 <script setup lang="ts">
 import { useSlots, withDefaults } from 'vue'
 
-import { query, t } from 'ox'
+import { t } from 'ox'
 import type {IModelPanelProps} from 'ox'
 import {OxOwnedPanel} from '@ox/auth/components'
 
@@ -30,7 +30,7 @@ import OxMailAccountEdit from './OxMailAccountEdit'
 import {useMailModels} from '../composables'
 
 const slots = useSlots()
-const forwardSlots = Object.keys(slots).filter(x => !(['list.filters', 'top', 'item.actions'].includes(x)))
+const forwardSlots = Object.keys(slots).filter(x => !(['list.filters'].includes(x)))
 
 const repos = useMailModels()
 const props = withDefaults(defineProps<IModelPanelProps>(), {

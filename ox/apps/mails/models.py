@@ -39,31 +39,31 @@ class MailAccount(Named, Owned):
         SSL = 0x02, "SSL"
 
     # SMTP Configuration
-    smtp_host = models.CharField(_("SMTP: Host"), max_length=255)
-    smtp_port = models.PositiveIntegerField(_("SMTP: Port"), default=587)
-    smtp_username = EncryptedCharField(_("SMTP: Username"), max_length=255)
-    smtp_password = EncryptedCharField(_("SMTP: Password"), max_length=128)
+    smtp_host = models.CharField(_("Host (SMTP)"), max_length=255)
+    smtp_port = models.PositiveIntegerField(_("Port (SMTP)"), default=587)
+    smtp_username = EncryptedCharField(_("Username (SMTP)"), max_length=255)
+    smtp_password = EncryptedCharField(_("Password (SMTP)"), max_length=128)
     smtp_encryption = models.PositiveSmallIntegerField(
-        _("SMTP: Encryption"), choices=Encryption, default=Encryption.SSL
+        _("Encryption (SMTP)"), choices=Encryption, default=Encryption.SSL
     )
 
     # IMAP Configuration (optional)
-    imap_host = models.CharField(_("IMAP: Host"), max_length=255, blank=True, null=True)
-    imap_port = models.PositiveIntegerField(_("IMAP: Port"), blank=True, null=True)
-    imap_username = EncryptedCharField(_("IMAP: Username"), max_length=255, blank=True, null=True)
-    imap_password = EncryptedCharField(_("IMAP: Password"), max_length=128, blank=True, null=True)
-    imap_ssl = models.BooleanField(_("IMAP: Use SSL"), default=True, null=True, blank=True)
-    imap_folder = models.CharField(_("IMAP: Folder"), max_length=255, default="INBOX")
+    imap_host = models.CharField(_("Host (IMAP)"), max_length=255, blank=True, null=True)
+    imap_port = models.PositiveIntegerField(_("Port (IMAP)"), blank=True, null=True)
+    imap_username = EncryptedCharField(_("Username (IMAP)"), max_length=255, blank=True, null=True)
+    imap_password = EncryptedCharField(_("Password (IMAP)"), max_length=128, blank=True, null=True)
+    imap_ssl = models.BooleanField(_("Use SSL (IMAP)"), default=True, null=True, blank=True)
+    imap_folder = models.CharField(_("Folder (IMAP)"), max_length=255, default="INBOX")
 
     class Meta:
         verbose_name = _("Email Account")
         verbose_name_plural = _("Email Accounts")
 
 
-class MailTemplate(Named, ChildOwned):
+class MailTemplate(Named, Timestamped, ChildOwned):
     """Email template."""
 
-    account = models.ForeignKey(MailAccount, models.SET_NULL, null=True, blank=True)
+    account = models.ForeignKey(MailAccount, models.SET_NULL, null=True, blank=True, verbose_name=_("Account"))
     subject = models.CharField(_("Subject"), max_length=128)
     content = RichTextField(_("Content"))
 
@@ -83,7 +83,7 @@ class OutMail(Timestamped, ChildOwned):
         SENT = 0x02, _("Sent")
 
     template = models.ForeignKey(MailTemplate, models.SET_NULL, null=True, blank=True)
-    contacts = models.ManyToManyField(Person)
+    contacts = models.ManyToManyField(Person, verbose_name=_("Recipients"))
     status = models.PositiveSmallIntegerField(_("Status"), choices=Status.choices, default=Status.DRAFT)
     context = models.JSONField(_("Context"), default=dict)
 

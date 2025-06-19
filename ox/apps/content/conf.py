@@ -38,7 +38,7 @@ class Settings(conf.Settings):
         "td": ["colspan", "rowspan"],
         "th": ["colspan", "rowspan"],
     }
-    ALLOWED_STYLES = ["text-align", "font-weight", "font-style", "color"]
+    ALLOWED_STYLES = ["text-align", "font-weight", "font-style", "color", "background-color"]
     ALLOWED_PROTOCOLS = ["https", "mailto", "tel"]
 
     STATIC_DIR = "ox_content/bundles"

@@ -1,39 +1,28 @@
 <template>
-    <ox-model-edit v-bind="props" :repo="repos.currencies">
+    <ox-model-edit v-bind="attrs" :repo="repos.currencies">
         <template #default="{editor}">
             <v-row>
                 <v-col>
-                    <v-text-field :label="t('fields.name')"
-                        :rules="[rules.required, rules.errors(editor.errors?.name)]"
-                        v-model="editor.value.name" />
+                    <ox-field :editor="editor" name="name" required/>
                 </v-col>
                 <v-col cols="2">
-                    <v-text-field :label="t('fields.code')"
-                        :rules="[rules.required, rules.errors(editor.errors?.code)]"
-                        v-model="editor.value.code"/>
+                    <ox-field :editor="editor" name="code" required/>
                 </v-col>
                 <v-col cols="2">
-                    <v-text-field :label="t('fields.numeric')"
-                        :rules="[rules.errors(editor.errors?.numeric)]"
-                        v-model="editor.value.numeric"/>
+                    <ox-field :editor="editor" name="numeric" />
                 </v-col>
             </v-row>
-            <v-checkbox :label="t('fields.is_iso')"
-                :rules="[rules.errors(editor.errors?.is_iso)]"
-                v-model="editor.value.is_iso"/>
-            <v-date-input :label="t('fields.valid_to')"
-                :rules="[rules.errors(editor.errors?.valid_to)]"
-                v-model="editor.value.valid_to"/>
+            <ox-field :editor="editor" name="is_iso" type="checkbox"/>
+            <ox-field :editor="editor" name="valid_to" type="date"/>
         </template>
     </ox-model-edit>
 </template>
 <script setup lang="ts">
-import { t, query, rules} from "ox"
-import type {IModelEditorProps} from 'ox'
-import {OxModelEdit} from 'ox/components'
+import { useAttrs } from 'vue'
+import {OxModelEdit, OxField} from 'ox/components'
 
 import {useCurrencies} from '../composables'
 
 const repos = useCurrencies()
-const props = defineProps<IModelEditorProps>()
+const attrs = useAttrs()
 </script>

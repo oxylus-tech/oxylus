@@ -36,7 +36,9 @@ class Country(Model):
     phone = models.PositiveIntegerField(_("Phone prefix"))
 
     # no money in Antarctica
-    currency = models.ForeignKey("ox_locations.currency", models.SET_NULL, blank=True, null=True)
+    currency = models.ForeignKey(
+        "ox_locations.currency", models.SET_NULL, blank=True, null=True, verbose_name=_("Currency")
+    )
 
     iban_sample = models.CharField(_("Sample IBAN"), max_length=42, null=True, blank=True)
     iban_length = models.PositiveSmallIntegerField(_("IBAN length"), null=True, blank=True)
@@ -119,8 +121,12 @@ class Currency(Named, Model):
     # Most common case is 2 digits after the comma
     decimals = models.PositiveSmallIntegerField(_("Decimals"), default=2, blank=True, null=True)
 
-    is_iso = models.BooleanField(_("ISO standard"))
+    is_iso = models.BooleanField(_("Is ISO"))
     valid_to = models.DateField(_("Withdrawal Date"), null=True, blank=True)
+
+    class Meta:
+        verbose_name = _("Currency")
+        verbose_name_plural = _("Currencies")
 
     @property
     def is_active(self):

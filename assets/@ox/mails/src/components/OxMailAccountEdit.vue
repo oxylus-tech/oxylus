@@ -1,11 +1,7 @@
 <template>
     <ox-model-edit v-bind="attrs" :repo="repos.mailAccounts" :initial="initial">
         <template #default="{editor, editable, edited, save}">
-            <v-text-field v-model="editor.value.name"
-                :label="t('fields.name')"
-                :rules="[rules.required]"
-                :error-messages="editor.error('name')"
-                />
+            <ox-field :editor="editor" name="name" required />
             <ox-agent-select v-model="editor.value.owner"
                 :disabled="editor.value.id"/>
 
@@ -14,37 +10,17 @@
                     <template #text>
                         <v-row>
                             <v-col>
-                                <v-text-field
-                                    :label="t('fields.host')"
-                                    :rules="[rules.required]"
-                                    :error-messages="editor.error('smtp_host')"
-                                    v-model="editor.value.smtp_host"/>
+                                <ox-field :editor="editor" name="smtp_host" type="text" required/>
                             </v-col>
                             <v-col cols="2">
-                                <v-text-field type="number"
-                                    :label="t('fields.port')"
-                                    :rules="[rules.required]"
-                                    :error-messages="editor.error('smtp_port')"
-                                    v-model="editor.value.smtp_port"/>
+                                <ox-field :editor="editor" name="smtp_port" type="number" required/>
                             </v-col>
                         </v-row>
-                        <v-text-field
-                            :label="t('fields.username')"
-                            :rules="[rules.required]"
-                            :error-messages="editor.error('smtp_username')"
-                            v-model="editor.value.smtp_username"/>
-                        <v-text-field type="password"
-                            :label="t('fields.password')"
-                            :rules="[rules.required]"
-                            :error-messages="editor.error('smtp_password')"
-                            v-model="editor.value.smtp_password"/>
-                        <v-select
-                            :label="t('fields.encryption')"
-                            :rules="[rules.required]"
-                            :error-messages="editor.error('smtp_encryption')"
-
+                        <ox-field :editor="editor" name="smtp_username" required/>
+                        <ox-field :editor="editor" name="smtp_password" type="password"/>
+                        <ox-field :editor="editor" name="smtp_encryption" type="select" required
                             :items="MailAccount.Encryption.items"
-                            v-model="editor.value.smtp_encryption"/>
+                            />
                     </template>
                 </v-expansion-panel>
             </v-expansion-panels>
@@ -54,7 +30,7 @@
 <script setup lang="ts">
 import { computed, ref, watch, onMounted, useAttrs } from 'vue'
 import { t, query, rules} from "ox"
-import {OxModelEdit} from 'ox/components'
+import {OxModelEdit, OxField} from 'ox/components'
 import {OxAgentSelect} from '@ox/auth/components'
 
 import {MailAccount} from '../models'

@@ -23,7 +23,8 @@ class RichTextField(mixins.RichTextFieldMixin, models.CharField):
     user to do so.
     """
 
-    pass
+    def to_python(self, value):
+        return self.clean(super().to_python(value))
 
 
 class TemplatePack(PackageInfo):

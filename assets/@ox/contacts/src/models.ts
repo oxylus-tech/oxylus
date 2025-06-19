@@ -113,37 +113,14 @@ export class ContactInfo extends models.Model {
         }
     }
 
-    static Kind = {
+    static Kind = models.Enum("kind", {
         MAIN: 0,
         PROFESSIONAL: 1,
         HOME: 2,
         LEGAL: 3,
         OTHER: 16,
-
-        display(value) {
-            return t(`enums.contactinfo_kind.${value}`)
-        }
-    }
-
-    static get kindItems() {
-        // we need to delay because title needs to be translated.
-        if(!this._kindItems) {
-            this._kindItems = Object.values(ContactInfo.Kind).filter(v => (typeof v == "number"))
-            this._kindItems.sort((a, b) => a.value - b.value)
-        }
-        return this._kindItems
-    }
-
-    /*
-    /** Get this' kind as human readable string /
-    get kindDisplay() {
-        return t(`enums.contactinfo_kind.${item[1]}`)
-    }*/
+    })
 }
-
-
-/** As items to be rendered in a v-select */
-
 
 
 export class Address extends ContactInfo {

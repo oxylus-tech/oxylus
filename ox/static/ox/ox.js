@@ -1,14 +1,15 @@
 var ve = Object.defineProperty;
 var be = (r, e, t) => e in r ? ve(r, e, { enumerable: !0, configurable: !0, writable: !0, value: t }) : r[e] = t;
 var o = (r, e, t) => be(r, typeof e != "symbol" ? e + "" : e, t);
-import { t as D, R as Me, c as K, d as xe, l as g, a as ie, H as Se, b as ke, e as Ae, B as Te, C as Ee, G as Oe, M as Re, f as Pe, P as Ce, U as W, u as j, g as Fe, S as b, h as Ie, i as Ve, j as Ye, k as $e, m as Ne, n as We, o as ae, s as qe, p as Be, q as I, r as Ke, v as U } from "./index-zDmba_tR.js";
-import { F as Or, w as Rr, D as Pr, N as Cr, O as Fr, L as Ir, z as Vr, A as Yr, E as $r, Q as Nr, y as Wr, I as qr, x as Br, J as Kr, K as jr } from "./index-zDmba_tR.js";
-import { inject as P, provide as v, reactive as M, computed as S, ref as je, watch as A, effectScope as _, nextTick as Ue, createApp as _e, onMounted as oe, onUnmounted as ue, unref as L, toRaw as z, defineAsyncComponent as Le } from "vue";
-import ze from "axios";
-import * as He from "ox/vendor";
-import { p as H, c as Ge, m as le, a as Ze, b as Je, d as Qe, e as Xe, f as et, g as tt, D as G, h as Z, T as J, I as Q, L as X, i as rt, j as nt } from "./theme-BVAWnHOc.js";
+import { t as y, R as Me, c as K, d as xe, l as g, a as ie, H as ke, b as Se, e as Ae, B as Te, C as Ee, G as Oe, M as Re, f as Pe, P as Ce, U as W, u as j, g as Fe, S as b, h as Ie, i as Ve, j as Ye, k as $e, m as Ne, n as We, o as ae, s as qe, p as Be, q as I, r as Ke, v as U } from "./index-BcsriIRW.js";
+import { E as Or, w as Rr, A as Pr, L as Cr, N as Fr, K as Ir, y as Vr, z as Yr, D as $r, O as Nr, F as Wr, I as qr, J as Br, x as Kr } from "./index-BcsriIRW.js";
+import { inject as P, provide as v, reactive as M, computed as k, ref as je, watch as A, effectScope as _, nextTick as Ue, createApp as _e, onMounted as oe, onUnmounted as ue, unref as z, toRaw as H, defineAsyncComponent as ze } from "vue";
+import He from "axios";
+import * as Le from "ox/vendor";
+import { p as L, c as Ge, m as le, a as Ze, b as Je, d as Qe, e as Xe, f as et, g as tt, D as G, h as Z, T as J, I as Q, L as X, i as rt, j as nt } from "./theme-BVAWnHOc.js";
 function ee(r, e) {
-  return D(`enums.${r}.${e}`);
+  let t = `enums.${r}.${e}`, n = y(t);
+  return n != t ? n : y(`enums.${r}._.${e}`);
 }
 const ce = {
   get(r, e, t) {
@@ -320,7 +321,7 @@ function he(r, e) {
   return e;
 }
 function de(r) {
-  return r instanceof Se || r instanceof ke || r instanceof Ae || r instanceof Te ? r.foreignKey : null;
+  return r instanceof ke || r instanceof Se || r instanceof Ae || r instanceof Te ? r.foreignKey : null;
 }
 const gr = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
@@ -357,7 +358,7 @@ function ht(r, { useInject: e = !0, useDefaults: t = !0, key: n = null } = {}) {
 class dt {
   static reactive(e) {
     const t = M(new this(e));
-    return t.user = S(() => {
+    return t.user = k(() => {
       var n;
       return new W(((n = t.data) == null ? void 0 : n.user) || {});
     }), t;
@@ -389,7 +390,7 @@ function yr(r, e = !0) {
   return e && t.dataEl && t.load(), v("context", t), v("user", t.user), t;
 }
 function wr({ props: r, user: e, emits: t = null }) {
-  const n = je(!1), s = S(() => !r.permission || e.can(r.permission, r.item));
+  const n = je(!1), s = k(() => !r.permission || e.can(r.permission, r.item));
   return { processing: n, run: async (...a) => {
     if (r.confirm && !confirm(r.confirm))
       return;
@@ -708,7 +709,7 @@ function wt(r, e, t, n) {
   return new Intl.DateTimeFormat(t, a).format(s);
 }
 function Dt(r, e) {
-  const t = r.toJsDate(e), n = t.getFullYear(), s = H(String(t.getMonth() + 1), 2, "0"), i = H(String(t.getDate()), 2, "0");
+  const t = r.toJsDate(e), n = t.getFullYear(), s = L(String(t.getMonth() + 1), 2, "0"), i = L(String(t.getDate()), 2, "0");
   return `${n}-${s}-${i}`;
 }
 function vt(r) {
@@ -731,21 +732,21 @@ function xt(r, e) {
   const t = new Date(r);
   return t.setDate(t.getDate() + e * 7), t;
 }
-function St(r, e) {
+function kt(r, e) {
   const t = new Date(r);
   return t.setDate(1), t.setMonth(t.getMonth() + e), t;
 }
 function $(r) {
   return r.getFullYear();
 }
-function kt(r) {
+function St(r) {
   return r.getMonth();
 }
 function At(r, e, t, n) {
   const s = T(e), i = t ?? (s == null ? void 0 : s.firstDay) ?? 0, a = n ?? (s == null ? void 0 : s.firstWeekSize) ?? 1;
-  function u(y) {
-    const w = new Date(y, 0, 1);
-    return 7 - N(w, Y(w, e, i), "days");
+  function u(w) {
+    const D = new Date(w, 0, 1);
+    return 7 - N(D, Y(D, e, i), "days");
   }
   let l = $(r);
   const m = R(Y(r, e, i), 6);
@@ -851,7 +852,7 @@ function F(r) {
 function ge(r) {
   return new Date(r.getFullYear(), r.getMonth(), r.getDate(), 23, 59, 59, 999);
 }
-class Lt {
+class zt {
   constructor(e) {
     this.locale = e.locale, this.formats = e.formats;
   }
@@ -880,7 +881,7 @@ class Lt {
     return xt(e, t);
   }
   addMonths(e, t) {
-    return St(e, t);
+    return kt(e, t);
   }
   getWeekArray(e, t) {
     const n = t !== void 0 ? Number(t) : void 0;
@@ -955,7 +956,7 @@ class Lt {
     return $(e);
   }
   getMonth(e) {
-    return kt(e);
+    return St(e);
   }
   getWeek(e, t, n) {
     const s = t !== void 0 ? Number(t) : void 0;
@@ -989,10 +990,10 @@ class Lt {
     return Ft(e);
   }
 }
-const zt = Symbol.for("vuetify:date-options"), ne = Symbol.for("vuetify:date-adapter");
-function Ht(r, e) {
+const Ht = Symbol.for("vuetify:date-options"), ne = Symbol.for("vuetify:date-adapter");
+function Lt(r, e) {
   const t = le({
-    adapter: Lt,
+    adapter: zt,
     locale: {
       af: "af-ZA",
       // ar: '', # not the same value for all variants
@@ -1062,7 +1063,7 @@ function ye() {
     directives: a = {}
   } = n, u = _();
   return u.run(() => {
-    const l = Ze(n.defaults), m = Je(n.display, n.ssr), f = Qe(n.theme), c = Xe(n.icons), h = et(n.locale), y = Ht(n.date, h), w = Ie(n.goTo, h);
+    const l = Ze(n.defaults), m = Je(n.display, n.ssr), f = Qe(n.theme), c = Xe(n.icons), h = et(n.locale), w = Lt(n.date, h), D = Ie(n.goTo, h);
     function E(d) {
       for (const p in a)
         d.directive(p, a[p]);
@@ -1077,7 +1078,7 @@ function ye() {
       const B = _();
       if (B.run(() => {
         f.install(d);
-      }), d.onUnmount(() => B.stop()), d.provide(G, l), d.provide(Z, m), d.provide(J, f), d.provide(Q, c), d.provide(X, h), d.provide(zt, y.options), d.provide(ne, y.instance), d.provide(Ve, w), rt && n.ssr)
+      }), d.onUnmount(() => B.stop()), d.provide(G, l), d.provide(Z, m), d.provide(J, f), d.provide(Q, c), d.provide(X, h), d.provide(Ht, w.options), d.provide(ne, w.instance), d.provide(Ve, D), rt && n.ssr)
         if (d.$nuxt)
           d.$nuxt.hook("app:suspense:resolve", () => {
             m.update();
@@ -1117,8 +1118,8 @@ function ye() {
       theme: f,
       icons: c,
       locale: h,
-      date: y,
-      goTo: w
+      date: w,
+      goTo: D
     };
   });
 }
@@ -1265,7 +1266,7 @@ function Xt(r, { props: e = {}, vuetify: t = {}, plugins: n = null } = {}) {
 }
 function er({ components: r = {}, defaults: e = {}, ...t }) {
   return t.components = {
-    ...He,
+    ...Le,
     ...r
   }, ye({
     blueprint: Jt,
@@ -1296,7 +1297,7 @@ function vr({ axiosConfig: r = null, baseURL: e = null } = {}) {
   const t = Ne(), n = We({
     plugins: [
       lt({
-        axios: ze,
+        axios: He,
         ...r || ae.axiosConfig,
         baseURL: e
       })
@@ -1304,7 +1305,7 @@ function vr({ axiosConfig: r = null, baseURL: e = null } = {}) {
   });
   return qe(t), t.use(n);
 }
-class k {
+class S {
   /**
   * @param {Repos} [repos] all models repositories
   * @param {Repository<M>} [repo] the main repository
@@ -1326,10 +1327,10 @@ class k {
    * @param [options.opts] options passed down to ``repo.api.get``
    */
   async fetch(e = {}) {
-    var h, y, w, E, O;
+    var h, w, D, E, O;
     e = { ...this.opts, ...e };
     let { url: t, id: n, ids: s, repo: i, lookup: a, params: u, relations: l, path: m, ...f } = e;
-    if (a ?? (a = "id__in"), i ?? (i = this.repo), (s == null ? void 0 : s.length) === 1 && (n = s[0], s = null), t || (t = (y = (h = i.use) == null ? void 0 : h.meta) == null ? void 0 : y.getUrl({ path: m, id: n })), n ? f.dataKey = null : "dataKey" in f || (f.dataKey = (O = (E = (w = i.use) == null ? void 0 : w.config) == null ? void 0 : E.axiosApi) == null ? void 0 : O.dataKey), s && a !== void 0) {
+    if (a ?? (a = "id__in"), i ?? (i = this.repo), (s == null ? void 0 : s.length) === 1 && (n = s[0], s = null), t || (t = (w = (h = i.use) == null ? void 0 : h.meta) == null ? void 0 : w.getUrl({ path: m, id: n })), n ? f.dataKey = null : "dataKey" in f || (f.dataKey = (O = (E = (D = i.use) == null ? void 0 : D.config) == null ? void 0 : E.axiosApi) == null ? void 0 : O.dataKey), s && a !== void 0) {
       if (n)
         throw Error("Both `ids` and `id` are provided while only one of those arguments is accepted.");
       u = { ...u || {} }, u[a] = [...s];
@@ -1415,16 +1416,16 @@ class k {
     if (!u)
       throw Error(`No source ids attributes for ${t}.`);
     const l = [...new Set(Be(e, u))];
-    return new k(a, this.repos).all({ ...n, ids: l, repo: a });
+    return new S(a, this.repos).all({ ...n, ids: l, repo: a });
   }
 }
 function tr(r, e, t = null) {
   if (typeof r == "string") {
     if (!(r in e))
       throw Error(`Repository "${r}" is not present in provided repositories.`);
-    return new k(e[r], e, t);
+    return new S(e[r], e, t);
   }
-  return new k(r, e, t);
+  return new S(r, e, t);
 }
 class we {
   constructor(e) {
@@ -1572,7 +1573,7 @@ class rr {
   onLeave() {
     if (!this.edited)
       return !0;
-    const e = D(this.confirmTKey);
+    const e = y(this.confirmTKey);
     return confirm(e);
   }
 }
@@ -1859,12 +1860,12 @@ class or extends rr {
     const { props: t, list: n } = this, s = this.repo.use;
     if (s) {
       if ((i = this.view) != null && i.startsWith("list."))
-        return D(U.model(s), 3);
+        return y(U.model(s), 3);
       if ((a = this.view) != null && a.startsWith("detail.")) {
         if ((u = this.value) != null && u.$title)
           return this.value.$title;
-        const m = D(U.model(s));
-        return (l = this.value) != null && l.id ? D("models._.title", { model: m, id: this.value.id }) : D("models._.title.new", { model: m });
+        const m = y(U.model(s));
+        return (l = this.value) != null && l.id ? y("models._.title", { model: m, id: this.value.id }) : y("models._.title.new", { model: m });
       }
     }
     return super.title;
@@ -1916,28 +1917,28 @@ function ur(r, e) {
   return v("panel", t), oe(() => t.panels.register(t.name, t)), ue(() => t.panels.unregister(t.name)), { panel: t };
 }
 function Mr({ query: r, repos: e, ...t }) {
-  e ?? (e = P("repos")), r ?? (r = new k(t.props.repo, e)), t.panels ?? (t.panels = P("panels"));
+  e ?? (e = P("repos")), r ?? (r = new S(t.props.repo, e)), t.panels ?? (t.panels = P("panels"));
   const { list: n, items: s } = lr({
     query: r,
     relations: t.props.relations,
     fetchRelations: t.props.fetchRelations
-  }), { panel: i } = ur({ list: n, ...t }, or), a = S(() => {
-    const l = n.getSiblingIndex(L(i.value), 1);
+  }), { panel: i } = ur({ list: n, ...t }, or), a = k(() => {
+    const l = n.getSiblingIndex(z(i.value), 1);
     return s.value[l] ?? null;
-  }), u = S(() => {
-    const l = n.getSiblingIndex(L(i.value), -1);
+  }), u = k(() => {
+    const l = n.getSiblingIndex(z(i.value), -1);
     return s.value[l] ?? null;
   });
   return { panels: i.panels, panel: i, list: n, items: s, next: a, prev: u };
 }
 function lr(r, e = ir) {
-  const t = M(new e(r)), n = t.repo.refs.acquireKey(), s = S(() => t.queryset(t.ids).orderBy((i) => t.ids.indexOf(i)).get());
+  const t = M(new e(r)), n = t.repo.refs.acquireKey(), s = k(() => t.queryset(t.ids).orderBy((i) => t.ids.indexOf(i)).get());
   return A(() => t.ids, (i, a) => {
-    g.isEqual(z(i), z(a)) || t.repo.refs.releaseAcquire(n, a, i);
+    g.isEqual(H(i), H(a)) || t.repo.refs.releaseAcquire(n, a, i);
   }), ue(() => t.repo.refs.flush(n)), v("list", t), v("items", s), { list: t, items: s, listId: n };
 }
 function xr(r, e = null, t) {
-  const n = new k(r, e, t), s = b.none();
+  const n = new S(r, e, t), s = b.none();
   async function i(a) {
     s.processing();
     let u = null;
@@ -1954,20 +1955,20 @@ function cr(r, e = we) {
   r.initial || r.props.initial;
   const t = M(new e(r));
   v("editor", t);
-  const n = S(() => t.isEdited());
+  const n = k(() => t.isEdited());
   A(() => t.props.initial, (i) => {
     t.initial = i || t.empty, t.reset(i || t.empty);
   });
   const s = P("panel");
   return s && A(() => t.edited, (i) => s.setEdition(t.name, i)), { editor: t, edited: n };
 }
-function Sr(r, e = ar) {
+function kr(r, e = ar) {
   return cr(r, e);
 }
-const kr = {
+const Sr = {
   /** Field is required */
   required(r) {
-    return r ? !0 : D("fields._.required");
+    return r ? !0 : y("fields._.required");
   },
   /**
    * Validate field errors returned from the server.
@@ -1986,7 +1987,7 @@ const kr = {
   },
   /** Rule validating email */
   email(r) {
-    return /^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i.test(r) || D("fields.email.rule");
+    return /^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i.test(r) || y("fields.email.rule");
   },
   /** Rule validating username */
   username(r) {
@@ -1994,7 +1995,7 @@ const kr = {
   }
 };
 function Ar(r, e) {
-  return Le(() => import(r).then((t) => e ? (console.log(t, t.components, Object.keys(t)), Object.values(t).filter((s) => s.__name == e)[0]) : t));
+  return ze(() => import(r).then((t) => e ? (console.log(t, t.components, Object.keys(t)), Object.values(t).filter((s) => s.__name == e)[0]) : t));
 }
 export {
   dt as AppContext,
@@ -2005,7 +2006,7 @@ export {
   or as ModelPanel,
   rr as Panel,
   nr as Panels,
-  k as Query,
+  S as Query,
   b as State,
   Or as States,
   I as assignNonEmpty,
@@ -2026,22 +2027,21 @@ export {
   Ye as i18n,
   Dr as init,
   Nr as injectOrProvide,
-  Wr as loadedLocalePaths,
-  qr as mapToObject,
+  Wr as mapToObject,
   gr as models,
   tr as query,
   Ke as reset,
-  kr as rules,
-  Br as setLocale,
-  Kr as shallowCopy,
-  jr as splitValues,
-  D as t,
+  Sr as rules,
+  qr as shallowCopy,
+  Br as splitValues,
+  y as t,
   U as tKeys,
+  Kr as te,
   wr as useAction,
   yr as useAppContext,
   cr as useEditor,
   $e as useI18n,
-  Sr as useModelEditor,
+  kr as useModelEditor,
   lr as useModelList,
   Mr as useModelPanel,
   ht as useModels,

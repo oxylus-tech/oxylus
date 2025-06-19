@@ -1,5 +1,5 @@
 <template>
-    <ox-model-edit ref="modelEdit" v-bind="props" :repo="repos.files"
+    <ox-model-edit ref="modelEdit" v-bind="attrs" :repo="repos.files"
             :initial="initial"
             :hide-validation-btn="!props.initial?.id"
             send-form-data
@@ -40,24 +40,26 @@
                         @change="onFileChange($event, editor)"/>
                 </v-col>
                 <v-col>
-                    <v-text-field name="name"
-                        :label="t('fields.name')"
-                        :rules="[rules.required]"
-                        :error-messages="editor.error('name')"
-                        v-model="editor.value.name" />
+                    <ox-field :editor="editor" name="name" required />
                     <v-row>
                         <v-col cols="4">
-                            <ox-agent-select name="owner" v-model="editor.value.owner"
-                                :disabled="editor.value.id" />
+                            <ox-field :editor="editor" name="owner">
+                                <template #default="{props}">
+                                    <ox-agent-select v-bind="props"
+                                        v-model="editor.value.owner"
+                                        :disabled="editor.value.id" />
+                                </template>
+                            </ox-field>
                         </v-col>
                         <v-col>
-                            <ox-folder-input
-                                name="folder"
-                                v-model="editor.value.folder"
-                                :disabled="!editor.value.owner"
-                                :owner="editor.value.owner"
-                                :error-messages="editor.error('folder')"
-                                :label="t('fields.folder')" />
+                            <ox-field :editor="editor" name="folder">
+                                <template #default="{props}">
+                                    <ox-folder-input v-bind="props"
+                                        v-model="editor.value.folder"
+                                        :disabled="!editor.value.owner"
+                                        :owner="editor.value.owner" />
+                                </template>
+                            </ox-field>
                         </v-col>
                     </v-row>
 
@@ -72,29 +74,10 @@
             <v-expansion-panels>
                 <v-expansion-panel :title="t('views.edit.informations')">
                     <template #text>
-                        <v-text-field
-                            name="caption"
-                            :label="t('fields.caption')"
-                            :hint="t('fields.caption.help')"
-                            :message-errors="editor.error('caption')"
-                            v-model="editor.value.caption"/>
-                        <v-text-field
-                            name="alternate"
-                            :label="t('fields.alternate')"
-                            :hint="t('fields.alternate.help')"
-                            :message-errors="editor.error('alternate')"
-                            v-model="editor.value.alternate"/>
-                        <v-textarea variant="outlined"
-                            name="description"
-                            :label="t('fields.description')"
-                            :message-errors="editor.error('description')"
-                            v-model="editor.value.description"/>
-                        <v-textarea variant="outlined"
-                            name="ariaDescription"
-                            :label="t('fields.ariaDescription')"
-                            :hint="t('fields.ariaDescription.help')"
-                            :message-errors="editor.error('ariaDescription')"
-                            v-model="editor.value.ariaDescription"/>
+                        <ox-field :editor="editor" name="caption" />
+                        <ox-field :editor="editor" name="alternate" />
+                        <ox-field :editor="editor" name="description" type="textarea" />
+                        <ox-field :editor="editor" name="ariaDescription" type="textarea" />
                     </template>
                 </v-expansion-panel>
             </v-expansion-panels>
@@ -103,23 +86,22 @@
 </template>
 <script setup lang="ts">
 // TODO: reset folder when owner changes
-import { computed, ref, watch, onMounted } from 'vue'
-import { t, query, rules} from "ox"
-import type {IModelEditorProps} from 'ox'
-import {OxModelEdit, OxValidationBtn} from 'ox/components'
+import { computed, ref, watch, onMounted, useAttrs } from 'vue'
+import { t, query} from "ox"
+import {OxModelEdit, OxField, OxValidationBtn} from 'ox/components'
 import {OxAgentSelect} from '@ox/auth/components'
 
 import {useFilesModels} from '../composables'
 import OxFolderInput from './OxFolderInput'
 import OxFileUpload from './OxFileUpload'
 
-interface IFileEditProps extends IModelEditorProps {
+const repos = useFilesModels()
+const props = defineProps({
     owner: Object
     folder: Object
-}
+})
+const attrs = useAttrs()
 
-const repos = useFilesModels()
-const props = defineProps<IFileEditProps>()
 const modelEdit = ref(null)
 const openUpload = ref(false)
 const initial = computed(() =>

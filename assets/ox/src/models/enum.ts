@@ -1,7 +1,12 @@
 import { t } from '../composables/i18n'
 
 function toString(prefix: string, prop: string) {
-    return t(`enums.${prefix}.${prop}`)
+    let key = `enums.${prefix}.${prop}`
+    let val = t(key)
+    if(val != key)
+        return val
+
+    return t(`enums.${prefix}._.${prop}`)
 }
 
 /**

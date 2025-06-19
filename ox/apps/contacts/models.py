@@ -36,7 +36,7 @@ class Contact(Model):
 class OrganisationType(Named, Model):
     """Represent a kind of Organisation."""
 
-    country = models.ForeignKey(Country, models.CASCADE)
+    country = models.ForeignKey(Country, models.CASCADE, verbose_name=_("Country"))
     code = models.CharField(_("Code"), max_length=8, blank=True, default="")
     abbreviation = models.CharField(_("Abbreviation"), max_length=32, blank=True, default="")
     language_code = models.CharField(_("Language Code"), max_length=4, blank=True, default="")
@@ -48,11 +48,13 @@ class OrganisationType(Named, Model):
 
 class Organisation(Described, Colored, Contact):
     # group = models.OneToOneField(Group, models.SET_NULL, null=True, blank=True)
-    short_name = models.CharField(_("Short name"), max_length=32, null=True, blank=True)
+    short_name = models.CharField(_("Short Name"), max_length=32, null=True, blank=True)
     reference = models.CharField(_("Reference Number"), max_length=32, default="", blank=True)
     vat = models.CharField(_("VAT"), max_length=32, blank=True, null=True)
-    type = models.ForeignKey(OrganisationType, models.SET_NULL, null=True, blank=True)
-    country = models.ForeignKey(Country, models.SET_NULL, null=True, blank=True)
+    type = models.ForeignKey(
+        OrganisationType, models.SET_NULL, null=True, blank=True, verbose_name=_("Organisation Type")
+    )
+    country = models.ForeignKey(Country, models.SET_NULL, null=True, blank=True, verbose_name=_("Country"))
 
     class Meta:
         verbose_name = _("Organisation")
@@ -60,12 +62,20 @@ class Organisation(Described, Colored, Contact):
 
 
 class Person(Contact):
-    user = models.OneToOneField(User, models.CASCADE, null=True, blank=True, related_name="contact")
+    user = models.OneToOneField(
+        User,
+        models.CASCADE,
+        null=True,
+        blank=True,
+        related_name="contact",
+        verbose_name=_("User"),
+        help_text=_("This contact is related to a user of the plateform"),
+    )
     first_name = models.CharField(_("First name"), default="", max_length=64)
     last_name = models.CharField(_("Last name"), default="", max_length=64)
     email = models.EmailField(_("Email"), unique=True, blank=True, null=True)
     """ When linked to user, this is User's email. """
-    organisations = models.ManyToManyField(Organisation, blank=True)
+    organisations = models.ManyToManyField(Organisation, blank=True, verbose_name=_("Organisations"))
 
     class Meta:
         verbose_name = _("Person")
@@ -79,15 +89,17 @@ class Person(Contact):
         return self.full_name
 
 
-class ContactInfo(Model):
-    class Kind(models.IntegerChoices):
-        MAIN = 0x00, _("Main")
-        PROFESSIONAL = 0x01, _("Professional")
-        HOME = 0x02, _("Home")
-        LEGAL = 0x03, _("Legal")
-        OTHER = 0x10, _("Other")
+# TODO: rename
+class Kind(models.IntegerChoices):
+    MAIN = 0x00, _("Main")
+    PROFESSIONAL = 0x01, _("Professional")
+    HOME = 0x02, _("Home")
+    LEGAL = 0x03, _("Legal")
+    OTHER = 0x10, _("Other")
 
-    contact = models.ForeignKey(Contact, models.CASCADE)
+
+class ContactInfo(Model):
+    contact = models.ForeignKey(Contact, models.CASCADE, verbose_name=_("Contact"))
     kind = models.SmallIntegerField(_("Kind"), default=Kind.MAIN, choices=Kind.choices)
 
     class Meta:

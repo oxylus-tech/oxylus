@@ -17,7 +17,7 @@ class RichTextField(mixins.RichTextFieldMixin, serializers.CharField):
     """Handles cleaning input HTML rich text content."""
 
     def to_internal_value(self, value):
-        return self.to_python(super().to_internal_value(value))
+        return self.clean(super().to_internal_value(value))
 
 
 class StripCharField(serializers.CharField):
