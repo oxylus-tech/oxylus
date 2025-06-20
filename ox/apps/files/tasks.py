@@ -9,14 +9,14 @@ from .conf import ox_files_settings
 
 
 @task()
-def create_preview(file_uuid, force: bool = True):
+def create_preview(uuid, force: bool = True):
     """Create file preview.
 
-    :param file_uuid: file object id
+    :param uuid: file object id
     :param force: if True (default), create preview even if already present.
     :return a tuple of ``(created, preview_path)``.
     """
-    obj = models.File.objects.get(uuid=file_uuid)
+    obj = models.File.objects.get(uuid=uuid)
     if not force and obj.preview:
         return
 

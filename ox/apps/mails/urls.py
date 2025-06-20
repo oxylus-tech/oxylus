@@ -7,10 +7,10 @@ from . import views
 router = DefaultRouter()
 router.register("account", views.MailAccountViewSet)
 router.register("template", views.MailTemplateViewSet)
-router.register("outmail", views.OutMailViewSet)
+router.register("sendmail", views.SendMailViewSet)
 
 api_urls = router.urls
 
 urls = [
-    path("", UserAppView.as_view(template_name="ox/mails/app.html", default_panel="outmails"), name="index"),
+    path("", UserAppView.as_view(template_name="ox/mails/app.html", default_panel="sendmails"), name="index"),
 ]

@@ -6,7 +6,7 @@ import * as models from './models'
 /** Use file's models. */
 export function useMailModels() : Object {
     return useModels([
-        Agent, Person, models.MailTemplate, models.MailAccount, models.OutMail
+        Agent, Person, models.MailTemplate, models.MailAccount, models.SendMail
     ])
 }
 

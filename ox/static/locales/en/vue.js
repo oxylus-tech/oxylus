@@ -90,6 +90,6 @@ window.__i18n_messages = { ...window.__i18n_messages, ...{
 
     // ---- @ox/mails
     "views.edit.smtp": "SMTP Configuration",
-
-
+    "actions.mails.send": "Send email",
+    "actions.mails.send.confirm": "This email has already been sent. Do you want to resend it?",
 }}

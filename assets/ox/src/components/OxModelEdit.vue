@@ -74,5 +74,12 @@ async function save(): State {
     return resp
 }
 
-defineExpose({modelEditor, save, reset})
+defineExpose({
+    save, reset,
+
+    get editor() { return modelEditor.value.editor },
+    get edited() { return modelEditor.value.edited },
+    get editable() { return modelEditor.value.editable },
+    get form() { return modelEditor.value.form },
+})
 </script>

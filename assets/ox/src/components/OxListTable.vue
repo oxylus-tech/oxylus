@@ -23,7 +23,7 @@
                 :title="t('actions.view')"
                 :item="item"
                 :run="show"/>
-            <slot name="item.actions" :value="item" :dense="true" :button="true"/>
+            <slot name="item.actions" :item="item" :dense="true" :button="true"/>
         </template>
     </v-data-table-server>
 </template>

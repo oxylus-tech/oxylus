@@ -34,7 +34,7 @@ class AppView(UserAppView):
 
 
 class TaskViewSet(viewsets.ModelViewSet):
-    queryset = DBTaskResult.objects.all()
+    queryset = DBTaskResult.objects.all().order_by("-finished_at", "-enqueued_at", "-started_at")
     serializer_class = serializers.TaskSerializer
     search_fields = ["task_path", "queue_name"]
 

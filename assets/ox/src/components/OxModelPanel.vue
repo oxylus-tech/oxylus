@@ -45,7 +45,7 @@
                                 </v-btn>
                             </template>
                             <v-list>
-                                <slot name="item.actions" :value="panel.value"/>
+                                <slot name="item.actions" :item="panel.value"/>
                             </v-list>
                         </v-menu>
                     </template>

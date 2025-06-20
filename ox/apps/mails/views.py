@@ -1,11 +1,13 @@
 from django.utils.translation import gettext_lazy as _
+from rest_framework.decorators import action
+from rest_framework.response import Response
 
 from caps.views import OwnedViewSet
 from ox.core.views import nav
-from . import models, serializers
+from . import models, serializers, tasks
 
 
-__all__ = ("MailAccountViewSet", "MailTemplateViewSet", "OutMailViewSet")
+__all__ = ("MailAccountViewSet", "MailTemplateViewSet", "SendMailViewSet")
 
 
 nav.app_nav.append(
@@ -14,11 +16,11 @@ nav.app_nav.append(
         _("Mails"),
         items=[
             nav.NavItem(
-                "outmails",
-                _("Outgoing"),
+                "sendmails",
+                _("Send"),
                 url="ox_mails:index",
                 icon="mdi-email-arrow-right",
-                permissions="ox_mails.view_outmail",
+                permissions="ox_mails.view_sendmail",
             ),
             nav.NavSubGroup(
                 "settings",
@@ -66,8 +68,17 @@ class MailTemplateViewSet(OwnedViewSet):
     }
 
 
-class OutMailViewSet(OwnedViewSet):
-    queryset = models.OutMail.objects.all().order_by("-updated")
-    serializer_class = serializers.OutMailSerializer
+class SendMailViewSet(OwnedViewSet):
+    queryset = models.SendMail.objects.all().order_by("-updated")
+    serializer_class = serializers.SendMailSerializer
 
-    filterset_fields = {"template__uuid": ["in", "exact"]}
+    filterset_fields = {"owner__uuid": ["in", "exact"], "template__uuid": ["in", "exact"]}
+
+    @action(detail=True, methods=["POST"])
+    def send(self, request, uuid=None):
+        obj = self.get_object()
+        tasks.send_mail.enqueue(uuid=str(obj.uuid))
+        obj.state = obj.State.SENDING
+        obj.save()
+        serializer = self.get_serializer(instance=obj)
+        return Response(serializer.data)

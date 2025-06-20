@@ -13,6 +13,6 @@ class MailTemplateAdmin(admin.ModelAdmin):
     pass
 
 
-@admin.register(models.OutMail)
-class OutMailAdmin(admin.ModelAdmin):
+@admin.register(models.SendMail)
+class SendMailAdmin(admin.ModelAdmin):
     pass

@@ -43,11 +43,11 @@
 
         <template #item.file_size="{item}">{{ formatBytes(item.file_size) }}</template>
 
-        <template #item.actions="{value, ...bind}">
-            <ox-action :href="value.file" icon="mdi-download"
+        <template #item.actions="{item, ...bind}">
+            <ox-action :href="item.file" icon="mdi-download"
                 :button="bind.button"
                 :title="t('actions.download')"/>
-            <slot name="item.actions" :value="value" v-bind="bind"/>
+            <slot name="item.actions" :item="item" v-bind="bind"/>
         </template>
 
         <template #views.detail.edit.default="{value, saved, list}">

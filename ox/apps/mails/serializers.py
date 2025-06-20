@@ -10,7 +10,7 @@ from . import models
 __all__ = (
     "MailAccountSerializer",
     "MailTemplateSerializer",
-    "OutMailSerializer",
+    "SendMailSerializer",
 )
 
 
@@ -41,12 +41,13 @@ class MailTemplateSerializer(OwnedSerializer):
         fields = "__all__"
 
 
-class OutMailSerializer(OwnedSerializer):
+class SendMailSerializer(OwnedSerializer):
     template = RelatedField(queryset=models.MailTemplate.objects.all())
     contacts = RelatedField(many=True, queryset=Person.objects.all())
     subject = StripCharField()
     content = RichTextField()
 
     class Meta:
-        model = models.OutMail
+        model = models.SendMail
         fields = "__all__"
+        read_only_fields = ("status",)

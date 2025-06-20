@@ -14,7 +14,7 @@ from ox.apps.content.models import RichTextField
 from ox.apps.contacts.models import Person
 
 
-__all__ = ("MailAccount", "MailTemplate", "OutMail", "validate_email_list")
+__all__ = ("MailAccount", "MailTemplate", "SendMail", "validate_email_list")
 
 
 def validate_email_list(value):
@@ -74,17 +74,18 @@ class MailTemplate(Named, Timestamped, ChildOwned):
         verbose_name_plural = _("Email Templates")
 
 
-class OutMail(Timestamped, ChildOwned):
+class SendMail(Timestamped, ChildOwned):
     """Outgoing mail to a set of contacts"""
 
-    class Status(models.IntegerChoices):
+    class State(models.IntegerChoices):
         DRAFT = 0x00, _("Draft")
         SENDING = 0x01, _("Sending")
         SENT = 0x02, _("Sent")
+        ERROR = 0x03, _("Error")
 
     template = models.ForeignKey(MailTemplate, models.SET_NULL, null=True, blank=True)
     contacts = models.ManyToManyField(Person, verbose_name=_("Recipients"))
-    status = models.PositiveSmallIntegerField(_("Status"), choices=Status.choices, default=Status.DRAFT)
+    state = models.PositiveSmallIntegerField(_("State"), choices=State.choices, default=State.DRAFT)
     context = models.JSONField(_("Context"), default=dict)
 
     subject = models.TextField(_("Subject"), default="", help_text=_("When provided, overrides template's content"))

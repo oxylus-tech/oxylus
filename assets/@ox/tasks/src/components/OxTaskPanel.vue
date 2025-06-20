@@ -1,12 +1,20 @@
 <template>
     <ox-model-panel ref="modelPanel" v-bind="props" :repo="repos.tasks" icon="mdi-cog-clockwise"
             :warning="t('alerts.danger_zone_system_data')">
-        <template v-for="(_, name) in slots" :key="name" #[name]="bind">
+        <template v-for="name in forwardSlots" :key="name" #[name]="bind">
             <slot :name="name" v-bind="bind"/>
         </template>
 
         <template #item.status="{item}">
             <v-chip :color="colors[item.status]">{{ item.status }}</v-chip>
+        </template>
+
+        <template #item.actions="bind">
+            <ox-action-post v-bind="bind"
+                icon="mdi-restart" :title="t('actions.task.restart')"
+                :repo="repos.tasks" path="restart"
+                permission="django_tasks_database.change_dbtaskresult" />
+            <slot name="item.actions" v-bind="bind"/>
         </template>
 
         <template #item.date="{item}">
@@ -30,13 +38,14 @@
 <script setup lang="ts">
 import { ref, useSlots, withDefaults } from 'vue'
 
-import { t } from 'ox'
-import {OxModelPanel} from 'ox/components'
+import { t, filterSlots } from 'ox'
+import {OxModelPanel, OxActionPost} from 'ox/components'
 import type {IModelPanelProps} from 'ox'
 
 import {useTasksModels} from '../composables'
 
 const slots = useSlots()
+const forwardSlots = filterSlots(slots, null, {exclude: ['item.actions']})
 const repos = useTasksModels()
 const modelPanel = ref(null)
 
@@ -52,8 +61,6 @@ const colors = {
     'STARTED': 'warning',
     'NEW': 'info',
 }
-
-
 
 function refresh(timeout) {
     window.setTimeout(() => {

@@ -1,9 +1,9 @@
 <template>
-    <ox-model-edit ref="model-editor" v-bind="attrs" :repo="repos.outMails">
+    <ox-model-edit ref="modelEditor" v-bind="attrs" :repo="repos.sendMails">
         <template #default="{editor, editable}">
             <ox-field :editor="editor" name="template" required>
                 <template #default="{props: props_}">
-                    <ox-autocomplete v-bind="props_"
+                    <ox-autocomplete ref="templateField" v-bind="props_"
                         :filters="{owner__uuid: props.owner}"
                         :repo="repos.mailTemplates"
                         item-title="name" item-value="id"
@@ -23,7 +23,7 @@
     </ox-model-edit>
 </template>
 <script setup lang="ts">
-import { useAttrs, computed } from 'vue'
+import { useAttrs, computed, ref, watch } from 'vue'
 import { t, rules } from "ox"
 import {OxModelEdit, OxField, OxAutocomplete} from 'ox/components'
 import {OxPersonInput} from '@ox/contacts/components'
@@ -37,4 +37,18 @@ const props = defineProps({
     /** Owner uuid **/
     owner: String
 })
+
+const templateField = ref(null)
+const modelEditor = ref(null)
+
+watch(() => templateField.value?.selected, (selected) => {
+    if(!selected || !selected.length)
+        return
+
+    selected = selected[0]
+    const editor = modelEditor.value.editor
+    editor.value.subject = editor.value.subject || selected.subject
+    editor.value.content = editor.value.content || selected.content
+})
+
 </script>

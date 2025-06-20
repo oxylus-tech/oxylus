@@ -5,9 +5,7 @@
 {{ block.super }}
 <template #panels.tasks>
     {% block tasks %}
-    {% with "ox/tasks/components/task_actions.html" as actions %}
-        {% include "ox/core/components/model_panel.html" with tag="ox-task-panel" name="tasks" %}
-    {% endwith %}
+    {% include "ox/core/components/model_panel.html" with tag="ox-task-panel" name="tasks" %}
     {% endblock %}
 </template>
 {% endblock %}

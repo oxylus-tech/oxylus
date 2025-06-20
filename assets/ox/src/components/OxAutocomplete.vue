@@ -12,17 +12,22 @@
 </template>
 <script setup lang="ts">
 import { isEqual, debounce, unionBy } from 'lodash'
-import { defineModel, inject, reactive, ref, onMounted, toRaw, useAttrs, useSlots, watch } from 'vue'
+
+import type { Reactive, Ref } from 'vue'
+import { defineExpose, defineModel, inject, reactive, ref, onMounted, toRaw, useAttrs, useSlots, watch } from 'vue'
 import type {Repository} from 'pinia-orm'
 import { VAutocomplete } from 'vuetify/components/VAutocomplete'
 
 import { useQuery } from 'ox'
 import type {IModelList, State} from 'ox'
-import type {ModelId} from 'ox/models'
+import type {Model, ModelId} from 'ox/models'
 
 const slots = useSlots()
-const value = defineModel()
-const search = ref("")
+
+/** Model value **/
+const value: Ref<ModelId|ModelId[]> = defineModel()
+/** Search string **/
+const search: Ref<string> = ref("")
 
 interface IAutoCompleteProps {
     /** Model's repository */
@@ -44,8 +49,11 @@ const repos = inject('repos')
 
 // list props are not expected to change, only `filters`
 const {state, query, fetch} = useQuery(props.repo, repos, {save: false})
-const items = reactive([])
-const selected = ref([])
+
+/** List items **/
+const items: Reactive<Model[]> = reactive([])
+/** Selected items **/
+const selected: Ref<Model[]> = ref([])
 
 
 async function getItems(ids: ModelId|ModelId[]) {
@@ -69,9 +77,10 @@ function getMissing(ids: ModelId|ModelId[]): ModelId[]|null {
 function updateSelected(ids: ModelId|ModelId[]) {
     if(Array.isArray(ids))
         selected.value = items.filter(v => ids.includes(v.id))
-    else if(ids)
+    else if(ids) {
         selected.value = [items.find(v => v.id == ids)]
-    else
+        console.log('updated', ids, items, selected.value)
+    } else
         selected.value = []
 }
 
@@ -132,4 +141,7 @@ watch(search, val => {
 watch(value, (val, old) => {
     val != old && updateSelected(val)
 })
+
+
+defineExpose({ value, selected, load, items })
 </script>

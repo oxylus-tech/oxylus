@@ -113,8 +113,9 @@ const actions = {
 
 
 watch(() => props.modelValue, (val) => {
-    if (editor.value && editor.value.getHTML() !== val)
-        editor.value.commands.setContent(val, false)
+    console.log(">>>", props.modelValue)
+    if (editor.getHTML() !== val)
+        editor.commands.setContent(val, false)
 })
 
 onUnmounted(() => editor.destroy())

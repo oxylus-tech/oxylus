@@ -60,19 +60,20 @@ export class MailTemplate extends Owned {
     }
 }
 
-export class OutMail extends Owned {
-    static entity = "outMails"
+export class SendMail extends Owned {
+    static entity = "sendMails"
     static meta = new models.Meta({
         app: "ox_mails",
-        model: "outmail",
-        url: "ox/mails/outmail/",
+        model: "sendmail",
+        url: "ox/mails/sendmail/",
         title: "subject",
     })
 
-    static Status = models.Enum("outmail.", {
+    static State = models.Enum("sendmail.state", {
         DRAFT: 0,
         SENDING: 1,
-        SENT: 2
+        SENT: 2,
+        ERROR: 3,
     })
 
     static fields() {
@@ -80,7 +81,9 @@ export class OutMail extends Owned {
             ...super.fields(),
             template: this.string(),
             contacts: this.attr(null),
-            status: this.number(),
+            state: this.number(),
+            updated: this.string(),
+            created: this.string(),
             subject: this.string(),
             content: this.string(),
             $template: this.belongsTo(MailTemplate, "template")

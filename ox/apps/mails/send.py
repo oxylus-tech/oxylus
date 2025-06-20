@@ -9,21 +9,21 @@ from django.template import Template
 from django.utils.html import strip_tags
 
 from ox.apps.contacts.models import Person
-from .models import OutMail, MailAccount
+from .models import SendMail, MailAccount
 
 
 logger = logging.getLogger()
 
 
-class SendMail:
-    """Handle sending an :py:class:`~.models.OutMail`."""
+class MailSend:
+    """Handle sending an :py:class:`~.models.SendMail`."""
 
-    mail: OutMail
+    mail: SendMail
     """ Outgoing mail """
     account: MailAccount
     """ Email account used to send the message. Defaults to mail's one. """
 
-    def __init__(self, mail: OutMail, account: MailAccount | None = None):
+    def __init__(self, mail: SendMail, account: MailAccount | None = None):
         self.mail = mail
         self.account = account or mail.template.account
 
@@ -38,11 +38,11 @@ class SendMail:
             "content": Template(self.mail.get_content()),
         }
 
-    def send(self, context: dict[str, Any]):
+    def send(self, context: dict[str, Any] = {}):
         """
         Send the mail to all contacts through SMTP.
 
-        Update the mail status once sent.
+        Update the mail state once sent.
 
         :param context: extra context to pass down to content's Template
         """
@@ -56,15 +56,15 @@ class SendMail:
                 smtp.starttls()
             smtp.login(self.account.smtp_username, self.account.smtp_password)
 
-            self.mail.status = OutMail.Status.SENDING
-            self.mail.save(update_fields=["status"])
+            self.mail.state = SendMail.State.SENDING
+            self.mail.save(update_fields=["state"])
 
             logger.info(f"Start send mail with id {self.mail.id}")
             for contact in self.mail.contacts.all():
                 self.send_mail(smtp, contact, context)
 
-            self.mail.status = OutMail.Status.SENT
-            self.mail.save(update_fields=["status"])
+            self.mail.state = SendMail.State.SENT
+            self.mail.save(update_fields=["state"])
 
     def send_mail(self, smtp: smtplib.SMTP, contact: Person, context: dict[str, Any]):
         """Send mail to provided contact.

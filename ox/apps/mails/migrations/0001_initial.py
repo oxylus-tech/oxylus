@@ -212,7 +212,7 @@ class Migration(migrations.Migration):
             },
         ),
         migrations.CreateModel(
-            name="OutMail",
+            name="SendMail",
             fields=[
                 ("id", models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name="ID")),
                 ("uuid", models.UUIDField(default=uuid.uuid4, verbose_name="Id")),
@@ -257,7 +257,7 @@ class Migration(migrations.Migration):
             },
         ),
         migrations.CreateModel(
-            name="OutMailAccess",
+            name="SendMailAccess",
             fields=[
                 ("id", models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name="ID")),
                 ("uuid", models.UUIDField(db_index=True, default=uuid.uuid4, verbose_name="Id")),
@@ -287,7 +287,7 @@ class Migration(migrations.Migration):
                         null=True,
                         on_delete=django.db.models.deletion.CASCADE,
                         related_name="derived",
-                        to="ox_mails.outmailaccess",
+                        to="ox_mails.sendmailaccess",
                         verbose_name="Origin",
                     ),
                 ),
@@ -305,7 +305,7 @@ class Migration(migrations.Migration):
                     models.ForeignKey(
                         on_delete=django.db.models.deletion.CASCADE,
                         related_name="accesses",
-                        to="ox_mails.outmail",
+                        to="ox_mails.sendmail",
                         verbose_name="Target",
                     ),
                 ),
