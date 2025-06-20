@@ -1,21 +1,21 @@
 <template>
-    <slot name="default" :props="fieldProps" :editor="editor">
+    <slot name="default" :props="fieldProps" :editor="props.editor">
         <template v-if="props.type == 'select'">
-            <v-select v-bind="fieldProps" v-model="editor.value[props.name]" />
+            <v-select v-bind="fieldProps" v-model="props.editor.value[props.name]" />
         </template>
         <template v-else-if="props.type == 'textarea'">
-            <v-textarea v-bind="fieldProps" v-model="editor.value[props.name]" />
+            <v-textarea v-bind="fieldProps" v-model="props.editor.value[props.name]" />
         </template>
         <template v-else-if="props.type == 'checkbox'">
             <v-checkbox v-bind="fieldProps"
-                v-model="editor.value[props.name]"/>
+                v-model="props.editor.value[props.name]"/>
         </template>
         <template v-else-if="props.type == 'date'">
             <v-date-input v-bind="fieldProps"
-                v-model="editor.value[props.name]"/>
+                v-model="props.editor.value[props.name]"/>
         </template>
         <template v-else>
-            <v-text-field v-bind="fieldProps" v-model="editor.value[props.name]"  :type="props.type"/>
+            <v-text-field v-bind="fieldProps" v-model="props.editor.value[props.name]"  :type="props.type"/>
         </template>
     </slot>
 </template>

@@ -81,6 +81,7 @@ export class OutMail extends Owned {
             template: this.string(),
             contacts: this.attr(null),
             status: this.number(),
+            subject: this.string(),
             content: this.string(),
             $template: this.belongsTo(MailTemplate, "template")
         }

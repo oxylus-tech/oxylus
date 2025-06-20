@@ -97,7 +97,7 @@ import OxFileUpload from './OxFileUpload'
 
 const repos = useFilesModels()
 const props = defineProps({
-    owner: Object
+    owner: Object,
     folder: Object
 })
 const attrs = useAttrs()

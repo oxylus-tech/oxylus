@@ -13,10 +13,11 @@
             </ox-field>
             <ox-field :editor="editor" name="contacts" required>
                 <template #default="{props: props_}">
-                    <ox-person-input v-bind="props_" multiple/>
+                    <ox-person-input v-bind="props_" multiple
+                        v-model="editor.value.contacts" />
                 </template>
             </ox-field>
-            <ox-field :editor="editor" name="subject" required/>
+            <ox-field :editor="editor" name="subject"/>
             <ox-rich-editor v-model="editor.value.content"/>
         </template>
     </ox-model-edit>

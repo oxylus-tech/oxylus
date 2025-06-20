@@ -5,7 +5,7 @@ import type {Response} from '@pinia-orm/axios'
 import {collectAttr} from '../utils'
 import type {IObject} from '../utils'
 import {asRelation, getSourceKey} from '../models'
-import type {Repos} from '../models'
+import type {Repos, ModelId} from '../models'
 
 
 /** Interface of {@link Query} class. */
@@ -30,13 +30,8 @@ export interface IQueryFetch<M extends Model> extends Partial<object> {
      * Usage of this argument is exclusive from {@link IQueryFetch.id} and {@link IQueryFetch.path}.
      */
     url?: string
-    /**
-     * Fetch item of this id.
-     * Usage of this argument is exclusive from {@link IQueryFetch.ids}
-     */
-    id?: number,
-    /** Fetch items with this id. */
-    ids?: number[] | Set<number>
+    /** Fetch item of this id, or items for those ids */
+    id?: ModelId | ModelId[],
     /** Extra path to append on url. */
     path?: string,
     /** Model repository (instead of `Query.repo`'s one). */
@@ -97,29 +92,21 @@ export default class Query<M extends Model> {
         this.opts = opts
     }
 
-    /**
-     * Fetch items from api.
-     *
-     * @param [options.ids] select by ids
-     * @param {Repository} [options.repo] use this repository instead of \
-     * ``Query.repo``.
-     * @param [options.url] use this url instead of repository's one.
-     * @param [options.id] fetch element with this id.
-     * @param [options.ids] fetch elements with those ids
-     * @param [options.lookup] query GET parameters used to get ids.
-     * @param [options.params] extra GET parameters
-     * @param [options.opts] options passed down to ``repo.api.get``
-     */
+    /** Fetch items from api. */
     async fetch(options: IQueryFetch<M> = {}) : Promise<Response> {
         options = {...this.opts, ...options}
-        let {url, id, ids, repo, lookup, params, relations, path, ...opts} = options
+        let {url, id, repo, lookup, params, relations, path, ...opts} = options
 
         lookup ??= "id__in"
         repo ??= this.repo
 
-        if(ids?.length === 1) {
-            id = ids[0]
-            ids = null
+        let ids = null
+        if(Array.isArray(id)) {
+            if(id.length == 1)
+                id = id[0]
+            else {
+                ids = id; id = null
+            }
         }
 
         if(!url)
@@ -245,9 +232,9 @@ export default class Query<M extends Model> {
         const fk = getSourceKey(rel)
         if(!fk)
             throw Error(`No source ids attributes for ${relation}.`)
-        const ids = [... new Set(collectAttr(objs, fk))]
+        const id = [... new Set(collectAttr(objs, fk))]
         const query = new Query(repo2, this.repos)
-        return query.all({...options, ids, repo: repo2})
+        return query.all({...options, id, repo: repo2})
     }
 
 }

@@ -18,10 +18,10 @@ import { VAutocomplete } from 'vuetify/components/VAutocomplete'
 
 import { useQuery } from 'ox'
 import type {IModelList, State} from 'ox'
+import type {ModelId} from 'ox/models'
 
 const slots = useSlots()
 const value = defineModel()
-const item = ref(null)
 const search = ref("")
 
 interface IAutoCompleteProps {
@@ -45,31 +45,34 @@ const repos = inject('repos')
 // list props are not expected to change, only `filters`
 const {state, query, fetch} = useQuery(props.repo, repos, {save: false})
 const items = reactive([])
+const selected = ref([])
 
 
-var lastId = null
-async function getItem(id) {
-    if(id) {
-        const idx = items.findIndex((v) => v.id == id)
-        console.log(id, idx)
-        if(idx != -1)
-            item.value = items[idx]
-        else if(lastId != id) {
-            console.log('fetch item...')
-            lastId = id
-            const resp = await fetch({id: id})
-            const value = resp.entities[0]
-            if(value.id == id) {
-                items.splice(0, 0, value)
-                item.value = value
-            }
-            else
-                item.value = null
-        }
+async function getItems(ids: ModelId|ModelId[]) {
+    const missingIds = ids && getMissing(ids)
+    if(missingIds?.length) {
+        const resp = await fetch({id: missingIds})
+        items.splice(0, 0, ...resp.entities)
     }
+
+    updateSelected(ids)
+}
+
+function getMissing(ids: ModelId|ModelId[]): ModelId[]|null {
+    if(!Array.isArray(ids))
+        return items.findIndex((v) => v.id == ids) == -1 ? [ids] : null
+
+    const itemIds = new Set(items.map(item => item.id))
+    return ids.filter(id => !itemIds.has(id))
+}
+
+function updateSelected(ids: ModelId|ModelId[]) {
+    if(Array.isArray(ids))
+        selected.value = items.filter(v => ids.includes(v.id))
+    else if(ids)
+        selected.value = [items.find(v => v.id == ids)]
     else
-        item.value = null
-    return item
+        selected.value = []
 }
 
 
@@ -95,46 +98,38 @@ const load = debounce(async ({reset=false}={}) => {
     filters[props.lookup] = q
     let resp = await fetch({params: filters})
 
-    items.splice(0, items.length, ...resp.entities)
+    const entities = selected.value ?
+        unionBy(resp.entities, selected.value, (v) => v.id) :
+        resp.entities
+
+    items.splice(0, items.length, ...entities)
 
     if(!reset) {
-        item.value = null
-
-        console.log('item...', item.value, value.value)
         // When item is not provided we ensure it is here
-        await getItem(value.value)
+        // value.value && await getItems(value.value)
         search.value = q
     }
 }, 500)
 
 
-/** Called when filters are updated */
-function filtersUpdated(filters) {
-    //const listFilters = {...toRaw(list.filters)}
-    //delete listFilters[props.lookup]
-
-    //if(!isEqual(toRaw(listFilters), toRaw(filters)))
-    load({reset: true})
-}
-
-/** Called when search is updated */
-function searchUpdated(val) {
-    // v-autocomplete set search to "<empty string>"
-    // when items are updated, search is reset
-    if(val != '<empty string>' && val != lastSearch)
-        load({q: val})
-}
-
 
 // --- Watchers
-onMounted(() => {
-    load() // ?.then(() => getItem(value.value))
+onMounted(async () => {
+    await load()
+    value.value && await getItems(value.value)
 })
 
 watch(() => props.filters, (val, old) => {
     if(!isEqual(toRaw(val), toRaw(old)))
-        filtersUpdated(val)
+        load({reset: true})
 })
-watch(search, searchUpdated)
-watch(value, (val, old) => val != old && getItem(val))
+watch(search, val => {
+    // v-autocomplete set search to "<empty string>"
+    // when items are updated, search is reset
+    if(val != '<empty string>' && val != lastSearch)
+        load({q: val})
+})
+watch(value, (val, old) => {
+    val != old && updateSelected(val)
+})
 </script>

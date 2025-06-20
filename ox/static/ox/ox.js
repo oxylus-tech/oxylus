@@ -453,21 +453,21 @@ function T(r) {
   }
 }
 function ft(r, e, t) {
-  var f;
+  var m;
   const n = [];
   let s = [];
-  const i = fe(r), a = me(r), u = t ?? ((f = T(e)) == null ? void 0 : f.firstDay) ?? 0, l = (i.getDay() - u + 7) % 7, m = (a.getDay() - u + 7) % 7;
+  const i = fe(r), a = me(r), u = t ?? ((m = T(e)) == null ? void 0 : m.firstDay) ?? 0, l = (i.getDay() - u + 7) % 7, h = (a.getDay() - u + 7) % 7;
   for (let c = 0; c < l; c++) {
-    const h = new Date(i);
-    h.setDate(h.getDate() - (l - c)), s.push(h);
+    const d = new Date(i);
+    d.setDate(d.getDate() - (l - c)), s.push(d);
   }
   for (let c = 1; c <= a.getDate(); c++) {
-    const h = new Date(r.getFullYear(), r.getMonth(), c);
-    s.push(h), s.length === 7 && (n.push(s), s = []);
+    const d = new Date(r.getFullYear(), r.getMonth(), c);
+    s.push(d), s.length === 7 && (n.push(s), s = []);
   }
-  for (let c = 1; c < 7 - m; c++) {
-    const h = new Date(a);
-    h.setDate(h.getDate() + c), s.push(h);
+  for (let c = 1; c < 7 - h; c++) {
+    const d = new Date(a);
+    d.setDate(d.getDate() + c), s.push(d);
   }
   return s.length > 0 && n.push(s), n;
 }
@@ -749,10 +749,10 @@ function At(r, e, t, n) {
     return 7 - N(D, Y(D, e, i), "days");
   }
   let l = $(r);
-  const m = R(Y(r, e, i), 6);
-  l < $(m) && u(l + 1) >= a && l++;
-  const f = new Date(l, 0, 1), c = u(l), h = c >= a ? R(f, c - 7) : R(f, c);
-  return 1 + N(ge(r), F(h), "weeks");
+  const h = R(Y(r, e, i), 6);
+  l < $(h) && u(l + 1) >= a && l++;
+  const m = new Date(l, 0, 1), c = u(l), d = c >= a ? R(m, c - 7) : R(m, c);
+  return 1 + N(ge(r), F(d), "weeks");
 }
 function Tt(r) {
   return r.getDate();
@@ -1063,36 +1063,36 @@ function ye() {
     directives: a = {}
   } = n, u = _();
   return u.run(() => {
-    const l = Ze(n.defaults), m = Je(n.display, n.ssr), f = Qe(n.theme), c = Xe(n.icons), h = et(n.locale), w = Lt(n.date, h), D = Ie(n.goTo, h);
-    function E(d) {
+    const l = Ze(n.defaults), h = Je(n.display, n.ssr), m = Qe(n.theme), c = Xe(n.icons), d = et(n.locale), w = Lt(n.date, d), D = Ie(n.goTo, d);
+    function E(f) {
       for (const p in a)
-        d.directive(p, a[p]);
+        f.directive(p, a[p]);
       for (const p in i)
-        d.component(p, i[p]);
+        f.component(p, i[p]);
       for (const p in s)
-        d.component(p, tt({
+        f.component(p, tt({
           ...s[p],
           name: p,
           aliasName: s[p].name
         }));
       const B = _();
       if (B.run(() => {
-        f.install(d);
-      }), d.onUnmount(() => B.stop()), d.provide(G, l), d.provide(Z, m), d.provide(J, f), d.provide(Q, c), d.provide(X, h), d.provide(Ht, w.options), d.provide(ne, w.instance), d.provide(Ve, D), rt && n.ssr)
-        if (d.$nuxt)
-          d.$nuxt.hook("app:suspense:resolve", () => {
-            m.update();
+        m.install(f);
+      }), f.onUnmount(() => B.stop()), f.provide(G, l), f.provide(Z, h), f.provide(J, m), f.provide(Q, c), f.provide(X, d), f.provide(Ht, w.options), f.provide(ne, w.instance), f.provide(Ve, D), rt && n.ssr)
+        if (f.$nuxt)
+          f.$nuxt.hook("app:suspense:resolve", () => {
+            h.update();
           });
         else {
           const {
             mount: p
-          } = d;
-          d.mount = function() {
+          } = f;
+          f.mount = function() {
             const De = p(...arguments);
-            return Ue(() => m.update()), d.mount = p, De;
+            return Ue(() => h.update()), f.mount = p, De;
           };
         }
-      d.mixin({
+      f.mixin({
         computed: {
           $vuetify() {
             return M({
@@ -1114,10 +1114,10 @@ function ye() {
       install: E,
       unmount: O,
       defaults: l,
-      display: m,
-      theme: f,
+      display: h,
+      theme: m,
       icons: c,
-      locale: h,
+      locale: d,
       date: w,
       goTo: D
     };
@@ -1313,30 +1313,20 @@ class S {
   constructor(e, t = null, n) {
     this.repo = e, this.repos = t, this.opts = n;
   }
-  /**
-   * Fetch items from api.
-   *
-   * @param [options.ids] select by ids
-   * @param {Repository} [options.repo] use this repository instead of \
-   * ``Query.repo``.
-   * @param [options.url] use this url instead of repository's one.
-   * @param [options.id] fetch element with this id.
-   * @param [options.ids] fetch elements with those ids
-   * @param [options.lookup] query GET parameters used to get ids.
-   * @param [options.params] extra GET parameters
-   * @param [options.opts] options passed down to ``repo.api.get``
-   */
+  /** Fetch items from api. */
   async fetch(e = {}) {
-    var h, w, D, E, O;
+    var d, w, D, E, O;
     e = { ...this.opts, ...e };
-    let { url: t, id: n, ids: s, repo: i, lookup: a, params: u, relations: l, path: m, ...f } = e;
-    if (a ?? (a = "id__in"), i ?? (i = this.repo), (s == null ? void 0 : s.length) === 1 && (n = s[0], s = null), t || (t = (w = (h = i.use) == null ? void 0 : h.meta) == null ? void 0 : w.getUrl({ path: m, id: n })), n ? f.dataKey = null : "dataKey" in f || (f.dataKey = (O = (E = (D = i.use) == null ? void 0 : D.config) == null ? void 0 : E.axiosApi) == null ? void 0 : O.dataKey), s && a !== void 0) {
+    let { url: t, id: n, repo: s, lookup: i, params: a, relations: u, path: l, ...h } = e;
+    i ?? (i = "id__in"), s ?? (s = this.repo);
+    let m = null;
+    if (Array.isArray(n) && (n.length == 1 ? n = n[0] : (m = n, n = null)), t || (t = (w = (d = s.use) == null ? void 0 : d.meta) == null ? void 0 : w.getUrl({ path: l, id: n })), n ? h.dataKey = null : "dataKey" in h || (h.dataKey = (O = (E = (D = s.use) == null ? void 0 : D.config) == null ? void 0 : E.axiosApi) == null ? void 0 : O.dataKey), m && i !== void 0) {
       if (n)
         throw Error("Both `ids` and `id` are provided while only one of those arguments is accepted.");
-      u = { ...u || {} }, u[a] = [...s];
+      a = { ...a || {} }, a[i] = [...m];
     }
-    const c = await i.api().get(t, { ...f, params: u });
-    return f.save === !1 && (c.entities = this.getEntities(c)), l && (c.relations = await this.relations(c.entities, l, { ...f, params: {} })), c;
+    const c = await s.api().get(t, { ...h, params: a });
+    return h.save === !1 && (c.entities = this.getEntities(c)), u && (c.relations = await this.relations(c.entities, u, { ...h, params: {} })), c;
   }
   /** Get entities from response **/
   getEntities(e) {
@@ -1416,7 +1406,7 @@ class S {
     if (!u)
       throw Error(`No source ids attributes for ${t}.`);
     const l = [...new Set(Be(e, u))];
-    return new S(a, this.repos).all({ ...n, ids: l, repo: a });
+    return new S(a, this.repos).all({ ...n, id: l, repo: a });
   }
 }
 function tr(r, e, t = null) {
@@ -1864,8 +1854,8 @@ class or extends rr {
       if ((a = this.view) != null && a.startsWith("detail.")) {
         if ((u = this.value) != null && u.$title)
           return this.value.$title;
-        const m = y(U.model(s));
-        return (l = this.value) != null && l.id ? y("models._.title", { model: m, id: this.value.id }) : y("models._.title.new", { model: m });
+        const h = y(U.model(s));
+        return (l = this.value) != null && l.id ? y("models._.title", { model: h, id: this.value.id }) : y("models._.title.new", { model: h });
       }
     }
     return super.title;
