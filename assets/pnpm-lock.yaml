@@ -182,6 +182,9 @@ importers:
       '@ox/content':
         specifier: workspace:*
         version: link:../content
+      '@ox/files':
+        specifier: workspace:*
+        version: link:../files
       ox:
         specifier: workspace:*
         version: link:../../ox

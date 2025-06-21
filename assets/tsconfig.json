@@ -35,6 +35,8 @@
         "@ox/location/*": ["./@ox/location/src/*"],
         "@ox/contacts": ["./@ox/contacts/src/index.ts"],
         "@ox/contacts/*": ["./@ox/contacts/src/*"],
+        "@ox/files": ["./@ox/files/src/index.ts"],
+        "@ox/files/*": ["./@ox/files/src/*"],
         "*": ["node_modules/*"]
     },
   }

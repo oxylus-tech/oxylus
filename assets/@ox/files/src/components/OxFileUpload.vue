@@ -22,13 +22,13 @@
                 </template>
                 <template v-else>
                     <v-icon size="x-large">mdi-cloud-upload</v-icon>
-                    <div class="filename">{{ t('actions.select_file.help') }}</div>
+                    <div class="filename">{{ t('actions.files.select.help') }}</div>
                 </template>
             </div>
         </div>
 
         <v-btn @click="triggerFileInput" prepend-icon="mdi-upload"
-            :text="t('actions.select_file')"/>
+            :text="t('actions.files.select')"/>
     </div>
 </template>
 

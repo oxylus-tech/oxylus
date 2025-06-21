@@ -1,2 +1,1 @@
-import('./components/OxUserPanel')
-import('./components/OxUserEdit')
+import('./components/OxFileSelect')

@@ -27,7 +27,7 @@
                     <v-btn target="_blank" class="ml-1"
                         size="small" color="secondary"
                         @click="openUpload=true"
-                        icon="mdi-upload" :title="t('actions.upload_new_file')" />
+                        icon="mdi-upload" :title="t('actions.files.upload.new')" />
                 </v-col>
                 <v-col cols="3" v-else>
                     <v-btn v-if="editor.value.id" class="float-right"

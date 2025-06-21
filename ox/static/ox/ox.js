@@ -1958,7 +1958,7 @@ function kr(r, e = ar) {
 const Sr = {
   /** Field is required */
   required(r) {
-    return r ? !0 : y("fields._.required");
+    return r || r === 0 ? !0 : y("fields._.required");
   },
   /**
    * Validate field errors returned from the server.

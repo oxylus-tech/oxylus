@@ -25,6 +25,6 @@ const repos = useMailModels()
 const props = withDefaults(defineProps<IModelPanelProps>(), {
     name: 'mailtemplates',
     relations: [],
-    headers: ['name', 'subject', 'created', 'updated'],
+    headers: ['name', 'subject', 'updated'],
 })
 </script>

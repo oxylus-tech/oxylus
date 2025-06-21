@@ -1,21 +1,29 @@
 <template>
     <slot name="default" :props="fieldProps" :editor="props.editor">
         <template v-if="props.type == 'select'">
-            <v-select v-bind="fieldProps" v-model="props.editor.value[props.name]" />
+            <v-select v-bind="fieldProps"
+                v-model="props.editor.value[props.name]"
+                @update:modelValue="emits('update:modelValue', $event)"/>
         </template>
         <template v-else-if="props.type == 'textarea'">
-            <v-textarea v-bind="fieldProps" v-model="props.editor.value[props.name]" />
+            <v-textarea v-bind="fieldProps"
+                v-model="props.editor.value[props.name]"
+                @update:modelValue="emits('update:modelValue', $event)"/>
         </template>
         <template v-else-if="props.type == 'checkbox'">
             <v-checkbox v-bind="fieldProps"
-                v-model="props.editor.value[props.name]"/>
+                v-model="props.editor.value[props.name]"
+                @update:modelValue="emits('update:modelValue', $event)"/>
         </template>
         <template v-else-if="props.type == 'date'">
             <v-date-input v-bind="fieldProps"
-                v-model="props.editor.value[props.name]"/>
+                v-model="props.editor.value[props.name]"
+                @update:modelValue="emits('update:modelValue', $event)"/>
         </template>
         <template v-else>
-            <v-text-field v-bind="fieldProps" v-model="props.editor.value[props.name]"  :type="props.type"/>
+            <v-text-field v-bind="fieldProps" :type="props.type"
+                v-model="props.editor.value[props.name]"
+                @update:modelValue="emits('update:modelValue', $event)"/>
         </template>
     </slot>
 </template>
@@ -26,12 +34,16 @@
  *
  * Slots:
  * - `default`: props, editor
+ *
+ * Event:
+ * - `update:modelValue`: value has changed
  */
 
-import {computed, useAttrs} from 'vue'
+import {computed, defineEmits, useAttrs} from 'vue'
 import {t, te, rules} from 'ox'
 
 
+const emits = defineEmits(['update:modelValue'])
 const attrs = useAttrs()
 const props = defineProps({
     /** Field or attribute name */

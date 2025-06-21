@@ -77,10 +77,9 @@ function getMissing(ids: ModelId|ModelId[]): ModelId[]|null {
 function updateSelected(ids: ModelId|ModelId[]) {
     if(Array.isArray(ids))
         selected.value = items.filter(v => ids.includes(v.id))
-    else if(ids) {
+    else if(ids)
         selected.value = [items.find(v => v.id == ids)]
-        console.log('updated', ids, items, selected.value)
-    } else
+    else
         selected.value = []
 }
 

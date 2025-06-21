@@ -11,12 +11,16 @@ window.__i18n_messages = { ...window.__i18n_messages, ...{
     "actions.delete": "Delete",
     "actions.delete.confirm": "Are you sure that you want to delete this item?",
     "actions.discard": "Discard",
+    "actions.cancel": "Cancel",
     "actions.save": "Save",
     "actions.saving": "Saving",
+    "actions.select": "Select",
     "actions.close": "Close",
-    "actions.list.reload": "Refresh items list",
+
     "actions.download": "Download",
     "actions.upload": "Upload",
+
+    "actions.list.reload": "Refresh items list",
 
     "nav.panels": "Applications",
 
@@ -66,9 +70,9 @@ window.__i18n_messages = { ...window.__i18n_messages, ...{
     // ---- @ox/files
     "fields.folder.add_error": "Couldn't save folder. Check if a folder or file already exists with this name or that you have the permissions.",
     "fields.name.update_filename": "Do you want to update the file name?",
-    "actions.upload_new_file": "Upload another file",
-    "actions.select_file": "Select a file",
-    "actions.select_file.help": "Drop a file here or select a file",
+    "actions.files.upload.new": "Upload another file",
+    "actions.files.select": "Select a file",
+    "actions.files.select.help": "Drop a file here or select a file",
 
     // ---- @ox/tasks
     "actions.tasks.restart": "Restart this task",

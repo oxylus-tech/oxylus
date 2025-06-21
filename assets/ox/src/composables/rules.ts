@@ -6,7 +6,7 @@ import {t} from '../composables'
 export default {
     /** Field is required */
     required(value) {
-        return value ? true : t('fields._.required')
+        return value || value === 0 ? true : t('fields._.required')
     },
 
     /**

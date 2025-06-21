@@ -2,7 +2,8 @@
     <v-data-table-server
             :items="items" item-index="id"
             :items-length="list.count || items.length"
-            :items-per-page="props.itemsPerPage"
+            :items-per-page="list.page_size"
+            :hide-default-footer="(list.count || items.length || 0) < list.page_size"
             :loading="list.state?.isProcessing"
             :headers="headers"
             :no-data-text="t('lists.empty')"

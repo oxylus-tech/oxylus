@@ -7,14 +7,14 @@
             @click.capture.stop="toggle"/>
 
         <div class="list" v-if="isOpen">
-            <ox-folder-nav-node v-for="item in items" :key="item.id"
+            <ox-folder-nav-item v-for="item in items" :key="item.id"
                 :item="item" :owner="props.owner"
                 @close="open()"
                 @open="emits('open', $event)"/>
         </div>
     </template>
     <template v-else>
-        <ox-folder-nav-node v-for="item in items" :key="item.id" :item="item" :owner="props.owner"
+        <ox-folder-nav-item v-for="item in items" :key="item.id" :item="item" :owner="props.owner"
             @open="emits('open', $event)"
             @close="emits('close', $event)"/>
     </template>
@@ -31,7 +31,7 @@
 import {ref, defineExpose, defineEmits, watch, onMounted} from 'vue'
 import {query, useModelList} from 'ox'
 import { useFolders } from '../composables'
-import OxFolderNavNode from './OxFolderNavNode'
+import OxFolderNavItem from './OxFolderNavItem'
 
 
 const props = defineProps({

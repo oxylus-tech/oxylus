@@ -19,6 +19,7 @@
     "@ox/auth": "workspace:*",
     "@ox/contacts": "workspace:*",
     "@ox/content": "workspace:*",
+    "@ox/files": "workspace:*",
     "vuetify": "^3.8.3"
   }
 }
