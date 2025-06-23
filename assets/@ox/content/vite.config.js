@@ -8,6 +8,11 @@ export default mergeConfig(
         base: 'static/ox_content',
         build: {
             outDir: `${staticRoot}/ox_content/`,
+            rollupOptions: {
+                input: {
+                    sfc: 'src/sfc.ts'
+                }
+            }
         },
     })
 )

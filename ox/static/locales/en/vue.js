@@ -10,6 +10,7 @@ window.__i18n_messages = { ...window.__i18n_messages, ...{
     "actions.view": "View",
     "actions.delete": "Delete",
     "actions.delete.confirm": "Are you sure that you want to delete this item?",
+    "actions.remove": "Remove",
     "actions.discard": "Discard",
     "actions.cancel": "Cancel",
     "actions.save": "Save",
@@ -73,6 +74,7 @@ window.__i18n_messages = { ...window.__i18n_messages, ...{
     "actions.files.upload.new": "Upload another file",
     "actions.files.select": "Select a file",
     "actions.files.select.help": "Drop a file here or select a file",
+    "labels.files.select.count": "There are {count} files selected",
 
     // ---- @ox/tasks
     "actions.tasks.restart": "Restart this task",

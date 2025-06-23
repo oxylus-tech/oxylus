@@ -8,11 +8,6 @@ class MailAccountAdmin(admin.ModelAdmin):
     pass
 
 
-@admin.register(models.MailTemplate)
-class MailTemplateAdmin(admin.ModelAdmin):
-    pass
-
-
 @admin.register(models.SendMail)
 class SendMailAdmin(admin.ModelAdmin):
     pass

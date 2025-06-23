@@ -12,9 +12,10 @@ from caps.models import Owned
 from ox.utils.models import Named, Timestamped, ChildOwned
 from ox.apps.content.models import RichTextField
 from ox.apps.contacts.models import Person
+from ox.apps.files.models import File
 
 
-__all__ = ("MailAccount", "MailTemplate", "SendMail", "validate_email_list")
+__all__ = ("MailAccount", "SendMail", "validate_email_list")
 
 
 def validate_email_list(value):
@@ -60,20 +61,6 @@ class MailAccount(Named, Owned):
         verbose_name_plural = _("Email Accounts")
 
 
-class MailTemplate(Named, Timestamped, ChildOwned):
-    """Email template."""
-
-    account = models.ForeignKey(MailAccount, models.SET_NULL, null=True, blank=True, verbose_name=_("Account"))
-    subject = models.CharField(_("Subject"), max_length=128)
-    content = RichTextField(_("Content"))
-
-    parent_attr = "account"
-
-    class Meta:
-        verbose_name = _("Email Template")
-        verbose_name_plural = _("Email Templates")
-
-
 class SendMail(Timestamped, ChildOwned):
     """Outgoing mail to a set of contacts"""
 
@@ -83,19 +70,26 @@ class SendMail(Timestamped, ChildOwned):
         SENT = 0x02, _("Sent")
         ERROR = 0x03, _("Error")
 
-    template = models.ForeignKey(MailTemplate, models.SET_NULL, null=True, blank=True)
-    contacts = models.ManyToManyField(Person, verbose_name=_("Recipients"))
+    account = models.ForeignKey(MailAccount, models.CASCADE, verbose_name=_("Account"))
+    template = models.ForeignKey("self", models.SET_NULL, null=True, blank=True, limit_choices_to={"is_template": True})
+    is_template = models.BooleanField(
+        _("Is template"), default=False, help_text=_("This mail is used as a template of other mails.")
+    )
     state = models.PositiveSmallIntegerField(_("State"), choices=State.choices, default=State.DRAFT)
-    context = models.JSONField(_("Context"), default=dict)
 
+    contacts = models.ManyToManyField(Person, verbose_name=_("Recipients"))
+    context = models.JSONField(_("Context"), default=dict)
     subject = models.TextField(_("Subject"), default="", help_text=_("When provided, overrides template's content"))
     content = RichTextField(_("Message"), default="", help_text=_("When provided, overrides template's content."))
+    attachments = models.ManyToManyField(File, related_name="+", verbose_name=_("Attach files"))
 
-    parent_attr = "template"
+    parent_attr = "account"
 
     class Meta:
         verbose_name = _("Mail")
         verbose_name_plural = _("Mails")
+
+    # TODO: validate owner from template
 
     def get_content(self):
         """Return raw content."""

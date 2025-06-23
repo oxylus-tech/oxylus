@@ -7,7 +7,7 @@ from ox.core.views import nav
 from . import models, serializers, tasks
 
 
-__all__ = ("MailAccountViewSet", "MailTemplateViewSet", "SendMailViewSet")
+__all__ = ("MailAccountViewSet", "SendMailViewSet")
 
 
 nav.app_nav.append(
@@ -34,13 +34,13 @@ nav.app_nav.append(
                         icon="mdi-email-lock",
                         permissions="ox_mails.view_mailaccount",
                     ),
-                    nav.NavItem(
-                        "mailtemplates",
-                        _("Templates"),
-                        url="ox_mails:index",
-                        icon="mdi-email-edit",
-                        permissions="ox_mails.view_mailtemplate",
-                    ),
+                    #                    nav.NavItem(
+                    #                        "mailtemplates",
+                    #                        _("Templates"),
+                    #                        url="ox_mails:index",
+                    #                        icon="mdi-email-edit",
+                    #                        permissions="ox_mails.view_mailtemplate",
+                    #                    ),
                 ],
             ),
         ],
@@ -58,21 +58,16 @@ class MailAccountViewSet(OwnedViewSet):
     ]
 
 
-class MailTemplateViewSet(OwnedViewSet):
-    queryset = models.MailTemplate.objects.all().order_by("name")
-    serializer_class = serializers.MailTemplateSerializer
-
-    filterset_fields = {
-        "owner__uuid": ["in", "exact"],
-        "account__uuid": ["in", "exact"],
-    }
-
-
 class SendMailViewSet(OwnedViewSet):
     queryset = models.SendMail.objects.all().order_by("-updated")
     serializer_class = serializers.SendMailSerializer
 
-    filterset_fields = {"owner__uuid": ["in", "exact"], "template__uuid": ["in", "exact"]}
+    filterset_fields = {
+        "owner__uuid": ["in", "exact"],
+        "template__uuid": ["in", "exact"],
+        "account__uuid": ["in", "exact"],
+        "is_template": ["exact"],
+    }
 
     @action(detail=True, methods=["POST"])
     def send(self, request, uuid=None):

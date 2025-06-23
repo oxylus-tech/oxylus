@@ -2,6 +2,7 @@ from caps.serializers import OwnedSerializer
 
 from ox.core.serializers import RelatedField
 from ox.apps.contacts.models import Person
+from ox.apps.files.models import File
 from ox.apps.content.serializers import RichTextField, StripCharField
 
 from . import models
@@ -9,7 +10,6 @@ from . import models
 
 __all__ = (
     "MailAccountSerializer",
-    "MailTemplateSerializer",
     "SendMailSerializer",
 )
 
@@ -31,21 +31,15 @@ class MailAccountSerializer(OwnedSerializer):
         return super().validate(data)
 
 
-class MailTemplateSerializer(OwnedSerializer):
-    account = RelatedField(queryset=models.MailAccount.objects.all())
-    subject = StripCharField()
-    content = RichTextField()
-
-    class Meta:
-        model = models.MailTemplate
-        fields = "__all__"
-
-
 class SendMailSerializer(OwnedSerializer):
-    template = RelatedField(queryset=models.MailTemplate.objects.all())
+    account = RelatedField(queryset=models.MailAccount.objects.all(), allow_null=True, required=False)
+    template = RelatedField(queryset=models.SendMail.objects.filter(is_template=True), allow_null=True, required=False)
     contacts = RelatedField(many=True, queryset=Person.objects.all())
     subject = StripCharField()
     content = RichTextField()
+
+    # TODO: filter owner
+    attachments = RelatedField(many=True, queryset=File.objects.all())
 
     class Meta:
         model = models.SendMail

@@ -33,8 +33,13 @@ Technical documentation
 
     - Backend vs frontend
     - Setup & Quickstart
-    - models/views+nav/viewsets/permissions
     - Settings & configuration
+
+    - Models:
+        - Meta
+        - Relationships
+    - panels/views+nav/viewsets/permissions
+    - SFC & ox-component
 
 
 User documentation

@@ -37,6 +37,10 @@ export default defineConfig({
                 manualChunks: (id) => {
                     if(id.includes("vuetify"))
                         return "vuetify"
+
+                    /*const match = id.match(/\/@ox\/([^/]+)\//)
+                    if (match)
+                        return match[1]*/
                 },
                 assetFileNames: "[name].[ext]",
                 chunkFileNames: "[name].js",

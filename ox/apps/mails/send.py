@@ -9,6 +9,7 @@ from django.template import Template
 from django.utils.html import strip_tags
 
 from ox.apps.contacts.models import Person
+from ox.apps.files.models import File
 from .models import SendMail, MailAccount
 
 
@@ -25,7 +26,7 @@ class MailSend:
 
     def __init__(self, mail: SendMail, account: MailAccount | None = None):
         self.mail = mail
-        self.account = account or mail.template.account
+        self.account = account or mail.account
 
     @cached_property
     def templates(self) -> dict[str, Template]:
@@ -94,7 +95,23 @@ class MailSend:
         msg["Subject"] = self.templates["subject"].render(context)
         msg.set_content(content_text)
         msg.add_alternative(content, subtype="html")
+
+        self.add_attachments(msg)
         return msg
 
     _strip_re_1 = re.compile("[ \t]+")
     _strip_re_2 = re.compile("\n ")
+
+    def add_attachments(self, message: EmailMessage):
+        """Add attachments to mail."""
+        files = self.mail.attachments.all()
+        for file in files:
+            self.add_attachment(message, file)
+
+    def add_attachment(self, message: EmailMessage, file: File):
+        """Add attachments to mail."""
+        with file.file.open() as f:
+            file_data = f.read()
+
+        mime = file.mime_type.split("/")
+        message.add_attachment(file_data, maintype=mime[0], subtype=mime[1], filename=file.name)

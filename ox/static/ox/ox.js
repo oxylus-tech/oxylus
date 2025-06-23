@@ -1,8 +1,8 @@
 var ve = Object.defineProperty;
 var be = (r, e, t) => e in r ? ve(r, e, { enumerable: !0, configurable: !0, writable: !0, value: t }) : r[e] = t;
 var o = (r, e, t) => be(r, typeof e != "symbol" ? e + "" : e, t);
-import { t as y, R as Me, c as K, d as xe, l as g, a as ie, H as ke, b as Se, e as Ae, B as Te, C as Ee, G as Oe, M as Re, f as Pe, P as Ce, U as W, u as j, g as Fe, S as b, h as Ie, i as Ve, j as Ye, k as $e, m as Ne, n as We, o as ae, s as qe, p as Be, q as I, r as Ke, v as U } from "./index-RW8_cbtd.js";
-import { E as Or, w as Rr, A as Pr, L as Cr, N as Fr, K as Ir, y as Vr, z as Yr, D as $r, O as Nr, F as Wr, I as qr, J as Br, x as Kr } from "./index-RW8_cbtd.js";
+import { t as y, R as Me, c as K, d as xe, l as g, a as ie, H as ke, b as Se, e as Ae, B as Te, C as Ee, G as Oe, M as Re, f as Pe, P as Ce, U as q, u as j, g as Fe, S as b, h as Ie, i as Ve, j as Ye, k as $e, m as Ne, n as qe, o as ae, s as We, p as Be, q as I, r as Ke, v as U } from "./index-RW8_cbtd.js";
+import { E as Or, w as Rr, A as Pr, L as Cr, N as Fr, K as Ir, y as Vr, z as Yr, D as $r, O as Nr, F as qr, I as Wr, J as Br, x as Kr } from "./index-RW8_cbtd.js";
 import { inject as P, provide as v, reactive as M, computed as k, ref as je, watch as A, effectScope as _, nextTick as Ue, createApp as _e, onMounted as oe, onUnmounted as ue, unref as z, toRaw as H, defineAsyncComponent as ze } from "vue";
 import He from "axios";
 import * as Le from "ox/vendor";
@@ -248,7 +248,7 @@ function ut(r) {
 function lt(r) {
   return xe((e) => (e.config.axiosApi = r, e));
 }
-class q {
+class W {
   constructor(e) {
     o(this, "repo");
     o(this, "items");
@@ -301,12 +301,12 @@ class q {
     this.refs = {};
   }
 }
-o(q, "_lastKey", 0);
+o(W, "_lastKey", 0);
 class V extends ot {
   constructor(t, n) {
     super(t, n);
     o(this, "refs");
-    this.refs = new q(this);
+    this.refs = new W(this);
   }
   flush() {
     this.refs.clear(), super.flush();
@@ -331,9 +331,9 @@ const gr = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   Meta: Re,
   Model: Pe,
   Permission: Ce,
-  RefCounter: q,
+  RefCounter: W,
   Repository: V,
-  User: W,
+  User: q,
   asRelation: he,
   enumProxy: ce,
   getSourceKey: de
@@ -346,7 +346,7 @@ function ct(r) {
 function ht(r, { useInject: e = !0, useDefaults: t = !0, key: n = null } = {}) {
   var s = e && (P("repos") || {});
   const i = e && !!Object.keys(s).length;
-  Array.isArray(r) || (r = Object.values(r)), t && r.push(W);
+  Array.isArray(r) || (r = Object.values(r)), t && r.push(q);
   for (const a of r)
     if (a && a.entity) {
       if (a.entity in s)
@@ -360,7 +360,7 @@ class dt {
     const t = M(new this(e));
     return t.user = k(() => {
       var n;
-      return new W(((n = t.data) == null ? void 0 : n.user) || {});
+      return new q(((n = t.data) == null ? void 0 : n.user) || {});
     }), t;
   }
   constructor(e = {}) {
@@ -797,10 +797,10 @@ function re(r, e) {
 function Nt(r, e) {
   return r.getDate() === e.getDate() && r.getMonth() === e.getMonth() && r.getFullYear() === e.getFullYear();
 }
-function Wt(r, e) {
+function qt(r, e) {
   return r.getMonth() === e.getMonth() && r.getFullYear() === e.getFullYear();
 }
-function qt(r, e) {
+function Wt(r, e) {
   return r.getFullYear() === e.getFullYear();
 }
 function N(r, e, t) {
@@ -925,10 +925,10 @@ class zt {
     return Nt(e, t);
   }
   isSameMonth(e, t) {
-    return Wt(e, t);
+    return qt(e, t);
   }
   isSameYear(e, t) {
-    return qt(e, t);
+    return Wt(e, t);
   }
   setMinutes(e, t) {
     return Kt(e, t);
@@ -1294,7 +1294,7 @@ function er({ components: r = {}, defaults: e = {}, ...t }) {
 }
 function vr({ axiosConfig: r = null, baseURL: e = null } = {}) {
   e || (e = document.body.dataset.apiUrl);
-  const t = Ne(), n = We({
+  const t = Ne(), n = qe({
     plugins: [
       lt({
         axios: He,
@@ -1303,7 +1303,7 @@ function vr({ axiosConfig: r = null, baseURL: e = null } = {}) {
       })
     ]
   });
-  return qe(t), t.use(n);
+  return We(t), t.use(n);
 }
 class S {
   /**
@@ -1677,7 +1677,7 @@ class sr {
    */
   async fetch(e = {}) {
     const t = this.getQueryOptions(e);
-    return await this.query.fetch(t);
+    return e.all ? this.query.fetch : this.query.all, await this.query.fetch(t);
   }
   /** Handle response from the {@link ModelContainer.fetch}'s request. */
   async handleResponse(e, t) {
@@ -1713,11 +1713,11 @@ class ir extends sr {
   }
   /** Destroy list, ensuring cleaning behind the scenes */
   drop() {
-    this.ids = [];
+    this.ids.splice(0);
   }
   /** Reset list */
   reset(t = []) {
-    this.ids = t, this.nextUrl = null, this.prevUrl = null, this.count = this.ids.length;
+    this.ids = [...t], this.nextUrl = null, this.prevUrl = null, this.count = this.ids.length;
   }
   /** Get item index by id */
   //findIndex(id: number): number { return this.items.findIndex((v) => v.id == id) }
@@ -1922,7 +1922,7 @@ function Mr({ query: r, repos: e, ...t }) {
   return { panels: i.panels, panel: i, list: n, items: s, next: a, prev: u };
 }
 function lr(r, e = ir) {
-  const t = M(new e(r)), n = t.repo.refs.acquireKey(), s = k(() => t.queryset(t.ids).orderBy((i) => t.ids.indexOf(i)).get());
+  const t = M(new e(r)), n = t.repo.refs.acquireKey(), s = k(() => t.length ? t.queryset(t.ids).orderBy((i) => t.ids.indexOf(i)).get() : []);
   return A(() => t.ids, (i, a) => {
     g.isEqual(H(i), H(a)) || t.repo.refs.releaseAcquire(n, a, i);
   }), ue(() => t.repo.refs.flush(n)), v("list", t), v("items", s), { list: t, items: s, listId: n };
@@ -2017,12 +2017,12 @@ export {
   Ye as i18n,
   Dr as init,
   Nr as injectOrProvide,
-  Wr as mapToObject,
+  qr as mapToObject,
   gr as models,
   tr as query,
   Ke as reset,
   Sr as rules,
-  qr as shallowCopy,
+  Wr as shallowCopy,
   Br as splitValues,
   y as t,
   U as tKeys,

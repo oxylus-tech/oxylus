@@ -86,13 +86,13 @@ export default class ModelList<M extends Model> extends ModelController<M, IMode
     /** Destroy list, ensuring cleaning behind the scenes */
     drop() {
         // this.refs.flush(this.$id)
-        this.ids = []
+        this.ids.splice(0)
     }
 
     /** Reset list */
     reset(ids: ModelId[] = []) {
         // this.refs.releaseAcquire(this.$id, this.ids, ids)
-        this.ids = ids
+        this.ids = [...ids]
         this.nextUrl = null
         this.prevUrl = null
         this.count = this.ids.length

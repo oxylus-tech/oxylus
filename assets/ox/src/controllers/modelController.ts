@@ -26,6 +26,8 @@ export interface IModelController<M extends Model> {
 export interface IModelFetch<M extends Model> extends IQueryFetch<M> {
     /** Response's key used to return data */
     dataKey?: string
+    /** If true, force loading all items */
+    all: boolean
 }
 
 
@@ -110,6 +112,7 @@ export default class ModelController<M extends Model, O=IModelController<M>> {
      */
     async fetch(options: IModelFetch<M> = {}) : Promise<Response> {
         const opts = this.getQueryOptions(options)
+        const func = options.all ? this.query.fetch : this.query.all
         return await this.query.fetch(opts)
     }
 

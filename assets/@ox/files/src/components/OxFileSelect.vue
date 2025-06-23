@@ -21,11 +21,15 @@
                     <ox-list-table v-model="selected" return-object
                             item-value="id"
                             :select-strategy="props.multiple ? 'page':'single'" show-select
-                            :headers="['preview', 'name', 'updated']"
+                            :headers="['preview', 'name', 'file_size', 'updated']"
                             >
                         <template #item.preview="{item}">
                             <v-img :src="item.preview" max-width="50px"/>
                         </template>
+                        <template #item.file_size="{item}">
+                            {{ formatBytes(item.file_size) }}
+                        </template>
+
                     </ox-list-table>
                 </v-col>
             </v-row>
@@ -64,7 +68,7 @@
     overflow-y: auto;
 }*/
 
-.folders { min-width: 18rem; }
+/* .folders { min-width: 18rem; } */
 </style>
 <script setup lang="ts">
 /**
@@ -75,40 +79,38 @@
  * This means that if you want to use those items dynamically without fetch again, you'll have to acquire them first in your own list.
  *
  * Events:
- * - `select(selected)`: emitted when items are selected, with a list of those items.
+ * - `select(selected: ModelId[])`: emitted when items are selected, with a list of those items.
  * - `close`: user clicked on close button
  */
+import type { Ref } from 'vue'
+import type { ModelId } from 'ox'
 
 import { defineModel, defineEmits, reactive, ref, watch } from 'vue'
 import { t, useModelList, query } from 'ox'
 import {OxListTable} from 'ox/components'
 import {useFilesModels} from '../composables'
+import { formatBytes } from '../models'
 
 import OxFolderNav from './OxFolderNav'
 
 const emits = defineEmits(['select', 'close'])
 const props = defineProps({
+    /** Current owner uuid **/
     owner: String,
+    /** Enable multi-selection **/
     multiple: Boolean,
 })
 const repos = useFilesModels()
-const folder = ref(null)
 
-const files = defineModel()
-const selected = defineModel('selected')
+const selected: Ref<ModelId[]> = ref([])
 
 const {list, items} = useModelList({
     query: query(repos.files, repos),
 })
 
 
-function select() {
-    emits('select', selected.value)
-}
-
-function close() {
-    emits('close')
-}
+function select() { emits('select', selected.value) }
+function close() { emits('close') }
 
 watch(() => props.owner, (val) => {
     list.filters.owner__uuid = props.owner

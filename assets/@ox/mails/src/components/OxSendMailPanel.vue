@@ -9,7 +9,7 @@
         </template>
 
         <template #item.actions="bind">
-            <ox-action-post v-bind="bind"
+            <ox-action-post v-if="!bind.item.is_template" v-bind="bind"
                 icon="mdi-send" :title="t('actions.mails.send')"
                 path="send" :repo="repos.sendMails"
                 :confirm="getConfirm(bind.item)"

@@ -123,7 +123,7 @@ export function useModelList<M extends Model>(options : IModelList<M>, cls: type
     // - list stores items as items
     // - we query items from db using list.ids (= maps of list.items)
     // - this adds levels of indirections and extra layers
-    const items = computed(() => list.queryset(list.ids).orderBy(id => list.ids.indexOf(id)).get())
+    const items = computed(() => list.length ? list.queryset(list.ids).orderBy(id => list.ids.indexOf(id)).get() : [])
 
     // release - acquire refs
     watch(() => list.ids, (val, old) => {

@@ -1,17 +1,36 @@
 <template>
     <ox-model-edit ref="modelEditor" v-bind="attrs" :repo="repos.sendMails">
         <template #default="{editor, editable}">
-            <ox-field :editor="editor" name="template" required>
-                <template #default="{props: props_}">
-                    <ox-autocomplete ref="templateField" v-bind="props_"
-                        :filters="{owner__uuid: props.owner}"
-                        :repo="repos.mailTemplates"
-                        item-title="name" item-value="id"
-                        v-model="editor.value.template"
-                        />
-                </template>
-            </ox-field>
-            <ox-field :editor="editor" name="contacts" required>
+            <v-row>
+                <v-col>
+                    <ox-field :editor="editor" name="account" required>
+                        <template #default="{props: props_}">
+                            <ox-autocomplete v-bind="props_"
+                                :filters="{owner__uuid: props.owner}"
+                                :repo="repos.mailAccounts"
+                                item-title="name" item-value="id"
+                                v-model="editor.value.account"
+                                />
+                        </template>
+                    </ox-field>
+                </v-col>
+                <v-col>
+                    <ox-field :editor="editor" name="template">
+                        <template #default="{props: props_}">
+                            <ox-autocomplete ref="templateField" v-bind="props_"
+                                :filters="{owner__uuid: props.owner, is_template: true}"
+                                :repo="repos.sendMails"
+                                item-title="subject" item-value="id"
+                                v-model="editor.value.template"
+                                />
+                        </template>
+                    </ox-field>
+                </v-col>
+                <v-col cols="3">
+                    <ox-field :editor="editor" name="is_template" type="checkbox"/>
+                </v-col>
+            </v-row>
+            <ox-field v-if="!editor.value.is_template" :editor="editor" name="contacts" required>
                 <template #default="{props: props_}">
                     <ox-person-input v-bind="props_" multiple
                         v-model="editor.value.contacts" />
@@ -20,11 +39,14 @@
             <ox-field :editor="editor" name="subject"/>
             <ox-rich-editor v-model="editor.value.content"/>
 
-            <v-btn @click="files.show = true">files</v-btn>
+            <v-expansion-panels multiple class="mt-3">
+                <v-expansion-panel :title="t('fields.attachments', 2) + ` (${editor.value.attachments?.length})`">
+                    <template #text>
+                        <ox-file-list :owner="props.owner" v-model="editor.value.attachments"/>
+                    </template>
+                </v-expansion-panel>
+            </v-expansion-panels>
 
-            <v-dialog v-model="files.show" height="80%" scrollable>
-                <ox-file-select :owner="props.owner" />
-            </v-dialog>
         </template>
     </ox-model-edit>
 </template>
@@ -34,9 +56,9 @@ import { t, rules } from "ox"
 import {OxModelEdit, OxField, OxAutocomplete, OxComponent} from 'ox/components'
 import {OxPersonInput} from '@ox/contacts/components'
 import {OxRichEditor} from '@ox/content/components'
-import {OxFileSelect} from '@ox/files/components'
 
 import {useMailModels} from '../composables'
+import OxFileList from './OxFileList'
 
 const repos = useMailModels()
 const attrs = useAttrs()

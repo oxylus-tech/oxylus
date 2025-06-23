@@ -6,7 +6,6 @@ from . import views
 
 router = DefaultRouter()
 router.register("account", views.MailAccountViewSet)
-router.register("template", views.MailTemplateViewSet)
 router.register("sendmail", views.SendMailViewSet)
 
 api_urls = router.urls

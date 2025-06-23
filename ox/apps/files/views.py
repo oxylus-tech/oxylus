@@ -55,7 +55,12 @@ class FolderAccessViewSet(AccessViewSet):
 class FileViewSet(OwnedViewSet):
     queryset = File.objects.all().order_by("-updated")
     serializer_class = serializers.FileSerializer
-    filterset_fields = {"owner__uuid": ["exact"], "folder__uuid": ["exact"], "name": ["exact", "icontains"]}
+    filterset_fields = {
+        "uuid": ["exact", "in"],
+        "owner__uuid": ["exact"],
+        "folder__uuid": ["exact"],
+        "name": ["exact", "icontains"],
+    }
     search_fields = ["name", "folder__path"]
 
     def perform_create(self, ser):

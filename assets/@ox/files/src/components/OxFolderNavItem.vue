@@ -6,7 +6,10 @@
             active-color="success"
             @click.capture.stop="toggle"/>
 
-        <div class="list" v-if="isOpen">
+        <div class="children" v-if="isOpen" style="
+                margin-left: 0.8rem;
+                border-left: 1px solid black;
+                margin-right: -1rem;">
             <ox-folder-nav-item v-for="item in items" :key="item.id"
                 :item="item" :owner="props.owner"
                 @close="open()"
@@ -20,12 +23,11 @@
     </template>
 </template>
 <style scoped>
-.list {
+.children {
     margin-left: 0.8rem;
     border-left: 1px solid black;
     margin-right: -1rem;
 }
-
 </style>
 <script setup lang="ts">
 import {ref, defineExpose, defineEmits, watch, onMounted} from 'vue'

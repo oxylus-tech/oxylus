@@ -15,11 +15,6 @@
                 v-model="props.editor.value[props.name]"
                 @update:modelValue="emits('update:modelValue', $event)"/>
         </template>
-        <template v-else-if="props.type == 'date'">
-            <v-date-input v-bind="fieldProps"
-                v-model="props.editor.value[props.name]"
-                @update:modelValue="emits('update:modelValue', $event)"/>
-        </template>
         <template v-else>
             <v-text-field v-bind="fieldProps" :type="props.type"
                 v-model="props.editor.value[props.name]"
@@ -76,7 +71,8 @@ const fieldProps = computed(() => {
         ...attrs
     }
 
-    if(te(helpKey)) {
+    const helpText = t(helpKey)
+    if(helpText != helpKey) {
         obj["hint"] = t(helpKey)
         obj["aria-description"] = t(helpKey)
     }

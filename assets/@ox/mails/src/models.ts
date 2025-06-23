@@ -1,5 +1,6 @@
 import {models} from 'ox'
 import {Owned} from '@ox/auth/models'
+import {File} from '@ox/files/models'
 
 
 export class MailAccount extends Owned {
@@ -37,29 +38,6 @@ export class MailAccount extends Owned {
 }
 
 
-export class MailTemplate extends Owned {
-    static entity = "mailTemplates"
-    static meta = new models.Meta({
-        app: "ox_mails",
-        model: "mailtemplate",
-        url: "ox/mails/template/",
-        title: "name",
-    })
-
-    static fields() {
-        return {
-            ...super.fields(),
-            name: this.string(),
-            account: this.string(),
-            subject: this.string(),
-            content: this.string(),
-            created: this.string(),
-            updated: this.string(),
-            $account: this.belongsTo(MailAccount, "account")
-        }
-    }
-}
-
 export class SendMail extends Owned {
     static entity = "sendMails"
     static meta = new models.Meta({
@@ -79,14 +57,19 @@ export class SendMail extends Owned {
     static fields() {
         return {
             ...super.fields(),
+            account: this.string(),
             template: this.string(),
+            is_template: this.boolean(),
             contacts: this.attr(null),
             state: this.number(),
             updated: this.string(),
             created: this.string(),
             subject: this.string(),
             content: this.string(),
-            $template: this.belongsTo(MailTemplate, "template")
+            attachments: this.attr(null),
+            $account: this.belongsTo(MailAccount, "account"),
+            $template: this.belongsTo(SendMail, "template"),
+            $attachments: this.hasManyBy(File, "attachments"),
         }
     }
 }

@@ -71,8 +71,8 @@ import {OxModelPanel, OxAction} from 'ox/components'
 
 import OxFileEdit from './OxFileEdit'
 import OxFolderDrawer from './OxFolderDrawer'
+import { formatBytes } from '../models'
 import {useFilesModels} from '../composables'
-import { formatBytes } from '../utils'
 
 const drawer = ref(true)
 const dialog = reactive({
