@@ -37,7 +37,9 @@
                 </template>
             </ox-field>
             <ox-field :editor="editor" name="subject"/>
-            <ox-rich-editor v-model="editor.value.content"/>
+
+            <ox-component src="../ox_content/OxRichEditor.js"
+                v-model="editor.value.content"/>
 
             <v-expansion-panels multiple class="mt-3">
                 <v-expansion-panel :title="t('fields.attachments', 2) + ` (${editor.value.attachments?.length})`">
@@ -51,11 +53,10 @@
     </ox-model-edit>
 </template>
 <script setup lang="ts">
-import { useAttrs, computed, reactive, ref, watch } from 'vue'
+import { computed, reactive, ref, useAttrs, watch } from 'vue'
 import { t, rules } from "ox"
 import {OxModelEdit, OxField, OxAutocomplete, OxComponent} from 'ox/components'
 import {OxPersonInput} from '@ox/contacts/components'
-import {OxRichEditor} from '@ox/content/components'
 
 import {useMailModels} from '../composables'
 import OxFileList from './OxFileList'

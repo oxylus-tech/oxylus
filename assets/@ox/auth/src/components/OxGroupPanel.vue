@@ -1,5 +1,5 @@
 <template>
-    <ox-model-panel v-bind="props" :repo="repos.groups" icon="mdi-account-multiple">
+    <ox-model-panel v-bind="props" :repo="repos.groups">
         <template v-for="(_, name) in slots" :key="name" #[name]="bind">
             <slot :name="name" v-bind="bind"></slot>
         </template>
@@ -30,7 +30,6 @@ const slots = useSlots()
 
 const repos = useAuthModels()
 const props = withDefaults(defineProps<IModelPanelProps>(), {
-    name: 'groups',
     headers: ['id', 'name'],
 })
 </script>

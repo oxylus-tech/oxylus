@@ -1,5 +1,5 @@
 <template>
-    <ox-model-panel v-bind="props" :repo="repos.persons" icon="mdi-card-account-mail">
+    <ox-model-panel v-bind="props" :repo="repos.persons">
         <template v-for="name in forwardSlots" :key="name" #[name]="bind">
             <slot :name="name" v-bind="bind"/>
         </template>

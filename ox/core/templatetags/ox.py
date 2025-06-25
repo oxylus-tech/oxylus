@@ -1,6 +1,7 @@
 import json
 from django import template, urls
 
+
 register = template.Library()
 
 
@@ -27,3 +28,11 @@ def panel_url(urlname: str, panel: str, view: str | None = None, id: str | int |
 def do_json(value) -> str:
     """Dumps value as json string."""
     return json.dumps(value)
+
+
+@register.simple_tag
+def format_string(template_str, *args, **kwargs):
+    try:
+        return template_str.format(*args, **kwargs)
+    except Exception as e:
+        return f"[format error: {e}]"

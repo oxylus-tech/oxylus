@@ -1,5 +1,5 @@
 <template>
-    <ox-model-panel v-bind="props" :repo="repos.folders" icon="mdi-folder-outline">
+    <ox-model-panel v-bind="props" :repo="repos.folders">
         <template v-for="name in forwardSlots" :key="name" #[name]="bind">
             <slot :name="name" v-bind="bind"/>
         </template>

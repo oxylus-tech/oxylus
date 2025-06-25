@@ -13,7 +13,7 @@
         </v-card>
     </v-dialog>
 
-    <ox-model-panel v-bind="props" :repo="repos.files" icon="mdi-file-outline">
+    <ox-model-panel v-bind="props" :repo="repos.files">
         <template v-for="name in forwardSlots" :key="name" #[name]="bind">
             <slot :name="name" v-bind="bind"/>
         </template>

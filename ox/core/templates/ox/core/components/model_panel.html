@@ -2,9 +2,8 @@
 Render a panel component.
 
 Context:
-- `tag="ox-model-panel`: component's tag
-- `name`: panel name (used as tab value and `panel.name`)
-- `attrs`: component's attributes
+- `panel`: :py:class:`~ox.core.panels.Panel` instance.
+- `attrs`: component's extra attributes
 - `filters`: if true (default), add `list-filters` block
 - `actions`: path to item's action django template.
 
@@ -15,8 +14,8 @@ Block:
 {% endcomment %}
 
 {% block outer %}
-{% with tag|default:"ox-model-panel" as tag %}
-<{{ tag }} {% if name %}name="{{ name }}"{% endif %} {{ attrs }}>
+<{{ panel.component }} name="{{ panel.name }}" title="{{ panel.title }}" icon="{{ panel.icon }}"
+        {{ attrs }}>
     {% block slots %}
     {% if filters|default_if_none:1 %}
     <template #list.filters="{filters,list}">
@@ -26,12 +25,13 @@ Block:
 
     <template #item.actions="bind">
         {% block actions %}
-        {% include actions|default:"./model_actions.html" with bind="bind" %}
+        {% if panel.actions_template %}
+            {% include panel.actions_template %}
+        {% endif %}
         {% endblock %}
     </template>
     {% endblock %}
 
     <template #nav.detail="{panels,panel,list,item}">{% block nav-detail %}{% endblock %}</template>
-</{{ tag }}>
-{% endwith %}
+</{{ panel.component }}>
 {% endblock %}

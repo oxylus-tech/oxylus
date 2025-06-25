@@ -1,7 +1,8 @@
 import pytest
 
+from django.conf import settings
 from django.test import RequestFactory
-from django.contrib.auth.models import AnonymousUser, User
+from django.contrib.auth.models import AnonymousUser, User, Group
 
 
 req_factory = RequestFactory()
@@ -32,6 +33,21 @@ def anon_user():
     return AnonymousUser()
 
 
+@pytest.fixture
+def group(transactional_db):
+    return Group.objects.create(name="group 1")
+
+
+@pytest.fixture
+def group_2(transactional_db):
+    return Group.objects.create(name="group 2")
+
+
+@pytest.fixture
+def user_groups(user, group, group_2):
+    user.groups.set([group, group_2])
+
+
 # ----  Agents
 @pytest.fixture
 def agent(user):
@@ -41,6 +57,24 @@ def agent(user):
 @pytest.fixture
 def agent_2(user_2):
     return user_2.agent
+
+
+# ---- Persons
+
+
+@pytest.fixture
+def person(user):
+    return user.contact
+
+
+@pytest.fixture
+def person_2(user_2):
+    return user_2.contact
+
+
+@pytest.fixture
+def staff_person(staff_user):
+    return staff_user.contact
 
 
 # ---- Simple GET requests
@@ -63,3 +97,14 @@ def anon_request(anon_user):
     req = req_factory.get("/")
     req.user = anon_user
     return req
+
+
+# ---- Test files
+@pytest.fixture
+def image_000():
+    return settings.MEDIA_ROOT / "image-000.jpg"
+
+
+@pytest.fixture
+def pdf_000():
+    return settings.MEDIA_ROOT / "lorem.pdf"

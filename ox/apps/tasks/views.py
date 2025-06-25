@@ -1,5 +1,3 @@
-from django.utils.translation import gettext_lazy as _
-
 from rest_framework import viewsets
 from rest_framework.response import Response
 from rest_framework.decorators import action
@@ -7,30 +5,11 @@ from rest_framework.decorators import action
 from django_tasks.task import ResultStatus
 from django_tasks.backends.database.models import DBTaskResult
 
-from ox.core.views import UserAppView, nav
 
 from . import serializers
 
 
-__all__ = ("AppView", "TaskViewSet")
-
-
-nav.app_nav["settings"]["system"].append(
-    nav.NavItem(
-        "tasks",
-        _("System Tasks"),
-        url="ox_tasks:index",
-        icon="mdi-cog-clockwise",
-        permissions="django_tasks_database.view_dbtaskresult",
-    ),
-)
-
-
-class AppView(UserAppView):
-    """Application view used to handle users and groups."""
-
-    template_name = "ox/tasks/app.html"
-    default_panel = "tasks"
+__all__ = ("TaskViewSet",)
 
 
 class TaskViewSet(viewsets.ModelViewSet):

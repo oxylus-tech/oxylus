@@ -93,11 +93,11 @@ class SendMail(Timestamped, ChildOwned):
 
     def get_content(self):
         """Return raw content."""
-        return self.content or self.template.content
+        return self.content
 
     def get_subject(self):
         """Return raw subject."""
-        return self.subject or self.template.subject
+        return self.subject
 
     def get_context(self, **context) -> Context:
         """Return mail context."""

@@ -5,12 +5,15 @@
     {% block title %}{{ block.super }}{% endblock %} | {{ block.super }}
 {% endblock %}
 
-
-{% comment %}
 {% block app %}
 {{ block.super }}
 {% if not no_panels %}
     <template #app-nav="{context}">{% block app-nav %}{% endblock %}</template>
 {% endif %}
+
+{% for panel in panels.get_panels %}
+<template #panels.{{ panel.name }}>
+    {% include panel.template %}
+</template>
+{% endfor %}
 {% endblock %}
-{% endcomment %}

@@ -1,4 +1,3 @@
-from . import nav
 from .api import ModelViewSet
 from .app import AppView, UserAppView
 from .generic import ListView, DetailView, UpdateView, DeleteView
@@ -12,5 +11,4 @@ __all__ = (
     "DetailView",
     "UpdateView",
     "DeleteView",
-    "nav",
 )

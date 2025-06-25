@@ -10,18 +10,41 @@ export {default as rules} from './rules'
 
 
 /**
- * Similar to `defineAsyncComponent` allowing to load a component
- * by name from a provided module url.
+ * Similar to `defineAsyncComponent` but using url string to module
+ * file.
+ *
+ * It will try to fetch related css file (based on module file).
  */
 export function defineAsyncComponent(url: string, name: string) {
     return $defineAsyncComponent(() => {
         return import(url).then(mod => {
+            // try to fetch css
+            if(url.endsWith('.js'))
+                loadCss(import.meta.resolve(url.replace(/\.js$/, '.css')))
             if(!name)
                 return mod
-            console.log(mod, mod.components, Object.keys(mod))
+
             const obj = Object.values(mod).filter((y: {[k: string]: any}) => y.__name == name)[0]
             return obj
         })
+    })
+}
+
+/** Load CSS. */
+function loadCss(href): Promise {
+    return new Promise((resolve, reject) => {
+        if (document.querySelector(`link[href="${href}"]`)) {
+            resolve()
+            return
+        }
+
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = href
+        link.onload = () => resolve()
+        link.onerror = (err) => reject(err)
+
+        document.head.appendChild(link)
     })
 }
 

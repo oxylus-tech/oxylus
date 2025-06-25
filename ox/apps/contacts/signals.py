@@ -1,12 +1,13 @@
-from django.db.models.signals import post_save
+from django.db.models.signals import m2m_changed, post_save
 from django.dispatch import receiver
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, Group
 
-from . import models
+from . import utils
+from .models import Person, Organisation
 
 
 @receiver(post_save, sender=User)
-def sync_user_to_contact(sender, instance, *args, **kwargs):
+def on_user_update_sync_contact(sender, instance, *args, **kwargs):
     if contact := getattr(instance, "contact", None):
         changed = []
         if instance.first_name != contact.first_name:
@@ -22,7 +23,7 @@ def sync_user_to_contact(sender, instance, *args, **kwargs):
         if changed:
             contact.save(update_fields=changed)
     else:
-        models.Person.objects.create(
+        Person.objects.create(
             user=instance,
             first_name=instance.first_name,
             last_name=instance.last_name,
@@ -30,26 +31,35 @@ def sync_user_to_contact(sender, instance, *args, **kwargs):
         )
 
 
-# @receiver(post_save, Group)
-# def sync_group_to_contact(sender, instance, *args, **kwargs):
-#     if contact := getattr(instance, 'organisation', None):
-#         if contact.name != instance.name:
-#             contact.name = instance.name
-#             contact.save(updated_fields=['name'])
+@receiver(m2m_changed, sender=User.groups.through)
+def on_user_group_changed(sender, instance: Group, action, **kwargs):
+    if action in ("post_add", "post_remove", "post_clear"):
+        utils.sync_groups_persons_contact_list(instance.groups.all(), instance)
+
+
+@receiver(m2m_changed, sender=User.groups.through)
+def on_person_organisation_changed(sender, instance: Group, action, **kwargs):
+    if action in ("post_add", "post_remove", "post_clear"):
+        utils.sync_groups_persons_contact_list(instance.groups.all(), instance)
+
+
+# @receiver(m2m_changed, sender=Person.organisations.through)
+# def on_person_organisation_changed(sender, instance: Person, action, reverse, pk_set, **kwargs):
+#     if action in ("post_add", "post_remove", "post_clear"):
+#         # Ensure signal doesn't misfire during migration
+#         orgs = instance.organisations.all() if not reverse else Organisation.objects.filter(pk__in=pk_set)
+#         for org in orgs:
+#             utils.sync_org_contact_list(org)
 #
-#
-# @receiver(m2m_changed, sender=User.groups.through)
-# def sync_person_organisations(sender, instance, action, pk_set, **kwargs):
-#     contact = getattr(instance, "contact", None)
-#     if not contact:
-#         return
-#
-#     if action == "post_add":
-#         organisations = Organisation.objects.filter(group__in=pk_set)
-#         person.organisations.add(*organisations)
-#     elif action == "post_remove":
-#         organisations = Organisation.objects.filter(group__in=pk_set)
-#         person.organisations.remove(*organisations)
-#     elif action == "post_clear":
-#         orgs = Organisation.objects.filter(group__in=instance.groups.all())
-#         person.organisations.remove(*orgs)
+
+
+@receiver(post_save, sender=Group)
+def ensure_group_contact_list(sender, instance: Group, created, **kwargs):
+    if created:
+        utils.get_or_create_contact_list_for_group(instance)
+
+
+@receiver(post_save, sender=Organisation)
+def ensure_org_contact_list(sender, instance: Organisation, created, **kwargs):
+    if created:
+        utils.get_or_create_contact_list_for_org(instance)

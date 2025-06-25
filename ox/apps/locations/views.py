@@ -1,42 +1,10 @@
-from django.utils.translation import gettext_lazy as _
 from rest_framework.permissions import DjangoModelPermissionsOrAnonReadOnly
 
-from ox.core.views import UserAppView, ModelViewSet, nav
+from ox.core.views import ModelViewSet
 from . import models, serializers, filters
 
 
-__all__ = ("AppView", "CountryViewSet", "CurrencyViewSet")
-
-
-nav.app_nav["settings"].append(
-    nav.NavSubGroup(
-        "locations",
-        _("Locations"),
-        items=[
-            nav.NavItem(
-                "countries",
-                _("Countries"),
-                url="ox_locations:index",
-                icon="mdi-earth",
-                permissions="ox_locations.view_country",
-            ),
-            nav.NavItem(
-                "currencies",
-                _("Currencies"),
-                url="ox_locations:index",
-                icon="mdi-currency-eur",
-                permissions="ox_locations.view_currency",
-            ),
-        ],
-    ),
-)
-
-
-class AppView(UserAppView):
-    """Application view used to handle users and groups."""
-
-    template_name = "ox/locations/app.html"
-    default_panel = "countries"
+__all__ = ("CountryViewSet", "CurrencyViewSet")
 
 
 class CountryViewSet(ModelViewSet):

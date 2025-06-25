@@ -3,6 +3,32 @@ import { Country } from '@ox/locations/models'
 import type { IModel } from "ox"
 
 
+/** Contact list */
+export class ContactList extends models.Model {
+    static entity = "contactLists"
+    static meta = new models.Meta({
+        app: 'ox_contacts',
+        model: 'contactlist',
+        url: 'ox/contacts/contactlist/',
+        title: 'name'
+    })
+
+    static fields() {
+        return {
+            id: this.attr(null),
+            name: this.string(),
+            description: this.string(),
+            color: this.string(),
+            group: this.number(),
+            organisation: this.string(),
+            is_subscription: this.boolean(),
+
+            $organisation: this.belongsTo(Organisation, 'organisation'),
+        }
+    }
+}
+
+
 /**
  * Base model for contacts.
  */
@@ -19,14 +45,6 @@ class Contact extends models.Model {
             addresses: this.attr([]),
         }
     }
-
-    /*
-    static create(val, old) {
-        val.emails = val.emails.map(v => new Email(v))
-        val.phones = val.phones.map(v => new Phone(v))
-        val.addresses = val.addresses.map(v => new Address(v))
-    }
-    */
 }
 
 
@@ -47,7 +65,9 @@ export class Person extends Contact {
             first_name: this.string(),
             last_name: this.string(),
             organisations: this.attr([]),
-            $organisations: this.hasManyBy(Organisation, 'organisations')
+            contact_lists: this.attr([]),
+            $organisations: this.hasManyBy(Organisation, 'organisations'),
+            $contact_lists: this.hasManyBy(ContactList, 'contact_lists'),
         }
     }
 

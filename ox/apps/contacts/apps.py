@@ -19,6 +19,4 @@ class AppConfig(apps.AppConfig):
         dependencies = ("ox.auth", "ox.locations")
 
     def ready(self):
-        from . import signals
-
-        signals.sync_user_to_contact
+        from . import signals  # noqa: F401

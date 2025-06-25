@@ -7,6 +7,8 @@ import type Panels from './panels'
 
 
 export interface IPanelInfo {
+    /** Panel's name */
+    name: string
     /** The view title displayed to user. */
     title?: string
     /** The view's icon displayed to user. */
@@ -16,8 +18,6 @@ export interface IPanelInfo {
 
 /** Properties of OxPanel **/
 export interface IPanelProps extends IPanelInfo {
-    /** Panel's name */
-    name: string
     /** Index view name **/
     index: string
     /** Panel's view */
@@ -30,25 +30,8 @@ export interface IPanelProps extends IPanelInfo {
     help?: string
 }
 
-/** Component properties used by OxPanelNav */
-export type IPanelNavProps = IPanelInfo & {
-    /** Panel's name */
-    name: string
-    /** Panels page **/
-    url?: string
-    /** Required permission */
-    permissions?: string|string[]
-    /** Item type: subheader, divider, (item by default) */
-    type?: string,
-    /** Nested items */
-    items?: Record[]
-    /** Order */
-    order: number
-}
 
 export interface IPanel<P> extends IPanelInfo {
-    /** Panel's name */
-    readonly name: string
     /** Panel component properties. */
     props: P
     /**

@@ -1,6 +1,6 @@
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from rest_framework import viewsets
+from rest_framework import permissions, viewsets
 
 
 __all__ = ("ModelViewSet", "ListCommitMixin")
@@ -12,7 +12,11 @@ class ModelViewSet(viewsets.ModelViewSet):
     Lookup objects by uuid.
     """
 
+    permission_classes = [permissions.DjangoModelPermissions]
     lookup_field = "uuid"
+    filterset_fields = {
+        "uuid": ["exact", "in"],
+    }
 
 
 class ListCommitMixin:

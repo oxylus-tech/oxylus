@@ -1,3 +1,4 @@
+export { default as OxContactListPanel} from './OxContactListPanel'
 export { default as OxPersonEdit} from './OxPersonEdit'
 export { default as OxPersonPanel} from './OxPersonPanel'
 export { default as OxPersonInput} from './OxPersonInput'

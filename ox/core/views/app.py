@@ -1,18 +1,14 @@
+from typing import Any
+
 from django.apps import apps
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import ImproperlyConfigured
 from django.views.generic.base import ContextMixin, TemplateView
-from django.utils.translation import gettext_lazy as _
 
+from ..panels import Panels, registry
 from ..serializers.auth import UserSerializer, GroupSerializer
-from . import nav
 
 __all__ = ("AppMixin", "UserAuthMixin", "AppView", "UserAppView")
-
-
-nav.app_nav.append(
-    nav.NavGroup("settings", _("Settings"), order=100, items=[nav.NavSubGroup("system", _("System"), order=100)])
-)
 
 
 class AppMixin(ContextMixin):
@@ -27,6 +23,8 @@ class AppMixin(ContextMixin):
     """
     default_panel: str = ""
     """Default panel to display."""
+    panels: Panels = None
+    """Application's panels descriptors."""
 
     def get_app_config(self):
         """Return application config.
@@ -44,13 +42,14 @@ class AppMixin(ContextMixin):
         kwargs["nav"] = self.get_app_nav()
         return kwargs
 
-    def get_app_nav(self):
+    def get_app_nav(self) -> dict[str, Any]:
         """Return application navigation menu."""
-        return nav.app_nav.data
+        return registry.nav_data
 
     def get_context_data(self, **kwargs):
         kwargs["app_config"] = self.get_app_config()
         kwargs["app_data"] = self.get_app_data()
+        kwargs["panels"] = self.panels
         kwargs.setdefault("title", self.title)
         return super().get_context_data(**kwargs)
 
@@ -73,7 +72,15 @@ class UserAuthMixin:
 class AppView(UserAuthMixin, AppMixin, TemplateView):
     """Base view used for ox based applications."""
 
-    def get_template_names(self):
+    template_name = "ox/core/app.html"
+
+    def get_template_names(self) -> list[str]:
+        """
+        By default return a list with:
+
+            - :py:attr:`template_name` value
+            - ``{self.app_config.get_root_url()}/app.html``, if app_config is found.
+        """
         try:
             names = super().get_template_names()
         except ImproperlyConfigured:

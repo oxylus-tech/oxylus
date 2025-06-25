@@ -1,5 +1,5 @@
 <template>
-    <ox-model-panel v-bind="props" :repo="repos.countries" icon="mdi-earth"
+    <ox-model-panel v-bind="props" :repo="repos.countries"
             :warning="t('alerts.danger_zone_system_data')">
         <template v-for="name in forwardSlots" :key="name" #[name]="bind">
             <slot :name="name" v-bind="bind"/>

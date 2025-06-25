@@ -1,51 +1,11 @@
-from django.utils.translation import gettext_lazy as _
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
 from caps.views import OwnedViewSet
-from ox.core.views import nav
 from . import models, serializers, tasks
 
 
 __all__ = ("MailAccountViewSet", "SendMailViewSet")
-
-
-nav.app_nav.append(
-    nav.NavGroup(
-        "mails",
-        _("Mails"),
-        items=[
-            nav.NavItem(
-                "sendmails",
-                _("Send"),
-                url="ox_mails:index",
-                icon="mdi-email-arrow-right",
-                permissions="ox_mails.view_sendmail",
-            ),
-            nav.NavSubGroup(
-                "settings",
-                _("Settings"),
-                order=100,
-                items=[
-                    nav.NavItem(
-                        "mailaccounts",
-                        _("Accounts"),
-                        url="ox_mails:index",
-                        icon="mdi-email-lock",
-                        permissions="ox_mails.view_mailaccount",
-                    ),
-                    #                    nav.NavItem(
-                    #                        "mailtemplates",
-                    #                        _("Templates"),
-                    #                        url="ox_mails:index",
-                    #                        icon="mdi-email-edit",
-                    #                        permissions="ox_mails.view_mailtemplate",
-                    #                    ),
-                ],
-            ),
-        ],
-    ),
-)
 
 
 class MailAccountViewSet(OwnedViewSet):
@@ -62,6 +22,10 @@ class SendMailViewSet(OwnedViewSet):
     queryset = models.SendMail.objects.all().order_by("-updated")
     serializer_class = serializers.SendMailSerializer
 
+    perms_map = {
+        "send": ["ox_mails.change_sendmail"],
+    }
+
     filterset_fields = {
         "owner__uuid": ["in", "exact"],
         "template__uuid": ["in", "exact"],
@@ -69,7 +33,7 @@ class SendMailViewSet(OwnedViewSet):
         "is_template": ["exact"],
     }
 
-    @action(detail=True, methods=["POST"])
+    @action(detail=True, methods=["POST", "PUT"])
     def send(self, request, uuid=None):
         obj = self.get_object()
         tasks.send_mail.enqueue(uuid=str(obj.uuid))

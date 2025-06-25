@@ -3,7 +3,7 @@ from functools import cached_property
 import logging
 import re
 import smtplib
-from typing import Any
+from typing import Any, Iterable
 
 from django.template import Template
 from django.utils.html import strip_tags
@@ -96,15 +96,14 @@ class MailSend:
         msg.set_content(content_text)
         msg.add_alternative(content, subtype="html")
 
-        self.add_attachments(msg)
+        self.add_attachments(msg, self.mail.attachments.all())
         return msg
 
     _strip_re_1 = re.compile("[ \t]+")
     _strip_re_2 = re.compile("\n ")
 
-    def add_attachments(self, message: EmailMessage):
+    def add_attachments(self, message: EmailMessage, files: Iterable[File]):
         """Add attachments to mail."""
-        files = self.mail.attachments.all()
         for file in files:
             self.add_attachment(message, file)
 

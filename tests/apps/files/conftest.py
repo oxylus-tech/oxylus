@@ -19,21 +19,11 @@ def teardown():
 
 
 @pytest.fixture
-def image_000():
-    return settings.MEDIA_ROOT / "image-000.jpg"
-
-
-@pytest.fixture
 def preview_000():
     path = settings.MEDIA_ROOT / "image-000.jpg.jpg"
     # we remove before running in order to keep visual confirmation
     path.unlink(missing_ok=True)
     return path
-
-
-@pytest.fixture
-def pdf_000():
-    return settings.MEDIA_ROOT / "lorem.pdf"
 
 
 @pytest.fixture

@@ -1,6 +1,6 @@
 from django.db import models
 from django.utils.translation import gettext_lazy as _
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, Group
 
 from ox.core.models import Model, InheritanceQuerySet
 from ox.apps.locations.models import Country
@@ -25,7 +25,46 @@ class ContactQuerySet(InheritanceQuerySet):
         return self.prefetch_related("address_set", "phone_set", "email_set")
 
 
+class ContactList(Described, Colored, Model):
+    """Provide a list of contacts."""
+
+    group = models.OneToOneField(
+        Group,
+        models.CASCADE,
+        blank=True,
+        null=True,
+        verbose_name=_("Group"),
+        related_name="contact_list",
+        help_text=_("This list is related to a group"),
+    )
+    organisation = models.OneToOneField(
+        "ox_contacts.organisation",
+        models.CASCADE,
+        blank=True,
+        null=True,
+        related_name="contact_list",
+        verbose_name=_("Organisation"),
+        help_text=_("This list is related to an organisation"),
+    )
+    is_subscription = models.BooleanField(
+        _("Subscription list"),
+        default=False,
+        help_text=_(
+            "This list is used for mailing-lists. It allows contacts to "
+            "unsubscribe from the list among other things."
+        ),
+    )
+
+    class Meta:
+        verbose_name = _("Contact List")
+        verbose_name_plural = _("Contact Lists")
+
+
 class Contact(Model):
+    email = models.EmailField(_("Email"), unique=True, blank=True, null=True)
+    """ When linked to user, this is User's email. """
+    contact_lists = models.ManyToManyField(ContactList, blank=True, verbose_name=_("Lists"), related_name="contacts")
+
     objects = ContactQuerySet.as_manager()
 
     class Meta:
@@ -47,7 +86,6 @@ class OrganisationType(Named, Model):
 
 
 class Organisation(Described, Colored, Contact):
-    # group = models.OneToOneField(Group, models.SET_NULL, null=True, blank=True)
     short_name = models.CharField(_("Short Name"), max_length=32, null=True, blank=True)
     reference = models.CharField(_("Reference Number"), max_length=32, default="", blank=True)
     vat = models.CharField(_("VAT"), max_length=32, blank=True, null=True)
@@ -73,9 +111,9 @@ class Person(Contact):
     )
     first_name = models.CharField(_("First name"), default="", max_length=64)
     last_name = models.CharField(_("Last name"), default="", max_length=64)
-    email = models.EmailField(_("Email"), unique=True, blank=True, null=True)
-    """ When linked to user, this is User's email. """
-    organisations = models.ManyToManyField(Organisation, blank=True, verbose_name=_("Organisations"))
+    organisations = models.ManyToManyField(
+        Organisation, blank=True, verbose_name=_("Organisations"), related_name="persons"
+    )
 
     class Meta:
         verbose_name = _("Person")

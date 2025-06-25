@@ -1,5 +1,5 @@
 <template>
-    <ox-owned-panel v-bind="props" :repo="repos.sendMails" icon="mdi-email-arrow-right">
+    <ox-owned-panel v-bind="props" :repo="repos.sendMails">
         <template #item.state="{item}">
             <v-chip :color="colors[item.state]">{{ SendMail.State.toString(item.state) }}</v-chip>
         </template>

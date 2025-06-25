@@ -2,7 +2,7 @@ var ve = Object.defineProperty;
 var be = (r, e, t) => e in r ? ve(r, e, { enumerable: !0, configurable: !0, writable: !0, value: t }) : r[e] = t;
 var o = (r, e, t) => be(r, typeof e != "symbol" ? e + "" : e, t);
 import { t as y, R as Me, c as K, d as xe, l as g, a as ie, H as ke, b as Se, e as Ae, B as Te, C as Ee, G as Oe, M as Re, f as Pe, P as Ce, U as q, u as j, g as Fe, S as b, h as Ie, i as Ve, j as Ye, k as $e, m as Ne, n as qe, o as ae, s as We, p as Be, q as I, r as Ke, v as U } from "./index-RW8_cbtd.js";
-import { E as Or, w as Rr, A as Pr, L as Cr, N as Fr, K as Ir, y as Vr, z as Yr, D as $r, O as Nr, F as qr, I as Wr, J as Br, x as Kr } from "./index-RW8_cbtd.js";
+import { E as Rr, w as Pr, A as Cr, L as Fr, N as Ir, K as Vr, y as Yr, z as $r, D as Nr, O as qr, F as Wr, I as Br, J as Kr, x as jr } from "./index-RW8_cbtd.js";
 import { inject as P, provide as v, reactive as M, computed as k, ref as je, watch as A, effectScope as _, nextTick as Ue, createApp as _e, onMounted as oe, onUnmounted as ue, unref as z, toRaw as H, defineAsyncComponent as ze } from "vue";
 import He from "axios";
 import * as Le from "ox/vendor";
@@ -323,7 +323,7 @@ function he(r, e) {
 function de(r) {
   return r instanceof ke || r instanceof Se || r instanceof Ae || r instanceof Te ? r.foreignKey : null;
 }
-const gr = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+const yr = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
   ContentType: Ee,
   Enum: st,
@@ -385,11 +385,11 @@ class dt {
     return t.innerText ? JSON.parse(t.innerText) : {};
   }
 }
-function yr(r, e = !0) {
+function wr(r, e = !0) {
   const t = dt.reactive(r);
   return e && t.dataEl && t.load(), v("context", t), v("user", t.user), t;
 }
-function wr({ props: r, user: e, emits: t = null }) {
+function Dr({ props: r, user: e, emits: t = null }) {
   const n = je(!1), s = k(() => !r.permission || e.can(r.permission, r.item));
   return { processing: n, run: async (...a) => {
     if (r.confirm && !confirm(r.confirm))
@@ -1247,7 +1247,7 @@ const Jt = {
 }, se = {
   green: Qt
 };
-function Dr({ App: r = null, el: e = "#app", onLoad: t = !0, ...n } = {}) {
+function vr({ App: r = null, el: e = "#app", onLoad: t = !0, ...n } = {}) {
   function s() {
     const i = Xt(r, n), a = e ? i.mount(e) : null;
     return document.body.classList.remove("loading"), { app: i, el: e, vm: a };
@@ -1292,7 +1292,7 @@ function er({ components: r = {}, defaults: e = {}, ...t }) {
     ...t
   });
 }
-function vr({ axiosConfig: r = null, baseURL: e = null } = {}) {
+function br({ axiosConfig: r = null, baseURL: e = null } = {}) {
   e || (e = document.body.dataset.apiUrl);
   const t = Ne(), n = qe({
     plugins: [
@@ -1883,7 +1883,7 @@ class or extends rr {
       return super.show(n);
   }
 }
-function br(r) {
+function Mr(r) {
   const e = M(new nr(r));
   v("panels", e), oe(() => {
     e.readDocumentLocation(), e.panel && e.show({
@@ -1906,7 +1906,7 @@ function ur(r, e) {
   const t = M(new e(r));
   return v("panel", t), oe(() => t.panels.register(t.name, t)), ue(() => t.panels.unregister(t.name)), { panel: t };
 }
-function Mr({ query: r, repos: e, ...t }) {
+function xr({ query: r, repos: e, ...t }) {
   e ?? (e = P("repos")), r ?? (r = new S(t.props.repo, e)), t.panels ?? (t.panels = P("panels"));
   const { list: n, items: s } = lr({
     query: r,
@@ -1927,7 +1927,7 @@ function lr(r, e = ir) {
     g.isEqual(H(i), H(a)) || t.repo.refs.releaseAcquire(n, a, i);
   }), ue(() => t.repo.refs.flush(n)), v("list", t), v("items", s), { list: t, items: s, listId: n };
 }
-function xr(r, e = null, t) {
+function kr(r, e = null, t) {
   const n = new S(r, e, t), s = b.none();
   async function i(a) {
     s.processing();
@@ -1952,10 +1952,10 @@ function cr(r, e = we) {
   const s = P("panel");
   return s && A(() => t.edited, (i) => s.setEdition(t.name, i)), { editor: t, edited: n };
 }
-function kr(r, e = ar) {
+function Sr(r, e = ar) {
   return cr(r, e);
 }
-const Sr = {
+const Ar = {
   /** Field is required */
   required(r) {
     return r || r === 0 ? !0 : y("fields._.required");
@@ -1984,8 +1984,18 @@ const Sr = {
     return /^[A-Za-z0-9@.+\-_]+$/.test(r) || "Username must not be empty. It only can contain letters, numbers and @/+/./- special characters";
   }
 };
-function Ar(r, e) {
-  return ze(() => import(r).then((t) => e ? (console.log(t, t.components, Object.keys(t)), Object.values(t).filter((s) => s.__name == e)[0]) : t));
+function Tr(r, e) {
+  return ze(() => import(r).then((t) => (r.endsWith(".js") && hr(import.meta.resolve(r.replace(/\.js$/, ".css"))), e ? Object.values(t).filter((s) => s.__name == e)[0] : t)));
+}
+function hr(r) {
+  return new Promise((e, t) => {
+    if (document.querySelector(`link[href="${r}"]`)) {
+      e();
+      return;
+    }
+    const n = document.createElement("link");
+    n.rel = "stylesheet", n.href = r, n.onload = () => e(), n.onerror = (s) => t(s), document.head.appendChild(n);
+  });
 }
 export {
   dt as AppContext,
@@ -1998,46 +2008,46 @@ export {
   nr as Panels,
   S as Query,
   b as State,
-  Or as States,
+  Rr as States,
   I as assignNonEmpty,
   Be as collectAttr,
   ae as config,
   Xt as createApp,
-  Rr as createI18n,
-  vr as createPinia,
+  Pr as createI18n,
+  br as createPinia,
   er as createVuetify,
-  Pr as csrfToken,
-  Ar as defineAsyncComponent,
-  Cr as excludeValues,
-  Fr as filterSlots,
-  Ir as filterValues,
-  Vr as getCookie,
-  Yr as getCookieList,
-  $r as getCsrf,
+  Cr as csrfToken,
+  Tr as defineAsyncComponent,
+  Fr as excludeValues,
+  Ir as filterSlots,
+  Vr as filterValues,
+  Yr as getCookie,
+  $r as getCookieList,
+  Nr as getCsrf,
   Ye as i18n,
-  Dr as init,
-  Nr as injectOrProvide,
-  qr as mapToObject,
-  gr as models,
+  vr as init,
+  qr as injectOrProvide,
+  Wr as mapToObject,
+  yr as models,
   tr as query,
   Ke as reset,
-  Sr as rules,
-  Wr as shallowCopy,
-  Br as splitValues,
+  Ar as rules,
+  Br as shallowCopy,
+  Kr as splitValues,
   y as t,
   U as tKeys,
-  Kr as te,
-  wr as useAction,
-  yr as useAppContext,
+  jr as te,
+  Dr as useAction,
+  wr as useAppContext,
   cr as useEditor,
   $e as useI18n,
-  kr as useModelEditor,
+  Sr as useModelEditor,
   lr as useModelList,
-  Mr as useModelPanel,
+  xr as useModelPanel,
   ht as useModels,
   ur as usePanel,
-  br as usePanels,
-  xr as useQuery,
+  Mr as usePanels,
+  kr as useQuery,
   ct as useRepo
 };
 //# sourceMappingURL=ox.js.map

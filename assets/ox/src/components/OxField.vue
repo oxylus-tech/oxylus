@@ -15,6 +15,11 @@
                 v-model="props.editor.value[props.name]"
                 @update:modelValue="emits('update:modelValue', $event)"/>
         </template>
+        <template v-else-if="props.type == 'autocomplete'">
+            <ox-autocomplete v-bind="fieldProps"
+                v-model="props.editor.value[props.name]"
+                @update:modelValue="emits('update:modelValue', $event)"/>
+        </template>
         <template v-else>
             <v-text-field v-bind="fieldProps" :type="props.type"
                 v-model="props.editor.value[props.name]"
@@ -34,9 +39,10 @@
  * - `update:modelValue`: value has changed
  */
 
-import {computed, defineEmits, useAttrs} from 'vue'
-import {t, te, rules} from 'ox'
+import {computed, defineEmits, defineAsyncComponent, useAttrs} from 'vue'
+import {t, rules} from 'ox'
 
+const OxAutocomplete = defineAsyncComponent(() => import('./OxAutocomplete.vue'))
 
 const emits = defineEmits(['update:modelValue'])
 const attrs = useAttrs()

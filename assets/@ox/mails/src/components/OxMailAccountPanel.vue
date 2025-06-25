@@ -1,5 +1,5 @@
 <template>
-    <ox-owned-panel v-bind="props" :repo="repos.mailAccounts" icon="mdi-email-lock">
+    <ox-owned-panel v-bind="props" :repo="repos.mailAccounts">
         <template v-for="name in forwardSlots" :key="name" #[name]="bind">
             <slot :name="name" v-bind="bind"/>
         </template>

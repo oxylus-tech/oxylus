@@ -50,6 +50,14 @@ class OrganisationTypeSerializer(ModelSerializer):
         fields = "__all__"
 
 
+class ContactListSerializer(ModelSerializer):
+    organisation = RelatedField(queryset=models.Organisation.objects.all(), required=False)
+
+    class Meta:
+        model = models.ContactList
+        fields = "__all__"
+
+
 class ContactSerializer(ModelSerializer):
     addresses = AddressSerializer(source="address_set", many=True, required=False)
     emails = EmailSerializer(source="email_set", many=True, required=False)
@@ -82,6 +90,7 @@ class OrganisationSerializer(ContactSerializer):
 
 class PersonSerializer(ContactSerializer):
     organisations = RelatedField(queryset=models.Organisation.objects.all(), many=True, required=False)
+    contact_lists = RelatedField(queryset=models.ContactList.objects.all(), many=True, required=False)
     email = serializers.EmailField(required=False)
 
     class Meta(ContactSerializer.Meta):
