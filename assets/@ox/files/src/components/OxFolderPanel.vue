@@ -45,6 +45,6 @@ const repos = useFilesModels()
 const props = withDefaults(defineProps<IModelPanelProps>(), {
     name: 'folders',
     relations: [],
-    headers: ['path', 'name', 'updated'],
+    headers: ['name', 'path', 'updated'],
 })
 </script>

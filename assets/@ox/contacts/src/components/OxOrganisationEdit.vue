@@ -11,6 +11,7 @@
                         <ox-field :editor="editor" name="short_name" />
                     </v-col>
                 </v-row>
+                <ox-field :editor="editor" name="email" type="email"/>
                 <ox-field :editor="editor" name="reference" />
                 <ox-field :editor="editor" name="country">
                     <template #default="{props}">

@@ -1,7 +1,4 @@
 <template>
-    <v-btn v-if="!drawer" @click.stop="drawer = !drawer"
-        class="float-left" icon="mdi-dock-left" :rounded="0"
-        variant="text"/>
     <v-navigation-drawer v-model="drawer" permanent v-bind="attrs">
         <v-list-item prepend-icon="mdi-account-key"
             @click.capture.stop="folderNav.load(); folder = ''">
@@ -29,10 +26,15 @@ import OxFolderNavEdit from './OxFolderNavEdit'
 
 const drawer = ref(true)
 const attrs = useAttrs()
+const props = defineProps({
+    show: Boolean
+})
+
 const folder = defineModel()
 const selected = defineModel('selected')
 const owner = defineModel('owner')
 
 const folderNav = ref(null)
 
+watch(() => props.show, (val) => drawer.value = val)
 </script>

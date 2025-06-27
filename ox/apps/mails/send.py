@@ -8,7 +8,7 @@ from typing import Any, Iterable
 from django.template import Template
 from django.utils.html import strip_tags
 
-from ox.apps.contacts.models import Person
+from ox.apps.contacts.models import Contact
 from ox.apps.files.models import File
 from .models import SendMail, MailAccount
 
@@ -67,7 +67,25 @@ class MailSend:
             self.mail.state = SendMail.State.SENT
             self.mail.save(update_fields=["state"])
 
-    def send_mail(self, smtp: smtplib.SMTP, contact: Person, context: dict[str, Any]):
+    def send_mails(self, smtp: smtplib.SMTP, context: dict[str, Any]):
+        """
+        Send mail to all contacts of current mail (from contact lists and contact).
+
+        :param smtp: logged in smtp instance.
+        :param context: extra context data.
+        """
+        done = set()
+
+        for list in self.mail.contact_lists.all():
+            ctx = {**context, "is_subscription": list.is_subscription}
+            for contact in list.contacts.exclude(id__in=done):
+                self.send_mail(smtp, contact, ctx)
+                done.add(contact.id)
+
+        for contact in self.mail.contacts.exclude(id__in=done):
+            self.send_mail(smtp, contact, ctx)
+
+    def send_mail(self, smtp: smtplib.SMTP, contact: Contact, context: dict[str, Any]):
         """Send mail to provided contact.
 
         :param smtp: logged in smtp instance.
@@ -78,7 +96,7 @@ class MailSend:
         logger.info(f"Send mail {self.mail.id} to {contact.email}")
         smtp.send_message(message)
 
-    def get_message(self, contact: Person, context: dict[str, Any]) -> EmailMessage:
+    def get_message(self, contact: Contact, context: dict[str, Any]) -> EmailMessage:
         """Return EmailMessage to send to provided contact with rendered content and subject.
 
         :param contact: target contact

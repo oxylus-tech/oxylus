@@ -2,18 +2,12 @@ from ox.apps.contacts import utils
 from ox.apps.contacts.models import ContactList
 
 
+# ---- groups
 def test_get_or_create_contact_list_for_group(group):
     ContactList.objects.all().delete()
     obj = utils.get_or_create_contact_list_for_group(group)
-    assert obj.name == f"Group: {group.name}"
+    assert obj.name == group.name
     assert obj.group_id == group.id
-
-
-def test_get_or_create_contact_list_for_org(organisation):
-    ContactList.objects.all().delete()
-    obj = utils.get_or_create_contact_list_for_org(organisation)
-    assert obj.name == f"Organisation: {organisation.name}"
-    assert obj.organisation_id == organisation.id
 
 
 def test_sync_group_contact_list(user, group, user_groups):
@@ -29,6 +23,7 @@ def test_sync_groups_contact_list(user, group, user_groups):
 
     for group in user.groups.all():
         assert group.contact_list
+        assert group.contact_list.name == group.name
 
 
 def test_sync_groups_persons_contact_list(user, group, user_groups):
@@ -38,6 +33,15 @@ def test_sync_groups_persons_contact_list(user, group, user_groups):
     for group in user.groups.all():
         assert group.contact_list
         assert group.contact_list.contacts.filter(id=user.contact.id).exists()
+
+
+# ---- organisations
+def test_get_or_create_contact_list_for_org(organisation):
+    ContactList.objects.all().delete()
+    obj = utils.get_or_create_contact_list_for_org(organisation)
+    assert obj.name == organisation.name
+    assert obj.color == organisation.color
+    assert obj.organisation_id == organisation.id
 
 
 def test_sync_org_contact_list(person, organisation):
@@ -53,6 +57,8 @@ def test_sync_orgs_contact_list(person, organisation):
 
     for organisation in person.organisations.all():
         assert organisation.contact_list
+        assert organisation.contact_list.name == organisation.name
+        assert organisation.contact_list.color == organisation.color
 
 
 def test_sync_orgs_persons_contact_list(person, organisation):

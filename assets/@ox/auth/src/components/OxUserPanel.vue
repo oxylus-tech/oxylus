@@ -58,6 +58,6 @@ const kanbanHeaders = computed(() => {
 const props = withDefaults(defineProps<IModelPanelProps>(), {
     name: 'users',
     relations: ['$groups'],
-    headers: ['id', 'username', 'first_name', 'last_name', 'email', 'groups'],
+    headers: ['username', 'email', 'first_name', 'last_name', 'groups'],
 })
 </script>

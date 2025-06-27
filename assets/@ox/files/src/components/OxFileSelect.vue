@@ -20,6 +20,7 @@
                 <v-col class="files">
                     <ox-list-table v-model="selected" return-object
                             item-value="id"
+                            :list="list" :items="items"
                             :select-strategy="props.multiple ? 'page':'single'" show-select
                             :headers="['preview', 'name', 'file_size', 'updated']"
                             >

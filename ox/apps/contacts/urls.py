@@ -6,6 +6,7 @@ from . import panels, views
 
 
 router = DefaultRouter()
+router.register("contact", views.ContactViewSet)
 router.register("organisation", views.OrganisationViewSet)
 router.register("person", views.PersonViewSet)
 router.register("contactlist", views.ContactListViewSet)

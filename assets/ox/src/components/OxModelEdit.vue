@@ -3,7 +3,7 @@
     <v-container class="ox-model-edit">
         <ox-model-editor ref="modelEditor" v-bind="props">
             <template #prepend="bind">
-                <div class="mb-3" v-if="!props.hideValidationBtn">
+                <div v-if="!props.hideValidationBtn">
                     <slot name="prepend" v-bind="bind" :save="save" :reset="reset">
                         <ox-validation-btn v-if="bind.editable && bind.edited"
                             @validate="save()" @reset="reset()" :state="bind.editor.state" :validate-disabled="bind.editor.valid === false"

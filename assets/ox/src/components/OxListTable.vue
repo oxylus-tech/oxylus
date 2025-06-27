@@ -1,29 +1,26 @@
 <template>
     <v-data-table-server
-            :items="items" item-index="id"
-            :items-length="list.count || items.length"
-            :items-per-page="list.page_size"
-            :hide-default-footer="(list.count || items.length || 0) < list.page_size"
-            :loading="list.state?.isProcessing"
+            :items="props.items" item-index="id"
+            :items-length="props.list.count || props.items.length"
+            :items-per-page="props.list.page_size"
+            :hide-default-footer="(props.list.count || props.items.length || 0) < props.list.page_size"
+            :loading="props.list.state?.isProcessing"
             :headers="headers"
             :no-data-text="t('lists.empty')"
             class="align-top-table"
             @update:options="updateOptions">
+        <template v-if="slots['item.image']" #item.image="{item}">
+            <slot name="item.image" :item="item">
+                <v-img v-if="item[props.image]" :src="item[props.image]" class="preview" cover max-height="200"/>
+            </slot>
+        </template>
+
         <template v-for="(_, name) in itemSlots" :key="name" v-slot:[name]="bind">
             <slot :name="name" v-bind="bind"/>
         </template>
 
         <template #item.actions="{item}">
-            <ox-action v-if="props.edit && user.can([item.constructor, 'change'], item)"
-                icon="mdi-pencil" button
-                :title="t('actions.edit')"
-                :item="item"
-                :run="show"/>
-            <ox-action v-else-if="props.edit && user.can([item.constructor, 'view'], item)"
-                icon="mdi-eye-outline" button
-                :title="t('actions.view')"
-                :item="item"
-                :run="show"/>
+            <ox-action-edit button :item="item" :edit="props.edit"/>
             <slot name="item.actions" :item="item" :dense="true" :button="true"/>
         </template>
     </v-data-table-server>
@@ -54,54 +51,59 @@ Slots:
 
  */
 
-import { computed, defineProps, inject, ref, useSlots } from 'vue'
+import { computed, defineProps, inject, ref, toRefs, useSlots } from 'vue'
 
 import { t, tKeys } from 'ox'
 // import { Permissions } from '../models'
 import { filterSlots } from '../utils'
-import OxAction from './OxAction.vue'
+import OxAction from './OxAction'
+import OxActionEdit from './OxActionEdit'
 
 const slots = useSlots()
-const itemSlots = filterSlots(slots, 'item.', {exclude: ['item.actions']})
+const itemSlots = filterSlots(slots, 'item.', {exclude: ['item.actions', 'item.image']})
 
 const panel = inject('panel')
-const list = inject('list')
-const items = inject('items')
 const user = inject('user')
 
 const props = defineProps({
-    // list: Object,
-    /** Table headers */
+    /** ModelList used to display objects **/
+    list: Object,
+    /** List items (cf. {@link useModelList}) **/
+    items: Array,
+    /** Table headers **/
     headers: Array,
-    /** If True, display edit/view button */
+    /** If True, display edit/view button **/
     edit: Boolean,
+    /** If provided, use this item field as image **/
+    image: String,
 })
-
 
 const headers = computed(() => {
-    return props.headers.reduce((dst, field) => {
-        dst.push(
-            (typeof(field) == 'string') ?
-            {key: field, title: t(tKeys.field(field))} :
-            {key: field.key, title: t(field.title) }
-        )
-        return dst
-    }, [])
-})
+    const items = [];
+    if(props.image || slots['item.image'])
+        items.push({'key': 'image', title:''})
 
+    return items.concat(
+        props.headers.reduce((dst, field) => {
+            dst.push(
+                (typeof(field) == 'string') ?
+                {key: field, title: t(tKeys.field(field))} :
+                {key: field.key, title: t(field.title) }
+            )
+            return dst
+        }, [])
+    )
+})
 
 function updateOptions(event) {
     const params = {
-        ...list.filters,
+        ...props.list.filters,
         page: event.page,
         page_size: event.itemsPerPage,
         ordering: event.sortBy.map(({key, order}) => order == 'asc' ? key : `-${key}`)
     }
-    list.page_size = event.itemsPerPage
-    list.load({params})
+    props.list.page_size = event.itemsPerPage
+    props.list.load({params})
 }
 
-function show(user, item) {
-    panel.show({view: 'detail.edit', value: item})
-}
 </script>

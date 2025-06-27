@@ -13,8 +13,7 @@
         </template>
 
         <template #item.country="{item}" v-if="!slots['item.country']">
-            {{ item.$country?.flag }}
-            {{ item.$country?.name }}
+            {{ item.$country?.flag }} {{ item.$country?.name }}
         </template>
 
         <template #item.name="{item}" v-if="!slots['item.color']">
@@ -22,7 +21,11 @@
             {{ item.name }}
         </template>
 
-        <template #item.email="{item}" v-if="!slots['item.emails']">
+        <template #item.email="{item}" v-if="!slots['item.email']">
+            <v-btn :href="`mailto:${item.email}`" size='x-small'
+                prepend-icon="mdi-mail" color="secondary">
+                {{ item.email }}
+            </v-btn>
             <template v-for="email of item.emails">
                 <v-btn :href="`mailto:${email.email}`" size='x-small'
                     prepend-icon="mdi-mail" color="secondary">
@@ -31,7 +34,7 @@
             </template>
         </template>
 
-        <template #item.phone="{item}" v-if="!slots['item.phones']">
+        <template #item.phone="{item}" v-if="!slots['item.phone']">
             <template v-for="phone of item.phones">
                 <v-btn :href="`tel:${phone.number}`" size='x-small'
                     prepend-icon="mdi-phone" color="secondary">
@@ -67,6 +70,7 @@ const organisations = computed(() => repos.organisations.all())
 const props = withDefaults(defineProps<IModelPanelProps>(), {
     name: 'organisations',
     relations: ['$country'],
-    headers: ['name', 'vat', 'email', 'phone', 'country'],
+    fetchRelations: true,
+    headers: ['name', 'email', 'vat', 'phone', 'country'],
 })
 </script>

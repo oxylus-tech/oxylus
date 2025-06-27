@@ -123,7 +123,7 @@ export default class Query<M extends Model> {
             if(id)
                 throw Error("Both `ids` and `id` are provided while only one of those arguments is accepted.")
             params = {...(params || {})}
-            params[lookup] = [...ids]
+            params[lookup] = ids.join(',')
         }
         const response = await repo.api().get(url, {...opts, params})
         if(opts.save === false)

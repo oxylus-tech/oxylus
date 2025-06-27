@@ -69,7 +69,7 @@ const ids = defineModel({default: []})
 
 const {list, items} = useModelList({
     query: query(repos.files),
-    ids: [...ids.value]
+    ids: ids.value ? [...ids.value] : []
 })
 
 const totalSize = computed(

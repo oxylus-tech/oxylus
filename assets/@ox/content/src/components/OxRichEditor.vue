@@ -1,28 +1,50 @@
 <template>
-    <template v-for="group, index in menu" :key="index">
-        <div class="button-group d-inline-block mr-3">
-            <template v-for="info, index in group" :key="index">
-                <v-btn
-                    variant="outline" size="small" rounded="0"
-                    :title="t(info.label)" :aria-label="t(info.label)"
-                    :icon="info.icon"
-                    @click="actions.edit(info.action, ...(info.args || []))" />
-            </template>
-        </div>
-    </template>
-
-    <editor-content class="editor" :editor="editor" :style="`height: ${props.height}`"/>
+    <v-input v-bind="attrs" :modelValue="props.modelValue"
+            :focused="focused"
+            @update:modelValue="modelValueUpdated">
+        <template #default>
+            <v-container>
+                <v-row>
+                    <v-label :text="attrs.label"/>
+                </v-row>
+                <v-row>
+                    <template v-for="group, index in menu" :key="index">
+                        <div class="button-group d-inline-block mr-3">
+                            <template v-for="info, index in group" :key="index">
+                                <v-btn
+                                    variant="text" size="small" rounded="0"
+                                    :title="t(info.label)" :aria-label="t(info.label)"
+                                    :icon="info.icon"
+                                    @click="actions.edit(info.action, ...(info.args || []))" />
+                            </template>
+                        </div>
+                    </template>
+                </v-row>
+                <v-row>
+                    <editor-content class="editor" :editor="editor"
+                        :style="`height: ${props.height}`"
+                        @focusin="focused = true" @focusout="focused = false"/>
+                </v-row>
+            </v-container>
+        </template>
+    </v-input>
 </template>
 <style>
 .editor {
+    width: 100%;
+    overflow-y: auto;
     display: flex;
     flex-direction: column;
 }
 
+.editor .tiptap:focus {
+    border-style: solid;
+}
+
 .editor .tiptap {
-    flex-grow: 1;
-    border: 1px black solid;
     padding: 0.3em;
+    border: 1px black dotted;
+    flex-grow: 1;
 }
 .editor .tiptap ul, .editor .tiptap ol {
     margin-left: 1.3em;
@@ -31,7 +53,7 @@
 .editor .tiptap ul { list-style: disc }
 </style>
 <script setup lang="ts">
-import { defineEmits, reactive, onUnmounted, watch } from 'vue'
+import { defineEmits, reactive, ref, onUnmounted, useAttrs, watch } from 'vue'
 import { t } from 'ox'
 
 import { Editor, EditorContent } from '@tiptap/vue-3'
@@ -46,10 +68,12 @@ import TableCell from '@tiptap/extension-table-cell'
 
 
 const emits = defineEmits(['update:modelValue'])
+const attrs = useAttrs()
 const props = defineProps({
     modelValue: {type: String, default: ''},
     height: {type: String, default: "300px;"},
 })
+const focused = ref(false)
 
 
 const menu = reactive([
@@ -112,11 +136,12 @@ const actions = {
 }
 
 
-watch(() => props.modelValue, (val) => {
-    console.log(">>>", props.modelValue)
+function modelValueUpdated(val) {
     if (editor.getHTML() !== val)
         editor.commands.setContent(val, false)
-})
+}
+
+watch(() => props.modelValue, modelValueUpdated)
 
 onUnmounted(() => editor.destroy())
 </script>

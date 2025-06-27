@@ -1,9 +1,9 @@
 var ve = Object.defineProperty;
 var be = (r, e, t) => e in r ? ve(r, e, { enumerable: !0, configurable: !0, writable: !0, value: t }) : r[e] = t;
 var o = (r, e, t) => be(r, typeof e != "symbol" ? e + "" : e, t);
-import { t as y, R as Me, c as K, d as xe, l as g, a as ie, H as ke, b as Se, e as Ae, B as Te, C as Ee, G as Oe, M as Re, f as Pe, P as Ce, U as q, u as j, g as Fe, S as b, h as Ie, i as Ve, j as Ye, k as $e, m as Ne, n as qe, o as ae, s as We, p as Be, q as I, r as Ke, v as U } from "./index-RW8_cbtd.js";
-import { E as Rr, w as Pr, A as Cr, L as Fr, N as Ir, K as Vr, y as Yr, z as $r, D as Nr, O as qr, F as Wr, I as Br, J as Kr, x as jr } from "./index-RW8_cbtd.js";
-import { inject as P, provide as v, reactive as M, computed as k, ref as je, watch as A, effectScope as _, nextTick as Ue, createApp as _e, onMounted as oe, onUnmounted as ue, unref as z, toRaw as H, defineAsyncComponent as ze } from "vue";
+import { t as y, R as Me, c as B, d as xe, l as g, a as ie, H as ke, b as Se, e as Ae, B as Te, C as Ee, G as Oe, M as Re, f as Pe, P as Ce, U as q, u as K, g as Fe, S as b, h as Ie, i as Ve, j as Ye, k as $e, m as Ne, n as qe, o as ae, s as We, p as je, q as I, r as Be, v as U } from "./index-Bdmim2Am.js";
+import { E as Rr, w as Pr, A as Cr, L as Fr, N as Ir, K as Vr, y as Yr, z as $r, D as Nr, O as qr, F as Wr, I as jr, J as Br, x as Kr } from "./index-Bdmim2Am.js";
+import { inject as P, provide as v, reactive as M, computed as k, ref as Ke, watch as A, effectScope as _, nextTick as Ue, createApp as _e, onMounted as oe, onUnmounted as ue, unref as z, toRaw as H, defineAsyncComponent as ze } from "vue";
 import He from "axios";
 import * as Le from "ox/vendor";
 import { p as L, c as Ge, m as le, a as Ze, b as Je, d as Qe, e as Xe, f as et, g as tt, D as G, h as Z, T as J, I as Q, L as X, i as rt, j as nt } from "./theme-BVAWnHOc.js";
@@ -233,7 +233,7 @@ class ot extends Me {
     o(this, "axios");
     o(this, "globalApiConfig");
     o(this, "apiConfig");
-    this.axios = ((i = (s = K) == null ? void 0 : s.axiosApi) == null ? void 0 : i.axios) || null, this.globalApiConfig = ((a = K) == null ? void 0 : a.axiosApi) || {}, this.apiConfig = {};
+    this.axios = ((i = (s = B) == null ? void 0 : s.axiosApi) == null ? void 0 : i.axios) || null, this.globalApiConfig = ((a = B) == null ? void 0 : a.axiosApi) || {}, this.apiConfig = {};
   }
   api() {
     return ut(this);
@@ -339,9 +339,9 @@ const yr = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   getSourceKey: de
 }, Symbol.toStringTag, { value: "Module" }));
 function ct(r) {
-  j(r);
+  K(r);
   const e = Fe();
-  return V.useModel = r, j(V, e);
+  return V.useModel = r, K(V, e);
 }
 function ht(r, { useInject: e = !0, useDefaults: t = !0, key: n = null } = {}) {
   var s = e && (P("repos") || {});
@@ -390,7 +390,7 @@ function wr(r, e = !0) {
   return e && t.dataEl && t.load(), v("context", t), v("user", t.user), t;
 }
 function Dr({ props: r, user: e, emits: t = null }) {
-  const n = je(!1), s = k(() => !r.permission || e.can(r.permission, r.item));
+  const n = Ke(!1), s = k(() => !r.permission || e.can(r.permission, r.item));
   return { processing: n, run: async (...a) => {
     if (r.confirm && !confirm(r.confirm))
       return;
@@ -826,15 +826,15 @@ function N(r, e, t) {
       return n.getTime() - s.getTime();
   }
 }
-function Bt(r, e) {
+function jt(r, e) {
   const t = new Date(r);
   return t.setHours(e), t;
 }
-function Kt(r, e) {
+function Bt(r, e) {
   const t = new Date(r);
   return t.setMinutes(e), t;
 }
-function jt(r, e) {
+function Kt(r, e) {
   const t = new Date(r);
   return t.setMonth(e), t;
 }
@@ -931,13 +931,13 @@ class zt {
     return Wt(e, t);
   }
   setMinutes(e, t) {
-    return Kt(e, t);
-  }
-  setHours(e, t) {
     return Bt(e, t);
   }
-  setMonth(e, t) {
+  setHours(e, t) {
     return jt(e, t);
+  }
+  setMonth(e, t) {
+    return Kt(e, t);
   }
   setDate(e, t) {
     return Ut(e, t);
@@ -1075,10 +1075,10 @@ function ye() {
           name: p,
           aliasName: s[p].name
         }));
-      const B = _();
-      if (B.run(() => {
+      const j = _();
+      if (j.run(() => {
         m.install(f);
-      }), f.onUnmount(() => B.stop()), f.provide(G, l), f.provide(Z, h), f.provide(J, m), f.provide(Q, c), f.provide(X, d), f.provide(Ht, w.options), f.provide(ne, w.instance), f.provide(Ve, D), rt && n.ssr)
+      }), f.onUnmount(() => j.stop()), f.provide(G, l), f.provide(Z, h), f.provide(J, m), f.provide(Q, c), f.provide(X, d), f.provide(Ht, w.options), f.provide(ne, w.instance), f.provide(Ve, D), rt && n.ssr)
         if (f.$nuxt)
           f.$nuxt.hook("app:suspense:resolve", () => {
             h.update();
@@ -1323,7 +1323,7 @@ class S {
     if (Array.isArray(n) && (n.length == 1 ? n = n[0] : (m = n, n = null)), t || (t = (w = (d = s.use) == null ? void 0 : d.meta) == null ? void 0 : w.getUrl({ path: l, id: n })), n ? h.dataKey = null : "dataKey" in h || (h.dataKey = (O = (E = (D = s.use) == null ? void 0 : D.config) == null ? void 0 : E.axiosApi) == null ? void 0 : O.dataKey), m && i !== void 0) {
       if (n)
         throw Error("Both `ids` and `id` are provided while only one of those arguments is accepted.");
-      a = { ...a || {} }, a[i] = [...m];
+      a = { ...a || {} }, a[i] = m.join(",");
     }
     const c = await s.api().get(t, { ...h, params: a });
     return h.save === !1 && (c.entities = this.getEntities(c)), u && (c.relations = await this.relations(c.entities, u, { ...h, params: {} })), c;
@@ -1405,7 +1405,7 @@ class S {
     const u = de(s);
     if (!u)
       throw Error(`No source ids attributes for ${t}.`);
-    const l = [...new Set(Be(e, u))];
+    const l = [...new Set(je(e, u))];
     return new S(a, this.repos).all({ ...n, id: l, repo: a });
   }
 }
@@ -1447,7 +1447,7 @@ class we {
    * When value is provided, reset initial to this value.
    */
   reset(e = null) {
-    Ke(this.value, e ?? this.empty), this.state.none();
+    Be(this.value, e ?? this.empty), this.state.none();
   }
   /** Return wether value has been edited or not */
   isEdited() {
@@ -2010,7 +2010,7 @@ export {
   b as State,
   Rr as States,
   I as assignNonEmpty,
-  Be as collectAttr,
+  je as collectAttr,
   ae as config,
   Xt as createApp,
   Pr as createI18n,
@@ -2030,13 +2030,13 @@ export {
   Wr as mapToObject,
   yr as models,
   tr as query,
-  Ke as reset,
+  Be as reset,
   Ar as rules,
-  Br as shallowCopy,
-  Kr as splitValues,
+  jr as shallowCopy,
+  Br as splitValues,
   y as t,
   U as tKeys,
-  jr as te,
+  Kr as te,
   Dr as useAction,
   wr as useAppContext,
   cr as useEditor,

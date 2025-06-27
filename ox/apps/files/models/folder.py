@@ -111,6 +111,12 @@ class Folder(Named, Timestamped, ChildOwned, TreeNode):
                 self.name = name
             super().move_to(parent, save)
 
+    def on_save(self, fields=None):
+        # set tree id to owner's id: this ensure that any file posted for
+        # a specific owner will be in the same tree.
+        self.tree_id = self.owner_id
+        super().on_save(fields)
+
     def validate_node(self):
         """
         Validate node for name collision (folder & file) and owner.

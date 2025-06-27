@@ -46,7 +46,7 @@ const repos = useMailModels()
 const props = withDefaults(defineProps<IModelPanelProps>(), {
     name: 'sendmails',
     relations: ['$template'],
-    headers: ['state', 'subject', 'updated'],
+    headers: ['subject', 'state', 'updated'],
 })
 
 const State = SendMail.State

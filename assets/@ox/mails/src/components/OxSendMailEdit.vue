@@ -30,19 +30,31 @@
                     <ox-field :editor="editor" name="is_template" type="checkbox"/>
                 </v-col>
             </v-row>
-            <ox-field v-if="!editor.value.is_template" :editor="editor" name="contacts" required>
-                <template #default="{props: props_}">
-                    <ox-person-input v-bind="props_" multiple
-                        v-model="editor.value.contacts" />
+            <v-card v-if="!editor.value.is_template" :subtitle="t('labels.recipients')">
+                <template #text>
+                    <ox-field :editor="editor" name="contacts">
+                        <template #default="{props: props_}">
+                            <ox-contact-input v-bind="props_" multiple
+                                v-model="editor.value.contacts" />
+                        </template>
+                    </ox-field>
+                    <ox-field :editor="editor" name="contact_lists" type="autocomplete"
+                        :repo="repos.contactLists"
+                        item-title="name" item-value="id"
+                        multiple />
                 </template>
-            </ox-field>
+            </v-card>
             <ox-field :editor="editor" name="subject"/>
 
-            <ox-component src="../ox_content/OxRichEditor.js"
-                v-model="editor.value.content"/>
+            <ox-field :editor="editor" name="content" type="custom">
+                <template #default="{props}">
+                    <ox-component src="../ox_content/OxRichEditor.js" v-bind="props"
+                        v-model="editor.value.content"/>
+                </template>
+            </ox-field>
 
             <v-expansion-panels multiple class="mt-3">
-                <v-expansion-panel :title="t('fields.attachments', 2) + ` (${editor.value.attachments?.length})`">
+                <v-expansion-panel :title="t('fields.attachments', 2) + ` (${editor.value.attachments?.length || 0})`">
                     <template #text>
                         <ox-file-list :owner="props.owner" v-model="editor.value.attachments"/>
                     </template>
@@ -56,7 +68,7 @@
 import { computed, reactive, ref, useAttrs, watch } from 'vue'
 import { t, rules } from "ox"
 import {OxModelEdit, OxField, OxAutocomplete, OxComponent} from 'ox/components'
-import {OxPersonInput} from '@ox/contacts/components'
+import {OxContactInput} from '@ox/contacts/components'
 
 import {useMailModels} from '../composables'
 import OxFileList from './OxFileList'

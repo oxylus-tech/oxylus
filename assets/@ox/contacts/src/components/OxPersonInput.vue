@@ -9,7 +9,7 @@
     </ox-autocomplete>
 </template>
 <script setup lang="ts">
-import {useAttrs, useSlots, defineModel, defineProps} from 'vue'
+import {useAttrs, useSlots, defineModel} from 'vue'
 import {useModels} from 'ox'
 import {OxAutocomplete} from 'ox/components'
 import {Person} from '../models'

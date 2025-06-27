@@ -1,29 +1,33 @@
 <template>
+    <!-- @slot default slot providing all values for custom field.
+        @binding {String} props field props as used by Vuetify
+        @binding {ModelEditor} editor the editor
+        -->
     <slot name="default" :props="fieldProps" :editor="props.editor">
         <template v-if="props.type == 'select'">
             <v-select v-bind="fieldProps"
-                v-model="props.editor.value[props.name]"
-                @update:modelValue="emits('update:modelValue', $event)"/>
+                v-model="props.editor.value[props.name]"/>
         </template>
         <template v-else-if="props.type == 'textarea'">
             <v-textarea v-bind="fieldProps"
-                v-model="props.editor.value[props.name]"
-                @update:modelValue="emits('update:modelValue', $event)"/>
+                v-model="props.editor.value[props.name]"/>
         </template>
         <template v-else-if="props.type == 'checkbox'">
             <v-checkbox v-bind="fieldProps"
-                v-model="props.editor.value[props.name]"
-                @update:modelValue="emits('update:modelValue', $event)"/>
+                v-model="props.editor.value[props.name]"/>
         </template>
         <template v-else-if="props.type == 'autocomplete'">
             <ox-autocomplete v-bind="fieldProps"
-                v-model="props.editor.value[props.name]"
-                @update:modelValue="emits('update:modelValue', $event)"/>
+                v-model="props.editor.value[props.name]">
+                <template v-for="_, name in slots" :key="slot"
+                    #[name]="bind">
+                    <slot :name="name" v-bind="bind"/>
+                </template>
+            </ox-autocomplete>
         </template>
         <template v-else>
             <v-text-field v-bind="fieldProps" :type="props.type"
-                v-model="props.editor.value[props.name]"
-                @update:modelValue="emits('update:modelValue', $event)"/>
+                v-model="props.editor.value[props.name]"/>
         </template>
     </slot>
 </template>
@@ -39,13 +43,14 @@
  * - `update:modelValue`: value has changed
  */
 
-import {computed, defineEmits, defineAsyncComponent, useAttrs} from 'vue'
+import {computed, defineEmits, defineAsyncComponent, useAttrs, useSlots} from 'vue'
 import {t, rules} from 'ox'
 
 const OxAutocomplete = defineAsyncComponent(() => import('./OxAutocomplete.vue'))
 
 const emits = defineEmits(['update:modelValue'])
 const attrs = useAttrs()
+const slots = useSlots()
 const props = defineProps({
     /** Field or attribute name */
     name: String,
@@ -60,6 +65,7 @@ const props = defineProps({
      * - `select`: creates a `v-select`;
      * - `checkbox`: create a `v-checkbox`;
      * - `date`: create a `v-date-input`;
+     * - `autocomplete`: create a `ox-autocomplete`;
      * - any other value: `v-text-field` with supplied type;
      */
     type: String,
@@ -74,13 +80,14 @@ const fieldProps = computed(() => {
         "aria-label": t(`fields.${props.name}`),
         "error-messages": props.editor.error(props.name),
         "rules": props.rules || [],
+        "onUpdate:modelValue": (...args) => emits('update:modelValue', ...args),
         ...attrs
     }
 
     const helpText = t(helpKey)
     if(helpText != helpKey) {
-        obj["hint"] = t(helpKey)
-        obj["aria-description"] = t(helpKey)
+        obj["hint"] = helpText
+        obj["aria-description"] = helpText
     }
 
     if(props.required)

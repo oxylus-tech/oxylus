@@ -24,15 +24,15 @@
 
         <template #prepend="{list, panel}">
             <ox-folder-drawer
-                v-if="panel.view.startsWith('list.')"
                 v-model="list.filters.folder__uuid"
                 v-model:owner="list.filters.owner__uuid"
+                :show="panel.view.startsWith('list.')"
                 />
         </template>
 
-        <template #item.preview="{item}" v-if="!slots['item.preview']">
+        <template #item.image="{item}" v-if="!slots['item.preview']">
             <v-img v-if="item.preview" :src="item.preview" class="preview"
-                cover max-height="200"
+                cover max-height="200" width="100"
                 @click="dialog.show(item)" style="cursor: pointer"/>
         </template>
 
@@ -96,6 +96,6 @@ const repos = useFilesModels()
 const props = withDefaults(defineProps<IModelPanelProps>(), {
     name: 'files',
     relations: ['$folder'],
-    headers: ['preview', 'name', 'file_size', 'updated'],
+    headers: ['name', 'file_size', 'updated'],
 })
 </script>

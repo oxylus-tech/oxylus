@@ -20,7 +20,7 @@ export function useContactModels(models: Array<models.Model> =[], opts: IUseMode
 
 export function useContactList() : models.Repos {
     return useModels([
-        oxModels.Group, models_.Organisation, models_.Person, models_.ContactList
+        oxModels.Group, models_.Organisation, models_.Person, models_.Contact, models_.ContactList
     ])
 }
 

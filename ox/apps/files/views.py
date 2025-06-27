@@ -32,7 +32,7 @@ class FileViewSet(OwnedViewSet):
     def perform_create(self, ser):
         super().perform_create(ser)
         ser.instance.read_mime_type()
-        tasks.create_preview.enqueue(file_uuid=str(ser.instance.uuid))
+        tasks.create_preview.enqueue(uuid=str(ser.instance.uuid))
 
     def perform_update(self, ser):
         if ser.validated_data.get("file"):

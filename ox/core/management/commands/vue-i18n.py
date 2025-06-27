@@ -1,5 +1,6 @@
 import inspect
 import json
+import re
 import logging
 from pathlib import Path
 from types import ModuleType
@@ -12,6 +13,14 @@ from django.utils import translation
 
 
 logger = logging.getLogger()
+
+
+escape_re = re.compile("([@$|{}])")
+
+
+def escape(value):
+    """Escape vue-i18n special characters."""
+    return escape_re.sub(r"{'\1'}", value)
 
 
 class Command(BaseCommand):
@@ -61,7 +70,7 @@ class Command(BaseCommand):
     def get_app_labels(self, app_config: AppConfig, output: dict[str, str]):
         """Provide labels for this app."""
         if label := getattr(app_config, "verbose_name"):
-            output[f"apps.{app_config.label}"] = str(label).replace("_", " ")
+            output[f"apps.{app_config.label}"] = escape(str(label).replace("_", " "))
 
         if not app_config.models_module:
             return
@@ -70,7 +79,7 @@ class Command(BaseCommand):
 
         for model in app_config.get_models():
             output[f"models.{model._meta.model_name}"] = (
-                f"{model._meta.verbose_name.capitalize()} | {model._meta.verbose_name_plural.capitalize()}"
+                f"{escape(model._meta.verbose_name.capitalize())} | {escape(model._meta.verbose_name_plural.capitalize())}"
             )
 
             self.get_fields_labels(model, output)
@@ -83,9 +92,9 @@ class Command(BaseCommand):
             if isinstance(field, models.ManyToOneRel):
                 continue
 
-            output[f"fields.{field.name}"] = str(field.verbose_name).capitalize()
+            output[f"fields.{field.name}"] = escape(str(field.verbose_name).capitalize())
             if field.help_text:
-                output[f"fields.{field.name}.help"] = str(field.help_text).capitalize()
+                output[f"fields.{field.name}.help"] = escape(str(field.help_text).capitalize())
 
     def get_enums_labels(self, obj: models.Model | ModuleType, output: dict[str, str], prefix: str = ""):
         """List enums from provided module or model and set provide translations."""
@@ -97,5 +106,5 @@ class Command(BaseCommand):
     def get_enum_labels(self, name: str, obj, output: dict[str, str]):
         """Provide translations for the provided enum."""
         for enum in iter(obj):
-            output[f"enums.{name}.{enum.name}"] = str(enum.label).capitalize()
-            output[f"enums.{name}._.{enum.value}"] = str(enum.label).capitalize()
+            output[f"enums.{name}.{enum.name}"] = escape(str(enum.label).capitalize())
+            output[f"enums.{name}._.{enum.value}"] = escape(str(enum.label).capitalize())

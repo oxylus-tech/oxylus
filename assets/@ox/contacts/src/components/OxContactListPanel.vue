@@ -4,13 +4,8 @@
             <slot :name="name" v-bind="bind"></slot>
         </template>
 
-        <template #item.group="{item}">
-            <v-chip v-if="item.$group" :prepend-icon="mdi-account-multiple">
-                {{ item.$group.name }}
-            </v-chip>
-            <v-chip v-if="item.$organisation" :prepend-icon="mdi-domain">
-                {{ item.$organisation.name }}
-            </v-chip>
+        <template #item.name="{item}">
+            <ox-contact-list-name :item="item"/>
         </template>
 
         <template #views.detail.edit.default="{value, saved}">
@@ -25,13 +20,15 @@ import type {IModelPanelProps} from 'ox'
 
 import { OxModelPanel } from 'ox/components'
 import { useContactList } from '../composables'
-import OxContactListEdit from './OxContactListEdit.vue'
+import OxContactListName from './OxContactListName'
+import OxContactListEdit from './OxContactListEdit'
 
 const slots = useSlots()
 
 const repos = useContactList()
 const props = withDefaults(defineProps<IModelPanelProps>(), {
     relations: ['$group', '$organisation'],
-    headers: ['name', 'group', 'is_subscription'],
+    fetchRelations: true,
+    headers: ['name', 'is_subscription'],
 })
 </script>

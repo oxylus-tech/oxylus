@@ -17,8 +17,7 @@ def create_app_groups(sender, app_config, *args, **kwargs):
     else:
         app_label = app_config.label.replace("_", " ").capitalize()
 
-    staff, _ = Group.objects.get_or_create(name=f"{app_label}: Staff")
-    viewers, _ = Group.objects.get_or_create(name=f"{app_label}: View")
+    staff, _ = Group.objects.get_or_create(name=app_label)
 
     for model in app_config.get_models():
         content_type = ContentType.objects.get_for_model(model)
@@ -26,10 +25,7 @@ def create_app_groups(sender, app_config, *args, **kwargs):
 
         for perm in perms:
             codename = perm.codename
-            if codename.startswith("view_"):
-                viewers.permissions.add(perm)
-                staff.permissions.add(perm)
-            elif codename.startswith(("add_", "change_", "delete_")):
+            if codename.startswith(("add_", "change_", "delete_")):
                 staff.permissions.add(perm)
 
     logger.info(f"Groups updated for app: {app_label}")

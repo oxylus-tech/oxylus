@@ -14,7 +14,6 @@ urls = [
     path(
         "",
         UserAppView.as_view(
-            template_name="ox/mails/app.html",
             default_panel="sendmails",
             panels=panels.panels,
         ),

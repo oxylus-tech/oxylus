@@ -30,6 +30,6 @@ const slots = useSlots()
 
 const repos = useAuthModels()
 const props = withDefaults(defineProps<IModelPanelProps>(), {
-    headers: ['id', 'name'],
+    headers: ['name'],
 })
 </script>

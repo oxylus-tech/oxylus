@@ -51,14 +51,17 @@ class OrganisationTypeSerializer(ModelSerializer):
 
 
 class ContactListSerializer(ModelSerializer):
-    organisation = RelatedField(queryset=models.Organisation.objects.all(), required=False)
+    organisation = RelatedField(queryset=models.Organisation.objects.all(), required=False, allow_null=True)
 
     class Meta:
         model = models.ContactList
         fields = "__all__"
+        extra_kwargs = {
+            "group": {"allow_null": True},
+        }
 
 
-class ContactSerializer(ModelSerializer):
+class BaseContactSerializer(ModelSerializer):
     addresses = AddressSerializer(source="address_set", many=True, required=False)
     emails = EmailSerializer(source="email_set", many=True, required=False)
     phones = PhoneSerializer(source="phone_set", many=True, required=False)
@@ -69,11 +72,11 @@ class ContactSerializer(ModelSerializer):
         fields = "__all__"
 
 
-class OrganisationSerializer(ContactSerializer):
+class OrganisationSerializer(BaseContactSerializer):
     country = RelatedField(queryset=models.Country.objects.all(), required=False)
     type = RelatedField(queryset=models.OrganisationType.objects.all(), required=False)
 
-    class Meta(ContactSerializer.Meta):
+    class Meta(BaseContactSerializer.Meta):
         model = models.Organisation
 
     def validate(self, data):
@@ -88,12 +91,12 @@ class OrganisationSerializer(ContactSerializer):
         return v_data
 
 
-class PersonSerializer(ContactSerializer):
+class PersonSerializer(BaseContactSerializer):
     organisations = RelatedField(queryset=models.Organisation.objects.all(), many=True, required=False)
     contact_lists = RelatedField(queryset=models.ContactList.objects.all(), many=True, required=False)
     email = serializers.EmailField(required=False)
 
-    class Meta(ContactSerializer.Meta):
+    class Meta(BaseContactSerializer.Meta):
         model = models.Person
         read_only_fields = ("user",)
 
@@ -106,3 +109,19 @@ class PersonSerializer(ContactSerializer):
                     {"email": _("Default email can't be changed for a contact linked to a user")}
                 )
         return v_data
+
+
+class ContactSerializer(ModelSerializer):
+    name = serializers.SerializerMethodField()
+    organisation = OrganisationSerializer(read_only=True)
+    person = PersonSerializer(read_only=True)
+
+    class Meta:
+        model = models.Contact
+        fields = ("id", "name", "email", "organisation", "person")
+
+    def get_name(self, obj):
+        if person := getattr(obj, "person", None):
+            return person.full_name
+        else:
+            return obj.organisation.name

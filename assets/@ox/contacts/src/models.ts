@@ -24,6 +24,7 @@ export class ContactList extends models.Model {
             is_subscription: this.boolean(),
 
             $organisation: this.belongsTo(Organisation, 'organisation'),
+            $group: this.belongsTo(models.Group, 'group')
         }
     }
 }
@@ -32,12 +33,12 @@ export class ContactList extends models.Model {
 /**
  * Base model for contacts.
  */
-class Contact extends models.Model {
+class BaseContact extends models.Model {
     static fields() {
         return {
             id: this.attr(null),
             name: this.string(),
-            description: this.string(),
+            email: this.string(),
 
             // Thoses values are nested and we keep them as is
             emails: this.attr([]),
@@ -48,7 +49,7 @@ class Contact extends models.Model {
 }
 
 
-export class Person extends Contact {
+export class Person extends BaseContact {
     static entity = "persons"
     static meta = new models.Meta({
         app: "ox_contacts",
@@ -61,7 +62,6 @@ export class Person extends Contact {
         return {
             ...super.fields(),
             user: this.number(),
-            email: this.string(),
             first_name: this.string(),
             last_name: this.string(),
             organisations: this.attr([]),
@@ -99,7 +99,7 @@ export class OrganisationType extends models.Model {
     }
 }
 
-export class Organisation extends Contact {
+export class Organisation extends BaseContact {
     static entity = "organisations"
     static meta = new models.Meta({
         app: "ox_contacts",
@@ -119,6 +119,31 @@ export class Organisation extends Contact {
             country: this.string(),
             $type: this.belongsTo(OrganisationType, 'type'),
             $country: this.belongsTo(Country, 'country'),
+        }
+    }
+}
+
+
+/**
+ * Model for Contact. It should never be used to write data as
+ * this is a base django concrete model class.
+ */
+export class Contact extends models.Model {
+    static entity = "contacts"
+    static meta = new models.Meta({
+        app: "ox_contacts",
+        model: "contact",
+        url: "ox/contacts/contact/",
+        title: "name",
+    })
+
+    static fields() {
+        return  {
+            id: this.attr(null),
+            name: this.string(),
+            email: this.string(),
+            person: this.attr(null),
+            organisation: this.attr(null),
         }
     }
 }

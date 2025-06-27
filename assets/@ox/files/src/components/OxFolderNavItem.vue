@@ -12,14 +12,14 @@
                 margin-right: -1rem;">
             <ox-folder-nav-item v-for="item in items" :key="item.id"
                 :item="item" :owner="props.owner"
-                @close="open()"
-                @open="emits('open', $event)"/>
+                :current-folder="props.currentFolder"
+                @close="onOpen" @open="emits('open', $event)"/>
         </div>
     </template>
     <template v-else>
         <ox-folder-nav-item v-for="item in items" :key="item.id" :item="item" :owner="props.owner"
-            @open="emits('open', $event)"
-            @close="emits('close', $event)"/>
+            :current-folder="props.currentFolder"
+            @open="onOpen" @close="emits('close', $event)"/>
     </template>
 </template>
 <style scoped>
@@ -37,8 +37,12 @@ import OxFolderNavItem from './OxFolderNavItem'
 
 
 const props = defineProps({
+    /** Folder object to be rendered */
     item: Object,
+    /** Owner id */
     owner: String,
+    /** Current opened folder */
+    currentFolder: String,
 })
 const emits = defineEmits(['open', 'close'])
 
@@ -77,13 +81,21 @@ async function load() {
     return await list.load({params})
 }
 
+function onOpen(...args) {
+    isOpen.value = true
+    emits('open', ...args)
+}
+
 watch(() => props.owner, (val, old) => {
     if(props.item || val == old)
         return
     load()
 })
 
-onMounted(() => props.owner && load())
+onMounted(() => {
+    props.owner && load()
+    props.item && props.currentFolder == props.item.id && open()
+})
 
 defineExpose({ load, items, close, open, toggle, isOpen })
 </script>

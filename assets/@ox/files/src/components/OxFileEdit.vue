@@ -8,26 +8,27 @@
         <template #default="{editor, editable, edited, save}">
             <input v-if="editor.value.id" type="hidden" name="id" :value="editor.value.id"/>
             <v-row class="mb-3">
-                <v-col cols="3" v-if="editor.value?.id && !openUpload" class="text-center">
-                    <figure class="mb-3">
-                        <v-img min-height="400" :src="editor.value.preview" aria-hidden="true">
+                <v-col cols="3" v-if="editor.value?.id && !openUpload">
+                    <figure class="mb-3 text-center">
+                        <v-img width="200" :src="editor.value.preview" aria-hidden="true">
                             <template v-slot:placeholder>
                                 <div class="d-flex align-center justify-center fill-height">
                                     <v-progress-circular
                                     color="grey-lighten-4"
                                     indeterminate/>
-                                    >
                                 </div>
                             </template>
                         </v-img>
                     </figure>
 
-                    <v-btn :href="editor.value.file" target="_blank"
-                        prepend-icon="mdi-download" :text="t('actions.download')" />
-                    <v-btn target="_blank" class="ml-1"
-                        size="small" color="secondary"
-                        @click="openUpload=true"
-                        icon="mdi-upload" :title="t('actions.files.upload.new')" />
+                    <div class="text-center">
+                        <v-btn :href="editor.value.file" target="_blank"
+                            prepend-icon="mdi-download" :text="t('actions.download')" />
+                        <v-btn target="_blank" class="ml-1"
+                            size="small" color="secondary"
+                            @click="openUpload=true"
+                            icon="mdi-upload" :title="t('actions.files.upload.new')" />
+                    </div>
                 </v-col>
                 <v-col cols="3" v-else>
                     <v-btn v-if="editor.value.id" class="float-right"
@@ -97,8 +98,9 @@ import OxFileUpload from './OxFileUpload'
 
 const repos = useFilesModels()
 const props = defineProps({
-    owner: Object,
-    folder: Object
+    owner: String,
+    folder: String,
+    initial: Object,
 })
 const attrs = useAttrs()
 

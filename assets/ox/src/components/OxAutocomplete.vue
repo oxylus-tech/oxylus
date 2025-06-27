@@ -29,6 +29,7 @@ const value: Ref<ModelId|ModelId[]> = defineModel()
 /** Search string **/
 const search: Ref<string> = ref("")
 
+
 interface IAutoCompleteProps {
     /** Model's repository */
     repo: Repository

@@ -5,7 +5,41 @@
             <ox-agent-select v-model="editor.value.owner"
                 :disabled="editor.value.id"/>
 
-            <v-expansion-panels :model-value="['smtp']">
+            <v-expansion-panels :model-value="['settings', 'smtp']">
+                <v-expansion-panel :title="t('views.edit.mail.settings')" value="settings">
+                    <template #text>
+                        <ox-field :editor="editor" name="mail_header" type="custom">
+                            <template #default="{props}">
+                                <ox-component src="../ox_content/OxRichEditor.js" v-bind="props"
+                                    height="150px"
+                                     v-model="editor.value.mail_header"/>
+                            </template>
+                        </ox-field>
+
+                        <ox-field :editor="editor" name="mail_signature" type="custom">
+                            <template #default="{props}">
+                                <ox-component src="../ox_content/OxRichEditor.js" v-bind="props"
+                                    height="150px"
+                                     v-model="editor.value.mail_signature"/>
+                            </template>
+                        </ox-field>
+
+                        <ox-field :editor="editor" name="mail_subscription_footer" type="custom">
+                            <template #default="{props}">
+                                <ox-component src="../ox_content/OxRichEditor.js" v-bind="props"
+                                    height="150px"
+                                     v-model="editor.value.mail_subscription_footer"/>
+                            </template>
+                        </ox-field>
+
+                        <!--
+                        <ox-component src="../ox_content/OxRichEditor.js"
+                            v-model="editor.value.mail_signature"/>
+
+                        <ox-component src="../ox_content/OxRichEditor.js"
+                            v-model="editor.value.mail_subscription_footer"/> -->
+                    </template>
+                </v-expansion-panel>
                 <v-expansion-panel :title="t('views.edit.smtp')" value="smtp">
                     <template #text>
                         <v-row>
@@ -33,7 +67,7 @@
 <script setup lang="ts">
 import { computed, ref, watch, onMounted, useAttrs } from 'vue'
 import { t, query, rules} from "ox"
-import {OxModelEdit, OxField} from 'ox/components'
+import {OxModelEdit, OxField, OxComponent} from 'ox/components'
 import {OxAgentSelect} from '@ox/auth/components'
 
 import {MailAccount} from '../models'

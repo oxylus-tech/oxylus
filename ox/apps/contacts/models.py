@@ -4,7 +4,7 @@ from django.contrib.auth.models import User, Group
 
 from ox.core.models import Model, InheritanceQuerySet
 from ox.apps.locations.models import Country
-from ox.utils.models import Named, Described, Colored
+from ox.utils.models import Named, Described, Colored, SaveHook
 
 
 __all__ = (
@@ -25,7 +25,7 @@ class ContactQuerySet(InheritanceQuerySet):
         return self.prefetch_related("address_set", "phone_set", "email_set")
 
 
-class ContactList(Described, Colored, Model):
+class ContactList(Described, Colored, SaveHook, Model):
     """Provide a list of contacts."""
 
     group = models.OneToOneField(
@@ -58,6 +58,14 @@ class ContactList(Described, Colored, Model):
     class Meta:
         verbose_name = _("Contact List")
         verbose_name_plural = _("Contact Lists")
+
+    def on_save(self, fields):
+        """Synchronise data with related group and organisation."""
+        if self.group:
+            self.name = self.group.name
+        elif self.organisation:
+            self.name = self.organisation.name
+            self.color = self.organisation.color
 
 
 class Contact(Model):

@@ -11,7 +11,7 @@ from encrypted_fields.fields import EncryptedCharField
 from caps.models import Owned
 from ox.utils.models import Named, Timestamped, ChildOwned
 from ox.apps.content.models import RichTextField
-from ox.apps.contacts.models import Person
+from ox.apps.contacts.models import Contact, ContactList
 from ox.apps.files.models import File
 
 
@@ -38,6 +38,22 @@ class MailAccount(Named, Owned):
         NONE = 0x00, _("NONE")
         TLS = 0x01, "TLS"
         SSL = 0x02, "SSL"
+
+    mail_header = RichTextField(
+        _("Mail Header"),
+        help_text=_("Emails' header at the top of all mails"),
+        blank=True,
+        null=True,
+    )
+    mail_signature = RichTextField(
+        _("Signature"), help_text=_("Email signature appent to all mails' content"), blank=True, null=True
+    )
+    mail_subscription_footer = RichTextField(
+        _("Subscription Footer"),
+        help_text=_("Footer appent below mails send to contacts of subscription contact lists."),
+        blank=True,
+        null=True,
+    )
 
     # SMTP Configuration
     smtp_host = models.CharField(_("Host (SMTP)"), max_length=255)
@@ -77,7 +93,8 @@ class SendMail(Timestamped, ChildOwned):
     )
     state = models.PositiveSmallIntegerField(_("State"), choices=State.choices, default=State.DRAFT)
 
-    contacts = models.ManyToManyField(Person, verbose_name=_("Recipients"))
+    contacts = models.ManyToManyField(Contact, verbose_name=_("Contacts"))
+    contact_lists = models.ManyToManyField(ContactList, verbose_name=_("Contact Lists"))
     context = models.JSONField(_("Context"), default=dict)
     subject = models.TextField(_("Subject"), default="", help_text=_("When provided, overrides template's content"))
     content = RichTextField(_("Message"), default="", help_text=_("When provided, overrides template's content."))

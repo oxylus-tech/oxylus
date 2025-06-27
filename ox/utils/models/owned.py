@@ -37,3 +37,5 @@ class ChildOwned(Owned, SaveHook):
         if parent and parent.owner_id != self.owner_id:
             model_name = type(self)._meta.verbose_name.lower()
             raise PermissionDenied(f"Owner of this {model_name} should be the same as its parent")
+
+        super().on_save(fields)

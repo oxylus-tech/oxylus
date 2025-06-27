@@ -38,6 +38,8 @@ class RichTextFieldMixin:
         super().__init__(*args, **kwargs)
 
     def clean(self, value):
+        if value is None:
+            return value
         return bleach.clean(
             value,
             tags=self.allowed_tags,

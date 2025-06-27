@@ -4,12 +4,12 @@
         v-model="value"
         v-bind="attrs"
         >
-        <template #selection="{ item, index }">
+        <template #selection="{ item }">
             <span class="mr-2">{{ item.raw.flag }}</span>
             {{ item.raw.name }}
         </template>
-        <template #item="{ props: itemProps, item }">
-            <v-list-item v-bind="itemProps">
+        <template #item="{ props, item }">
+            <v-list-item v-bind="props">
                 <template #prepend>
                     <span class="mr-2">{{ item.raw.flag }} </span>
                 </template>

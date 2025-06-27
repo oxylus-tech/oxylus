@@ -74,11 +74,11 @@
                         :aria-label="t('panels.nav.table')">
                     <v-icon>mdi-table</v-icon>
                 </v-btn>
-                <v-btn value="list.cards" v-if="slots['views.list.cards']"
+                <v-btn value="list.cards"
                         @click.capture.stop="panel.show({view: 'list.cards'})"
                         :title="t('panels.nav.cards')"
                         :aria-label="t('panels.nav.cards')">
-                    <v-icon>mdi-card-account-details</v-icon>
+                    <v-icon>mdi-view-grid</v-icon>
                 </v-btn>
                 <v-btn value="list.kanban" v-if="slots['views.list.kanban']"
                         @click.capture.stop="panel.show({view: 'list.kanban'})"
@@ -121,11 +121,20 @@
 
         <!-- list.table is always provided -->
         <template #views.list.table v-if="!slots['views.list.table']">
-            <ox-list-table :headers="headers" :edit="hasEdit">
+            <ox-list-table :list="list" :items="items" :headers="headers" :edit="hasEdit">
                 <template v-for="(_, name) in itemSlots" v-slot:[name]="bind" :key="name">
                     <slot :name="name" v-bind="bind"/>
                 </template>
             </ox-list-table>
+        </template>
+
+        <template #views.list.cards v-if="!slots['views.list.cards']">
+            <ox-list-card :list="list" :items="items" :edit="hasEdit"
+                    :headers="props.headers">
+                <template v-for="(_, name) in itemSlots" v-slot:[name]="bind" :key="name">
+                    <slot :name="name" v-bind="bind"/>
+                </template>
+            </ox-list-card>
         </template>
 
         <template v-for="(name, slot) in viewsListSlots" v-slot:[slot]>
@@ -146,12 +155,13 @@
 import { computed, defineProps, defineExpose, inject, useTemplateRef, useSlots, toRefs, withDefaults, watch } from 'vue'
 import { Teleport } from 'vue'
 
-import OxAction from './OxAction.vue'
-import OxListFilters from './OxListFilters.vue'
-import OxListTable from './OxListTable.vue'
-import OxPanel from './OxPanel.vue'
+import OxAction from './OxAction'
+import OxListFilters from './OxListFilters'
+import OxListTable from './OxListTable'
+import OxListCard from './OxListCard'
+import OxPanel from './OxPanel'
 import OxView from './OxView'
-import OxModelEdit from './OxModelEdit.vue'
+import OxModelEdit from './OxModelEdit'
 
 import {t, filterSlots, useModelPanel} from 'ox'
 import type {IModelPanelProps} from '../controllers'

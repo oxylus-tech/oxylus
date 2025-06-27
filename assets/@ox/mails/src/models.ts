@@ -22,11 +22,18 @@ export class MailAccount extends Owned {
         return {
             ...super.fields(),
             name: this.string(),
+            mail_header: this.string(),
+            mail_signature: this.string(),
+            mail_subscription_footer: this.string(),
+
+            // ---- smtp
             smtp_host: this.string(),
             smtp_port: this.number(587),
             smtp_username: this.string(),
             smtp_password: this.string(),
             smtp_encryption: this.number(),
+
+            // ---- imap
             imap_host: this.string(),
             imap_port: this.number(),
             imap_username: this.string(),
@@ -61,6 +68,7 @@ export class SendMail extends Owned {
             template: this.string(),
             is_template: this.boolean(),
             contacts: this.attr(null),
+            contact_lists: this.attr(null),
             state: this.number(),
             updated: this.string(),
             created: this.string(),

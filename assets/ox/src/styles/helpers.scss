@@ -11,7 +11,7 @@
 
 .flex-row { display: flex; flex-direction: row; }
 .flex-column { display: flex; flex-direction: column; }
-.justify-right { justify-content: right }
+.justify-right { justify-content: right !important }
 
 .al-center { align: center }
 .als-flex-end { align-self: flex-end }
