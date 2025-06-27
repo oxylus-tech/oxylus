@@ -24,9 +24,9 @@
 
         <template #prepend="{list, panel}">
             <ox-folder-drawer
+                :show="panel.view.startsWith('list.')"
                 v-model="list.filters.folder__uuid"
                 v-model:owner="list.filters.owner__uuid"
-                :show="panel.view.startsWith('list.')"
                 />
         </template>
 
