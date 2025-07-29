@@ -8,8 +8,9 @@ from ox.utils.models import Named, Described, Colored, SaveHook
 
 
 __all__ = (
-    "Contact",
     "ContactQuerySet",
+    "Contact",
+    "ContactList",
     "Person",
     "Organisation",
     "OrganisationType",
@@ -63,6 +64,10 @@ class ContactList(Described, Colored, SaveHook, Model):
         """Synchronise data with related group and organisation."""
         if self.group:
             self.name = self.group.name
+
+            if self.organisation:
+                raise ValueError("Organisation can't be set when group is set.")
+
         elif self.organisation:
             self.name = self.organisation.name
             self.color = self.organisation.color

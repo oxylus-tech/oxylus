@@ -34,9 +34,23 @@ class MailSend:
 
         The keys will be: ``subject``, ``header``, ``content``, ``signature``, ``footer``.
         """
+        subscription = self.account.mail_subscription_footer
+        if subscription:
+            subscription = f"{{% if is_subscription %}}{subscription}{{% endif %}}"
+
         return {
             "subject": Template(self.mail.get_subject()),
-            "content": Template(self.mail.get_content()),
+            "content": Template(
+                "<br><br>".join(
+                    v
+                    for v in (
+                        self.mail.get_content(),
+                        self.account.mail_signature,
+                        subscription,
+                    )
+                    if v
+                )
+            ),
         }
 
     def send(self, context: dict[str, Any] = {}):
@@ -102,8 +116,7 @@ class MailSend:
         :param contact: target contact
         :param context: extra context
         """
-        context = self.mail.get_context(contact=contact, **context)
-        content = self.templates["content"].render(context)
+        content = self.get_content(contact, context)
         content_text = self._strip_re_1.sub(" ", strip_tags(content))
         content_text = self._strip_re_2.sub("\n", content_text).strip()
 
@@ -116,6 +129,11 @@ class MailSend:
 
         self.add_attachments(msg, self.mail.attachments.all())
         return msg
+
+    def get_content(self, contact: Contact, context: dict[str, Any]) -> str:
+        """Render content to HTML and return."""
+        context = self.mail.get_context(contact=contact, **context)
+        return self.templates["content"].render(context)
 
     _strip_re_1 = re.compile("[ \t]+")
     _strip_re_2 = re.compile("\n ")

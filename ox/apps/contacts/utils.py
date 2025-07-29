@@ -1,24 +1,37 @@
-from typing import Iterable
+from collections import defaultdict
 
 from django.apps.registry import Apps
+from django.db.models import Q
 
 from ox.utils.models import get_model, get_models
 
 # used only for type hints, because thoses functions are used in migrations.
-from django.contrib.auth.models import Group, User
+from django.contrib.auth.models import Group
 from .models import ContactList, Organisation, Person
 
 
-# ---- Users
-def sync_user_contacts(apps: Apps | None = None, alias: str = "default"):
-    """Ensure all users have related contact."""
+__all__ = (
+    "sync_user_contacts",
+    "get_or_create_contact_list_for_group",
+    "get_or_create_contact_list_for_org",
+    "ContactListSynchronizer",
+)
+
+
+def sync_user_contacts(apps: Apps | None = None, alias: str = "default") -> list[Person]:
+    """Ensure all users have related contact.
+
+    :return The created users.
+    """
     User, Person = get_models(["auth.user", "ox_contacts.person"], apps)
+    return Person.objects.using(alias).bulk_create(
+        [
+            Person(user=user, first_name=user.first_name, last_name=user.last_name, email=user.email)
+            for user in User.objects.using(alias).filter(contact__isnull=True)
+        ]
+    )
 
-    for user in User.objects.using(alias).filter(contact__isnull=True):
-        Person(user=user, first_name=user.first_name, last_name=user.last_name, email=user.email).save(using=alias)
 
-
-# ---- Groups
 def get_or_create_contact_list_for_group(group: Group, apps: Apps | None = None, alias: str = "default") -> ContactList:
     """Return contact list for the provided group, creating if required."""
     ContactList = get_model("ox_contacts.ContactList")
@@ -27,70 +40,6 @@ def get_or_create_contact_list_for_group(group: Group, apps: Apps | None = None,
     return contact_list
 
 
-def sync_group_contact_list(group: Group, apps: Apps | None = None, alias: str = "default") -> ContactList:
-    """Synchronize contact list for a single group"""
-    Person = get_model("ox_contacts.person", apps)
-
-    contact_list = get_or_create_contact_list_for_group(group)
-    users = group.user_set.all()
-    people = Person.objects.using(alias).filter(user__in=users)
-    contact_list.contacts.set(people)
-    return contact_list
-
-
-def sync_groups_contact_list(
-    groups: Iterable[Group] | None = None, apps: Apps | None = None, alias: str = "default"
-) -> list[ContactList]:
-    """Ensure all groups have a related ContactList."""
-    Group, ContactList = get_models(["auth.group", "ox_contacts.contactlist"], apps)
-
-    if groups:
-        in_db = ContactList.objects.using(alias).filter(group__in=groups)
-    else:
-        groups = Group.objects.using(alias).all()
-        in_db = ContactList.objects.using(alias).exclude(group=None)
-
-    in_db = in_db.values_list("organisation_id")
-    return ContactList.objects.using(alias).bulk_create(
-        [ContactList(name=item.name, group=item) for item in Group.objects.using(alias).exclude(id__in=in_db)]
-    )
-
-
-def sync_groups_persons_contact_list(
-    items: Iterable[Group] | None = None, user: User | None = None, apps: Apps | None = None, alias: str = "default"
-):
-    """Ensure all group's users have the related ContactList.
-
-    :param groups: if provided restrict to thoses groups
-    :param user: if provided restrict to this user's groups
-    """
-    Group, ContactList, Person = get_models(["auth.group", "ox_contacts.contactlist", "ox_contacts.person"], apps)
-
-    sync_groups_contact_list(items)
-
-    if user and not items:
-        items = user.groups.all()
-
-    if items:
-        lists = ContactList.objects.using(alias).filter(group__in=items)
-        rows = Group.user_set.through.objects.using(alias).filter(group__in=items)
-    else:
-        lists = ContactList.objects.using(alias).exclude(group=None)
-        rows = Group.user_set.through.objects.using(alias).all()
-
-    if user:
-        rows = rows.filter(user_id=user.id)
-
-    by_id = dict(lists.values_list("group_id", "id"))
-    through = Person.contact_lists.through
-    items = [
-        through(contact_id=contact_id, contactlist_id=by_id.get(group_id))
-        for contact_id, group_id in rows.values_list("user__contact", "group_id")
-    ]
-    through.objects.using(alias).bulk_create(items, ignore_conflicts=True)
-
-
-# ---- Organisations
 def get_or_create_contact_list_for_org(
     org: Organisation, apps: Apps | None = None, alias: str = "default"
 ) -> ContactList:
@@ -102,71 +51,115 @@ def get_or_create_contact_list_for_org(
     return contact_list
 
 
-def sync_org_contact_list(org: Organisation, apps: Apps | None = None, alias: str = "default") -> ContactList:
-    """Synchronize contact list for a single organisation"""
-    Person = get_model("ox_contacts.person", apps)
-
-    contact_list = get_or_create_contact_list_for_org(org)
-    persons = Person.objects.using(alias).filter(organisations=org).distinct()
-    contact_list.contacts.set(persons)
-    return contact_list
-
-
-def sync_orgs_contact_list(
-    organisations: Iterable[Organisation] | None = None, apps: Apps | None = None, alias: str = "default"
-) -> list[ContactList]:
-    """Ensure all organisations have a related ContactList."""
-    ContactList, Organisation = get_models(["ox_contacts.contactlist", "ox_contacts.organisation"], apps)
-
-    if organisations:
-        in_db = ContactList.objects.using(alias).filter(organisation__in=organisations)
-    else:
-        organisations = Organisation.objects.using(alias).all()
-        in_db = ContactList.objects.using(alias).exclude(organisation=None)
-
-    in_db = in_db.values_list("organisation_id")
-    return ContactList.objects.using(alias).bulk_create(
-        [
-            ContactList(name=item.name, color=item.color, organisation=item)
-            for item in Organisation.objects.using(alias).exclude(id__in=in_db)
-        ]
-    )
-
-
-def sync_orgs_persons_contact_list(
-    items: Iterable[Organisation] | None = None,
-    person: Person | None = None,
-    apps: Apps | None = None,
-    alias: str = "default",
-):
-    """Ensure all organisation's users have the related ContactList.
-
-    :param organisations: if provided restrict to thoses organisations
-    :param user: if provided restrict to this user's organisations
+class ContactListSynchronizer:
     """
-    ContactList, Organisation, Person = get_models(
-        ["ox_contacts.contactlist", "ox_contacts.organisation", "ox_contacts.person"], apps
-    )
-    # TODO: make it generic
-    sync_orgs_contact_list(items)
+    Synchronize Person instance's ContactList based on group and organisations.
+    """
 
-    if person and not items:
-        items = person.organisations.all()
+    def __init__(self, persons: list[Person] = [], apps=None, alias="default"):
+        """
+        :params persons: if not provided, run over all persons
+        :param apps: Apps registry (used by migrations)
+        :param alias: database alias (used by migrations)
+        """
+        self.ContactList = get_model("ox_contacts.ContactList", apps)
+        self.Organisation = get_model("ox_contacts.Organisation", apps)
+        self.Person = get_model("ox_contacts.Person", apps)
+        self.Group = get_model("auth.Group", apps)
+        self.User = get_model("auth.User", apps)
 
-    if items:
-        lists = ContactList.objects.using(alias).filter(organisation__in=items)
-        rows = Organisation.persons.through.objects.using(alias).filter(organisation__in=items)
-    else:
-        lists = ContactList.objects.using(alias).exclude(organisation=None)
-        rows = Organisation.persons.through.objects.using(alias).all()
+        self.persons = persons or self.Person.objects.using(alias).all()
+        self.alias = alias
 
-    if person:
-        rows = rows.filter(person_id=person.id)
+        self.person_map = {p.id: p for p in self.persons}
+        self.group_map = defaultdict(set)  # user_id -> set(Group)
+        self.organisation_map = defaultdict(set)  # person_id -> set(Organisation)
 
-    by_id = dict(lists.values_list("organisation_id", "id"))
-    through = Person.contact_lists.through
-    items = [
-        through(contact_id=person_id, contactlist_id=by_id.get(organisation_id))
-        for person_id, organisation_id in rows.values_list("person_id", "organisation_id")
-    ]
-    through.objects.using(alias).bulk_create(items, ignore_conflicts=True)
+        self._populate_groups()
+        self._populate_organisations()
+
+    def _populate_groups(self):
+        user_ids = [p.user_id for p in self.persons]
+
+        group_qs = (
+            self.Group.objects.using(self.alias).filter(user__id__in=user_ids).distinct().prefetch_related("user_set")
+        )
+
+        for group in group_qs:
+            for user in group.user_set.all():
+                self.group_map[user.id].add(group)
+
+    def _populate_organisations(self):
+        person_ids = [p.id for p in self.persons]
+        through = self.Person.organisations.through
+        org_links = (
+            through.objects.using(self.alias)
+            .filter(person_id__in=person_ids)
+            .values_list("person_id", "organisation_id")
+        )
+
+        organisation_ids = {oid for _, oid in org_links}
+        org_map = {org.id: org for org in self.Organisation.objects.using(self.alias).filter(id__in=organisation_ids)}
+
+        for person_id, org_id in org_links:
+            if org_id in org_map:
+                self.organisation_map[person_id].add(org_map[org_id])
+
+    def sync(self):
+        """Synchronize over all persons."""
+        self.ensure_contact_lists()
+        for person in self.persons:
+            self.sync_one(person)
+
+    def sync_one(self, person: Person):
+        """Synchronize a single person."""
+        groups = self.group_map.get(person.user_id, set())
+        orgs = self.organisation_map.get(person.id, set())
+
+        valid_lists = self.eligible_lists_for(groups, orgs)
+        current_lists = set(person.contact_lists.all())
+
+        to_add = valid_lists - current_lists
+        to_remove = current_lists - valid_lists
+
+        if to_add:
+            person.contact_lists.add(*to_add)
+        if to_remove:
+            person.contact_lists.remove(*to_remove)
+
+    def ensure_contact_lists(self):
+        """Ensure contact lists are created for groups and organisations."""
+        self.ensure_group_contact_lists()
+        self.ensure_organisation_contact_lists()
+
+    def ensure_group_contact_lists(self):
+        """Ensure contact lists for groups are created."""
+        all_groups = {g for groups in self.group_map.values() for g in groups}
+
+        existing_group_ids = set(
+            self.ContactList.objects.using(self.alias)
+            .filter(group__in=all_groups, organisation__isnull=True)
+            .values_list("group_id", flat=True)
+        )
+        self.ContactList.objects.using(self.alias).bulk_create(
+            self.ContactList(name=group.name, group=group) for group in all_groups if group.id not in existing_group_ids
+        )
+
+    def ensure_organisation_contact_lists(self):
+        """Ensure contact lists for organisations are created."""
+        all_orgs = {o for orgs in self.organisation_map.values() for o in orgs}
+        existing_org_ids = set(
+            self.ContactList.objects.using(self.alias)
+            .filter(organisation__in=all_orgs, group__isnull=True)
+            .values_list("organisation_id", flat=True)
+        )
+        self.ContactList.objects.using(self.alias).bulk_create(
+            self.ContactList(name=org.name, organisation=org) for org in all_orgs if org.id not in existing_org_ids
+        )
+
+    def eligible_lists_for(self, groups, orgs):
+        return set(
+            self.ContactList.objects.using(self.alias)
+            .filter(Q(group__in=groups, organisation__isnull=True) | Q(organisation__in=orgs, group__isnull=True))
+            .distinct()
+        )

@@ -57,3 +57,8 @@ class OrganisationAdmin(ContactAdmin):
 @admin.register(models.Person)
 class PersonAdmin(ContactAdmin):
     pass
+
+
+@admin.register(models.ContactList)
+class ContactListAdmin(admin.ModelAdmin):
+    list_display = ("name", "group", "organisation", "is_subscription")

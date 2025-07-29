@@ -91,8 +91,3 @@ class TemplatePack(PackageInfo):
         This typically takes the format of ``app_label.model_name`` (lower cased).
         """
         return cls.source_dir or cls._meta.label_lower
-
-    def save(self, *args, update_fields=None, **kwargs):
-        if not update_fields or "is_active" in update_fields:
-            type(self).objects.filter(is_active=True).update(is_active=False)
-        super().save(*args, update_fields=update_fields, **kwargs)

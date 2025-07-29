@@ -33,14 +33,16 @@ class MailAccountSerializer(OwnedSerializer):
 class SendMailSerializer(OwnedSerializer):
     account = RelatedField(queryset=models.MailAccount.objects.all(), allow_null=True, required=False)
     template = RelatedField(queryset=models.SendMail.objects.filter(is_template=True), allow_null=True, required=False)
-    contacts = RelatedField(many=True, queryset=models.Contact.objects.all())
+    contacts = RelatedField(many=True, queryset=models.Contact.objects.all(), allow_null=True)
+    contact_lists = RelatedField(many=True, queryset=models.ContactList.objects.all(), allow_null=True)
     subject = StripCharField()
-    content = RichTextField()
+    content = RichTextField(allow_null=True)
 
     # TODO: filter owner
-    attachments = RelatedField(many=True, queryset=File.objects.all())
+    attachments = RelatedField(many=True, queryset=File.objects.all(), allow_null=True)
 
     class Meta:
         model = models.SendMail
         fields = "__all__"
-        read_only_fields = ("status",)
+        read_only_fields = ("state",)
+        extra_kwargs = {"is_template": {"allow_null": True}}

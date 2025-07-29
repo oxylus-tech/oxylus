@@ -11,12 +11,7 @@ from ox.apps.contacts import utils
 
 def forward_sync(apps, schema_editor):
     utils.sync_user_contacts(apps, schema_editor.connection.alias)
-
-    utils.sync_groups_contact_list(apps=apps, alias=schema_editor.connection.alias)
-    utils.sync_groups_persons_contact_list(apps=apps, alias=schema_editor.connection.alias)
-
-    utils.sync_orgs_contact_list(apps=apps, alias=schema_editor.connection.alias)
-    utils.sync_orgs_persons_contact_list(apps=apps, alias=schema_editor.connection.alias)
+    utils.ContactListSynchronizer().sync()
 
 
 def backward_sync(apps, schema_editor):

@@ -49,15 +49,15 @@ def on_user_update_sync_contact(sender, instance, *args, **kwargs):
 
 
 @receiver(m2m_changed, sender=User.groups.through)
-def on_user_group_changed(sender, instance: Group, action, **kwargs):
+def on_user_group_changed(sender, instance: User, action, **kwargs):
     if action in ("post_add", "post_remove", "post_clear"):
-        utils.sync_groups_persons_contact_list(instance.groups.all(), instance)
+        utils.ContactListSynchronizer([instance.contact]).sync()
 
 
-@receiver(m2m_changed, sender=User.groups.through)
-def on_person_organisation_changed(sender, instance: Group, action, **kwargs):
+@receiver(m2m_changed, sender=Person.organisations.through)
+def on_person_organisation_changed(sender, instance: Organisation, action, **kwargs):
     if action in ("post_add", "post_remove", "post_clear"):
-        utils.sync_groups_persons_contact_list(instance.groups.all(), instance)
+        utils.ContactListSynchronizer([instance]).sync()
 
 
 # @receiver(m2m_changed, sender=Person.organisations.through)
