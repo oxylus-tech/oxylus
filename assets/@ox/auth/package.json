@@ -7,7 +7,11 @@
     "dev": "pnpm exec vite",
     "build": "pnpm exec vite build",
     "watch": "pnpm exec vite build --watch",
-    "preview": "pnpm exec vite preview"
+    "preview": "pnpm exec vite preview",
+    "test": "pnpm exec vitest",
+    "coverage": "pnpm exec vitest run --coverage",
+    "docs:vue": "pnpm exec vuedoc-md src/components --out ../docs/vue",
+    "docs:ts": "pnpm exec typedoc --out ../docs/ts --tsconfig tsconfig.json src"
   },
   "exports": {
     "./components": "./src/components/index.ts",

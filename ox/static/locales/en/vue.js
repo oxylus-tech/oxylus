@@ -63,6 +63,7 @@ window.__i18n_messages = { ...window.__i18n_messages, ...{
     "fields.iban.too_short": "IBAN too short",
     "fields.iban.help": "Example for {name}: \"{sample}\"",
     "fields.iban.country_without_iban": "The detected country {name} might not support IBAN.",
+    "fields.vat.rule": "Please provide a valid VAT number.",
 
     // ---- @ox/contacts
     "labels.phone.call": "Call this number",

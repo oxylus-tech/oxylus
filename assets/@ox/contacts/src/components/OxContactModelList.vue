@@ -11,7 +11,7 @@
                 @click="add()"/>
         </v-col>
     </v-row>
-    <ox-model-list ref="modelList" :repo="repos.contacts"
+    <ox-model-list ref="modelList" :repo="repos.contacts" class="grid"
             v-bind="attrs" v-model="ids" editable>
         <template #item="{item}">
             <v-list-item-title>

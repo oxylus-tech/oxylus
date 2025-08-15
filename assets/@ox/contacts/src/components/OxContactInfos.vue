@@ -23,7 +23,7 @@
                 :editable="props.editable"/>
         </template>
     </v-expansion-panel>
-    <v-expansion-panel :title="t('models.bankAccount', 2)"
+    <v-expansion-panel :title="t('models.bankaccount', 2)"
             v-if="user.can('ox_contacts.view_bankaccount')">
         <template #text>
             <ox-bank-account-form-list v-model="value.addresses"

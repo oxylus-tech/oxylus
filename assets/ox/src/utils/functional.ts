@@ -29,7 +29,7 @@ export function collectAttr(objs: Record<string, any>[], attr: string): Set<any>
     let dest : Set<any> = new Set()
     for(const obj of objs) {
         const vals = obj[attr]
-        if(vals) {
+        if(vals !== undefined) {
             if(Array.isArray(vals))
                 dest = dest.union(new Set(vals))
             else
