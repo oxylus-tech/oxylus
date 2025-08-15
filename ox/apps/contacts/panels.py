@@ -9,7 +9,7 @@ panels = Panels(
         Panel(
             "persons",
             _("Persons"),
-            "mdi-card-account-mail",
+            "mdi-card-account-details",
             "ox-person-panel",
             url="ox_contacts:index",
             order=0,

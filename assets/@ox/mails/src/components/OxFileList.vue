@@ -78,7 +78,7 @@ const totalSize = computed(
 
 function onSelect(selected) {
     const vals = selected.map(v => v.id)
-    list.setIds(vals, true)
+    list.update(vals, true)
     ids.value = [...list.ids]
     showSelect.value = false
 }

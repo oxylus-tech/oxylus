@@ -22,6 +22,8 @@ export class ContactList extends models.Model {
             group: this.number(),
             organisation: this.string(),
             is_subscription: this.boolean(),
+            contacts: this.attr([]),
+            contact_count: this.number(),
 
             $organisation: this.belongsTo(Organisation, 'organisation'),
             $group: this.belongsTo(models.Group, 'group')

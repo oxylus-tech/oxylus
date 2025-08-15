@@ -25,6 +25,8 @@ Bugs
         - update/load edit view on existing item
         - then create a new item: save button is disabled
 
+- Confirmation before leaving edited content does not work
+
 
 Technical documentation
 =======================

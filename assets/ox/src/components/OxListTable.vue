@@ -49,7 +49,7 @@ Slots:
 
 - *: forwarded down to `v-data-table`
 
- */
+*/
 
 import { computed, defineProps, inject, ref, toRefs, useSlots } from 'vue'
 

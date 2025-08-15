@@ -1,4 +1,5 @@
-
+import {isEqual} from 'lodash'
+import {toRaw, type Reactive} from 'vue'
 
 // TODO: remove in favor of TS' Record
 /**
@@ -145,4 +146,24 @@ export function excludeValues(source: Record<string, any>, keys: string[]) {
             dst[key] = source[key]
         return dst
     }, {})
+}
+
+/**
+ * Execute the provided function if the values ar not equal (using lodash's `isEqual`).
+ *
+ * Ensure that values are `toRaw` (vue).
+ */
+export function ifNotEqual(a: any|Reactive<any>, b: any[]|Reactive<any>, func: (a,b) => void) {
+    a = toRaw(a)
+    b = toRaw(b)
+    if(!isEqual(a, b))
+        func(a, b)
+}
+
+/**
+ * Same as {@link ifNotEqual}, except that at returns an arrow function instead of executing the
+ * code directly.
+ */
+export function ifNotEqualFn<T extends any|Reactive<any>>(func: (a: T, b: T) => void): (a: T, b: T) => void {
+    return (a, b) => ifNotEqual(a, b, func)
 }

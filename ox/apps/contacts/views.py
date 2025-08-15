@@ -1,3 +1,4 @@
+from django.db.models import Count
 from rest_framework.permissions import DjangoModelPermissionsOrAnonReadOnly
 
 from ox.core.views import ModelViewSet
@@ -12,7 +13,7 @@ __all__ = (
 
 
 class ContactListViewSet(ModelViewSet):
-    queryset = models.ContactList.objects.all().order_by("-id")
+    queryset = models.ContactList.objects.all().annotate(contact_count=Count("contacts", distinct=True)).order_by("-id")
     serializer_class = serializers.ContactListSerializer
     filterset_fields = {
         **ModelViewSet.filterset_fields,
@@ -21,6 +22,7 @@ class ContactListViewSet(ModelViewSet):
     search_fields = [
         "name",
     ]
+    ordering_fields = ["name", "contact_count", "is_subscription"]
 
 
 class OrganisationTypeViewSet(ModelViewSet):

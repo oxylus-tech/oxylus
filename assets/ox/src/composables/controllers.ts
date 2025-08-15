@@ -1,13 +1,12 @@
 import {
     computed, inject, isRef, toRefs, unref, watch,
-    onMounted, onUnmounted, provide, reactive, toRaw
+    onMounted, onUnmounted, provide, reactive
 } from 'vue'
-import { isEqual } from 'lodash'
 
 import type {ComputedRef, Reactive, Ref, WatchHandle} from 'vue'
 import type {Repository} from 'pinia-orm'
 
-import {State} from '../utils'
+import {State, ifNotEqualFn} from '../utils'
 import type {Repos, Model} from '../models'
 
 import {
@@ -112,7 +111,19 @@ export function useModelPanel<M extends Model, P extends IModelPanelProps<M>>(
 
 
 //---- Controllers
-/** Create a new {@link List} and provide it as `list`. */
+/**
+ * Create a new {@link ModelList} and provide it as `list`.
+ *
+ * A ModelList only stores the ids of the items, though loading will add them to the
+ * repo. In order to keep memory usage low, we use an acquire-release mechanism which
+ * will release items from repos that are no longer use by any list.
+ *
+ * The returned object will have:
+ * - `list`: the ModelList instance;
+ * - `items`: a computed values based on list's ids;
+ * - `listId`: the list id used to track items acquisition and release;
+ *
+ */
 export function useModelList<M extends Model>(options : IModelList<M>, cls: typeof ModelList = ModelList)
 {
     const list = reactive(new cls(options))
@@ -126,10 +137,10 @@ export function useModelList<M extends Model>(options : IModelList<M>, cls: type
     const items = computed(() => list.length ? list.queryset(list.ids).orderBy(id => list.ids.indexOf(id)).get() : [])
 
     // release - acquire refs
-    watch(() => list.ids, (val, old) => {
-        if(!isEqual(toRaw(val), toRaw(old)))
-            list.repo.refs.releaseAcquire(listId, old, val)
-    })
+    watch(
+        () => list.ids,
+        ifNotEqualFn((val, old) => list.repo.refs.releaseAcquire(listId, old, val))
+    )
     onUnmounted(() => list.repo.refs.flush(listId))
 
     provide('list', list)

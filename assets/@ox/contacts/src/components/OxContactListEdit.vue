@@ -19,17 +19,7 @@
             <v-expansion-panels v-if="attrs.initial.id" multiple :modelValue="['contacts']">
                 <v-expansion-panel :title="t('models.contact', 2)" value="contacts" >
                     <template #text>
-                        <v-row>
-                            <v-col>
-                                <ox-contact-input v-bind="props" multiple density="compact" hide-details/>
-                            </v-col>
-                            <v-col cols="2">
-                                <v-btn icon="mdi-plus" size="x-small"
-                                    :title="t('actions.add')"
-                                    :aria-label="t('actions.add')"
-                                    @click=""/>
-                            </v-col>
-                        </v-row>
+                        <ox-contact-model-list v-model="editor.value.contacts" />
                     </template>
                 </v-expansion-panel>
             </v-expansion-panels>
@@ -40,11 +30,11 @@
 import {inject, useAttrs, watch, onMounted} from 'vue'
 
 import {query, t, useModelList} from 'ox'
-import {OxAutocomplete, OxModelEdit, OxField, OxListTable} from 'ox/components'
+import {OxModelEdit, OxField} from 'ox/components'
 
 import {useContactList} from '../composables'
-import OxContactInput from './OxContactInput'
 import OxContactListName from './OxContactListName'
+import OxContactModelList from './OxContactModelList'
 
 const repos = useContactList()
 const user = inject('user')

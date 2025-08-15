@@ -1,15 +1,10 @@
 <template>
-    <ox-autocomplete :repo="repos.contacts"
+    <ox-autocomplete ref="input" :repo="repos.contacts"
         item-value="id" item-title="name"
         lookup="search" v-model="value" v-bind="attrs"
         >
         <template #selection="{ item }">
-            <v-chip v-if="item.raw.person" prepend-icon="mdi-card-account-details" color="info">
-                {{ item.raw.name }}
-            </v-chip>
-            <v-chip v-else prepend-icon="mdi-domain" :color="item.raw.organisation.color || 'info'">
-                {{ item.raw.name }}
-            </v-chip>
+            <ox-contact-name :item="item.raw"/>
         </template>
 
         <template #item="{ props, item }">
@@ -28,13 +23,19 @@
     </ox-autocomplete>
 </template>
 <script setup lang="ts">
-import {useAttrs, useSlots, defineModel} from 'vue'
+import {defineExpose, ref, useAttrs, useSlots, defineModel} from 'vue'
 import {useModels} from 'ox'
 import {OxAutocomplete} from 'ox/components'
 import {Contact} from '../models'
+import OxContactName from './OxContactName'
 
 const slots = useSlots()
 const attrs = useAttrs()
 const value = defineModel()
 const repos = useModels([Contact])
+const input = ref(null)
+
+defineExpose({
+    get selected() { return input.value?.selected }
+})
 </script>
