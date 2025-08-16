@@ -1,7 +1,7 @@
 <template>
     <ox-state-alert v-if="modelEditor?.editor" :state="modelEditor.editor.state"/>
     <v-container class="ox-model-edit">
-        <ox-model-editor ref="modelEditor" v-bind="props">
+        <ox-model-editor ref="modelEditor" v-bind="modelEditorProps">
             <template #prepend="bind">
                 <div v-if="!props.hideValidationBtn">
                     <slot name="prepend" v-bind="bind" :save="save" :reset="reset">
@@ -31,7 +31,7 @@
  * for validation ({@link OxValidationBtn}) and an alert.
  *
  */
-import { defineExpose, defineEmits, watch, ref, onMounted } from 'vue'
+import { computed, defineExpose, defineEmits, watch, ref, onMounted } from 'vue'
 import type { State } from 'ox'
 import { t, useModelEditor } from 'ox'
 
@@ -54,6 +54,10 @@ interface IModelEdit extends IModelEditorProps {
 const emits = defineEmits('saved')
 const props = defineProps<IModelEdit>()
 const modelEditor = ref(null)
+const modelEditorProps = computed(() => {
+    const {sendFormData, hideValidationBtn, ...vals} = props
+    return vals
+})
 
 /**
  * Reset editor to initial values (provided by component's props).

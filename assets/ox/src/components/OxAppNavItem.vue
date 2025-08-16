@@ -42,6 +42,8 @@ interface INavItemProps extends IPanelInfo {
     type?: string,
     /** Nested items */
     items?: Record<string, INavItemProps>[]
+    // Unused but avoids warnings
+    order: number
 }
 
 const props = defineProps<INavItemProps>()

@@ -1,3 +1,4 @@
+@use "vuetify/lib/styles/settings/_variables" as *;
 
 .text-left { text-align: left; }
 .text-center { text-align: center; }
@@ -29,3 +30,18 @@
 .text-success { color: rgb(var(--theme-success)) }
 .text-error { color: rgb(var(--theme-error)) }
 .text-warning { color: rgb(var(--theme-warning)) }
+
+
+
+/**
+ * Provide a grid of three columns (reduce to two or one on smaller screens).
+ */
+.grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+
+    // based on Vuetify's breakpoints
+    @media (max-width: 1280px) { grid-template-columns: repeat(2, 1fr) }
+    @media (max-width: 960px) { grid-template-columns: 1fr }
+}

@@ -8,6 +8,11 @@
             <ox-contact-list-name :item="item"/>
         </template>
 
+        <template #item.contact_count="{item}">
+            {{ t('fields.contact_count.value', item.contact_count, {count: item.contact_count}) }}
+            <v-chip v-if="item.is_subscription">{{ t('fields.is_subscription') }}</v-chip>
+        </template>
+
         <template #views.detail.edit.default="{value, saved}">
             <ox-contact-list-edit :initial="value" :saved="saved"/>
         </template>
@@ -17,6 +22,7 @@
 import { defineProps, useSlots, withDefaults } from 'vue'
 
 import type {IModelPanelProps} from 'ox'
+import { t } from 'ox'
 
 import { OxModelPanel } from 'ox/components'
 import { useContactList } from '../composables'
@@ -29,6 +35,6 @@ const repos = useContactList()
 const props = withDefaults(defineProps<IModelPanelProps>(), {
     relations: ['$group', '$organisation'],
     fetchRelations: true,
-    headers: ['name', 'is_subscription'],
+    headers: ['name', 'contact_count'],
 })
 </script>

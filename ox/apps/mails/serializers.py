@@ -36,7 +36,7 @@ class SendMailSerializer(OwnedSerializer):
     contacts = RelatedField(many=True, queryset=models.Contact.objects.all(), required=False)
     contact_lists = RelatedField(many=True, queryset=models.ContactList.objects.all(), required=False)
     subject = StripCharField()
-    content = RichTextField(required=False)
+    content = RichTextField(required=False, allow_blank=True)
 
     # TODO: filter owner
     attachments = RelatedField(many=True, queryset=File.objects.all(), required=False)

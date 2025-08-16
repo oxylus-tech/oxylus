@@ -11,14 +11,14 @@
     </v-autocomplete>
 </template>
 <script setup lang="ts">
-import { isEqual, debounce, unionBy } from 'lodash'
+import { debounce, unionBy } from 'lodash'
 
 import type { Reactive, Ref } from 'vue'
-import { defineExpose, defineModel, inject, reactive, ref, onMounted, toRaw, useAttrs, useSlots, watch } from 'vue'
+import { defineExpose, defineModel, inject, reactive, ref, onMounted, useAttrs, useSlots, watch } from 'vue'
 import type {Repository} from 'pinia-orm'
 import { VAutocomplete } from 'vuetify/components/VAutocomplete'
 
-import { useQuery } from 'ox'
+import { useQuery, ifNotEqualFn } from 'ox'
 import type {IModelList, State} from 'ox'
 import type {Model, ModelId} from 'ox/models'
 
@@ -128,10 +128,7 @@ onMounted(async () => {
     value.value && await getItems(value.value)
 })
 
-watch(() => props.filters, (val, old) => {
-    if(!isEqual(toRaw(val), toRaw(old)))
-        load({reset: true})
-})
+watch(() => props.filters, ifNotEqualFn(() => load({reset: true})))
 watch(search, val => {
     // v-autocomplete set search to "<empty string>"
     // when items are updated, search is reset

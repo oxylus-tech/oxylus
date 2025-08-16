@@ -52,6 +52,8 @@ class OrganisationTypeSerializer(ModelSerializer):
 
 class ContactListSerializer(ModelSerializer):
     organisation = RelatedField(queryset=models.Organisation.objects.all(), required=False, allow_null=True)
+    contacts = RelatedField(queryset=models.Contact.objects.all(), many=True, required=False)
+    contact_count = serializers.IntegerField(read_only=True)
 
     class Meta:
         model = models.ContactList

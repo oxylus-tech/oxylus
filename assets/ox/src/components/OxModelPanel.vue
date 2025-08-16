@@ -202,9 +202,9 @@ function saved(item) {
 }
 
 const bind = computed(() => ({
-        panel, panels, list, items, context,
-        saved,
-        value: panel.value,
+    panel, panels, list, items, context,
+    saved,
+    value: panel.value,
 }))
 
 watch(() => Object.values(list.filters), () => list.load())

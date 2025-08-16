@@ -63,10 +63,13 @@ window.__i18n_messages = { ...window.__i18n_messages, ...{
     "fields.iban.too_short": "IBAN too short",
     "fields.iban.help": "Example for {name}: \"{sample}\"",
     "fields.iban.country_without_iban": "The detected country {name} might not support IBAN.",
+    "fields.vat.rule": "Please provide a valid VAT number.",
 
     // ---- @ox/contacts
     "labels.phone.call": "Call this number",
     "fields.address": "Address | Addresses",
+    "fields.contact_count": "Members",
+    "fields.contact_count.value": "No member | 1 member | {count} members",
 
     // ---- @ox/files
     "fields.folder.add_error": "Couldn't save folder. Check if a folder or file already exists with this name or that you have the permissions.",

@@ -77,7 +77,6 @@ export default class ModelList<M extends Model> extends ModelController<M, IMode
 
     constructor(...args) {
         super(...args)
-        // this.$id = this.refs.acquireKey()
     }
 
     /** Return index for id */
@@ -85,13 +84,11 @@ export default class ModelList<M extends Model> extends ModelController<M, IMode
 
     /** Destroy list, ensuring cleaning behind the scenes */
     drop() {
-        // this.refs.flush(this.$id)
         this.ids.splice(0)
     }
 
     /** Reset list */
     reset(ids: ModelId[] = []) {
-        // this.refs.releaseAcquire(this.$id, this.ids, ids)
         this.ids = [...ids]
         this.nextUrl = null
         this.prevUrl = null
@@ -112,7 +109,6 @@ export default class ModelList<M extends Model> extends ModelController<M, IMode
         if(idx != -1)
             return idx
 
-        // this.refs.acquire(this.$id, id)
         if(index !== null) {
             this.ids.splice(index, 0 , id)
             return index
@@ -124,10 +120,8 @@ export default class ModelList<M extends Model> extends ModelController<M, IMode
     /** Remove item by id from list if present. */
     remove(id: ModelId) {
         const idx = this.ids.indexOf(id)
-        if(idx != -1) {
-            this.ids.splice(index, 1)
-            // this.refs.release(this.$id, id)
-        }
+        if(idx != -1)
+            this.ids.splice(idx, 1)
     }
 
     /**
@@ -178,7 +172,7 @@ export default class ModelList<M extends Model> extends ModelController<M, IMode
         response = await super.handleResponse(options, response)
         if(!this.state.isError && options.save !== false) {
             const ids = map(response.entities, 'id')
-            this.setIds(ids, append)
+            this.update(ids, append)
             this.nextUrl = response.response.data[this.nextKey] || null
             this.prevUrl = response.response.data[this.prevKey] || null
             this.count = response.response.data[this.countKey] || this.ids.length
@@ -187,15 +181,32 @@ export default class ModelList<M extends Model> extends ModelController<M, IMode
     }
 
     /**
-     * Update ids with the provided ones.
+     * Update the list with the provided ids
+     *
+     * @param {ModelId[]} ids - The ids to add to the list
+     * @param {boolean|number} append - When `true`, append items. When a number, insert at the provided position. \
+     *                                  When `false`, remove all previous ids.
      */
-    setIds(ids?: ModelId[], append: boolean|number =false) {
+    update(ids?: ModelId[], append: boolean|number =false) {
         if(typeof append == "number")
             this.ids.splice(append, 0, ...ids)
         else if(append && this.ids.length)
             this.ids = union(this.ids, ids)
         else
             this.ids = ids
+    }
+
+    /**
+     * Update the list with the provided items.
+     *
+     * It first insert items in the repository before calling {@link ModelList.update}.
+     *
+     * @param {Model[]} items - The items to insert and add to the list.
+     * @param ...args - Arguments passed down to {@link ModelList.update}.
+     */
+    updateWith(items: Model[], ...args) {
+        this.repo.insert(items)
+        this.update(items.map(v => v.id), ...args)
     }
 }
 
