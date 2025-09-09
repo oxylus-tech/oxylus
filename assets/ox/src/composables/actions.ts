@@ -1,11 +1,8 @@
 import { computed, ref } from 'vue'
 
-import type { ComputedRef, Ref } from 'vue'
-import type { Repository } from 'pinia-orm'
-import type { Response } from '@pinia-orm/axios'
+import type { Ref } from 'vue'
 
 import { User, Model } from '../models'
-import type { IPermissionGetCodename } from '../models'
 
 
 export type ActionRun<M extends Model, R> = (user: User, item: M, ...args: any[]) => Promise<R>

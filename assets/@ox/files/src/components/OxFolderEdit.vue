@@ -1,7 +1,8 @@
 <template>
     <ox-model-edit ref="model-editor" v-bind="attrs" :repo="repos.folders">
         <template #default="{editor, editable}">
-            <ox-field :editor="editor" name="name" required />
+            <ox-field :editor="editor" name="name" required
+                :rules="[fileNameRule]"/>
             <ox-field :editor="editor" name="parent">
                 <template #default="{props}">
                     <ox-folder-input v-bind="props"

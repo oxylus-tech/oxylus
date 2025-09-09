@@ -69,6 +69,9 @@ const props = defineProps({
      * - any other value: `v-text-field` with supplied type;
      */
     type: String,
+    /**
+     * Field rules as provided to Vuetify field inputs.
+     */
     rules: Array
 })
 

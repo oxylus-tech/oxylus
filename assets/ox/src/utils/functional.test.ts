@@ -1,3 +1,4 @@
+import {reactive} from 'vue'
 import * as utils from './functional'
 
 const objs = [
@@ -33,5 +34,40 @@ describe("mapToObject", () => {
     test("map keys and function", () => {
         expect(utils.mapToObject(["a", "b", "c"], (v) => v.toUpperCase()))
             .toEqual({"a": "A", "b": "B", "c": "C"})
+    })
+})
+
+
+describe("assignNonEmpty", () => {
+    test("assign keys except null and undefined"), () => {
+        const target = {}
+        const source = {"a": 12, "b": 0.0, "c": null, "d": [], "e": 0}
+
+        expect(utils.assignNonEmpty(target, source)).toEqual({"a": 12, "b": 0.0, "d": [], "e": 0})
+    }
+})
+
+describe("reset", () => {
+    test("reset object assign values", () => {
+        expect(utils.reset({...objs[0]}, objs[1])).toEqual(objs[1])
+    })
+
+    test("reset object skip undefined values", () => {
+        expect(utils.reset({...objs[0]}, {"a": 12, "b": undefined})).toEqual({"a": 12})
+    })
+
+    test("reset object to empty object", () => {
+        expect(utils.reset({...objs[0]})).toEqual({})
+    })
+})
+
+
+describe("ifNotEqual", () => {
+    test("equal with reactive objects", () => {
+        expect(utils.ifNotEqual(objs[0], reactive(objs[0]), () => 1)).toEqual(undefined)
+    })
+
+    test("not equal with reactive objects", () => {
+        expect(utils.ifNotEqual(objs[0], reactive(objs[1]), () => 1)).toEqual(1)
     })
 })

@@ -1,12 +1,12 @@
 var De = Object.defineProperty;
 var ve = (n, e, t) => e in n ? De(n, e, { enumerable: !0, configurable: !0, writable: !0, value: t }) : n[e] = t;
 var o = (n, e, t) => ve(n, typeof e != "symbol" ? e + "" : e, t);
-import { t as y, R as be, c as B, d as Me, l as g, a as se, H as xe, b as ke, e as Se, B as Ae, C as Te, G as Ee, M as Oe, f as Re, P as Pe, U as q, u as K, g as Ce, S as b, h as Fe, i as Ie, j as Ve, k as Ye, m as $e, n as Ne, o as ie, s as qe, p as We, q as I, r as je, v as U, w as Be } from "./index-dsh_Og0D.js";
-import { F as Rr, x as Pr, D as Cr, N as Fr, Q as Ir, L as Vr, z as Yr, A as $r, E as Nr, O as qr, T as Wr, I as jr, J as Br, K as Kr, y as Ur } from "./index-dsh_Og0D.js";
-import { inject as P, provide as v, reactive as M, computed as k, ref as Ke, watch as A, effectScope as _, nextTick as Ue, createApp as _e, onMounted as ae, onUnmounted as oe, unref as z, defineAsyncComponent as ze } from "vue";
-import He from "axios";
-import * as Le from "ox/vendor";
-import { p as H, c as Ge, m as ue, a as Ze, b as Je, d as Qe, e as Xe, f as et, g as tt, D as L, h as G, T as Z, I as J, L as Q, i as rt, j as nt } from "./theme-BVAWnHOc.js";
+import { t as y, R as be, c as B, d as Me, l as g, a as se, H as ke, b as xe, e as Se, B as Ae, C as Te, G as Ee, M as Oe, f as Re, P as Pe, U as W, u as K, g as Ce, S as b, h as Fe, i as Ie, j as Ye, k as $e, m as Ve, n as Ne, o as ie, s as We, p as qe, q as I, r as je, v as U, w as Be } from "./index-DmxTQQmI.js";
+import { F as Pr, x as Cr, D as Fr, K as Ir, z as Yr, A as $r, E as Vr, J as Nr, L as Wr, I as qr, y as jr } from "./index-DmxTQQmI.js";
+import { inject as P, provide as v, reactive as M, computed as x, ref as Ke, watch as A, effectScope as _, nextTick as Ue, createApp as _e, onMounted as ae, onUnmounted as oe, unref as L, defineAsyncComponent as Le } from "vue";
+import ze from "axios";
+import * as He from "ox/vendor";
+import { p as z, c as Ge, a as Ze, m as ue, b as Je, d as Qe, e as Xe, f as et, g as tt, h as rt, D as H, i as G, T as Z, I as J, L as Q, j as nt, k as st } from "./theme-DoSqMg68.js";
 function X(n, e) {
   let t = `enums.${n}.${e}`, r = y(t);
   return r != t ? r : y(`enums.${n}._.${e}`);
@@ -19,10 +19,10 @@ const le = {
     })) : e == "toString" ? (r) => X(t.__prefix, r) : Reflect.get(...arguments);
   }
 };
-function st(n, e) {
+function it(n, e) {
   return e.__prefix = n, new Proxy(e, le);
 }
-class it {
+class at {
   /**
    * Create a new response instance.
    */
@@ -117,7 +117,7 @@ class it {
     return ["save", "insert"].includes(e);
   }
 }
-class at {
+class ot {
   /**
    * Create a new api instance.
    */
@@ -222,11 +222,11 @@ class at {
    * For example, it saves response data if `save` option id set to `true`.
    */
   async createResponse(e, t) {
-    const r = new it(this.repository, t, e);
+    const r = new at(this.repository, t, e);
     return t.delete !== void 0 ? (await r.delete(), r) : (t.save && await r.save(), r);
   }
 }
-class ot extends be {
+class ut extends be {
   constructor(t, r) {
     var s, i, a;
     super(t, r);
@@ -236,19 +236,19 @@ class ot extends be {
     this.axios = ((i = (s = B) == null ? void 0 : s.axiosApi) == null ? void 0 : i.axios) || null, this.globalApiConfig = ((a = B) == null ? void 0 : a.axiosApi) || {}, this.apiConfig = {};
   }
   api() {
-    return ut(this);
+    return lt(this);
   }
   setAxios(t) {
     return this.axios = t, this;
   }
 }
-function ut(n) {
-  return new at(n);
-}
 function lt(n) {
+  return new ot(n);
+}
+function ct(n) {
   return Me((e) => (e.config.axiosApi = n, e));
 }
-class W {
+class q {
   constructor(e) {
     o(this, "repo");
     o(this, "items");
@@ -301,12 +301,12 @@ class W {
     this.refs = {};
   }
 }
-o(W, "_lastKey", 0);
-class V extends ot {
+o(q, "_lastKey", 0);
+class Y extends ut {
   constructor(t, r) {
     super(t, r);
     o(this, "refs");
-    this.refs = new W(this);
+    this.refs = new q(this);
   }
   flush() {
     this.refs.clear(), super.flush();
@@ -321,46 +321,46 @@ function ce(n, e) {
   return e;
 }
 function he(n) {
-  return n instanceof xe || n instanceof ke || n instanceof Se || n instanceof Ae ? n.foreignKey : null;
+  return n instanceof ke || n instanceof xe || n instanceof Se || n instanceof Ae ? n.foreignKey : null;
 }
-const yr = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+const wr = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
   ContentType: Te,
-  Enum: st,
+  Enum: it,
   Group: Ee,
   Meta: Oe,
   Model: Re,
   Permission: Pe,
-  RefCounter: W,
-  Repository: V,
-  User: q,
+  RefCounter: q,
+  Repository: Y,
+  User: W,
   asRelation: ce,
   enumProxy: le,
   getSourceKey: he
 }, Symbol.toStringTag, { value: "Module" }));
-function ct(n) {
+function ht(n) {
   K(n);
   const e = Ce();
-  return V.useModel = n, K(V, e);
+  return Y.useModel = n, K(Y, e);
 }
-function ht(n, { useInject: e = !0, useDefaults: t = !0, key: r = null } = {}) {
+function dt(n, { useInject: e = !0, useDefaults: t = !0, key: r = null } = {}) {
   var s = e && (P("repos") || {});
   const i = e && !!Object.keys(s).length;
-  Array.isArray(n) || (n = Object.values(n)), t && n.push(q);
+  Array.isArray(n) || (n = Object.values(n)), t && n.push(W);
   for (const a of n)
     if (a && a.entity) {
       if (a.entity in s)
         continue;
-      s[a.entity] = ct(a);
+      s[a.entity] = ht(a);
     }
   return !i && v("repos", s), s;
 }
-class dt {
+class ft {
   static reactive(e) {
     const t = M(new this(e));
-    return t.user = k(() => {
+    return t.user = x(() => {
       var r;
-      return new q(((r = t.data) == null ? void 0 : r.user) || {});
+      return new W(((r = t.data) == null ? void 0 : r.user) || {});
     }), t;
   }
   constructor(e = {}) {
@@ -371,7 +371,7 @@ class dt {
    * source element.
    */
   load(e = void 0) {
-    this.dataEl !== void 0 && (e === void 0 && (e = this.readData(this.dataEl)), e.dataEl = this.dataEl, this.data = e), this.models !== void 0 && (this.repos = ht(this.models));
+    this.dataEl !== void 0 && (e === void 0 && (e = this.readData(this.dataEl)), e.dataEl = this.dataEl, this.data = e), this.models !== void 0 && (this.repos = dt(this.models));
   }
   /**
    * Read data from the context of provided source element.
@@ -385,12 +385,12 @@ class dt {
     return t.innerText ? JSON.parse(t.innerText) : {};
   }
 }
-function wr(n, e = !0) {
-  const t = dt.reactive(n);
+function Dr(n, e = !0) {
+  const t = ft.reactive(n);
   return e && t.dataEl && t.load(), v("context", t), v("user", t.user), t;
 }
-function Dr({ props: n, user: e, emits: t = null }) {
-  const r = Ke(!1), s = k(() => !n.permission || e.can(n.permission, n.item));
+function vr({ props: n, user: e, emits: t = null }) {
+  const r = Ke(!1), s = x(() => !n.permission || e.can(n.permission, n.item));
   return { processing: r, run: async (...a) => {
     if (n.confirm && !confirm(n.confirm))
       return;
@@ -452,7 +452,7 @@ function T(n) {
       return null;
   }
 }
-function ft(n, e, t) {
+function mt(n, e, t) {
   var m;
   const r = [];
   let s = [];
@@ -471,14 +471,16 @@ function ft(n, e, t) {
   }
   return s.length > 0 && r.push(s), r;
 }
-function Y(n, e, t) {
+function $(n, e, t) {
   var i;
-  const r = t ?? ((i = T(e)) == null ? void 0 : i.firstDay) ?? 0, s = new Date(n);
+  let r = (t ?? ((i = T(e)) == null ? void 0 : i.firstDay) ?? 0) % 7;
+  [0, 1, 2, 3, 4, 5, 6].includes(r) || (Ge("Invalid firstDayOfWeek, expected discrete number in range [0-6]"), r = 0);
+  const s = new Date(n);
   for (; s.getDay() !== r; )
     s.setDate(s.getDate() - 1);
   return s;
 }
-function mt(n, e) {
+function pt(n, e) {
   var s;
   const t = new Date(n), r = ((((s = T(e)) == null ? void 0 : s.firstDay) ?? 0) + 6) % 7;
   for (; t.getDay() !== r; )
@@ -491,34 +493,34 @@ function de(n) {
 function fe(n) {
   return new Date(n.getFullYear(), n.getMonth() + 1, 0);
 }
-function pt(n) {
+function gt(n) {
   const e = n.split("-").map(Number);
   return new Date(e[0], e[1] - 1, e[2]);
 }
-const gt = /^([12]\d{3}-([1-9]|0[1-9]|1[0-2])-([1-9]|0[1-9]|[12]\d|3[01]))$/;
+const yt = /^([12]\d{3}-([1-9]|0[1-9]|1[0-2])-([1-9]|0[1-9]|[12]\d|3[01]))$/;
 function me(n) {
   if (n == null) return /* @__PURE__ */ new Date();
   if (n instanceof Date) return n;
   if (typeof n == "string") {
     let e;
-    if (gt.test(n))
-      return pt(n);
+    if (yt.test(n))
+      return gt(n);
     if (e = Date.parse(n), !isNaN(e)) return new Date(e);
   }
   return null;
 }
 const ee = new Date(2e3, 0, 2);
-function yt(n, e) {
-  var r;
-  const t = e ?? ((r = T(n)) == null ? void 0 : r.firstDay) ?? 0;
-  return Ge(7).map((s) => {
-    const i = new Date(ee);
-    return i.setDate(ee.getDate() + t + s), new Intl.DateTimeFormat(n, {
-      weekday: "narrow"
-    }).format(i);
+function wt(n, e, t) {
+  var s;
+  const r = e ?? ((s = T(n)) == null ? void 0 : s.firstDay) ?? 0;
+  return Ze(7).map((i) => {
+    const a = new Date(ee);
+    return a.setDate(ee.getDate() + r + i), new Intl.DateTimeFormat(n, {
+      weekday: t ?? "narrow"
+    }).format(a);
   });
 }
-function wt(n, e, t, r) {
+function Dt(n, e, t, r) {
   const s = me(n) ?? /* @__PURE__ */ new Date(), i = r == null ? void 0 : r[e];
   if (typeof i == "function")
     return i(s, e, t);
@@ -527,7 +529,7 @@ function wt(n, e, t, r) {
     case "fullDate":
       a = {
         year: "numeric",
-        month: "long",
+        month: "short",
         day: "numeric"
       };
       break;
@@ -708,19 +710,19 @@ function wt(n, e, t, r) {
   }
   return new Intl.DateTimeFormat(t, a).format(s);
 }
-function Dt(n, e) {
-  const t = n.toJsDate(e), r = t.getFullYear(), s = H(String(t.getMonth() + 1), 2, "0"), i = H(String(t.getDate()), 2, "0");
+function vt(n, e) {
+  const t = n.toJsDate(e), r = t.getFullYear(), s = z(String(t.getMonth() + 1), 2, "0"), i = z(String(t.getDate()), 2, "0");
   return `${r}-${s}-${i}`;
 }
-function vt(n) {
+function bt(n) {
   const [e, t, r] = n.split("-").map(Number);
   return new Date(e, t - 1, r);
 }
-function bt(n, e) {
+function Mt(n, e) {
   const t = new Date(n);
   return t.setMinutes(t.getMinutes() + e), t;
 }
-function Mt(n, e) {
+function kt(n, e) {
   const t = new Date(n);
   return t.setHours(t.getHours() + e), t;
 }
@@ -732,75 +734,75 @@ function xt(n, e) {
   const t = new Date(n);
   return t.setDate(t.getDate() + e * 7), t;
 }
-function kt(n, e) {
+function St(n, e) {
   const t = new Date(n);
   return t.setDate(1), t.setMonth(t.getMonth() + e), t;
 }
-function $(n) {
+function V(n) {
   return n.getFullYear();
 }
-function St(n) {
+function At(n) {
   return n.getMonth();
 }
-function At(n, e, t, r) {
+function Tt(n, e, t, r) {
   const s = T(e), i = t ?? (s == null ? void 0 : s.firstDay) ?? 0, a = r ?? (s == null ? void 0 : s.firstWeekSize) ?? 1;
   function u(w) {
     const D = new Date(w, 0, 1);
-    return 7 - N(D, Y(D, e, i), "days");
+    return 7 - N(D, $(D, e, i), "days");
   }
-  let l = $(n);
-  const h = R(Y(n, e, i), 6);
-  l < $(h) && u(l + 1) >= a && l++;
+  let l = V(n);
+  const h = R($(n, e, i), 6);
+  l < V(h) && u(l + 1) >= a && l++;
   const m = new Date(l, 0, 1), c = u(l), d = c >= a ? R(m, c - 7) : R(m, c);
   return 1 + N(pe(n), F(d), "weeks");
 }
-function Tt(n) {
+function Et(n) {
   return n.getDate();
 }
-function Et(n) {
+function Ot(n) {
   return new Date(n.getFullYear(), n.getMonth() + 1, 1);
 }
-function Ot(n) {
+function Rt(n) {
   return new Date(n.getFullYear(), n.getMonth() - 1, 1);
 }
-function Rt(n) {
+function Pt(n) {
   return n.getHours();
 }
-function Pt(n) {
+function Ct(n) {
   return n.getMinutes();
 }
-function Ct(n) {
+function Ft(n) {
   return new Date(n.getFullYear(), 0, 1);
 }
-function Ft(n) {
+function It(n) {
   return new Date(n.getFullYear(), 11, 31);
 }
-function It(n, e) {
-  return C(n, e[0]) && $t(n, e[1]);
+function Yt(n, e) {
+  return C(n, e[0]) && Nt(n, e[1]);
 }
-function Vt(n) {
+function $t(n) {
   const e = new Date(n);
   return e instanceof Date && !isNaN(e.getTime());
 }
 function C(n, e) {
   return n.getTime() > e.getTime();
 }
-function Yt(n, e) {
+function Vt(n, e) {
   return C(F(n), F(e));
 }
-function $t(n, e) {
+function Nt(n, e) {
   return n.getTime() < e.getTime();
 }
 function te(n, e) {
   return n.getTime() === e.getTime();
 }
-function Nt(n, e) {
+function Wt(n, e) {
   return n.getDate() === e.getDate() && n.getMonth() === e.getMonth() && n.getFullYear() === e.getFullYear();
 }
 function qt(n, e) {
   return n.getMonth() === e.getMonth() && n.getFullYear() === e.getFullYear();
 }
-function Wt(n, e) {
+function jt(n, e) {
   return n.getFullYear() === e.getFullYear();
 }
 function N(n, e, t) {
@@ -826,23 +828,23 @@ function N(n, e, t) {
       return r.getTime() - s.getTime();
   }
 }
-function jt(n, e) {
+function Bt(n, e) {
   const t = new Date(n);
   return t.setHours(e), t;
 }
-function Bt(n, e) {
+function Kt(n, e) {
   const t = new Date(n);
   return t.setMinutes(e), t;
 }
-function Kt(n, e) {
+function Ut(n, e) {
   const t = new Date(n);
   return t.setMonth(e), t;
 }
-function Ut(n, e) {
+function _t(n, e) {
   const t = new Date(n);
   return t.setDate(e), t;
 }
-function _t(n, e) {
+function Lt(n, e) {
   const t = new Date(n);
   return t.setFullYear(e), t;
 }
@@ -863,16 +865,16 @@ class zt {
     return e;
   }
   toISO(e) {
-    return Dt(this, e);
+    return vt(this, e);
   }
   parseISO(e) {
-    return vt(e);
+    return bt(e);
   }
   addMinutes(e, t) {
-    return bt(e, t);
+    return Mt(e, t);
   }
   addHours(e, t) {
-    return Mt(e, t);
+    return kt(e, t);
   }
   addDays(e, t) {
     return R(e, t);
@@ -881,18 +883,18 @@ class zt {
     return xt(e, t);
   }
   addMonths(e, t) {
-    return kt(e, t);
+    return St(e, t);
   }
   getWeekArray(e, t) {
     const r = t !== void 0 ? Number(t) : void 0;
-    return ft(e, this.locale, r);
+    return mt(e, this.locale, r);
   }
   startOfWeek(e, t) {
     const r = t !== void 0 ? Number(t) : void 0;
-    return Y(e, this.locale, r);
+    return $(e, this.locale, r);
   }
   endOfWeek(e) {
-    return mt(e, this.locale);
+    return pt(e, this.locale);
   }
   startOfMonth(e) {
     return de(e);
@@ -901,81 +903,81 @@ class zt {
     return fe(e);
   }
   format(e, t) {
-    return wt(e, t, this.locale, this.formats);
+    return Dt(e, t, this.locale, this.formats);
   }
   isEqual(e, t) {
     return te(e, t);
   }
   isValid(e) {
-    return Vt(e);
+    return $t(e);
   }
   isWithinRange(e, t) {
-    return It(e, t);
+    return Yt(e, t);
   }
   isAfter(e, t) {
     return C(e, t);
   }
   isAfterDay(e, t) {
-    return Yt(e, t);
+    return Vt(e, t);
   }
   isBefore(e, t) {
     return !C(e, t) && !te(e, t);
   }
   isSameDay(e, t) {
-    return Nt(e, t);
+    return Wt(e, t);
   }
   isSameMonth(e, t) {
     return qt(e, t);
   }
   isSameYear(e, t) {
-    return Wt(e, t);
-  }
-  setMinutes(e, t) {
-    return Bt(e, t);
-  }
-  setHours(e, t) {
     return jt(e, t);
   }
-  setMonth(e, t) {
+  setMinutes(e, t) {
     return Kt(e, t);
   }
-  setDate(e, t) {
+  setHours(e, t) {
+    return Bt(e, t);
+  }
+  setMonth(e, t) {
     return Ut(e, t);
   }
-  setYear(e, t) {
+  setDate(e, t) {
     return _t(e, t);
+  }
+  setYear(e, t) {
+    return Lt(e, t);
   }
   getDiff(e, t, r) {
     return N(e, t, r);
   }
-  getWeekdays(e) {
-    const t = e !== void 0 ? Number(e) : void 0;
-    return yt(this.locale, t);
+  getWeekdays(e, t) {
+    const r = e !== void 0 ? Number(e) : void 0;
+    return wt(this.locale, r, t);
   }
   getYear(e) {
-    return $(e);
+    return V(e);
   }
   getMonth(e) {
-    return St(e);
+    return At(e);
   }
   getWeek(e, t, r) {
     const s = t !== void 0 ? Number(t) : void 0;
-    return At(e, this.locale, s, r);
+    return Tt(e, this.locale, s, r);
   }
   getDate(e) {
-    return Tt(e);
-  }
-  getNextMonth(e) {
     return Et(e);
   }
-  getPreviousMonth(e) {
+  getNextMonth(e) {
     return Ot(e);
   }
-  getHours(e) {
+  getPreviousMonth(e) {
     return Rt(e);
   }
-  getMinutes(e) {
+  getHours(e) {
     return Pt(e);
+  }
+  getMinutes(e) {
+    return Ct(e);
   }
   startOfDay(e) {
     return F(e);
@@ -984,14 +986,14 @@ class zt {
     return pe(e);
   }
   startOfYear(e) {
-    return Ct(e);
+    return Ft(e);
   }
   endOfYear(e) {
-    return Ft(e);
+    return It(e);
   }
 }
 const Ht = Symbol.for("vuetify:date-options"), re = Symbol.for("vuetify:date-adapter");
-function Lt(n, e) {
+function Gt(n, e) {
   const t = ue({
     adapter: zt,
     locale: {
@@ -1040,10 +1042,10 @@ function Lt(n, e) {
   }, n);
   return {
     options: t,
-    instance: Gt(t, e)
+    instance: Zt(t, e)
   };
 }
-function Gt(n, e) {
+function Zt(n, e) {
   const t = M(typeof n.adapter == "function" ? new n.adapter({
     locale: n.locale[e.current.value] ?? e.current.value,
     formats: n.formats
@@ -1063,14 +1065,14 @@ function ge() {
     directives: a = {}
   } = r, u = _();
   return u.run(() => {
-    const l = Ze(r.defaults), h = Je(r.display, r.ssr), m = Qe(r.theme), c = Xe(r.icons), d = et(r.locale), w = Lt(r.date, d), D = Fe(r.goTo, d);
+    const l = Je(r.defaults), h = Qe(r.display, r.ssr), m = Xe(r.theme), c = et(r.icons), d = tt(r.locale), w = Gt(r.date, d), D = Fe(r.goTo, d);
     function E(f) {
       for (const p in a)
         f.directive(p, a[p]);
       for (const p in i)
         f.component(p, i[p]);
       for (const p in s)
-        f.component(p, tt({
+        f.component(p, rt({
           ...s[p],
           name: p,
           aliasName: s[p].name
@@ -1078,7 +1080,7 @@ function ge() {
       const j = _();
       if (j.run(() => {
         m.install(f);
-      }), f.onUnmount(() => j.stop()), f.provide(L, l), f.provide(G, h), f.provide(Z, m), f.provide(J, c), f.provide(Q, d), f.provide(Ht, w.options), f.provide(re, w.instance), f.provide(Ie, D), rt && r.ssr)
+      }), f.onUnmount(() => j.stop()), f.provide(H, l), f.provide(G, h), f.provide(Z, m), f.provide(J, c), f.provide(Q, d), f.provide(Ht, w.options), f.provide(re, w.instance), f.provide(Ie, D), nt && r.ssr)
         if (f.$nuxt)
           f.$nuxt.hook("app:suspense:resolve", () => {
             h.update();
@@ -1096,12 +1098,12 @@ function ge() {
         computed: {
           $vuetify() {
             return M({
-              defaults: x.call(this, L),
-              display: x.call(this, G),
-              theme: x.call(this, Z),
-              icons: x.call(this, J),
-              locale: x.call(this, Q),
-              date: x.call(this, re)
+              defaults: k.call(this, H),
+              display: k.call(this, G),
+              theme: k.call(this, Z),
+              icons: k.call(this, J),
+              locale: k.call(this, Q),
+              date: k.call(this, re)
             });
           }
         }
@@ -1123,15 +1125,15 @@ function ge() {
     };
   });
 }
-const Zt = "3.8.9";
-ge.version = Zt;
-function x(n) {
+const Jt = "3.9.6";
+ge.version = Jt;
+function k(n) {
   var r, s;
   const e = this.$, t = ((r = e.parent) == null ? void 0 : r.provides) ?? ((s = e.vnode.appContext) == null ? void 0 : s.provides);
   if (t && n in t)
     return t[n];
 }
-const Jt = {
+const Qt = {
   defaults: {
     VAppBar: {
       flat: !0
@@ -1225,7 +1227,7 @@ const Jt = {
   icons: {
     defaultSet: "mdi",
     sets: {
-      mdi: nt
+      mdi: st
     }
   },
   theme: {
@@ -1241,15 +1243,15 @@ const Jt = {
       }
     }
   }
-}, Qt = {
+}, Xt = {
   lighten4: "#c8e6c9",
   darken1: "#43a047"
 }, ne = {
-  green: Qt
+  green: Xt
 };
-function vr({ App: n = null, el: e = "#app", onLoad: t = !0, ...r } = {}) {
+function br({ App: n = null, el: e = "#app", onLoad: t = !0, ...r } = {}) {
   function s() {
-    const i = Xt(n, r), a = e ? i.mount(e) : null;
+    const i = er(n, r), a = e ? i.mount(e) : null;
     return document.body.classList.remove("loading"), { app: i, el: e, vm: a };
   }
   return new Promise((i) => {
@@ -1261,15 +1263,15 @@ function vr({ App: n = null, el: e = "#app", onLoad: t = !0, ...r } = {}) {
     i(s());
   });
 }
-function Xt(n, { props: e = {}, vuetify: t = {}, plugins: r = null } = {}) {
-  return n = _e(n, e), n.config.globalProperties.window = window, n.use(er(t)), n.use(Ve), Ye(), r && r.forEach((s) => n.use(s)), n;
+function er(n, { props: e = {}, vuetify: t = {}, plugins: r = null } = {}) {
+  return n = _e(n, e), n.config.globalProperties.window = window, n.use(tr(t)), n.use(Ye), $e(), r && r.forEach((s) => n.use(s)), n;
 }
-function er({ components: n = {}, defaults: e = {}, ...t }) {
+function tr({ components: n = {}, defaults: e = {}, ...t }) {
   return t.components = {
-    ...Le,
+    ...He,
     ...n
   }, ge({
-    blueprint: Jt,
+    blueprint: Qt,
     theme: {
       themes: {
         light: {
@@ -1292,18 +1294,18 @@ function er({ components: n = {}, defaults: e = {}, ...t }) {
     ...t
   });
 }
-function br({ axiosConfig: n = null, baseURL: e = null } = {}) {
+function Mr({ axiosConfig: n = null, baseURL: e = null } = {}) {
   e || (e = document.body.dataset.apiUrl);
-  const t = $e(), r = Ne({
+  const t = Ve(), r = Ne({
     plugins: [
-      lt({
-        axios: He,
+      ct({
+        axios: ze,
         ...n || ie.axiosConfig,
         baseURL: e
       })
     ]
   });
-  return qe(t), t.use(r);
+  return We(t), t.use(r);
 }
 class S {
   /**
@@ -1405,11 +1407,11 @@ class S {
     const u = he(s);
     if (!u)
       throw Error(`No source ids attributes for ${t}.`);
-    const l = [...new Set(We(e, u))];
+    const l = [...new Set(qe(e, u))];
     return new S(a, this.repos).all({ ...r, id: l, repo: a });
   }
 }
-function tr(n, e, t = null) {
+function rr(n, e, t = null) {
   if (typeof n == "string") {
     if (!(n in e))
       throw Error(`Repository "${n}" is not present in provided repositories.`);
@@ -1495,7 +1497,7 @@ class ye {
     throw "not implemented";
   }
 }
-class rr {
+class nr {
   constructor(e = null) {
     o(this, "index", "list.table");
     o(this, "view", "");
@@ -1543,7 +1545,7 @@ class rr {
    * @return - true if view changed
    */
   show({ view: e = null, value: t = null, silent: r = !1, force: s = !1 } = {}) {
-    return (e != this.view || t != this.value) && (s || this.onLeave()) ? (this.view = e || this.index, this.value = t, !r && this.updateLocation(), !0) : !1;
+    return (e != this.view || t != this.value) && (s || this.canLeave()) ? (this.view = e || this.index, this.value = t, !r && this.updateLocation(), !0) : !1;
   }
   /** Update current location using History api */
   updateLocation() {
@@ -1560,14 +1562,14 @@ class rr {
    *
    * @return true if we can proceed to view/panel change.
    */
-  onLeave() {
+  canLeave() {
     if (!this.edited)
       return !0;
     const e = y(this.confirmTKey);
     return confirm(e);
   }
 }
-class nr {
+class sr {
   constructor(e = null) {
     o(this, "panel", "");
     o(this, "params", {});
@@ -1605,7 +1607,7 @@ class nr {
    * unwanted page change.
    */
   show({ force: e = !1, href: t = null, ...r }) {
-    if (e || !this.current || this.current.onLeave()) {
+    if (e || this.canLeave()) {
       if (t && window.location.pathname != t) {
         if (!r.panel)
           throw Error("The attribute `href` requires`panel`.");
@@ -1615,12 +1617,16 @@ class nr {
       this.reset(r);
     }
   }
+  /** Return whether we can change page/panel. */
+  canLeave() {
+    return this.current ? this.current.canLeave() : !0;
+  }
   reset({ panel: e, silent: t = !1, ...r }) {
     var i;
-    e && e != this.panel && this.current && !this.current.onLeave() || (this.panel = e || this.panel, this.params = r, this.current = this.children[this.panel], (i = this.current) == null || i.show({ ...this.params, silent: t }));
+    e && e != this.panel && !this.canLeave() || (this.panel = e || this.panel, this.params = r, this.current = this.children[this.panel], (i = this.current) == null || i.show({ ...this.params, silent: t }));
   }
 }
-class sr {
+class ir {
   constructor(e = null) {
     o(this, "state", b.none());
     o(this, "save", !0);
@@ -1688,7 +1694,7 @@ class sr {
     return !e.relations && this.relations && this.fetchRelations && (e.relations = this.relations), e.url || (e.url = this.url), "save" in e || (e.save = this.save), e;
   }
 }
-class ir extends sr {
+class ar extends ir {
   constructor(...t) {
     super(...t);
     // /** Reference counter key **/
@@ -1799,7 +1805,7 @@ class ir extends sr {
     this.repo.insert(t), this.update(t.map((s) => s.id), ...r);
   }
 }
-class ar extends ye {
+class or extends ye {
   constructor(e) {
     e.fields = Object.keys(e.props.repo.use.fields()), e.empty ?? (e.empty = new e.props.repo.use()), super(e);
   }
@@ -1836,7 +1842,7 @@ class ar extends ye {
     );
   }
 }
-class or extends rr {
+class ur extends nr {
   constructor(t) {
     var r;
     super(t);
@@ -1894,13 +1900,13 @@ class or extends rr {
   }
   show({ id: t = null, ...r }) {
     if (t)
-      tr(this.repo).fetch({ id: t, relations: this.relations }).then((s) => (super.show({ ...r, value: s.entities[0] }), s));
+      rr(this.repo).fetch({ id: t, relations: this.relations }).then((s) => (super.show({ ...r, value: s.entities[0] }), s));
     else
       return super.show(r);
   }
 }
-function Mr(n) {
-  const e = M(new nr(n));
+function kr(n) {
+  const e = M(new sr(n));
   v("panels", e), ae(() => {
     e.readDocumentLocation(), e.panel && e.show({
       panel: e.panel,
@@ -1918,33 +1924,33 @@ function Mr(n) {
     r ? document.title = `${r} | ${t}` : document.title = t;
   }), e;
 }
-function ur(n, e) {
+function lr(n, e) {
   const t = M(new e(n));
   return v("panel", t), ae(() => t.panels.register(t.name, t)), oe(() => t.panels.unregister(t.name)), { panel: t };
 }
 function xr({ query: n, repos: e, ...t }) {
   e ?? (e = P("repos")), n ?? (n = new S(t.props.repo, e)), t.panels ?? (t.panels = P("panels"));
-  const { list: r, items: s } = lr({
+  const { list: r, items: s } = cr({
     query: n,
     relations: t.props.relations,
     fetchRelations: t.props.fetchRelations
-  }), { panel: i } = ur({ list: r, ...t }, or), a = k(() => {
-    const l = r.getSiblingIndex(z(i.value), 1);
+  }), { panel: i } = lr({ list: r, ...t }, ur), a = x(() => {
+    const l = r.getSiblingIndex(L(i.value), 1);
     return s.value[l] ?? null;
-  }), u = k(() => {
-    const l = r.getSiblingIndex(z(i.value), -1);
+  }), u = x(() => {
+    const l = r.getSiblingIndex(L(i.value), -1);
     return s.value[l] ?? null;
   });
   return { panels: i.panels, panel: i, list: r, items: s, next: a, prev: u };
 }
-function lr(n, e = ir) {
-  const t = M(new e(n)), r = t.repo.refs.acquireKey(), s = k(() => t.length ? t.queryset(t.ids).orderBy((i) => t.ids.indexOf(i)).get() : []);
+function cr(n, e = ar) {
+  const t = M(new e(n)), r = t.repo.refs.acquireKey(), s = x(() => t.length ? t.queryset(t.ids).orderBy((i) => t.ids.indexOf(i)).get() : []);
   return A(
     () => t.ids,
     Be((i, a) => t.repo.refs.releaseAcquire(r, a, i))
   ), oe(() => t.repo.refs.flush(r)), v("list", t), v("items", s), { list: t, items: s, listId: r };
 }
-function kr(n, e = null, t) {
+function Sr(n, e = null, t) {
   const r = new S(n, e, t), s = b.none();
   async function i(a) {
     s.processing();
@@ -1958,21 +1964,21 @@ function kr(n, e = null, t) {
   }
   return { state: s, query: r, fetch: i };
 }
-function cr(n, e = ye) {
+function hr(n, e = ye) {
   n.initial || n.props.initial;
   const t = M(new e(n));
   v("editor", t);
-  const r = k(() => t.isEdited());
+  const r = x(() => t.isEdited());
   A(() => t.props.initial, (i) => {
     t.initial = i || t.empty, t.reset(i || t.empty);
   });
   const s = P("panel");
   return s && A(() => t.edited, (i) => s.setEdition(t.name, i)), { editor: t, edited: r };
 }
-function Sr(n, e = ar) {
-  return cr(n, e);
+function Ar(n, e = or) {
+  return hr(n, e);
 }
-const Ar = {
+const Tr = {
   /** Field is required */
   required(n) {
     return n || n === 0 ? !0 : y("fields._.required");
@@ -2001,10 +2007,10 @@ const Ar = {
     return /^[A-Za-z0-9@.+\-_]+$/.test(n) || "Username must not be empty. It only can contain letters, numbers and @/+/./- special characters";
   }
 };
-function Tr(n, e) {
-  return ze(() => import(n).then((t) => (n.endsWith(".js") && hr(import.meta.resolve(n.replace(/\.js$/, ".css"))), e ? Object.values(t).filter((s) => s.__name == e)[0] : t)));
+function Er(n, e) {
+  return Le(() => import(n).then((t) => (n.endsWith(".js") && dr(import.meta.resolve(n.replace(/\.js$/, ".css"))), e ? Object.values(t).filter((s) => s.__name == e)[0] : t)));
 }
-function hr(n) {
+function dr(n) {
   return new Promise((e, t) => {
     if (document.querySelector(`link[href="${n}"]`)) {
       e();
@@ -2015,58 +2021,54 @@ function hr(n) {
   });
 }
 export {
-  dt as AppContext,
+  ft as AppContext,
   ye as Editor,
-  sr as ModelController,
-  ar as ModelEditor,
-  ir as ModelList,
-  or as ModelPanel,
-  rr as Panel,
-  nr as Panels,
+  ir as ModelController,
+  or as ModelEditor,
+  ar as ModelList,
+  ur as ModelPanel,
+  nr as Panel,
+  sr as Panels,
   S as Query,
   b as State,
-  Rr as States,
+  Pr as States,
   I as assignNonEmpty,
-  We as collectAttr,
+  qe as collectAttr,
   ie as config,
-  Xt as createApp,
-  Pr as createI18n,
-  br as createPinia,
-  er as createVuetify,
-  Cr as csrfToken,
-  Tr as defineAsyncComponent,
-  Fr as excludeValues,
+  er as createApp,
+  Cr as createI18n,
+  Mr as createPinia,
+  tr as createVuetify,
+  Fr as csrfToken,
+  Er as defineAsyncComponent,
   Ir as filterSlots,
-  Vr as filterValues,
   Yr as getCookie,
   $r as getCookieList,
-  Nr as getCsrf,
-  Ve as i18n,
-  qr as ifNotEqual,
+  Vr as getCsrf,
+  Ye as i18n,
+  Nr as ifNotEqual,
   Be as ifNotEqualFn,
-  vr as init,
+  br as init,
   Wr as injectOrProvide,
-  jr as mapToObject,
-  yr as models,
-  tr as query,
+  qr as mapToObject,
+  wr as models,
+  rr as query,
   je as reset,
-  Ar as rules,
-  Br as shallowCopy,
-  Kr as splitValues,
+  Tr as rules,
   y as t,
   U as tKeys,
-  Ur as te,
-  Dr as useAction,
-  wr as useAppContext,
-  cr as useEditor,
-  Ye as useI18n,
-  Sr as useModelEditor,
-  lr as useModelList,
+  jr as te,
+  vr as useAction,
+  Dr as useAppContext,
+  hr as useEditor,
+  $e as useI18n,
+  Ar as useModelEditor,
+  cr as useModelList,
   xr as useModelPanel,
-  ht as useModels,
-  ur as usePanel,
-  Mr as usePanels,
-  kr as useQuery,
-  ct as useRepo
+  dt as useModels,
+  lr as usePanel,
+  kr as usePanels,
+  Sr as useQuery,
+  ht as useRepo
 };
 //# sourceMappingURL=ox.js.map

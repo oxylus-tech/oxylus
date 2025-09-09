@@ -50,3 +50,6 @@ class TestMailSend:
         for file, attachment in zip(files, msg.iter_attachments()):
             assert file.name == attachment.get_filename()
             assert file.mime_type == attachment.get_content_type()
+
+    def test_send_mails_with_contact_list(self):
+        raise NotImplementedError("TBD")

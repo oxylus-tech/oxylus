@@ -78,6 +78,10 @@ async function save(): State {
     return resp
 }
 
+
+// TODO
+// watch(() => modelEditor.edited, (val) => panel.setEdition(""))
+
 defineExpose({
     save, reset,
 

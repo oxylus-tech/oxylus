@@ -104,7 +104,7 @@ export default class Panel<P extends IPanelProps = IPanelProps>
      * @return - true if view changed
      */
     show({view=null, value=null, silent=false, force=false}: {view?: string, value?: any, silent?: boolean, force?: boolean}={}) {
-        if((view != this.view || value != this.value) && (force || this.onLeave())) {
+        if((view != this.view || value != this.value) && (force || this.canLeave())) {
             this.view = view || this.index
             this.value = value
             !silent && this.updateLocation()
@@ -129,7 +129,7 @@ export default class Panel<P extends IPanelProps = IPanelProps>
      *
      * @return true if we can proceed to view/panel change.
      */
-    onLeave() {
+    canLeave(): boolean {
         if(!this.edited)
             return true
 

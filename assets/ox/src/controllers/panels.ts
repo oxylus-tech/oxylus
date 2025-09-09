@@ -81,7 +81,7 @@ export default class Panels {
      * unwanted page change.
      */
     show({force=false, href=null, ...options}: IPanelShow) {
-        const proceed = force || !this.current || this.current.onLeave()
+        const proceed = force || this.canLeave()
         if(!proceed)
             return
 
@@ -99,12 +99,15 @@ export default class Panels {
         this.reset(options)
     }
 
+    /** Return whether we can change page/panel. */
+    canLeave(): boolean {
+        return this.current ? this.current.canLeave() : true
+    }
+
     reset({panel, silent=false, ...params}: IPanels) {
         const panelChanged = (panel && panel != this.panel)
-        if(panelChanged && this.current) {
-            if(!this.current.onLeave())
-                return
-        }
+        if(panelChanged && !this.canLeave())
+            return
 
         this.panel = panel || this.panel
         this.params = params

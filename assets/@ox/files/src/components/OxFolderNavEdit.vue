@@ -29,7 +29,7 @@
                         prepend-icon="mdi-plus" v-bind="props"/>
             </template>
             <v-list-item>
-                <v-text-field :placeholder="t('fields.name')" v-model="newFolder.name"/>
+                <v-text-field :placeholder="t('fields.name')" v-model="newFolder.name" :rules="[fileNameRule]"/>
                 <div class="text-right" v-if="newFolder.name">
                     <v-btn prepend-icon="mdi-plus" size="small"
                         :text="t('actions.add')"
@@ -44,7 +44,7 @@ import {computed, inject, reactive, defineEmits} from 'vue'
 import {query, t} from 'ox'
 import {OxModelEditor, OxActionModelDelete} from 'ox/components'
 
-import {useFolders} from '../composables'
+import {useFolders, fileNameRule} from '../composables'
 import OxFolderInput from './OxFolderInput'
 
 const emits = defineEmits(['updated'])

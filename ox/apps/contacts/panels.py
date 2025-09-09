@@ -23,6 +23,7 @@ panels = Panels(
             "ox-organisation-panel",
             url="ox_contacts:index",
             permission="ox_contacts.view_organisation",
+            actions_template="ox/contacts/components/organisation_actions.html",
         ),
         Panel(
             "contactlists",

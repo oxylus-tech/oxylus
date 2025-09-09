@@ -74,6 +74,7 @@ window.__i18n_messages = { ...window.__i18n_messages, ...{
     // ---- @ox/files
     "fields.folder.add_error": "Couldn't save folder. Check if a folder or file already exists with this name or that you have the permissions.",
     "fields.name.update_filename": "Do you want to update the file name?",
+    "fields.file_name.rules.invalid_characters": "Invalid characters in the name ('/')",
     "actions.files.upload.new": "Upload another file",
     "actions.files.select": "Select a file",
     "actions.files.select.help": "Drop a file here or select a file",
