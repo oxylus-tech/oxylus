@@ -115,10 +115,12 @@ export class Organisation extends BaseContact {
             ...super.fields(),
             short_name: this.string(),
             color: this.string(),
+            reference: this.string(),
             group: this.number(),
             vat: this.string(),
             type: this.string(),
             country: this.string(),
+            contact_list: this.string(),
             $type: this.belongsTo(OrganisationType, 'type'),
             $country: this.belongsTo(Country, 'country'),
         }

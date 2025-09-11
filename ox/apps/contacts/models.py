@@ -1,3 +1,5 @@
+from functools import cached_property
+
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 from django.contrib.auth.models import User, Group
@@ -79,6 +81,14 @@ class Contact(Model):
     contact_lists = models.ManyToManyField(ContactList, blank=True, verbose_name=_("Lists"), related_name="contacts")
 
     objects = ContactQuerySet.as_manager()
+
+    @cached_property
+    def full_name(self) -> str:
+        if person := getattr(self, "person", None):
+            return person.full_name
+        elif org := getattr(self, "organisation", None):
+            return org.name
+        return ""
 
     class Meta:
         verbose_name = _("Contact")

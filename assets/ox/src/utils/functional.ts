@@ -64,15 +64,15 @@ export function mapToObject(keys: Record<string, any> | Array<RecordKey>, map: M
 }
 
 /**
- * Same as `Object.assign`, but skipping empty values
+ * Same as `Object.assign`, but skipping empty values.
+ * FIXME: what about empty objects and arrays?
  */
-export function assignNonEmpty(target: Record<string, any>, source: Record<string, any>) {
-    if(!source)
-        return
-
+export function assignNonEmpty(target: Record<string, any>, source: Record<string, any>) : Record<string, any> {
+    // FIXME: what about empty objects and arrays?
     for(const key of Object.keys(source))
         if(source[key] && source[key] !== 0 && source[key] !== 0.0)
             target[key] = source[key]
+    return target
 }
 
 
@@ -100,70 +100,21 @@ export function reset(target: Record<string, any>, assign: Record<string, any>|u
 
 
 /**
- * Shallow copy of a class instance
- * Assign extra `attrs` attributes.
- */
-export function shallowCopy(source: Record<string, any>, attrs: Record<string, any>={}) {
-    const clone = Object.create(Object.getPrototypeOf(source))
-    return Object.assign(clone, {...source, ...attrs})
-}
-
-
-/**
- * Return two objects from the provided one with the first one having
- * values specified by keys, other with what's left.
- */
-export function splitValues(source: Record<string, any>, keys: Record<string, any>|string[]) {
-    if(!Array.isArray(keys))
-        keys = Object.keys(keys)
-    return Object.keys(source).reduce((dst, key) => {
-        if(keys.indexOf(key) == -1)
-            dst[1][key] = source[key]
-        else
-            dst[0][key] = source[key]
-        return dst
-    }, [{}, {}])
-}
-
-
-/**
- * Return a new object from provided one with only specified values.
- */
-export function filterValues(source: Record<string, any>, keys: string[]) {
-    return Object.keys(source).reduce((dst, key) => {
-        if(keys.indexOf(key) != -1)
-            dst[key] = source[key]
-        return dst
-    }, {})
-}
-
-/**
- * Return a new object from provided one with specified values excluded.
- */
-export function excludeValues(source: Record<string, any>, keys: string[]) {
-    return Object.keys(source).reduce((dst, key) => {
-        if(keys.indexOf(key) == -1)
-            dst[key] = source[key]
-        return dst
-    }, {})
-}
-
-/**
  * Execute the provided function if the values ar not equal (using lodash's `isEqual`).
  *
  * Ensure that values are `toRaw` (vue).
  */
-export function ifNotEqual(a: any|Reactive<any>, b: any[]|Reactive<any>, func: (a,b) => void) {
+export function ifNotEqual<R extends any>(a: any|Reactive<any>, b: any[]|Reactive<any>, func: (a,b) => R): R|void {
     a = toRaw(a)
     b = toRaw(b)
     if(!isEqual(a, b))
-        func(a, b)
+        return func(a, b)
 }
 
 /**
  * Same as {@link ifNotEqual}, except that at returns an arrow function instead of executing the
  * code directly.
  */
-export function ifNotEqualFn<T extends any|Reactive<any>>(func: (a: T, b: T) => void): (a: T, b: T) => void {
+export function ifNotEqualFn<T extends any|Reactive<any>, R extends any>(func: (a: T, b: T) => R): (a: T, b: T) => R|void {
     return (a, b) => ifNotEqual(a, b, func)
 }

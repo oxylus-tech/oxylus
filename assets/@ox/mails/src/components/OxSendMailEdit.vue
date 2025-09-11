@@ -30,7 +30,8 @@
                     <ox-field :editor="editor" name="is_template" type="checkbox"/>
                 </v-col>
             </v-row>
-            <v-card v-if="!editor.value.is_template" :subtitle="t('labels.recipients')">
+            <v-card v-if="!editor.value.is_template" :subtitle="t('labels.recipients')"
+                    class="mb-3">
                 <template #text>
                     <ox-field :editor="editor" name="contacts">
                         <template #default="{props: props_}">

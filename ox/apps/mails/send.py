@@ -5,7 +5,7 @@ import re
 import smtplib
 from typing import Any, Iterable
 
-from django.template import Template
+from django.template import Template, Context
 from django.utils.html import strip_tags
 
 from ox.apps.contacts.models import Contact
@@ -106,11 +106,12 @@ class MailSend:
         :param contact: target contact.
         :param context: extra context data.
         """
+        context = self.mail.get_context(contact=contact, **context)
         message = self.get_message(contact, context)
         logger.info(f"Send mail {self.mail.id} to {contact.email}")
         smtp.send_message(message)
 
-    def get_message(self, contact: Contact, context: dict[str, Any]) -> EmailMessage:
+    def get_message(self, contact: Contact, context: Context) -> EmailMessage:
         """Return EmailMessage to send to provided contact with rendered content and subject.
 
         :param contact: target contact
@@ -130,9 +131,8 @@ class MailSend:
         self.add_attachments(msg, self.mail.attachments.all())
         return msg
 
-    def get_content(self, contact: Contact, context: dict[str, Any]) -> str:
+    def get_content(self, contact: Contact, context: Context) -> str:
         """Render content to HTML and return."""
-        context = self.mail.get_context(contact=contact, **context)
         return self.templates["content"].render(context)
 
     _strip_re_1 = re.compile("[ \t]+")

@@ -29,7 +29,7 @@
                         <slot name="item.actions" :list="list" :item="item" />
                         <v-btn v-if="props.editable"
                             type="button" class="ml-2" size="small" color="error"
-                            @click.stop.prevent="list.remove(item.id)"
+                            @click.stop.prevent="remove(item.id)"
                             :aria-label="t('actions.remove')"
                             :title="t('actions.remove')"
                             icon="mdi-delete"/>
@@ -69,6 +69,14 @@ const attrs = useAttrs()
 const {list, items} = useModelList({
     query: new Query(props.repo)
 })
+
+
+function remove(id) {
+    // for some reason, watch isn't triggered on remove
+    list.remove(id)
+    ids.value = [...list.ids]
+}
+
 
 onMounted(() => ids.value.length && list.load({id: ids.value}))
 watch(ids, (val) => val.length && ifNotEqual(val, list.ids, (val) => val.length && list.load({id: val})))

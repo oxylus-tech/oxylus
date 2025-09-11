@@ -3,15 +3,24 @@
 Current dev
 ===========
 
-Files
+Mails
 -----
 
-- FolderNavDrawer:
+- SendMail:
 
-    - drawer
-    - remove, rename folder
+    - Set the template: copy informations from it;
+    - list view: action to create a mail from this template;
+    - remove template attribute? Just generate from a mail
 
-- file & folder name validation ('/')
+        - add tags in such case
+
+Contacts
+--------
+
+- Contact list filters: is subscription, related to a group, or an organisation
+
+Files
+-----
 
 
 Bugs

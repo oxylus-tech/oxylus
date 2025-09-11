@@ -77,6 +77,7 @@ class BaseContactSerializer(ModelSerializer):
 class OrganisationSerializer(BaseContactSerializer):
     country = RelatedField(queryset=models.Country.objects.all(), required=False)
     type = RelatedField(queryset=models.OrganisationType.objects.all(), required=False)
+    contact_list = RelatedField(read_only=True)
 
     class Meta(BaseContactSerializer.Meta):
         model = models.Organisation

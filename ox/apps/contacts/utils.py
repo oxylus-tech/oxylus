@@ -24,12 +24,17 @@ def sync_user_contacts(apps: Apps | None = None, alias: str = "default") -> list
     :return The created users.
     """
     User, Person = get_models(["auth.user", "ox_contacts.person"], apps)
-    return Person.objects.using(alias).bulk_create(
-        [
-            Person(user=user, first_name=user.first_name, last_name=user.last_name, email=user.email)
-            for user in User.objects.using(alias).filter(contact__isnull=True)
-        ]
-    )
+
+    objs = [
+        Person(user=user, first_name=user.first_name, last_name=user.last_name, email=user.email)
+        for user in User.objects.using(alias).filter(contact__isnull=True)
+    ]
+
+    # can't bulk create model with multi-inheritance
+    for obj in objs:
+        obj.save()
+
+    return objs
 
 
 def get_or_create_contact_list_for_group(group: Group, apps: Apps | None = None, alias: str = "default") -> ContactList:

@@ -10,7 +10,7 @@
     "preview": "pnpm exec vite preview",
     "test": "pnpm exec vitest",
     "coverage": "pnpm exec vitest run --coverage",
-    "docs:vue": "pnpm exec vuedoc-md src/components --out ../docs/vue",
+    "docs:vue": "pnpm exec vue-styleguidist build",
     "docs:ts": "pnpm exec typedoc --out ../docs/ts --tsconfig tsconfig.json src"
   },
   "exports": {

@@ -8,7 +8,7 @@ from .models import Person, Organisation
 
 @receiver(post_save, sender=Group)
 def on_group_update_sync_contact_list(sender, instance, *args, **kwargs):
-    if contact_list := getattr(instance, "contact_list"):
+    if contact_list := getattr(instance, "contact_list", None):
         if contact_list.name != instance.name:
             contact_list.name = instance.name
             contact_list.save(update_fields=["name"])
@@ -16,7 +16,7 @@ def on_group_update_sync_contact_list(sender, instance, *args, **kwargs):
 
 @receiver(post_save, sender=Organisation)
 def on_org_update_sync_contact_list(sender, instance, *args, **kwargs):
-    if contact_list := getattr(instance, "contact_list"):
+    if contact_list := getattr(instance, "contact_list", None):
         if contact_list.name != instance.name or contact_list.color != instance.color:
             contact_list.name = instance.name
             contact_list.color = instance.color

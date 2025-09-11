@@ -41,7 +41,7 @@
                         @change="onFileChange($event, editor)"/>
                 </v-col>
                 <v-col>
-                    <ox-field :editor="editor" name="name" required />
+                        <ox-field :editor="editor" name="name" required  :rules="[fileNameRule]"/>
                     <v-row>
                         <v-col cols="4">
                             <ox-field :editor="editor" name="owner">
