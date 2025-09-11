@@ -1,5 +1,4 @@
 import pytest
-from django.db import models
 
 from ox.apps.contacts import utils
 from ox.apps.contacts.models import ContactList
@@ -94,49 +93,16 @@ class TestContactListSynchronizer:
         assert set(synchronizer.organisation_map[person.id]) == set(person.organisations.all())
 
     def test_sync(self, synchronizer):
-        synchronizer.ensure_contact_lists()
-        synchronizer.sync()
-        for person in synchronizer.persons:
-            groups = synchronizer.group_map.get(person.user_id, set())
-            orgs = synchronizer.organisation_map.get(person.id, set())
-            valid_lists = synchronizer.eligible_lists_for(groups, orgs)
-            current_lists = set(person.contact_lists.all())
-            assert valid_lists == current_lists
+        raise NotImplementedError("TBD")
 
     def test_ensure_contact_lists(self, synchronizer):
-        synchronizer.ensure_contact_lists()
-        # Check that all group and organisation contact lists exist
-        all_groups = {g for groups in synchronizer.group_map.values() for g in groups}
-        all_orgs = {o for orgs in synchronizer.organisation_map.values() for o in orgs}
-        group_lists = ContactList.objects.filter(group__in=all_groups, organisation__isnull=True)
-        org_lists = ContactList.objects.filter(organisation__in=all_orgs, group__isnull=True)
-        assert group_lists.count() == len(all_groups)
-        assert org_lists.count() == len(all_orgs)
+        raise NotImplementedError("TBD")
 
     def test_ensure_group_contact_lists(self, synchronizer):
-        synchronizer.ensure_group_contact_lists()
-        all_groups = {g for groups in synchronizer.group_map.values() for g in groups}
-        group_lists = ContactList.objects.filter(group__in=all_groups, organisation__isnull=True)
-        assert group_lists.count() == len(all_groups)
+        raise NotImplementedError("TBD")
 
     def test_ensure_organisation_contact_lists(self, synchronizer):
-        synchronizer.ensure_organisation_contact_lists()
-        all_orgs = {o for orgs in synchronizer.organisation_map.values() for o in orgs}
-        org_lists = ContactList.objects.filter(organisation__in=all_orgs, group__isnull=True)
-        assert org_lists.count() == len(all_orgs)
+        raise NotImplementedError("TBD")
 
     def test_eligible_lists_for(self, synchronizer):
-        for person in synchronizer.persons:
-            groups = synchronizer.group_map.get(person.user_id, set())
-            orgs = synchronizer.organisation_map.get(person.id, set())
-            eligible = synchronizer.eligible_lists_for(groups, orgs)
-            # Should match the contact lists for those groups/orgs
-            expected = set(
-                ContactList.objects.filter(
-                    (
-                        models.Q(group__in=groups, organisation__isnull=True)
-                        | models.Q(organisation__in=orgs, group__isnull=True)
-                    ).distinct()
-                )
-            )
-            assert eligible == expected
+        raise NotImplementedError("TBD")
