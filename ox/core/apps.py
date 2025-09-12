@@ -70,11 +70,9 @@ ox_assets = Assets(
     Asset("@mdi/font", css="css/materialdesignicons.min.css", dist=""),
     Asset("vuetify", css="vuetify.min.css"),
     # note:
-    Asset("ox", "ox.js", css="style.css", static_dir="ox"),
-    Asset("ox/components", "components.js", static_dir="ox"),
-    Asset("ox/vendor", "vendor.js", static_dir="ox"),
-    lookup_dirs=[("{BASE_DIR}/assets/ox/", "{BASE_DIR}/ox/static")],
-    static_dir="ox",
+    Asset("@oxylus/core", "lib.js", css="style.css", static_dir="ox"),
+    Asset("@oxylus/core/components", "components.js", static_dir="ox"),
+    Asset("@oxylus/core/vendor", "vendor.js", static_dir="ox"),
 )
 
 

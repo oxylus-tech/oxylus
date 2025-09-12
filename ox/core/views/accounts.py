@@ -31,10 +31,7 @@ class LoginMixin:
         return self.credentials_serializer_class(**kwargs)
 
     def get_welcome_message(self, user, **kw):
-        if user.first_name:
-            kw["name"] = f"{user.first_name} {user.last_name or ''}".strip()
-        else:
-            kw["name"] = user.username
+        kw["name"] = user.full_name or user.username
         return self.welcome_message.format(**kw)
 
 
