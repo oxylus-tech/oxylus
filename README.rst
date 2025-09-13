@@ -51,7 +51,7 @@ Technically:
 - Frontend: Vue, Vuetify, Pinia, Pinia-ORM
 - QA: pre-commit, unit tests
 - Documentation
-- Object permission system using `django-caps <https://github.com/oxylus-tech/django-caps/>`
+- Object permission system using `django-caps <https://github.com/oxylus-tech/django-caps/>`__
 
 
 Practices and conventions
