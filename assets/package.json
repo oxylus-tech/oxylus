@@ -1,6 +1,6 @@
 {
   "private": true,
-  "name": "ox-monorepo",
+  "name": "oxylus-monorepo",
   "workspaces": [
     "@oxylus/*"
   ],
