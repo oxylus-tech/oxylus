@@ -27,16 +27,16 @@
 
     "baseUrl": "./",
     "paths": {
-        "ox": ["./ox/src/lib.ts"],
-        "ox/*": ["./ox/src/*"],
-        "@ox/auth": ["./@ox/auth/src/index.ts"],
-        "@ox/auth/*": ["./@ox/auth/src/*"],
-        "@ox/location": ["./@ox/location/src/index.ts"],
-        "@ox/location/*": ["./@ox/location/src/*"],
-        "@ox/contacts": ["./@ox/contacts/src/index.ts"],
-        "@ox/contacts/*": ["./@ox/contacts/src/*"],
-        "@ox/files": ["./@ox/files/src/index.ts"],
-        "@ox/files/*": ["./@ox/files/src/*"],
+        "@oxylus/core": ["./@oxylus/core/src/lib.ts"],
+        "@oxylus/core/*": ["./@oxylus/core/src/*"],
+        "@oxylus/auth": ["./@oxylus/auth/src/index.ts"],
+        "@oxylus/auth/*": ["./@oxylus/auth/src/*"],
+        "@oxylus/location": ["./@oxylus/location/src/index.ts"],
+        "@oxylus/location/*": ["./@oxylus/location/src/*"],
+        "@oxylus/contacts": ["./@oxylus/contacts/src/index.ts"],
+        "@oxylus/contacts/*": ["./@oxylus/contacts/src/*"],
+        "@oxylus/files": ["./@oxylus/files/src/index.ts"],
+        "@oxylus/files/*": ["./@oxylus/files/src/*"],
         "*": ["node_modules/*"]
     },
   }

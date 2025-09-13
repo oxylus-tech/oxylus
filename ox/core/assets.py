@@ -17,18 +17,15 @@ There can also be nested instances of the same class, using :py:func:`order_asse
 to have them unfold.
 
 The entry point for assets are Oxylus' :py:class:`~ox.core.apps.AppConfig` which are looked
-for in order to execute commands or rendering views.
+for rendering views.
 """
 
 from __future__ import annotations
 
 
 from collections import namedtuple
-from pathlib import Path
 from functools import cached_property
 from graphlib import TopologicalSorter
-import shutil
-import subprocess
 from typing import Iterable
 
 from django.conf import settings
@@ -57,11 +54,7 @@ class Asset(Owned):
         - javascript and development javascript distribution file
         - css directory
 
-    Collecting asset will copy the distribution files into the corresponding django's
-    `static` file (using :py:meth:`~.collect`).
     """
-
-    project_module_dir = settings.BASE_DIR / "ox"
 
     def __init__(
         self,
@@ -100,62 +93,32 @@ class Asset(Owned):
     def css_url(self):
         return self.css and static(f"{self.static_dir}/{self.css}") or None
 
-    def collect(self, assets: Assets | None = None, **_) -> AssetPaths | None:
-        """Copy assets into statics if source exists."""
-        path = assets.paths.source / "node_modules" / self.name
-        if self.dist:
-            path = path / self.dist
-
-        if not path.exists():
-            return None
-
-        target = assets.paths.target / self.name
-        target.exists() and shutil.rmtree(target)
-        shutil.copytree(str(path), str(target))
-        return AssetPaths(assets.paths.root, path, target)
-
 
 class Assets(Owned):
-    """Represent a client side application project to be built and integrated
-    into rendered templates. It includes project specification and
-    dependencies. Assets is an :py:class:`~ox.utils.owned.Owned` which is owned
-    by AppConfig instances.
+    """
+    This class represent a client side application's assets to included
+    in Django's application rendered templates.
 
-    For standalone Assets (such as the javascript ``ox`` library), :py:attr:`~.lookup_dirs`
-    (if not :py:attr:`~.app_dir`) and :py:attr:`~.static_dir` should be specified. Default
-    lookups will use ``app_dir`` set to ``AppConfig.path``:
+    It contains multiple :py:class:`Asset` instances each designating a
+    dependency (such as ``vue``, etc.). It also can contain :py:class:`Assets` instances of other application as dependencies.
 
-        - ``BASE_DIR / assets / app_label``: generated in ``BASE_DIR / static``
-        - ``app_dir / assets``: generated in ``app_dir / static``
+    It is responsible to:
 
-    It also provides cached properties to generate :py:attr:`~.import_map`, :py:attr:`~.js_urls`
-    and :py:attr:`~.css_urls`.
+        - render importmap (in ``ox/core/base.html`` template);
+        - provide a list of CSS and javascript modules to import;
+        - handle assets dependencies, sorting them topologically (using :py:func:`order_assets`)
 
-    Look at the doc of :py:attr:`ox.core.apps.AppConfig.assets` for more info.
+    The Assets class is :py:class:`~ox.utils.functional.Owned` by an AppConfig. Uninitialized
+    :py:attr:`static_dir` will be set to app_config's ``label``.
+    Concretely, this means that setting a instance of Assets to :py:attr:`~.apps.AppConfig`
+    will search for statics in this app's directory.
     """
 
-    lookup_dirs: dict[str, str] = (
-        ("{BASE_DIR}/assets/{self.static_dir}", "{BASE_DIR}/ox/static"),
-        ("{self.app_dir}/assets", "{self.app_dir}/static"),
-    )
-    """Source and destination directories to look assets up."""
-    commands: dict[str, str] = {
-        "init": "npm install",
-        "build": "npm run build -- --outDir {self.paths.target}/{self.static_dir}",
-        "watch": "npm run watch -- --outDir {self.paths.target}/{self.static_dir}",
-    }
-    """Provide multiple commands that can be executed by :py:meth:`~.command`.
-
-    It is declared as a dict of ``{name: shell}``. The ``shell`` is
-    formatted using ``{self: assets, app: app_config}``.
+    index: str = "index.{ext}"
     """
-    output: str = "index.{ext}"
-    """Output filename, formatted with correct extension (eg.
-
-    ``"js"``).
+    Application's static's filename to look for, formatted with correct extension
+    (eg. ``"js"``).
     """
-    app_dir: Path | None = None
-    """Directory in which to lookup for ``assets``."""
     static_dir: str = ""
     """Static directory name."""
 
@@ -173,28 +136,15 @@ class Assets(Owned):
         self.__dict__.update(**kwargs)
 
     @cached_property
-    def paths(self) -> None | AssetPaths:
-        """Source and target directory or ``None`` when it does not exists.
-
-        :return: AssetPaths (``root`` will be None if Assets is not owned by application).
-        """
-        kw = {"self": self, "BASE_DIR": settings.BASE_DIR}
-        for source, target in self.lookup_dirs:
-            source = Path(source.format(**kw))
-            if source.exists:
-                target = Path(target.format(**kw))
-                return AssetPaths(self.app_dir, source, target)
-        return None
-
-    @cached_property
     def css_urls(self) -> list[str]:
         """A list of CSS static files urls."""
         urls = [asset.css_url for asset in iter(self) if asset.css]
 
-        app_output = self.output.format(ext="css")
-        app_url = f"{self.static_dir}/{app_output}"
-        if finders.find(app_url):
-            urls.append(static(app_url))
+        app_index = self.index.format(ext="css")
+        if self.static_dir:
+            app_url = f"{self.static_dir}/{app_index}"
+            if finders.find(app_url):
+                urls.append(static(app_url))
         return urls
 
     @cached_property
@@ -203,10 +153,11 @@ class Assets(Owned):
         entrypoint."""
         urls = [asset.js_url for asset in iter(self) if asset.js]
 
-        app_output = self.output.format(ext="js")
-        app_url = f"{self.static_dir}/{app_output}"
-        if finders.find(app_url):
-            urls.append(static(app_url))
+        app_index = self.index.format(ext="js")
+        if self.static_dir:
+            app_url = f"{self.static_dir}/{app_index}"
+            if finders.find(app_url):
+                urls.append(static(app_url))
         return urls
 
     @cached_property
@@ -216,79 +167,9 @@ class Assets(Owned):
         map["imports"] = {asset.name: asset.js_url for asset in iter(self) if asset.js_url}
         return map
 
-    def is_init(self) -> bool:
-        """Return True if assets and dependencies have been installed.
-
-        Heuristic is based on the existence of the ``node_modules``
-        directory.
-        """
-        return self.paths and (self.paths.source / "node_modules").exists()
-
-    def command(self, command_name, use_async=False, dev=False, **kwargs):
-        """Execute a command by name. Commands are provided by the ``commands``
-        instance attribute.
-
-        :param str command_name: command name to execute
-        :param bool use_async: if True, execute command as non-blocking operation.
-        :param bool dev: if True, add ``--mode development`` arguments
-        :param apps.AppConfig app: if provided use this application
-        :param **kwargs: extra argument to pass down to subprocess function.
-        :return: ``subprocess``'s ``Popen`` or ``run`` result depending on ``use_async`` value.
-        """
-
-        if not self.paths:
-            return None
-        command = self.commands[command_name].format(self=self)
-        if dev:
-            command += " --mode develoment"
-        return self._get_process(use_async)(command, shell=True, cwd=self.paths.source, **kwargs)
-
-    def _get_process(self, use_async):
-        return use_async and subprocess.Popen or subprocess.run
-
-    def collect(
-        self,
-        exclude: set[str] = None,
-        init: bool = False,
-        force_init: bool = False,
-        build: bool = False,
-        dev: bool = False,
-        nested: bool = False,
-    ) -> None | dict[str, AssetPaths]:
-        """Collect statics over all nested assets.
-
-        :param set[str] exclude: exclude those assets by name. Note: the provided object will be updated with the \
-        assets that have been collected here.
-        :param bool init: run ``init`` if not already initialized.
-        :param bool force_init: run ``init`` regardless asset already has been initialized.
-        :param bool build: run ``build``.
-        :return: a dict of collected statics as ``{name, paths}``, where ``paths`` is the result of ``Asset.resolve`` \
-        (or ``None`` if source does not exists).
-        """
-        if not self.paths:
-            return None
-
-        if force_init or ((init or build) and not self.is_init()):
-            self.command("init", dev=dev)
-        if build:
-            self.command("build", dev=dev)
-
-        done, exclude = {}, exclude or set()
-        for asset in self.items:
-            if isinstance(asset, Asset):
-                if asset.app or asset.name in exclude:
-                    continue
-                if paths := asset.collect(self):
-                    done[asset.name] = paths
-                    exclude.add(asset.name)
-            elif nested:
-                # we don't pass app down, since it can be declared on the nested Assets.
-                asset.collect(exclude=exclude, init=init, force_init=force_init, build=build, dev=dev)
-        return done
-
     def contribute(self, owner) -> Assets:
-        """When ``Assets`` instance is contributed to an owner, assign
-        ``static_dir`` and ``app_dir`` to the application label if not present.
+        """When ``Assets`` instance is contributed to an AppConfig, assign
+        ``static_dir`` to the application label if not present.
 
         See :py:meth:`..utils.functional.Owned.contribute` for more
         info.
@@ -296,7 +177,6 @@ class Assets(Owned):
         self = super().contribute(owner)
         if not self.static_dir:
             self.static_dir = owner.label
-            self.app_dir = owner.path
         return self
 
     def __iter__(self):
@@ -309,10 +189,10 @@ class Assets(Owned):
             else:
                 yield asset
 
-    def __repr__(self):
+    def __str__(self):
         if owner := getattr(self, "_owner", None):
             return owner.label
-        return f"Assets<{self.paths.source}>"
+        return f"{self.static_dir}"
 
 
 def order_assets(assets_list: Iterable[Assets]) -> Iterable[Assets]:

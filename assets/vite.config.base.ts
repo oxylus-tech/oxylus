@@ -18,13 +18,18 @@ export default defineConfig({
     ],
     build: {
         sourcemap: true,
+        emptyOutDir: true,
+        manifest: true,
 
         optimizeDeps: {
             include: ['vuetify'],
         },
 
         rollupOptions: {
-            external: ['vue', 'vuex', 'axios', 'ox', 'ox/app', 'ox/components', 'ox/vendor'],
+            external: [
+                'vue', /*'pinia',*/ 'axios',
+                '@oxylus/core', '@oxylus/core/components', '@oxylus/core/vendor'
+            ],
             input: {
                 index: "src/index.ts",
                 // sfc: "src/sfc.ts",
@@ -38,7 +43,7 @@ export default defineConfig({
                     if(id.includes("vuetify"))
                         return "vuetify"
 
-                    /*const match = id.match(/\/@ox\/([^/]+)\//)
+                    /*const match = id.match(/\/@oxylus\/([^/]+)\//)
                     if (match)
                         return match[1]*/
                 },
@@ -63,8 +68,8 @@ export default defineConfig({
         extensions: ['.js', '.ts', '.json', '.vue', '.scss'],
         alias: {
             '@': fileURLToPath(new URL('./src', import.meta.url)),
-            //'@ox': fileURLToPath(new URL('./ox/src/', import.meta.url)),
-            //'@ox_locations': fileURLToPath(new URL('./@ox/locations/src/', import.meta.url)),
+            //'@oxylus': fileURLToPath(new URL('./ox/src/', import.meta.url)),
+            //'@oxylus_locations': fileURLToPath(new URL('./@oxylus/locations/src/', import.meta.url)),
         }
     }
 })
