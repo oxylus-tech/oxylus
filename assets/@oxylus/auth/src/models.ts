@@ -1,5 +1,5 @@
-import { models } from "@oxylus/core"
-export {models} from '@oxylus/core'
+import { models } from "@oxylus/ox"
+export {models} from '@oxylus/ox'
 
 /** Represent a `django-caps` Agent. */
 export class Agent extends models.Model {

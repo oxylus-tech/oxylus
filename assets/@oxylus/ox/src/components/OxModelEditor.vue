@@ -23,7 +23,7 @@
  * - `editable`: a boolean computed value defining if user can edit the component.
  */
 import { computed, defineExpose, inject, watch, ref } from 'vue'
-import { t, useModelEditor } from '@oxylus/core'
+import { t, useModelEditor } from '@oxylus/ox'
 
 import type {IModelEditorProps} from '../controllers/modelEditor'
 

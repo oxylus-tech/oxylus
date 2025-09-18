@@ -24,8 +24,8 @@
 </template>
 <script setup lang="ts">
 import {defineExpose, ref, useAttrs, useSlots, defineModel} from 'vue'
-import {useModels} from '@oxylus/core'
-import {OxAutocomplete} from '@oxylus/core/components'
+import {useModels} from '@oxylus/ox'
+import {OxAutocomplete} from '@oxylus/ox/components'
 import {Contact} from '../models'
 import OxContactName from './OxContactName'
 

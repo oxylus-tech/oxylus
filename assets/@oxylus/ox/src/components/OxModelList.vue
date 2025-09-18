@@ -46,7 +46,7 @@
  * The default implementation renders a `v-list`.
  */
 import { defineModel, defineExpose, onMounted, watch, useSlots, useAttrs } from 'vue'
-import { useModelList, Query, t, ifNotEqual } from '@oxylus/core'
+import { useModelList, Query, t, ifNotEqual } from '@oxylus/ox'
 
 /**
  * The list of ids to fetch.

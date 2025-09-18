@@ -54,7 +54,7 @@
 
 
 import { defineProps, inject, onMounted, onUnmounted, ref, useSlots, watch } from 'vue'
-import {filterSlots} from '@oxylus/core'
+import {filterSlots} from '@oxylus/ox'
 
 import OxStateAlert from './OxStateAlert.vue'
 import type {IPanelProps} from '../controllers'

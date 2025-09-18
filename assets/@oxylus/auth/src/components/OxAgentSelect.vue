@@ -28,7 +28,7 @@
  * current user.
  */
 import { computed, defineModel, defineExpose, inject, useAttrs, onMounted, ref, watch} from 'vue'
-import { query, t } from '@oxylus/core'
+import { query, t } from '@oxylus/ox'
 import { useAgents } from '../composables'
 
 const attrs = useAttrs()

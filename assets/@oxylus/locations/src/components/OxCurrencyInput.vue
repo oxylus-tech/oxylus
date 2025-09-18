@@ -23,8 +23,8 @@
 </template>
 <script setup lang="ts">
 import {useSlots, defineModel, defineProps} from 'vue'
-import {query} from '@oxylus/core'
-import {OxAutocomplete} from '@oxylus/core/components'
+import {query} from '@oxylus/ox'
+import {OxAutocomplete} from '@oxylus/ox/components'
 import {useCurrencies} from '../composables'
 
 const slots = useSlots()

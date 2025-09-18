@@ -35,7 +35,7 @@
 <script setup lang="ts">
 import { defineExpose, defineEmits, ref, defineModel, watch } from 'vue'
 import { VIcon } from 'vuetify/components'
-import { t } from '@oxylus/core'
+import { t } from '@oxylus/ox'
 
 interface FilePreview {
     preview?: string

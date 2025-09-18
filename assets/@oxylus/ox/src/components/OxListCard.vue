@@ -62,7 +62,7 @@
  */
 import { computed, onMounted, useSlots } from 'vue'
 import { isEmpty } from 'lodash'
-import { filterSlots, t } from '@oxylus/core'
+import { filterSlots, t } from '@oxylus/ox'
 import OxActionEdit from './OxActionEdit'
 
 const slots = useSlots()

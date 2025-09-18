@@ -1,4 +1,4 @@
-import {App} from '@oxylus/core/components'
+import {App} from '@oxylus/ox/components'
 import * as components from './components'
 
 export default {

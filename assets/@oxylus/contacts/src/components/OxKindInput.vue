@@ -5,7 +5,7 @@
 </template>
 <script setup lang="ts">
 import { defineModel } from 'vue'
-import { t } from '@oxylus/core'
+import { t } from '@oxylus/ox'
 import { ContactInfo } from '../models'
 
 const value = defineModel()

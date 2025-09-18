@@ -29,9 +29,9 @@
 <script setup lang="ts">
 import { useSlots, withDefaults } from 'vue'
 
-import { query, t } from '@oxylus/core'
-import type {IModelPanelProps} from '@oxylus/core'
-import {OxModelPanel} from '@oxylus/core/components'
+import { query, t } from '@oxylus/ox'
+import type {IModelPanelProps} from '@oxylus/ox'
+import {OxModelPanel} from '@oxylus/ox/components'
 
 import OxFolderEdit from './OxFolderEdit'
 import OxFolderInput from './OxFolderInput'

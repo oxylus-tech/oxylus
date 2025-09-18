@@ -84,11 +84,11 @@
  * - `close`: user clicked on close button
  */
 import type { Ref } from 'vue'
-import type { ModelId } from '@oxylus/core'
+import type { ModelId } from '@oxylus/ox'
 
 import { defineModel, defineEmits, reactive, ref, watch } from 'vue'
-import { t, useModelList, query } from '@oxylus/core'
-import {OxListTable} from '@oxylus/core/components'
+import { t, useModelList, query } from '@oxylus/ox'
+import {OxListTable} from '@oxylus/ox/components'
 import {useFilesModels} from '../composables'
 import { formatBytes } from '../models'
 

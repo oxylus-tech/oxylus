@@ -1,4 +1,4 @@
-import {models} from '@oxylus/core'
+import {models} from '@oxylus/ox'
 import {Owned} from '@oxylus/auth/models'
 
 

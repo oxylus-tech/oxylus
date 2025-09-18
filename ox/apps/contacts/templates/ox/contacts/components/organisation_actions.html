@@ -1,0 +1,10 @@
+{% extends "ox/core/components/model_actions.html" %}
+{% load i18n ox %}
+
+{% block actions %}
+<ox-action v-if="bind.item.contact_list"
+    icon="mdi-card-account-details-star" title="{% translate "Contact list" %}"
+    :button="bind.button" :item="bind.item"
+    :href="`{% panel_url 'ox_contacts:index' 'contactlists' id="${bind.item.contact_list}" %}`"></ox-action>
+{{ block.super }}
+{% endblock %}

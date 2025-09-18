@@ -34,7 +34,7 @@
 </template>
 <script setup lang="ts">
 import { defineModel, inject } from 'vue'
-import { t } from '@oxylus/core'
+import { t } from '@oxylus/ox'
 import { ContactInfo, Email, Phone, Address, BankAccount } from '../models'
 import OxEmailFormList from './OxEmailFormList'
 import OxPhoneFormList from './OxPhoneFormList'

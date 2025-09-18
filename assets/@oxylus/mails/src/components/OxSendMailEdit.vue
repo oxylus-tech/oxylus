@@ -67,8 +67,8 @@
 </template>
 <script setup lang="ts">
 import { computed, reactive, ref, useAttrs, watch } from 'vue'
-import { t, rules } from "@oxylus/core"
-import {OxModelEdit, OxField, OxAutocomplete, OxComponent} from '@oxylus/core/components'
+import { t, rules } from "@oxylus/ox"
+import {OxModelEdit, OxField, OxAutocomplete, OxComponent} from '@oxylus/ox/components'
 import {OxContactInput} from '@oxylus/contacts/components'
 
 import {useMailModels} from '../composables'

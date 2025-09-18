@@ -9,7 +9,7 @@
 </template>
 <script setup lang="ts">
 import { defineModel, defineProps, useAttrs } from 'vue'
-import { t } from '@oxylus/core'
+import { t } from '@oxylus/ox'
 import { Country } from '../models'
 
 const value = defineModel()

@@ -69,7 +69,7 @@
 import { useSlots, withDefaults, onErrorCaptured, onMounted } from 'vue'
 import { computed, defineProps, inject, provide, reactive, watch } from 'vue'
 
-import {useAppContext, usePanels, t, filterSlots} from '@oxylus/core'
+import {useAppContext, usePanels, t, filterSlots} from '@oxylus/ox'
 import type {Model} from '../models'
 import OxAppNav from './OxAppNav'
 

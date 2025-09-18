@@ -27,6 +27,8 @@
 
     "baseUrl": "./",
     "paths": {
+        "@oxylus/ox": ["./@oxylus/ox/src/lib.ts"],
+        "@oxylus/ox/*": ["./@oxylus/ox/src/*"],
         "@oxylus/core": ["./@oxylus/core/src/lib.ts"],
         "@oxylus/core/*": ["./@oxylus/core/src/*"],
         "@oxylus/auth": ["./@oxylus/auth/src/index.ts"],

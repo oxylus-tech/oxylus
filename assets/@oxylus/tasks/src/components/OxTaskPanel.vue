@@ -38,9 +38,9 @@
 <script setup lang="ts">
 import { ref, useSlots, withDefaults } from 'vue'
 
-import { t, filterSlots } from '@oxylus/core'
-import {OxModelPanel, OxActionPost} from '@oxylus/core/components'
-import type {IModelPanelProps} from '@oxylus/core'
+import { t, filterSlots } from '@oxylus/ox'
+import {OxModelPanel, OxActionPost} from '@oxylus/ox/components'
+import type {IModelPanelProps} from '@oxylus/ox'
 
 import {useTasksModels} from '../composables'
 

@@ -88,8 +88,8 @@
 <script setup lang="ts">
 // TODO: reset folder when owner changes
 import { computed, ref, watch, onMounted, useAttrs } from 'vue'
-import { t, query} from "@oxylus/core"
-import {OxModelEdit, OxField, OxValidationBtn} from '@oxylus/core/components'
+import { t, query} from "@oxylus/ox"
+import {OxModelEdit, OxField, OxValidationBtn} from '@oxylus/ox/components'
 import {OxAgentSelect} from '@oxylus/auth/components'
 
 import {useFilesModels} from '../composables'

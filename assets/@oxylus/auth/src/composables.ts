@@ -1,5 +1,5 @@
-import {models as oxModels, useModels, query} from '@oxylus/core'
-import type {Repos, IUseModelOpts} from '@oxylus/core'
+import {models as oxModels, useModels, query} from '@oxylus/ox'
+import type {Repos, IUseModelOpts} from '@oxylus/ox'
 import {Agent} from './models'
 
 /**

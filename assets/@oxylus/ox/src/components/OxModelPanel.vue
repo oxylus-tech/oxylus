@@ -163,7 +163,7 @@ import OxPanel from './OxPanel'
 import OxView from './OxView'
 import OxModelEdit from './OxModelEdit'
 
-import {t, filterSlots, useModelPanel} from '@oxylus/core'
+import {t, filterSlots, useModelPanel} from '@oxylus/ox'
 import type {IModelPanelProps} from '../controllers'
 
 const slots = useSlots()

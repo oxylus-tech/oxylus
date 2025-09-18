@@ -20,7 +20,7 @@
 </template>
 <script setup>
 import { computed, defineProps, defineExpose, inject } from 'vue'
-import { t } from '@oxylus/core'
+import { t } from '@oxylus/ox'
 
 const list = inject('list')
 const props = defineProps({

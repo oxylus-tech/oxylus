@@ -20,8 +20,8 @@
 <script setup lang="ts">
 import {inject, useAttrs} from 'vue'
 
-import {t} from '@oxylus/core'
-import {OxModelEdit, OxField} from '@oxylus/core/components'
+import {t} from '@oxylus/ox'
+import {OxModelEdit, OxField} from '@oxylus/ox/components'
 
 import {useAuthModels} from '../composables'
 import OxPermissionsEdit from './OxPermissionsEdit.vue'

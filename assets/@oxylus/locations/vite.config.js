@@ -1,14 +1,3 @@
-import { defineConfig, mergeConfig } from 'vite'
-import baseConfig, {staticRoot} from '../../vite.config.base.ts'
+import baseConfig from '@oxylus/ox/vite.config.base'
 
-
-// https://vitejs.dev/config/
-export default mergeConfig(
-    baseConfig,
-    defineConfig({
-        base: 'static/ox_locations',
-        build: {
-            outDir: `${staticRoot}/ox_locations/`,
-        },
-    })
-)
+export default baseConfig

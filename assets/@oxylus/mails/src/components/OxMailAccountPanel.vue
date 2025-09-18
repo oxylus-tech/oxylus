@@ -22,8 +22,8 @@
 <script setup lang="ts">
 import { useSlots, withDefaults } from 'vue'
 
-import { t } from '@oxylus/core'
-import type {IModelPanelProps} from '@oxylus/core'
+import { t } from '@oxylus/ox'
+import type {IModelPanelProps} from '@oxylus/ox'
 import {OxOwnedPanel} from '@oxylus/auth/components'
 
 import OxMailAccountEdit from './OxMailAccountEdit'

@@ -36,7 +36,7 @@
  * Other slots can be named following the convention: `window.[name]` and `tab.[name]`.
  */
 import { ref, defineProps, onMounted, useSlots } from 'vue'
-import { filterSlots } from '@oxylus/core'
+import { filterSlots } from '@oxylus/ox'
 
 const props = defineProps({
     /** default tab title */

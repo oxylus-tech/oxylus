@@ -16,7 +16,7 @@
  * Display bank account form list, wrapping around {@link OxFormList}
  */
 import {defineModel, useAttrs} from 'vue'
-import {OxFormList} from '@oxylus/core/components'
+import {OxFormList} from '@oxylus/ox/components'
 import OxBankAccountForm from './OxBankAccountForm'
 
 const items = defineModel()

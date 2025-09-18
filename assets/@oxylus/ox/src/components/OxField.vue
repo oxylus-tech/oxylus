@@ -44,7 +44,7 @@
  */
 
 import {computed, defineEmits, defineAsyncComponent, useAttrs, useSlots} from 'vue'
-import {t, rules} from '@oxylus/core'
+import {t, rules} from '@oxylus/ox'
 
 const OxAutocomplete = defineAsyncComponent(() => import('./OxAutocomplete.vue'))
 

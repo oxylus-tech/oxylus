@@ -51,9 +51,9 @@
 <script setup lang="ts">
 import { computed, defineProps, useSlots, withDefaults } from 'vue'
 
-import { query, t } from '@oxylus/core'
-import {OxModelPanel} from '@oxylus/core/components'
-import type {IModelPanelProps} from '@oxylus/core'
+import { query, t } from '@oxylus/ox'
+import {OxModelPanel} from '@oxylus/ox/components'
+import type {IModelPanelProps} from '@oxylus/ox'
 import {OxCountryInput} from '@oxylus/locations/components'
 
 import {useContactModels} from '../composables'

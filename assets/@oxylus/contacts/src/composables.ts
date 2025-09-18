@@ -1,7 +1,7 @@
-import {models as oxModels, useModels, t} from '@oxylus/core'
+import {models as oxModels, useModels, t} from '@oxylus/ox'
 import {Country} from '@oxylus/locations/models'
 import * as models_ from './models'
-import type {IUseModelOpts, models} from '@oxylus/core'
+import type {IUseModelOpts, models} from '@oxylus/ox'
 
 
 /**

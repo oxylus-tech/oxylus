@@ -31,8 +31,8 @@
 <script setup>
 import {computed, inject, ref, reactive, defineModel, defineProps} from 'vue'
 
-import {OxStateAlert, OxValidationBtn} from '@oxylus/core/components'
-import {State, t} from '@oxylus/core'
+import {OxStateAlert, OxValidationBtn} from '@oxylus/ox/components'
+import {State, t} from '@oxylus/ox'
 
 const repos = inject("repos")
 const props = defineProps({

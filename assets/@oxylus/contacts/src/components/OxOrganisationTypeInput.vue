@@ -24,8 +24,8 @@
 </template>
 <script setup lang="ts">
 import {useAttrs, useSlots, defineModel} from 'vue'
-import {useModels} from '@oxylus/core'
-import {OxAutocomplete} from '@oxylus/core/components'
+import {useModels} from '@oxylus/ox'
+import {OxAutocomplete} from '@oxylus/ox/components'
 import {OrganisationType} from '../models'
 
 const slots = useSlots()

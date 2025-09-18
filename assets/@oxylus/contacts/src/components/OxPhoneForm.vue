@@ -14,7 +14,7 @@ import {defineProps} from 'vue'
 import 'v-phone-input/dist/v-phone-input.css';
 import { VPhoneInput } from 'v-phone-input';
 
-import {t} from '@oxylus/core'
+import {t} from '@oxylus/ox'
 import OxKindInput from './OxKindInput.vue'
 
 const props = defineProps({

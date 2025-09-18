@@ -48,8 +48,8 @@
  * Provide a list of mail attachments, wrapping around {@link OxFormList}.
  */
 import { computed, defineModel, onMounted, ref, watch } from 'vue'
-import {useModelList, query, t} from '@oxylus/core'
-import {OxFormList, OxComponent} from '@oxylus/core/components'
+import {useModelList, query, t} from '@oxylus/ox'
+import {OxFormList, OxComponent} from '@oxylus/ox/components'
 import {useFilesModels} from '@oxylus/files/composables'
 import {formatBytes} from '@oxylus/files/models'
 

@@ -54,7 +54,7 @@
 </style>
 <script setup lang="ts">
 import { defineEmits, reactive, ref, onUnmounted, useAttrs, watch } from 'vue'
-import { t } from '@oxylus/core'
+import { t } from '@oxylus/ox'
 
 import { Editor, EditorContent } from '@tiptap/vue-3'
 import StarterKit from '@tiptap/starter-kit'

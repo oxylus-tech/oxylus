@@ -1,4 +1,4 @@
-import { useModels, query } from '@oxylus/core'
+import { useModels, query } from '@oxylus/ox'
 import { Country, Currency } from './models'
 
 

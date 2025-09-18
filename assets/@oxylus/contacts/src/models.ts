@@ -1,6 +1,6 @@
-import { models, t } from "@oxylus/core"
+import { models, t } from "@oxylus/ox"
 import { Country } from '@oxylus/locations/models'
-import type { IModel } from "@oxylus/core"
+import type { IModel } from "@oxylus/ox"
 
 
 /** Contact list */

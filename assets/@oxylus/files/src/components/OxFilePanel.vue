@@ -65,9 +65,9 @@
 <script setup lang="ts">
 import { ref, reactive, useSlots, withDefaults, watch } from 'vue'
 
-import { query, t } from '@oxylus/core'
-import type {IModelPanelProps} from '@oxylus/core'
-import {OxModelPanel, OxAction} from '@oxylus/core/components'
+import { query, t } from '@oxylus/ox'
+import type {IModelPanelProps} from '@oxylus/ox'
+import {OxModelPanel, OxAction} from '@oxylus/ox/components'
 
 import OxFileEdit from './OxFileEdit'
 import OxFolderDrawer from './OxFolderDrawer'

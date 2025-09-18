@@ -1,4 +1,4 @@
-import {useModels, t} from '@oxylus/core'
+import {useModels, t} from '@oxylus/ox'
 import {Agent} from '@oxylus/auth/models'
 import * as models from './models'
 

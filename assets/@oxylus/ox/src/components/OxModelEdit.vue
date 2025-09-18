@@ -32,8 +32,8 @@
  *
  */
 import { computed, defineExpose, defineEmits, watch, ref, onMounted } from 'vue'
-import type { State } from '@oxylus/core'
-import { t, useModelEditor } from '@oxylus/core'
+import type { State } from '@oxylus/ox'
+import { t, useModelEditor } from '@oxylus/ox'
 
 import OxStateAlert from './OxStateAlert.vue'
 import OxValidationBtn from './OxValidationBtn.vue'

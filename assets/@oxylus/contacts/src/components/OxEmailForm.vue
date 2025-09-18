@@ -10,7 +10,7 @@
 </template>
 <script setup lang="ts">
 import {defineProps} from 'vue'
-import {t, rules} from '@oxylus/core'
+import {t, rules} from '@oxylus/ox'
 import OxKindInput from './OxKindInput.vue'
 
 const props = defineProps({

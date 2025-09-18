@@ -29,8 +29,8 @@
 <script setup lang="ts">
 import {inject, useAttrs, watch, onMounted} from 'vue'
 
-import {query, t, useModelList} from '@oxylus/core'
-import {OxModelEdit, OxField} from '@oxylus/core/components'
+import {query, t, useModelList} from '@oxylus/ox'
+import {OxModelEdit, OxField} from '@oxylus/ox/components'
 
 import {useContactList} from '../composables'
 import OxContactListName from './OxContactListName'

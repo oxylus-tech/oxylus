@@ -90,7 +90,7 @@
  * It wraps around `v-list` and uses {@link OxFormListItem} as items.
  */
 import {computed, defineModel, defineProps, inject, ref, reactive, provide, toRefs} from "vue"
-import {t} from "@oxylus/core"
+import {t} from "@oxylus/ox"
 
 import OxFormListItem from './OxFormListItem'
 

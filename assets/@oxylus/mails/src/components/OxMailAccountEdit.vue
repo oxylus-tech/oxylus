@@ -66,8 +66,8 @@
 </template>
 <script setup lang="ts">
 import { computed, ref, watch, onMounted, useAttrs } from 'vue'
-import { t, query, rules} from "@oxylus/core"
-import {OxModelEdit, OxField, OxComponent} from '@oxylus/core/components'
+import { t, query, rules} from "@oxylus/ox"
+import {OxModelEdit, OxField, OxComponent} from '@oxylus/ox/components'
 import {OxAgentSelect} from '@oxylus/auth/components'
 
 import {MailAccount} from '../models'

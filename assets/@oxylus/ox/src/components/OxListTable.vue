@@ -53,7 +53,7 @@ Slots:
 
 import { computed, defineProps, inject, ref, toRefs, useSlots } from 'vue'
 
-import { t, tKeys } from '@oxylus/core'
+import { t, tKeys } from '@oxylus/ox'
 // import { Permissions } from '../models'
 import { filterSlots } from '../utils'
 import OxAction from './OxAction'

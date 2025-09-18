@@ -1,6 +1,6 @@
 <script>
 import { h, computed, shallowRef, watch } from 'vue'
-import { defineAsyncComponent } from '@oxylus/core'
+import { defineAsyncComponent } from '@oxylus/ox'
 
 export default {
     props: {

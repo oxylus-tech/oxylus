@@ -45,7 +45,7 @@
 </template>
 <script setup lang="ts">
 import {defineProps, inject} from 'vue'
-import {t} from '@oxylus/core'
+import {t} from '@oxylus/ox'
 import {OxCountryInput} from '@oxylus/locations/components'
 import OxKindInput from './OxKindInput.vue'
 

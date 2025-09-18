@@ -22,8 +22,8 @@
  * Display email form list, wrapping around {@link OxFormList}
  */
 import {defineModel, useAttrs} from 'vue'
-import { t } from '@oxylus/core'
-import {OxFormList} from '@oxylus/core/components'
+import { t } from '@oxylus/ox'
+import {OxFormList} from '@oxylus/ox/components'
 
 import { ContactInfo } from '../models'
 import OxEmailForm from './OxEmailForm'

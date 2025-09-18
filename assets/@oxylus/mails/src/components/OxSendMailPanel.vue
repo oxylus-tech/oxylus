@@ -30,9 +30,9 @@
 <script setup lang="ts">
 import { useSlots, withDefaults } from 'vue'
 
-import { t, filterSlots } from '@oxylus/core'
-import type {IModelPanelProps} from '@oxylus/core'
-import {OxActionPost} from '@oxylus/core/components'
+import { t, filterSlots } from '@oxylus/ox'
+import type {IModelPanelProps} from '@oxylus/ox'
+import {OxActionPost} from '@oxylus/ox/components'
 import {OxOwnedPanel} from '@oxylus/auth/components'
 
 import OxSendMailEdit from './OxSendMailEdit'

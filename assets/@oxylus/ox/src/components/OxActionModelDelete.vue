@@ -8,7 +8,7 @@
 </template>
 <script setup lang="ts">
 import { defineProps, inject, useAttrs } from 'vue'
-import { t } from '@oxylus/core'
+import { t } from '@oxylus/ox'
 
 import OxAction from './OxAction.vue'
 

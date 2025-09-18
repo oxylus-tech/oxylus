@@ -35,7 +35,7 @@
 </template>
 <script setup lang="ts">
 import { useAttrs } from 'vue'
-import {OxModelEdit, OxField} from '@oxylus/core/components'
+import {OxModelEdit, OxField} from '@oxylus/ox/components'
 
 import {useLocationModels} from '../composables'
 import OxContinentInput from './OxContinentInput.vue'

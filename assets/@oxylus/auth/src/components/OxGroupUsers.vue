@@ -26,8 +26,8 @@
 <script setup>
 import {computed, inject, defineProps} from 'vue'
 
-import {t, query} from '@oxylus/core'
-import {OxAction} from '@oxylus/core/components'
+import {t, query} from '@oxylus/ox'
+import {OxAction} from '@oxylus/ox/components'
 
 const repos = inject('repos')
 const props = defineProps({

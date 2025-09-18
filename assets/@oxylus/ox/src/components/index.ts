@@ -1,5 +1,5 @@
 import * as ox from './ox'
-import {components as vendor} from '@oxylus/core/vendor'
+import {components as vendor} from '@oxylus/ox/vendor'
 
 export * from './ox'
 
@@ -13,7 +13,7 @@ export * from './ox'
  * @example
  * // Example app.ts for another application.
  *
- * import {App} from '@oxylus/core/components'
+ * import {App} from '@oxylus/ox/components'
  * import * as components from './components'
  *
  * export default {

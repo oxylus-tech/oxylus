@@ -1,5 +1,5 @@
-import { models, t } from "@oxylus/core"
-import type { IModel } from "@oxylus/core"
+import { models, t } from "@oxylus/ox"
+import type { IModel } from "@oxylus/ox"
 
 
 export class Task extends models.Model {

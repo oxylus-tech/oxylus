@@ -1,4 +1,4 @@
-import { useModels } from '@oxylus/core'
+import { useModels } from '@oxylus/ox'
 import { Task } from './models'
 
 /** Use @oxylus/tasks models. */

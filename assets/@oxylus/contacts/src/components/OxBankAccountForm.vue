@@ -33,7 +33,7 @@
 </template>
 <script setup lang="ts">
 import {defineProps, inject} from 'vue'
-import {t} from '@oxylus/core'
+import {t} from '@oxylus/ox'
 import {OxIbanInput} from '@oxylus/locations/components'
 
 const props = defineProps({

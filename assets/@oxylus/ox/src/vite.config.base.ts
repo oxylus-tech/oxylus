@@ -28,7 +28,7 @@ export default defineConfig({
         rollupOptions: {
             external: [
                 'vue', /*'pinia',*/ 'axios',
-                '@oxylus/core', '@oxylus/core/components', '@oxylus/core/vendor'
+                '@oxylus/ox', '@oxylus/ox/components', '@oxylus/ox/vendor'
             ],
             input: {
                 index: "src/index.ts",

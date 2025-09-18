@@ -13,7 +13,7 @@
 </template>
 <script setup lang="ts">
 import { useAttrs, ref, inject, useSlots, watch } from 'vue'
-import {OxModelPanel} from '@oxylus/core/components'
+import {OxModelPanel} from '@oxylus/ox/components'
 import OxAgentSelect from './OxAgentSelect'
 
 const slots = useSlots()

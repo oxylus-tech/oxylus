@@ -34,9 +34,9 @@
 <script setup lang="ts">
 import { computed, defineProps, useSlots, withDefaults } from 'vue'
 
-import { useModels, query } from '@oxylus/core'
-import {OxModelPanel} from '@oxylus/core/components'
-import type {IModelPanelProps} from '@oxylus/core'
+import { useModels, query } from '@oxylus/ox'
+import {OxModelPanel} from '@oxylus/ox/components'
+import type {IModelPanelProps} from '@oxylus/ox'
 
 import {useAuthModels} from '../composables'
 import OxUserEdit from './OxUserEdit.vue'

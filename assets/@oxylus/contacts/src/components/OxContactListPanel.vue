@@ -21,10 +21,10 @@
 <script setup lang="ts">
 import { defineProps, useSlots, withDefaults } from 'vue'
 
-import type {IModelPanelProps} from '@oxylus/core'
-import { t } from '@oxylus/core'
+import type {IModelPanelProps} from '@oxylus/ox'
+import { t } from '@oxylus/ox'
 
-import { OxModelPanel } from '@oxylus/core/components'
+import { OxModelPanel } from '@oxylus/ox/components'
 import { useContactList } from '../composables'
 import OxContactListName from './OxContactListName'
 import OxContactListEdit from './OxContactListEdit'

@@ -1,5 +1,5 @@
 {
-  "name": "@oxylus/core",
+  "name": "@oxylus/ox",
   "version": "0.0.1",
   "private": true,
   "type": "module",
@@ -15,10 +15,26 @@
   },
   "files": ["src/"],
   "exports": {
-    "./index": "./src/index.ts"
+    "./vite.config.base": "./src/vite.config.base.ts",
+    "./components": "./src/components/index.ts",
+    "./composables": "./src/composables/index.ts",
+    "./controllers": "./src/controllers/index.ts",
+    "./models": "./src/models.ts",
+    "./utils": "./src/utils/index.ts"
   },
   "dependencies": {
-    "@oxylus/ox": "workspace:*"
+    "@mdi/font": "^7.4.47",
+    "@pinia-orm/axios": "^1.10.2",
+    "core-js": "^3.42.0",
+    "dpdm": "^3.14.0",
+    "lodash": "^4.17.21",
+    "pinia": "^2.3.1",
+    "pinia-orm": "^1.10.2",
+    "tsc": "^2.0.4",
+    "typescript": "^5.8.3",
+    "vue": "^3.4.21",
+    "vue-i18n": "^10.0.7",
+    "vuetify": "^3.8.3"
   },
   "eslintConfig": {
     "root": true,

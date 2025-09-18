@@ -32,7 +32,7 @@
  * Attributes will be forwarded to inner `v-list-item`.
  */
 import { defineModel, defineEmits, useAttrs } from 'vue'
-import { t } from '@oxylus/core'
+import { t } from '@oxylus/ox'
 
 const props = defineProps({
     /** Item being displayed. **/

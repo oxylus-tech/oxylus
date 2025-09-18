@@ -1,4 +1,4 @@
-import { models, t } from "@oxylus/core"
+import { models, t } from "@oxylus/ox"
 
 
 export class Currency extends models.Model {

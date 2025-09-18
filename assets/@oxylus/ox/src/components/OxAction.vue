@@ -14,9 +14,9 @@
 </template>
 <script setup lang="ts">
 import {computed, defineProps, defineEmits, inject, useAttrs} from 'vue'
-import {useAction} from '@oxylus/core'
+import {useAction} from '@oxylus/ox'
 
-import type {ActionCompleted} from '@oxylus/core'
+import type {ActionCompleted} from '@oxylus/ox'
 import type {IActionProps} from '../composables/actions'
 
 const props = defineProps<IActionProps>()

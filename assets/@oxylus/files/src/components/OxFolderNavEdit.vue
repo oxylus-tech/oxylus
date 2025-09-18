@@ -41,8 +41,8 @@
 </template>
 <script setup lang="ts">
 import {computed, inject, reactive, defineEmits} from 'vue'
-import {query, t} from '@oxylus/core'
-import {OxModelEditor, OxActionModelDelete} from '@oxylus/core/components'
+import {query, t} from '@oxylus/ox'
+import {OxModelEditor, OxActionModelDelete} from '@oxylus/ox/components'
 
 import {useFolders, fileNameRule} from '../composables'
 import OxFolderInput from './OxFolderInput'

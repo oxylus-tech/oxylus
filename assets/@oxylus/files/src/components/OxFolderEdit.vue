@@ -16,8 +16,8 @@
 </template>
 <script setup lang="ts">
 import { computed, useAttrs } from 'vue'
-import { t, rules } from "@oxylus/core"
-import {OxModelEdit, OxField} from '@oxylus/core/components'
+import { t, rules } from "@oxylus/ox"
+import {OxModelEdit, OxField} from '@oxylus/ox/components'
 import {OxAgentSelect} from '@oxylus/auth/components'
 
 import OxFolderInput from './OxFolderInput'

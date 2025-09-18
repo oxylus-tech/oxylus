@@ -20,9 +20,9 @@
 <script setup lang="ts">
 import { defineProps, useSlots, withDefaults } from 'vue'
 
-import type {IModelPanelProps} from '@oxylus/core'
+import type {IModelPanelProps} from '@oxylus/ox'
 
-import { OxModelPanel } from '@oxylus/core/components'
+import { OxModelPanel } from '@oxylus/ox/components'
 import { useAuthModels } from '../composables'
 import OxGroupEdit from './OxGroupEdit.vue'
 

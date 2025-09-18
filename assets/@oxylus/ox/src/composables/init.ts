@@ -9,7 +9,7 @@ import { createPiniaOrmAxios } from '@pinia-orm/axios'
 import axios from 'axios'
 
 import '../styles/index.scss'
-import * as vendorComponents from '@oxylus/core/vendor'
+import * as vendorComponents from '@oxylus/ox/vendor'
 import config from '../config'
 import {i18n, useI18n} from './i18n'
 

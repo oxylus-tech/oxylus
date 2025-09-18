@@ -18,9 +18,9 @@ import { defineExpose, defineModel, inject, reactive, ref, onMounted, useAttrs, 
 import type {Repository} from 'pinia-orm'
 import { VAutocomplete } from 'vuetify/components/VAutocomplete'
 
-import { useQuery, ifNotEqualFn } from '@oxylus/core'
-import type {IModelList, State} from '@oxylus/core'
-import type {Model, ModelId} from '@oxylus/core/models'
+import { useQuery, ifNotEqualFn } from '@oxylus/ox'
+import type {IModelList, State} from '@oxylus/ox'
+import type {Model, ModelId} from '@oxylus/ox/models'
 
 const slots = useSlots()
 

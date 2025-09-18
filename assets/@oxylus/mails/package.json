@@ -14,12 +14,13 @@
     "docs:ts": "pnpm exec typedoc --out ../docs/ts --tsconfig tsconfig.json src"
   },
   "exports": {
+    "./index": "./src/index.ts",
     "./components": "./src/components/index.ts",
     "./composables": "./src/composables.ts",
     "./models": "./src/models.ts"
   },
   "dependencies": {
-    "@oxylus/core": "workspace:*",
+    "@oxylus/ox": "workspace:*",
     "@oxylus/auth": "workspace:*",
     "@oxylus/contacts": "workspace:*",
     "@oxylus/content": "workspace:*",

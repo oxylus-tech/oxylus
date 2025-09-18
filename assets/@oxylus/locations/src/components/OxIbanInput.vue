@@ -25,7 +25,7 @@
 
 <script setup lang="ts">
 import { computed, defineProps, defineModel, ref, watch } from 'vue';
-import { t, query } from '@oxylus/core'
+import { t, query } from '@oxylus/ox'
 import { useLocationModels } from '../composables';
 
 const {countries, currencies} = useLocationModels()

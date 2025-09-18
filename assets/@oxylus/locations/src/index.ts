@@ -1,4 +1,4 @@
-import {init, createPinia} from '@oxylus/core'
+import {init, createPinia} from '@oxylus/ox'
 import App from './app'
 
 const pinia = createPinia()

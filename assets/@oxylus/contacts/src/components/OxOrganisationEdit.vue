@@ -40,8 +40,8 @@
 </template>
 <script setup lang="ts">
 import { useAttrs } from 'vue'
-import { query, rules} from "@oxylus/core"
-import {OxModelEdit, OxField} from '@oxylus/core/components'
+import { query, rules} from "@oxylus/ox"
+import {OxModelEdit, OxField} from '@oxylus/ox/components'
 import {OxCountryInput} from '@oxylus/locations/components'
 
 import {vatRule, useContactModels} from '../composables'

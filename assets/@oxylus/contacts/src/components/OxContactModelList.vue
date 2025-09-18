@@ -22,8 +22,8 @@
 </template>
 <script setup lang="ts">
 import {defineModel, inject, ref, useAttrs} from 'vue'
-import { t } from '@oxylus/core'
-import { OxModelList } from '@oxylus/core/components'
+import { t } from '@oxylus/ox'
+import { OxModelList } from '@oxylus/ox/components'
 import OxContactInput from './OxContactInput'
 import OxContactName from './OxContactName'
 
