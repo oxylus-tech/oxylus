@@ -1,17 +1,15 @@
-"""Prototype URL Configuration.
+"""
+This module provides urls for Oxylus applications.
 
-The `urlpatterns` list routes URLs to views. For more information please see:
-    https://docs.djangoproject.com/en/3.2/topics/http/urls/
-Examples:
-Function views
-    1. Add an import:  from my_app import views
-    2. Add a URL to urlpatterns:  path('', views.home, name='home')
-Class-based views
-    1. Add an import:  from other_app.views import Home
-    2. Add a URL to urlpatterns:  path('', Home.as_view(), name='home')
-Including another URLconf
-    1. Import the include() function: from django.urls import include, path
-    2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
+It scans over applications' directory for module ``urls`` from which it gets:
+
+    - ``urls``: the list of urls to regular views. They will be namespaced under the app label. The final url will look like: ``{root_url}/{path}``.
+    - ``api_urls``: the list of urls to API views. They will be namespaced as ``{app.label}-api``. The final url will look like: ``api/{root_url}/{path}``.
+
+Where ``root_url`` is specified on the AppConfig instance (if none, uses app label). Note that only subclasses of :py:class:`ox.core.apps.AppConfig` are taken in account).
+
+Thoses urls will be automatically added to url patterns.
+
 """
 
 from collections import namedtuple
@@ -79,7 +77,7 @@ class Router:
 
     def get_app_urls(self, app, urls: AppUrls) -> list:
         """Return urls for a specific app."""
-        root_url, patterns = app.get_root_url(), []
+        root_url, patterns = app.root_url, []
 
         if urls.urls:
             patterns.append(path(f"{root_url}/", include((urls.urls, app.label))))

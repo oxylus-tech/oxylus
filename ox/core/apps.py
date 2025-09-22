@@ -12,6 +12,7 @@ from __future__ import annotations
 from functools import cached_property
 
 from django import apps
+from django.conf import settings
 from django.utils.translation import gettext_lazy as _
 
 from ..utils.functional import Owned
@@ -64,20 +65,64 @@ class AppMeta(Owned):
         return md
 
 
+# Each package has:
+# - dist => multiple entry points there
+# - dependencies => in node_modules
+#
+# Importmap:
+# - module name + path to file
+#
+# Static:
+# - name + path to dir (may contains multiple files)
+#
+#
+
+
 ox_assets = Assets(
-    Asset("axios", "esm/axios.min.js"),
-    Asset("vue", "vue.esm-browser.prod.js", dev_js="vue.esm-browser.js"),
-    Asset("@mdi/font", css="css/materialdesignicons.min.css", dist=""),
-    Asset("vuetify", css="vuetify.min.css"),
-    # note:
-    Asset("@oxylus/core", "lib.js", css="style.css", static_dir="ox"),
-    Asset("@oxylus/core/components", "components.js", static_dir="ox"),
-    Asset("@oxylus/core/vendor", "vendor.js", static_dir="ox"),
+    settings.BASE_DIR / "assets",
+    dependencies=[
+        Asset("axios", "esm/axios.min.js"),
+        Asset("vue", "vue.esm-browser.prod.js", dev_js="vue.esm-browser.js"),
+        Asset("@mdi/font", css="css/materialdesignicons.min.css", dist=""),
+        Asset("vuetify", css="vuetify.min.css"),
+    ],
+    exports=[
+        Asset(".", "index.js", css="style.css"),
+        Asset("./components", "components.js"),
+        Asset("./vendor", "vendor.js"),
+    ],
 )
 
 
+# Cases:
+#
+# In dev / collectstatic
+#
+# Apps:
+# - {root}/assets/{package}/dist
+# - {app_dir}/assets/dist
+#
+# Dependencies:
+# - {root}/assets/{package}/node_modules/{static_dir}
+# - {app_dir}/assets/node_modules/{static_dir}
+#
+# Resolution:
+#
+#
+
+
 class AppConfig(apps.AppConfig):
-    """Base AppConfig application to use with ox."""
+    """
+    Base AppConfig application to use for Oxylus applications.
+
+    It provides extra features as:
+
+        - assets managements (:py:class:`~.assets.Assets`);
+        - custom root url for the whole application (see :py:mod:`ox.urls`)
+        - default icon (as MDI specifier)
+
+    It is planned later to handle app dependencies.
+    """
 
     # meta: AppMeta = AppMeta()
     # """Provide extra informations about the application such as dependencies,
@@ -92,28 +137,26 @@ class AppConfig(apps.AppConfig):
     Note: there is no need to provide an extra :py:class:`~ox.core.assets.Asset`
     specifying the application to be compiled, since it is what the Assets class does.
     """
+    npm_package: str | None = None
+    """ Name of the corresponding NPM package to look up for.
 
+    Defaults to app label.
+    """
     icon: str = "mdi-home"
     """Material design icon class."""
+
     root_url: str = ""
     """Provide an alternative to app label when we target application in paths.
 
     For example Oxylus will nest template directories as ``ox/core/``
     instead of ``ox_core``. The same happens for urls.
     """
-    index_urlname: str = ""
-    """Url name of application index page."""
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.assets = self.assets.contribute(self)
-        # self.meta = self.meta.contribute(self)
-
-    def get_root_url(self):
-        """Return path label or label if not set."""
-        if self.root_url:
-            return self.root_url
-        return self.label
+        self.root_url = self.rool_url or self.label
+        self.npm_package = self.npm_package or self.label
 
 
 class CoreAppConfig(AppConfig):
@@ -121,11 +164,10 @@ class CoreAppConfig(AppConfig):
     label = "ox_core"
     verbose_name = _("Oxylus")
     default = True
-    verbose_name = _("Oxylus")
     icon = "mdi-weather-sunny"
 
     root_url = "ox/core"
-    index_urlname = "ox_core:index"
+    npm = "@oxylus/core"
 
     def ready(self):
         from . import signals  # noqa: F401  # isort: skip

@@ -20,12 +20,10 @@ export default defineConfig(({mode}) => {
                     // - composables
                     // - utils
                     // - app
-                    lib: resolve(__dirname , 'src/lib.ts'),
+                    index: resolve(__dirname , 'src/lib.ts'),
                     // main library components
                     components: resolve(__dirname, 'src/components/index.ts'),
                     vendor: resolve(__dirname, 'src/vendor.ts'),
-                    // core app
-                    index: resolve(__dirname, 'src/index.ts'),
                 },
                 name : 'oxylus',
                 // the proper extensions will be added

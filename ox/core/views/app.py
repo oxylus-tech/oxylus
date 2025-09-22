@@ -96,6 +96,6 @@ class AppView(UserAuthMixin, AppMixin, TemplateView):
 
 
 class UserAppView(LoginRequiredMixin, AppView):
-    """Application view requiring user to be authenticed."""
+    """Application view requiring user to be authentified."""
 
     pass
