@@ -22,14 +22,12 @@ for rendering views.
 
 from __future__ import annotations
 import logging
+import itertools
 from typing import Generator
 from pathlib import Path
 
 
-from collections import namedtuple
 from functools import cached_property
-from graphlib import TopologicalSorter
-from typing import Iterable
 
 from django.apps import apps as django_apps
 from django.conf import settings
@@ -40,19 +38,13 @@ from django.templatetags.static import static
 from ..utils.functional import Owned
 
 
-__all__ = ("AssetPaths", "Asset", "Assets", "order_assets")
+__all__ = (
+    "Asset",
+    "Assets",
+)
 
 
 logger = logging.get_logger()
-
-
-AssetPaths = namedtuple("AssetPaths", ["root", "source", "target"])
-"""Describes a source-target paths.
-
-- {Path|None} root: parent project or app directory
-- {Path} source: assets project root directory
-- {Path} target: static directory
-"""
 
 
 class Asset(Owned):
@@ -101,28 +93,45 @@ class Asset(Owned):
         pass
 
 
-class NPMPackage:
+class Assets:
+    """
+    This class represent an assets package for a Django application.
+
+    It is responsible to:
+
+        - provide a list of CSS, JS to include;
+        - generate the import map (in ``ox/core/base.html``);
+        - provide list of directories used for statics;
+
+    It defines:
+
+        - the Django application's related package
+        - a source directory where to get npm packages;
+        - dependencies to collect;
+        - exported files to include into the rendered templates;
+
+    When it contributes to an AppConfig (see :py:class:`ox.utils.functional.Owned`, :py:meth:`contribute`), it
+    will use its parameters to get the actual package name (if not
+    already provided).
+    """
+
     name: str = ""
     """ Package name """
     path: Path | None = None
-    """ Package root directory or workspace one. """
+    """ Path of the package (or workspace).
+
+    The actual package path is retrieved using :py:prop:`package_path`.
+    """
     exports: list[Asset] | None = None
     """ Exported assets. """
     dependencies: list[Asset] | None = None
     """ Dependencies. """
 
-    def __init__(self, path, name, exports=None, dependencies=None, base_dir=None):
+    def __init__(self, path, name="", exports=None, dependencies=None, base_dir=None):
         self.path = path
-        """ Path of the package (or workspace).
-
-        The actual package path is retrieved using :py:prop:`package_path`.
-        """
         self.name = name
-        """ Package name """
         self.exports = exports or []
-        """ The assets to export. """
         self.dependencies = dependencies or []
-        """ Assets used as dependencies. """
 
     @cached_property
     def package_path(self) -> Path:
@@ -133,6 +142,7 @@ class NPMPackage:
         return self.path
 
     def contribute(self, owner):
+        """TODO"""
         self = super().contribute(owner)
 
         # ensure cached properties are cleaned up
@@ -148,7 +158,7 @@ class NPMPackage:
 
         path = self.path / "node_modules"
         for asset in self.dependencies:
-            if isinstance(asset, NPMPackage):
+            if isinstance(asset, Assets):
                 for val in asset.get_paths():
                     yield val
             else:
@@ -159,163 +169,41 @@ class NPMPackage:
                     logger.warn(f"Directory does not exists for asset {asset.name}: {location}")
 
     @cached_property
-    def css_urls(self) -> list[str]:
-        """A list of CSS static files urls."""
-        urls = [asset.css_url for asset in iter(self) if asset.css]
-
-        app_index = self.index.format(ext="css")
-        if self.static_dir:
-            app_url = f"{self.static_dir}/{app_index}"
-            if finders.find(app_url):
-                urls.append(static(app_url))
-        return urls
+    def css_urls(self) -> set[str]:
+        """A list of CSS static urls."""
+        return {url for _, url in self.get_urls("css")}
 
     @cached_property
-    def js_urls(self) -> list[str]:
-        """A list of javascripts urls of all dependencies and assets
-        entrypoint."""
-        urls = [asset.js_url for asset in iter(self) if asset.js]
-
-        app_index = self.index.format(ext="js")
-        if self.static_dir:
-            app_url = f"{self.static_dir}/{app_index}"
-            if finders.find(app_url):
-                urls.append(static(app_url))
-        return urls
+    def js_urls(self) -> set[str]:
+        """A list of CSS static urls."""
+        return {url for _, url in self.get_urls("js")}
 
     @cached_property
     def import_map(self) -> dict[str, str]:
-        """Return import map as a dictionary of ``{asset_name: asset_url}``."""
-        map = {"imports": None}
-        map["imports"] = {asset.name: asset.js_url for asset in iter(self) if asset.js_url}
-        return map
+        """A list of CSS static urls."""
+        return {"imports": dict(self.get_urls("css"))}
 
+    def get_urls(self, attr: str) -> Generator[tuple[str, str]]:
+        return (val for val in itertools.chain(self.get_dependencies_urls(attr), self.get_export_urls(attr)))
 
-class Assets(Owned):
-    """
-    This class represent a client side application's assets to included
-    in Django's application rendered templates.
-
-    It contains multiple :py:class:`Asset` instances each designating a
-    dependency (such as ``vue``, etc.). It also can contain :py:class:`Assets` instances of other application as dependencies.
-
-    It is responsible to:
-
-        - render importmap (in ``ox/core/base.html`` template);
-        - provide a list of CSS and javascript modules to import;
-        - handle assets dependencies, sorting them topologically (using :py:func:`order_assets`)
-
-    The Assets class is :py:class:`~ox.utils.functional.Owned` by an AppConfig. Uninitialized
-    :py:attr:`static_dir` will be set to app_config's ``label``.
-    Concretely, this means that setting a instance of Assets to :py:attr:`~.apps.AppConfig`
-    will search for statics in this app's directory.
-    """
-
-    path: Path | None = None
-    """
-    Lookup root dir for assets.
-
-    It can be None if it is owned by an AppConfig: in such case, this will
-    defaults to app directory as ``{app_dir}/assets``.
-    """
-    index: str = "index.{ext}"
-    """
-    Application's static's filename to look for, formatted with correct extension
-    (eg. ``"js"``).
-    """
-    static_dir: str = ""
-    """Static directory name."""
-
-    Items = list  # list[Asset|Assets] | tuple[Asset|Assets]
-    items: Items = None
-    """Child Asset and Assets instances."""
-
-    lookups = {
-        "{root_dir}/assets/{package}",
-        "{app_dir}/assets/",
-    }
-
-    def __init__(self, *assets, **kwargs):
-        """Assets are provided as positional parameters, and can either be:
-
-        - ``Asset`` instance
-        - ``Assets`` instance
-        """
-        self.items = assets
-        self.__dict__.update(**kwargs)
-
-    @cached_property
-    def css_urls(self) -> list[str]:
-        """A list of CSS static files urls."""
-        urls = [asset.css_url for asset in iter(self) if asset.css]
-
-        app_index = self.index.format(ext="css")
-        if self.static_dir:
-            app_url = f"{self.static_dir}/{app_index}"
-            if finders.find(app_url):
-                urls.append(static(app_url))
-        return urls
-
-    @cached_property
-    def js_urls(self) -> list[str]:
-        """A list of javascripts urls of all dependencies and assets
-        entrypoint."""
-        urls = [asset.js_url for asset in iter(self) if asset.js]
-
-        app_index = self.index.format(ext="js")
-        if self.static_dir:
-            app_url = f"{self.static_dir}/{app_index}"
-            if finders.find(app_url):
-                urls.append(static(app_url))
-        return urls
-
-    @cached_property
-    def import_map(self) -> dict[str, str]:
-        """Return import map as a dictionary of ``{asset_name: asset_url}``."""
-        map = {"imports": None}
-        map["imports"] = {asset.name: asset.js_url for asset in iter(self) if asset.js_url}
-        return map
-
-    def contribute(self, owner) -> Assets:
-        """When ``Assets`` instance is contributed to an AppConfig, assign
-        ``static_dir`` to the application label if not present.
-
-        See :py:meth:`..utils.functional.Owned.contribute` for more
-        info.
-        """
-        self = super().contribute(owner)
-        if not self.static_dir:
-            self.static_dir = owner.label
-        return self
-
-    def __iter__(self):
-        """Iterate over all ``Asset`` instance, including ones nested under
-        child ``Assets`` class."""
-        for asset in self.items:
+    def get_dependencies_urls(self, attr: str) -> Generator[tuple[str, str]]:
+        for asset in self.dependencies:
             if isinstance(asset, Assets):
-                for asset_2 in iter(asset):
-                    yield asset_2
-            else:
-                yield asset
+                yield from asset.get_dependencies_urls(attr)
+            if val := getattr(asset, attr):
+                yield (asset.name, static(f"{asset.static_dir}/{val}"))
 
-    def __str__(self):
-        if owner := getattr(self, "_owner", None):
-            return owner.label
-        return f"{self.static_dir}"
-
-
-def order_assets(assets_list: Iterable[Assets]) -> Iterable[Assets]:
-    """:return: a list of assets topologically sorted by dependency."""
-    graph = TopologicalSorter()
-    todo = [*assets_list]
-    done = set()
-    for assets in assets_list:
-        deps = [dep for dep in assets.items if isinstance(dep, Assets)]
-        graph.add(assets, *deps)
-
-        done.add(assets)
-        todo.extend(a for a in deps if a not in done)
-    return list(graph.static_order())
+    def get_export_urls(self, attr: str) -> Generator[tuple[str, str]]:
+        # For exports, the algorithm is slightly different, as it takes
+        # `self.name` as prefix.
+        # Assets is not handled here as it does not make sense. This may
+        # change in the future.
+        for asset in self.exports:
+            if val := getattr(asset, attr):
+                name = asset.name
+                if name.startsWith("."):
+                    name = self.name + name[1:]
+                yield (name, static(f"{self.name}/{val}"))
 
 
 class AssetsFinder(finders.BaseFinder):

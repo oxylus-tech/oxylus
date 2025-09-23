@@ -80,6 +80,7 @@ class AppMeta(Owned):
 
 ox_assets = Assets(
     settings.BASE_DIR / "assets",
+    "@oxylus/ox",
     dependencies=[
         Asset("axios", "esm/axios.min.js"),
         Asset("vue", "vue.esm-browser.prod.js", dev_js="vue.esm-browser.js"),
