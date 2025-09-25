@@ -184,6 +184,7 @@ class Assets:
         return {"imports": dict(self.get_urls("css"))}
 
     def get_urls(self, attr: str) -> Generator[tuple[str, str]]:
+        """Return assets urls for the provided attribute (``css`` or ``js``)."""
         return (val for val in itertools.chain(self.get_dependencies_urls(attr), self.get_export_urls(attr)))
 
     def get_dependencies_urls(self, attr: str) -> Generator[tuple[str, str]]:
