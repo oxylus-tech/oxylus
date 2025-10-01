@@ -13,7 +13,9 @@
     "docs:vue": "pnpm exec vue-styleguidist build",
     "docs:ts": "pnpm exec typedoc --out ../docs/ts --tsconfig tsconfig.json src"
   },
-  "files": ["src/"],
+  "files": [
+    "src/"
+  ],
   "exports": {
     "./vite.config.base": "./src/vite.config.base.ts",
     "./components": "./src/components/index.ts",
@@ -25,6 +27,7 @@
   "dependencies": {
     "@mdi/font": "^7.4.47",
     "@pinia-orm/axios": "^1.10.2",
+    "axios": "^1.12.2",
     "core-js": "^3.42.0",
     "dpdm": "^3.14.0",
     "lodash": "^4.17.21",

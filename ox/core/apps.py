@@ -65,51 +65,23 @@ class AppMeta(Owned):
         return md
 
 
-# Each package has:
-# - dist => multiple entry points there
-# - dependencies => in node_modules
-#
-# Importmap:
-# - module name + path to file
-#
-# Static:
-# - name + path to dir (may contains multiple files)
-#
-#
-
-
 ox_assets = Assets(
     settings.BASE_DIR / "assets",
     "@oxylus/ox",
+    includes=[
+        Asset("", "index.js", css="style.css"),
+        Asset("components", "components.js"),
+        Asset("vendor", "vendor.js"),
+    ],
     dependencies=[
         Asset("axios", "esm/axios.min.js"),
         Asset("vue", "vue.esm-browser.prod.js", dev_js="vue.esm-browser.js"),
-        Asset("@mdi/font", css="css/materialdesignicons.min.css", dist=""),
+        Asset("@mdi/font", css="css/materialdesignicons.min.css"),
+        # FIXME: required?
         Asset("vuetify", css="vuetify.min.css"),
     ],
-    exports=[
-        Asset(".", "index.js", css="style.css"),
-        Asset("./components", "components.js"),
-        Asset("./vendor", "vendor.js"),
-    ],
 )
-
-
-# Cases:
-#
-# In dev / collectstatic
-#
-# Apps:
-# - {root}/assets/{package}/dist
-# - {app_dir}/assets/dist
-#
-# Dependencies:
-# - {root}/assets/{package}/node_modules/{static_dir}
-# - {app_dir}/assets/node_modules/{static_dir}
-#
-# Resolution:
-#
-#
+""" Common assets for all applications, as it provides the ``@oxylus/ox`` package. """
 
 
 class AppConfig(apps.AppConfig):
@@ -129,7 +101,13 @@ class AppConfig(apps.AppConfig):
     # """Provide extra informations about the application such as dependencies,
     # or package metadata."""
 
-    assets: Assets = Assets(ox_assets)
+    assets: Assets = Assets(
+        ox_assets.path,
+        includes=[
+            Asset(".", "index.js"),
+        ],
+        dependencies=[ox_assets],
+    )
     """The assets use by the application. It will be used at two places:
 
         - building and managing assets, through ``./manage.py assets``;
@@ -156,7 +134,7 @@ class AppConfig(apps.AppConfig):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.assets = self.assets.contribute(self)
-        self.root_url = self.rool_url or self.label
+        self.root_url = self.root_url or self.label
         self.npm_package = self.npm_package or self.label
 
 
@@ -168,7 +146,7 @@ class CoreAppConfig(AppConfig):
     icon = "mdi-weather-sunny"
 
     root_url = "ox/core"
-    npm = "@oxylus/core"
+    npm_package = "@oxylus/core"
 
     def ready(self):
         from . import signals  # noqa: F401  # isort: skip
