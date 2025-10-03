@@ -1,5 +1,5 @@
 from __future__ import annotations
-from functional import cached_property
+from functools import cached_property
 import os
 from pathlib import Path
 
@@ -36,24 +36,18 @@ class AssetsFinder(finders.BaseFinder):
         """A list of ``prefix, path`` tuples used for looking up locations."""
         locations = []
         for assets in self.assets:
-            locations.extends(assets.get_locations())
+            locations.extend(assets.get_locations())
         return locations
-
-    @cached_property
-    def storages(self) -> dict[Assets, FileSystemStorage]:
-        """Storage for each Assets instance."""
-        return {assets: FileSystemStorage(assets.package_path) for assets in self.assets}
 
     def check(self, **kwargs):
         return []
 
     def list(self, ignore_patterns):
         for assets in self.assets:
-            storage = self.storages[assets]
-
-            for prefix, root in assets.list_paths(skip_nested=True):
-                location = root.relative_to(assets.package_path)
-                for path in static_utils.get_files(storage, ignore_patterns, location=location):
+            for prefix, root in assets.get_locations():
+                storage = FileSystemStorage(root)
+                storage.prefix = prefix
+                for path in static_utils.get_files(storage, ignore_patterns):
                     yield path, storage
 
     def find(self, path, find_all=False):

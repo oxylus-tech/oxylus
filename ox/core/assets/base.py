@@ -40,6 +40,8 @@ class Asset(Owned):
     """Include this javascript file."""
     static_dir: str
     """Include this css file."""
+    dist: str
+    """Distribution path. The file will be looked up there."""
 
     def __init__(
         self,
@@ -48,6 +50,7 @@ class Asset(Owned):
         css: str = "",
         dev_js: str = "",
         static_dir: str = "",
+        dist: str = "dist",
     ):
         self.__dict__.update(
             {
@@ -55,6 +58,7 @@ class Asset(Owned):
                 "static_dir": static_dir or name,
                 "js": settings.DEBUG and dev_js or js,
                 "css": css,
+                "dist": dist,
             }
         )
 
@@ -121,33 +125,17 @@ class Assets(Owned):
     def get_locations(self) -> Generator[tuple[str, Path]]:
         """Get locations of npm packages.
 
-        Return a generator that yield tuples of ``(prefix, abs_path)``. Prefix can
-        be an empty string (for ``node_modules``).
-        """
-        paths = (
-            (self.name, self.package_path / "dist"),
-            ("", self.package_path / "node_modules"),
-        )
-        for prefix, path in paths:
-            if path.is_dir():
-                yield prefix, path
-
-    def list_paths(self) -> Generator[tuple[str, Path]]:
-        """
-        List statics paths, yielding tuples of ``(prefix, abs_path)``.
-
+        Return a generator that yield tuples of ``(prefix, path_to_dist)``.
         It doesn't yield values from inner :py:class:`Assets` instances.
-
-        :param skip_nested: if True, don't yield from inner Assets dependencies.
         """
         path = self.package_path / "dist"
-        if path.exists():
+        if path.is_dir():
             yield self.name, path
 
         path = self.package_path / "node_modules"
         for asset in self.dependencies:
             if isinstance(asset, Asset):
-                location = path / asset.name
+                location = path / asset.name / asset.dist
                 if location.is_dir():
                     yield (asset.static_dir, location)
                 else:
@@ -176,7 +164,7 @@ class Assets(Owned):
         """Return urls of dependencies, based on ``attr`` attribute value."""
         for asset in self.dependencies:
             if isinstance(asset, Assets):
-                yield from asset.get_dependencies_urls(attr)
+                yield from asset.get_urls(attr)
             elif val := self.get_dependency_url(asset, attr):
                 yield val
 
@@ -199,10 +187,10 @@ class Assets(Owned):
     def get_include_url(self, asset: Asset, attr: str) -> tuple[str, str] | None:
         if val := getattr(asset, attr):
             if asset.static_dir:
-                name = self.name + "/" + asset.static_dir
+                prefix = self.name + "/" + asset.static_dir
             else:
-                name = self.name
-            return name, static(f"{name}/{val}")
+                prefix = self.name
+            return prefix, static(f"{self.name}/{val}")
 
 
 def order_assets(assets_list: Iterable[Assets]) -> list[Assets]:
@@ -230,4 +218,4 @@ def unique_dfs(assets_list: Iterable[Assets]) -> list[Assets]:
         if item not in items:
             todo.extend(dep for dep in item.dependencies if isinstance(dep, Assets) and dep not in todo)
             items.append(item)
-    return item
+    return items

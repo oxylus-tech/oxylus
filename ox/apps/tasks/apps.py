@@ -13,4 +13,4 @@ class AppConfig(apps.AppConfig):
     icon = "mdi-wrench-clock"
 
     root_url = "ox/tasks"
-    index_urlname = "ox_tasks:index"
+    npm_package = "@oxylus/tasks"

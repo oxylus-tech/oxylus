@@ -79,7 +79,7 @@ class AppView(UserAuthMixin, AppMixin, TemplateView):
         By default return a list with:
 
             - :py:attr:`template_name` value
-            - ``{self.app_config.get_root_url()}/app.html``, if app_config is found.
+            - ``{self.app_config.root_url}/app.html``, if app_config is found.
         """
         try:
             names = super().get_template_names()
@@ -87,7 +87,7 @@ class AppView(UserAuthMixin, AppMixin, TemplateView):
             names = []
 
         if hasattr(self, "app_config"):
-            names.append(f"{self.app_config.get_root_url()}/app.html")
+            names.append(f"{self.app_config.root_url}/app.html")
         return names
 
     def get(self, *args, service=None, **kwargs):

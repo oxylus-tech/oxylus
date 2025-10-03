@@ -2,7 +2,7 @@ from django.apps import apps
 from django.templatetags.static import static
 
 from ox.utils.tests import track_calls
-from ox.core.assets.base import Asset
+from ox.core.assets.base import Asset, order_assets, unique_dfs
 
 
 class TestAssets:
@@ -81,9 +81,9 @@ class TestAssets:
         )
 
 
-def test_order_assets():
-    raise NotImplementedError("not implemented")
+def test_order_assets(assets, nested):
+    assert order_assets([assets]) == [nested, assets]
 
 
-def test_unique_dfs():
-    raise NotImplementedError("not implemented")
+def test_unique_dfs(assets, nested):
+    assert unique_dfs([assets]) == [assets, nested]

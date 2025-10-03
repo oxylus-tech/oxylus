@@ -53,6 +53,13 @@ Technical documentation
     - SFC & ox-component
 
 
+- CI/CD:
+
+    - tests require assets to be built and deps installed
+    - deployment:
+        - require assets to be build (in order for collectstatic to work)
+        - OR collectstatic before deployment (but ain't possible to provide output directory)
+
 User documentation
 ==================
 

@@ -13,4 +13,4 @@ class AppConfig(apps.AppConfig):
     icon = "mdi-flag"
 
     root_url = "ox/locations"
-    index_urlname = "ox_locations:index"
+    npm_package = "@oxylus/locations"

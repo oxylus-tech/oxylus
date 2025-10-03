@@ -13,7 +13,7 @@ class AppConfig(apps.AppConfig):
     icon = "mdi-mail"
 
     root_url = "ox/mails"
-    index_urlname = "ox_mails:index"
+    npm_package = "@oxylus/mails"
 
     class Meta:
         dependencies = ("ox.auth", "ox.contacts", "ox.content")

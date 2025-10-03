@@ -1,1 +1,0 @@
-{"version":3,"mappings":";8/BAAA,OAAO,kBAA0B,wCACjC,OAAO,iBAAyB","names":[],"ignoreList":[],"sources":["../../../assets/@oxylus/auth/src/sfc.ts"],"sourcesContent":["import('./components/OxUserPanel')\nimport('./components/OxUserEdit')\n"],"file":"sfc.js"}

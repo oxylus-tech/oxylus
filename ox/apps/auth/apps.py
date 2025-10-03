@@ -13,4 +13,4 @@ class AppConfig(apps.AppConfig):
     icon = "mdi-account-group-outline"
 
     root_url = "ox/auth"
-    index_urlname = "ox_auth:index"
+    npm_package = "@oxylus/auth"

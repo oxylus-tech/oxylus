@@ -133,7 +133,15 @@ LANGUAGE_COOKIE_NAME = "lang"
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 STATIC_URL = "/static/"
+
 STATICFILES_DIRS = [BASE_DIR / "static", BASE_DIR / "ox" / "static"]
+
+STATICFILES_FINDERS = [
+    "ox.core.assets.finders.AssetsFinder",
+    "django.contrib.staticfiles.finders.FileSystemFinder",
+    "django.contrib.staticfiles.finders.AppDirectoriesFinder",
+]
+
 
 MEDIA_ROOT = BASE_DIR / "static" / "media"
 MEDIA_URL = "/media/"

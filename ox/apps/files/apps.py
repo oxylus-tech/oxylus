@@ -13,7 +13,7 @@ class AppConfig(apps.AppConfig):
     icon = "mdi-document-multiple-outline"
 
     root_url = "ox/files"
-    index_urlname = "ox_files:index"
+    npm_package = "@oxylus/files"
 
     def ready(self):
         from .processors import registry

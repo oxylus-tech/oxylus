@@ -13,7 +13,7 @@ class AppConfig(apps.AppConfig):
     icon = "mdi-card-account-mail"
 
     root_url = "ox/contacts"
-    index_urlname = "ox_contacts:index"
+    npm_package = "@oxylus/contacts"
 
     class Meta:
         dependencies = ("ox.auth", "ox.locations")

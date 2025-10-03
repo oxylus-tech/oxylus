@@ -76,7 +76,7 @@ ox_assets = Assets(
     dependencies=[
         Asset("axios", "esm/axios.min.js"),
         Asset("vue", "vue.esm-browser.prod.js", dev_js="vue.esm-browser.js"),
-        Asset("@mdi/font", css="css/materialdesignicons.min.css"),
+        Asset("@mdi/font", css="css/materialdesignicons.min.css", dist=""),
         # FIXME: required?
         Asset("vuetify", css="vuetify.min.css"),
     ],
@@ -104,7 +104,7 @@ class AppConfig(apps.AppConfig):
     assets: Assets = Assets(
         ox_assets.path,
         includes=[
-            Asset(".", "index.js"),
+            Asset("", "index.js"),
         ],
         dependencies=[ox_assets],
     )
