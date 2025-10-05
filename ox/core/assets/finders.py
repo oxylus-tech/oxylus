@@ -3,8 +3,7 @@ from functools import cached_property
 import os
 from pathlib import Path
 
-
-from django.apps import apps as django_apps
+from django.apps import apps as d_apps
 from django.core.files.storage import FileSystemStorage
 from django.contrib.staticfiles import finders, utils as static_utils
 
@@ -24,7 +23,7 @@ class AssetsFinder(finders.BaseFinder):
 
     def __init__(self, apps=None, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.apps = apps or django_apps.get_app_configs()
+        self.apps = apps or d_apps.get_app_configs()
 
     @cached_property
     def assets(self) -> list[Assets]:
@@ -42,7 +41,7 @@ class AssetsFinder(finders.BaseFinder):
     def check(self, **kwargs):
         return []
 
-    def list(self, ignore_patterns):
+    def list(self, ignore_patterns=[]):
         for assets in self.assets:
             for prefix, root in assets.get_locations():
                 storage = FileSystemStorage(root)

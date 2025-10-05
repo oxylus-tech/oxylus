@@ -24,16 +24,16 @@ class TestMailSend:
     def test_send_with_tls(self, mocker, mail_account, mail_send, contact_1, contact_2):
         mail_send.account.encryption = MailAccount.Encryption.TLS
 
-        mock_smtp = mocker.patch("smtplib.SMTP")
-        smtp_instance = mock_smtp.return_value.__enter__.return_value
+        with mocker.patch("smtplib.SMTP") as mock_smtp:
+            smtp_instance = mock_smtp.return_value.__enter__.return_value
 
-        mail_send.send({"bar": "tee"})
+            mail_send.send({"bar": "tee"})
 
-        mock_smtp.assert_called_with(mail_account.smtp_host, mail_account.smtp_port)
-        smtp_instance.starttls.assert_called_once()
-        smtp_instance.login.assert_called_once_with(mail_account.smtp_username, mail_account.smtp_password)
+            mock_smtp.assert_called_with(mail_account.smtp_host, mail_account.smtp_port)
+            smtp_instance.starttls.assert_called_once()
+            smtp_instance.login.assert_called_once_with(mail_account.smtp_username, mail_account.smtp_password)
 
-        smtp_instance.send_message.assert_called()
+            smtp_instance.send_message.assert_called()
 
         # contact
         for i, contact in enumerate(mail_send.mail.contacts.all()):

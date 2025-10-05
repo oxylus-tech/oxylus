@@ -8,7 +8,7 @@ from types import ModuleType
 from django.db import models
 from django.conf import settings
 from django.core.management.base import BaseCommand
-from django.apps import apps, AppConfig
+from django.apps import apps as d_apps, AppConfig
 from django.utils import translation
 
 
@@ -26,13 +26,19 @@ def escape(value):
 class Command(BaseCommand):
     help = "Generate Vue-i18n translations"
 
+    apps = None
+
     def add_arguments(self, parser):
+        parser.add_argument("apps", metavar="APP", action="append", help="Select those applications (by label)")
         parser.add_argument("-l", "--locale", action="append", help="Specify a locale")
         parser.add_argument(
             "-o", "--out", type=Path, help="Specify an output directory instead of default (ox/static/locales)."
         )
+        parser.add_argument(
+            "-r", "--root", action="append", type=Path, help="Only applications that are in the parent directory"
+        )
 
-    def handle(self, locale=None, out=None, **kwargs):
+    def handle(self, locale=None, out=None, root=None, apps=None, **kwargs):
         if out is None:
             out = settings.BASE_DIR / "ox/static/locales"
 
@@ -40,6 +46,13 @@ class Command(BaseCommand):
 
         if not locale:
             locale = (v[0] for v in settings.LANGUAGES)
+
+        # filter by parent directory
+        self.apps = d_apps.get_app_configs()
+        if apps:
+            self.apps = [app for app in self.apps if app.label in apps]
+        if root:
+            self.apps = [app for app in self.apps if app.path in root or any(p in root for p in app.path.parents)]
 
         for code in locale:
             self.make_i18n(code, out)
@@ -62,7 +75,7 @@ class Command(BaseCommand):
         output = {}
         with translation.override(locale):
             logger.info(f"Get translation for `{locale}`...")
-            for app_config in apps.get_app_configs():
+            for app_config in self.apps:
                 logger.info(f"Get app labels for `{app_config.name}`")
                 self.get_app_labels(app_config, output)
         return output

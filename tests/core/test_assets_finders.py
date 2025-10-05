@@ -40,6 +40,3 @@ class TestAssetsFinder:
     def test_find(self, finder):
         for path, expected in self.find_items.items():
             assert finder.find(path) == expected
-
-    def test_find_location(self, finder):
-        pass

@@ -137,7 +137,6 @@ STATIC_URL = "/static/"
 STATICFILES_DIRS = [BASE_DIR / "static", BASE_DIR / "ox" / "static"]
 
 STATICFILES_FINDERS = [
-    "ox.core.assets.finders.AssetsFinder",
     "django.contrib.staticfiles.finders.FileSystemFinder",
     "django.contrib.staticfiles.finders.AppDirectoriesFinder",
 ]
