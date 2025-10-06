@@ -22,11 +22,11 @@ class Command(AppsCommand):
         self.log(f"> {len(self.apps)} applications found")
         for app in self.apps:
             if isinstance(getattr(app, "assets", None), Assets):
-                self.collect_app_storage(app, app.assets)
+                self.collect_app(app, app.assets)
 
         self.log(f"[b]Done! [green]{len(self.copied_files)}[/green] have been copied[/b]", level=1)
 
-    def collect_app_storage(self, app, assets):
+    def collect_app(self, app, assets):
         self.log(f"[b cyan]Collect {app.label} assets[/b cyan]", level=1)
         static_storage = FileSystemStorage(os.path.join(app.path, "static"))
         self.log(f"Target directory: `{static_storage.location}`", level=1)
