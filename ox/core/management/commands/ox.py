@@ -168,6 +168,7 @@ class Command(Command):
 
             paths.sort()
 
-            self.log(f"Fixture found for {app.label}.")
+            self.log(f"Fixtures found for {app.label}.")
             for path in paths:
+                self.log(f"Load {path}")
                 call_command("loaddata", str(path))
