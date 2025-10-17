@@ -1,0 +1,6 @@
+.vite
+node_modules/.vite
+**/vite.config.js.timestamp-*
+**/*.timestamp-*
+dist
+__pycache__

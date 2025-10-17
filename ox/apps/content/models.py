@@ -12,7 +12,7 @@ from .conf import ox_content_settings
 __all__ = ("RichTextField", "TemplatePack")
 
 
-class RichTextField(mixins.RichTextFieldMixin, models.CharField):
+class RichTextField(mixins.RichTextFieldMixin, models.TextField):
     """
     Provide rich text value, ensuring input text is cleaned based on
     :py:attr:`~.conf.ox_content_settings`.

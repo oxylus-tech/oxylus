@@ -99,7 +99,7 @@ ipython_config.py
 #   This is especially recommended for binary packages to ensure reproducibility, and is more
 #   commonly ignored for libraries.
 #   https://python-poetry.org/docs/basic-usage/#commit-your-poetrylock-file-to-version-control
-#poetry.lock
+poetry.lock
 
 # pdm
 #   Similar to Pipfile.lock, it is generally recommended to include pdm.lock in version control.
@@ -162,3 +162,11 @@ cython_debug/
 pnpm-lock.yaml
 package-lock.json
 node_modules/
+.vite
+**/vite.config.js.timestamp-*
+**/*.timestamp-*
+dist
+
+
+# Ignore dynaconf secret files
+.secrets.*

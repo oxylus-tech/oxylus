@@ -1,5 +1,5 @@
 import { defineConfig, mergeConfig } from 'vite'
-import baseConfig, {staticRoot} from '@oxylus/ox/vite.config.base'
+import baseConfig, {staticRoot} from '../ox/src/vite.config.base'
 
 
 export default mergeConfig(

@@ -1,0 +1,66 @@
+version: "3.9"
+
+x-common-variables: &common-variables
+  # Postgres variables, fullfill both as OX_* are passed down to Oxylus
+  POSTGRES_USER: oxylus
+  POSTGRES_PASSWORD: secret
+  POSTGRES_DB: oxylus
+
+  OX_POSTGRES_USER: oxylus
+  OX_POSTGRES_PASSWORD: secret
+  OX_POSTGRES_DB: oxylus
+  OX_POSTGRES_PORT: 5432
+
+
+volumes:
+  db-data:
+  oxylus-static:
+  oxylus-conf:
+
+services:
+  db:
+    image: postgres:15
+    environment:
+      <<: *common-variables
+    volumes:
+      - db-data:/var/lib/postgresql/data
+
+  oxylus-tasks:
+    build:
+      context: .
+      dockerfile: scripts/runtime.Dockerfile
+    command: ./manage.py db_worker
+    environment:
+      <<: *common-variables
+    volumes:
+      - oxylus-static:/srv/oxylus/static
+      - oxylus-conf:/srv/oxylus/conf.d
+    depends_on:
+      - db
+
+  oxylus:
+    build:
+      context: .
+      dockerfile: scripts/runtime.Dockerfile
+    command: run
+    ports:
+      - "8042:8042"
+    environment:
+      <<: *common-variables
+      OX_DEBUG: true
+    volumes:
+      - oxylus-static:/srv/oxylus/static
+      - oxylus-conf:/srv/oxylus/conf.d
+    depends_on:
+      - db
+      - oxylus-tasks
+
+  nginx:
+    image: nginx:1.25
+    ports:
+      - "8080:80"
+    volumes:
+      - ./scripts/conf/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+      - oxylus-static:/srv/oxylus/static
+    depends_on:
+      - oxylus

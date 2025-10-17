@@ -22,12 +22,6 @@ class Settings(conf.Settings):
     FILE_SIZE_LIMIT = 15 * 1024 * 1024
     """ Set maximum file size. """
 
-    PREVIEW_ON_SAVE = True
-    """ If True, preview is created when model is saved.
-
-    Otherwise it will be handled by task manager.
-    """
-
     CLEAR_FILES_ON_DELETE = True
     """ When a File is deleted from database, remove it from storage. """
 
@@ -45,20 +39,21 @@ class Settings(conf.Settings):
 
     @property
     def upload_dir(self) -> Path:
-        """Return full path to upload dir"""
+        """Return full path to upload dir."""
         return Path(settings.MEDIA_ROOT) / self.UPLOAD_DIR
 
     @property
     def preview_dir(self) -> Path:
-        """Return full path to preview dir"""
+        """Return full path to preview dir."""
         return Path(settings.MEDIA_ROOT) / self.PREVIEW_DIR
 
     @property
     def sync_dir(self) -> Path:
+        """Return full path to sync dir."""
         return Path(settings.MEDIA_ROOT) / self.SYNC_DIR
 
 
 ox_files_settings: Settings = Settings("OX_FILES")
 """
-Settings used by ``ox_content`` application, using key ``OX_CONTENT``.
+Settings used by ``ox_files`` application, using key ``OX_FILES``.
 """

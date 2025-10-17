@@ -1,4 +1,3 @@
-import baseConfig from '@oxylus/ox/vite.config.base'
+import baseConfig from '../ox/src/vite.config.base'
 
-// https://vitejs.dev/config/
 export default baseConfig

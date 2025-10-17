@@ -60,9 +60,9 @@ class Command(AppsCommand):
             self.log(f"Delete {file_path}", level=2)
             if not self.dry_run:
                 try:
-                    full_path = self.storage.path(file_path)
+                    full_path = storage.path(file_path)
                 except NotImplementedError:
-                    self.storage.delete(file_path)
+                    storage.delete(file_path)
                 else:
                     if not os.path.exists(full_path) and os.path.lexists(full_path):
                         os.unlink(full_path)

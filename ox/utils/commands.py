@@ -34,7 +34,7 @@ class Command(BaseCommand):
         if self.dry_run:
             self.log("[yellow]*** You have chosen to run this command in dry mode. ***[/yellow]")
 
-    def log(self, msg, level=2):
+    def log(self, msg, level=1):
         """Log provided message."""
         if self.verbosity >= level:
             if self.dry_run:

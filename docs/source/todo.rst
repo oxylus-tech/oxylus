@@ -3,6 +3,8 @@
 Current dev
 ===========
 
+- login: on error 500, success message is provided as "Congrats! Data have been updated."
+
 Mails
 -----
 
@@ -39,6 +41,9 @@ Bugs
 
 Technical documentation
 =======================
+
+- Requirements:
+    - libmagic(-dev)
 
 - Application:
 
