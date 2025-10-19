@@ -125,18 +125,20 @@ development:
 production:
   DEBUG: false
   BASE_DIR: /srv/oxylus
+  USE_X_FORWARDED_HOST: true
+  SECURE_PROXY_SSL_HEADER: ["HTTP_X_FORWARDED_HOST", "https"]
   ALLOWED_HOSTS:
     - localhost
 
   DATABASES:
     default:
       ENGINE: django.db.backends.postgresql
-      NAME: oxylus
-      USER: "@format {env.POSTGRES_USER}"
-      PASSWORD: "@format {env.POSTGRES_PASSWORD}"
-      HOST: "@format {env.POSTGRES_HOST}"
-      PORT: "@format {env.POSTGRES_PORT}"
+      NAME: "@format {env[POSTGRES_DB]}"
+      USER: "@format {env[POSTGRES_USER]}"
+      PASSWORD: "@format {env[POSTGRES_PASSWORD]}"
+      HOST: "@format {env[POSTGRES_HOST]}"
+      PORT: "@format {env[POSTGRES_PORT]}"
 
   OX:
     dynaconf_merge:
-      SETTINGS_DIR: "/etc/oxylus/conf.d/"
+      SETTINGS_DIR: "/etc/oxylus/conf/"

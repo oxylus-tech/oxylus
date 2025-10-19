@@ -40,8 +40,8 @@ Applications (and datasets when applicable):
 - ``auth``: user, groups and permissions managements;
 - ``locations``: country and related informations such as VAT/IBAN validation and examples; phone prefix; continent;
 - ``contacts``: contacts and organisations management, entity types, related information (address, email, phone, bank account);
-- ``files`` [WIP]: file and folder management, including permission system with sharing access, files preview, name obfuscation;
-- ``tasks`` [WIP]: asynchronous tasks management on external process (using ``django-tasks``);
+- ``files``: file and folder management, including permission system with sharing access, files preview, name obfuscation;
+- ``tasks``: asynchronous tasks management on external process (using ``django-tasks``);
 - ``content`` [TBD]: generic content edition and template framework to be used to render specific content (e.g. mails, invoices, etc.)
 - ``mails`` [TBD]: manage mailing-list and subscription, using contacts and organisations;
 

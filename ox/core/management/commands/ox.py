@@ -60,7 +60,7 @@ class Command(Command):
 
     def project_setup(self, admin=False, default_admin=False, once=False, **kwargs):
         """Initialize the whole project."""
-        self.log("[b]🌱️ Setup Oxylus 🌳[/b]\n")
+        self.log("[b]🌱️ Start Oxylus setup...[/b]")
 
         if once:
             if self.secret_path.exists():
@@ -79,16 +79,21 @@ class Command(Command):
         elif default_admin:
             self.log("\n[b underline]🙉 Create default super user[/b underline]")
             self.log("[b yellow]*** You MUST change your password after creation ***[/b yellow]")
-            user = User(username="admin", is_superuser=True, is_staff=True)
-            user.set_password("admin")
-            user.save()
-            self.log(f"User {user.username} has been created with password `admin`")
+            user, created = User.objects.get_or_create(username="admin", is_superuser=True, is_staff=True)
+            if created:
+                user.set_password("admin")
+                user.save()
+                self.log(f"User {user.username} has been created with password `admin`")
+            else:
+                self.log(f"User {user.username} already exists. Skip")
 
         print("")
         self.import_fixtures()
 
         self.log("\n[b underline]🦋 Collect statics[/b underline]")
         call_command("collectstatic", "--noinput")
+
+        self.log("[b]🌳 Setup done![/b]")
 
     def update_secrets(self, path=None, **_):
         """Update ``.secrets.yaml` file and related keys.`"""

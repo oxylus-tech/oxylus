@@ -55,6 +55,7 @@ class Command(BaseCommand):
             self.apps = [app for app in self.apps if app.path in root or any(p in root for p in app.path.parents)]
 
         for code in locale:
+            translation.activate(code)
             self.make_i18n(code, out)
 
     source = "window.__i18n_messages??={{}};" "window.__i18n_messages={{...window.__i18n_messages, ...{messages} }};"

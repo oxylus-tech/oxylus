@@ -168,5 +168,11 @@ node_modules/
 dist
 
 
+# ---------------------------------------------------------------------
+# Oxylus
+# ---------------------------------------------------------------------
+ox/apps/*/static
+ox/core/static
+
 # Ignore dynaconf secret files
 .secrets.*

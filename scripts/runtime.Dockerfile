@@ -40,7 +40,7 @@ COPY --from=builder /srv/oxylus/poetry.lock ./poetry.lock
 COPY --from=builder /srv/oxylus/README.rst ./README.rst
 COPY --from=builder /srv/oxylus/.venv ./.venv
 
-RUN apt-get update && apt-get install -y python3-poetry libmagic-dev \
+RUN apt-get update && apt-get install -y python3-poetry libpq5 libmagic-dev \
     && pip install --upgrade pip \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 

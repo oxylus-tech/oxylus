@@ -37,7 +37,11 @@
     </template>
 </template>
 <script setup>
-import {computed, inject, ref, reactive, defineModel, defineProps, useTemplateRef} from 'vue'
+/**
+ * A form handling user login.
+ */
+
+import {computed, inject, ref, reactive, defineModel, defineProps} from 'vue'
 
 import OxStateAlert from './OxStateAlert'
 import OxValidationBtn from './OxValidationBtn.vue'
@@ -48,10 +52,12 @@ import {reset as $reset} from '../utils'
 import {User} from '../models/auth'
 
 
-const passwordInput = useTemplateRef('password')
+const passwordInput = ref('passwordInput')
 
 const props = defineProps({
+    /** Url to go once logged in. */
     next: {type: String},
+    /** API url to call to log in. */
     url: {type: String},
 })
 
@@ -63,11 +69,13 @@ const credentials = reactive({
 const showPassword = ref(false)
 const state = reactive(new State())
 
+/** Reset credentials */
 function reset(resetState=true) {
     $reset(credentials, {"username": "", password: ""})
     resetState && state.none()
 }
 
+/** Run login and redirect to the next page if succeed. */
 async function login() {
     state.processing()
 
@@ -89,7 +97,9 @@ async function login() {
             state.error(await resp.json())
     }
     catch(error) {
-        state.ok(error?.message || error)
+        state.error(error?.message || error)
     }
 }
+
+defineExpose({login, reset, state})
 </script>

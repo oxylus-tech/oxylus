@@ -5585,9 +5585,7 @@
   pk: 619
   fields:
     uuid: c97b601f-f41f-4544-89fa-f8daa8bea8a7
-    name: A company formed under the Companies Act may seek designation as a Community
-      Interest Company (a hybrid structure having characteristics of both for profit
-      and non-profit entities)
+    name: Community Interest Company
     country: 40
     code: 3M14
     abbreviation: Community Interest Company;société d'intérêt communautaire;C.I.C.;CIC;S.I.C.;SIC
@@ -13200,10 +13198,10 @@
   fields:
     uuid: 4dd3f78c-f419-4f98-806f-911ca2be22f1
     name: Société de Participations Financières de Profession Libérale Société anonyme
-      à conseil d'administration (SPFPL SA à conseil d'administration)
+      à conseil d'administration
     country: 76
     code: SMZ6
-    abbreviation: ''
+    abbreviation: SPFPL SA à conseil d'administration
     language_code: fr
 - model: ox_contacts.organisationtype
   pk: 1461
@@ -18686,8 +18684,7 @@
   fields:
     uuid: 95fe30d9-f24e-4c6b-b4ed-d4ac09937c10
     name: Autres personnes morales dont l'immatriculation est prévue par l'article
-      1 de la loi modifiée du 19 décembre 2002 concernant le registre de commerce
-      et des sociétés ainsi que la comptabilité et les comptes annuels des entreprises
+      1 de la loi modifiée du 19 décembre 2002
     country: 134
     code: JIWD
     abbreviation: OTH

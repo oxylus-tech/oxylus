@@ -31,16 +31,14 @@ else
 fi
 
 
-if [ ! -f "$APP_DIR/conf/.secrets.yaml" ]; then
-    echo "⚙️ Setup project configuration..."
-    python ./manage.py ox setup --default-admin
-fi
-
-
 #-----------------------------------------------------------------------------
 # Start the application
 #-----------------------------------------------------------------------------
 case "${1:-run}" in
+    init)
+        echo "⚙️ Setup project configuration..."
+        python ./manage.py ox setup --default-admin
+        ;;
     run)
         echo "🚀 Starting Gunicorn..."
         exec gunicorn ox.wsgi:application \
@@ -53,7 +51,7 @@ case "${1:-run}" in
         exec python "$MANAGE" runserver 0.0.0.0:8000
         ;;
     shell)
-        exec python "$MANAGE" shell ${2:}
+        exec python "$MANAGE" shell ${@:2:}
         ;;
     bash)
         exec bash

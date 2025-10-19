@@ -183,10 +183,10 @@ class Migration(migrations.Migration):
             name="OrganisationType",
             fields=[
                 ("id", models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name="ID")),
-                ("name", models.CharField(max_length=64, verbose_name="Name")),
+                ("name", models.CharField(max_length=128, verbose_name="Name")),
                 ("uuid", models.UUIDField(db_index=True, default=uuid.uuid4, editable=False, verbose_name="Reference")),
                 ("code", models.CharField(blank=True, default="", max_length=8, verbose_name="Code")),
-                ("abbreviation", models.CharField(blank=True, default="", max_length=32, verbose_name="Abbreviation")),
+                ("abbreviation", models.CharField(blank=True, default="", max_length=512, verbose_name="Abbreviation")),
                 ("language_code", models.CharField(blank=True, default="", max_length=4, verbose_name="Language Code")),
                 (
                     "country",

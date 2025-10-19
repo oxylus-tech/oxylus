@@ -108,7 +108,7 @@ export default class State {
 
         let msg = ""
         for(var field in this.data) {
-            const errs = this.data[field]
+            const errs = typeof this.data[field] == "string" ? [errs] : errs
             if(typeof field == 'string')
                 msg += errs.map(v => `- ${field}: ${v}\n`)
             else

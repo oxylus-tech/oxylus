@@ -6,7 +6,7 @@ from django.contrib.auth.models import User, Group
 
 from ox.core.models import Model, InheritanceQuerySet
 from ox.apps.locations.models import Country
-from ox.utils.models import Named, Described, Colored, SaveHook
+from ox.utils.models import Named, LongNamed, Described, Colored, SaveHook
 
 
 __all__ = (
@@ -95,12 +95,12 @@ class Contact(Model):
         verbose_name_plural = _("Contacts")
 
 
-class OrganisationType(Named, Model):
+class OrganisationType(LongNamed, Model):
     """Represent a kind of Organisation."""
 
     country = models.ForeignKey(Country, models.CASCADE, verbose_name=_("Country"))
     code = models.CharField(_("Code"), max_length=8, blank=True, default="")
-    abbreviation = models.CharField(_("Abbreviation"), max_length=32, blank=True, default="")
+    abbreviation = models.CharField(_("Abbreviation"), max_length=512, blank=True, default="")
     language_code = models.CharField(_("Language Code"), max_length=4, blank=True, default="")
 
     class Meta:

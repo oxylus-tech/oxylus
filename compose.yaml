@@ -1,17 +1,45 @@
 version: "3.9"
 
-x-common-variables: &common-variables
+# ---------------------------------------------------------------------
+# Common variables and declarations
+# ---------------------------------------------------------------------
+
+# -- Common env variables
+x-common-env: &common-env
   # Postgres variables, fullfill both as OX_* are passed down to Oxylus
   POSTGRES_USER: oxylus
   POSTGRES_PASSWORD: secret
   POSTGRES_DB: oxylus
+  POSTGRES_HOST: db
+  POSTGRES_PORT: 5432
+  OX_ENV: production
 
-  OX_POSTGRES_USER: oxylus
-  OX_POSTGRES_PASSWORD: secret
-  OX_POSTGRES_DB: oxylus
-  OX_POSTGRES_PORT: 5432
+# -- Base container for oxylus services
+x-oxylus-simple-container: &oxylus-simple-container
+  build:
+    context: .
+    dockerfile: scripts/runtime.Dockerfile
+  environment:
+    <<: *common-env
+  volumes:
+    - oxylus-static:/srv/oxylus/static
+    - oxylus-conf:/srv/oxylus/conf
+  depends_on:
+    - db
+
+# -- Container to use for oxylus services (awaiting init)
+x-oxylus-container: &oxylus-container
+  <<: *oxylus-simple-container
+  depends_on: &oxylus-container-depends
+    db:
+        condition: service_started
+    oxylus-init:
+        condition: service_completed_successfully
 
 
+# ---------------------------------------------------------------------
+# Actual docker compose settings
+# ---------------------------------------------------------------------
 volumes:
   db-data:
   oxylus-static:
@@ -21,39 +49,30 @@ services:
   db:
     image: postgres:15
     environment:
-      <<: *common-variables
+      <<: *common-env
     volumes:
       - db-data:/var/lib/postgresql/data
 
+  oxylus-init:
+    <<: *oxylus-simple-container
+    command: init
+
   oxylus-tasks:
-    build:
-      context: .
-      dockerfile: scripts/runtime.Dockerfile
+    <<: *oxylus-container
     command: ./manage.py db_worker
-    environment:
-      <<: *common-variables
-    volumes:
-      - oxylus-static:/srv/oxylus/static
-      - oxylus-conf:/srv/oxylus/conf.d
-    depends_on:
-      - db
 
   oxylus:
-    build:
-      context: .
-      dockerfile: scripts/runtime.Dockerfile
+    <<: *oxylus-container
     command: run
     ports:
       - "8042:8042"
     environment:
-      <<: *common-variables
+      <<: *common-env
       OX_DEBUG: true
-    volumes:
-      - oxylus-static:/srv/oxylus/static
-      - oxylus-conf:/srv/oxylus/conf.d
     depends_on:
-      - db
-      - oxylus-tasks
+      <<: *oxylus-container-depends
+      oxylus-tasks:
+          condition: service_started
 
   nginx:
     image: nginx:1.25

@@ -1732,7 +1732,7 @@
   pk: 174
   fields:
     uuid: 091e43f9-f4fd-4c3b-8642-b6a7c34c345e
-    name: Codes specifically reserved for testing purposes
+    name: Reserved for testing purposes
     code: XTS
     decimals: null
     numeric: '963'
@@ -1742,7 +1742,7 @@
   pk: 175
   fields:
     uuid: 9f3f327d-fa19-4baf-be00-21713e8fc06e
-    name: The codes assigned for transactions where no currency is involved
+    name: No currency involved
     code: XXX
     decimals: null
     numeric: '999'
