@@ -27,7 +27,7 @@ import {defineExpose, ref, useAttrs, useSlots, defineModel} from 'vue'
 import {useModels} from '@oxylus/ox'
 import {OxAutocomplete} from '@oxylus/ox/components'
 import {Contact} from '../models'
-import OxContactName from './OxContactName'
+import OxContactName from './OxContactName.vue'
 
 const slots = useSlots()
 const attrs = useAttrs()

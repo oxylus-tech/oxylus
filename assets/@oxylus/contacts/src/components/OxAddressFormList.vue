@@ -26,7 +26,7 @@ import { t } from '@oxylus/ox'
 import {OxFormList} from '@oxylus/ox/components'
 
 import { ContactInfo } from '../models'
-import OxAddressForm from './OxAddressForm'
+import OxAddressForm from './OxAddressForm.vue'
 
 const items = defineModel()
 const attrs = useAttrs()

@@ -20,7 +20,7 @@ import { t, rules } from "@oxylus/ox"
 import {OxModelEdit, OxField} from '@oxylus/ox/components'
 import {OxAgentSelect} from '@oxylus/auth/components'
 
-import OxFolderInput from './OxFolderInput'
+import OxFolderInput from './OxFolderInput.vue'
 import {useFilesModels} from '../composables'
 
 const repos = useFilesModels()

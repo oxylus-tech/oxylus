@@ -92,7 +92,7 @@
 import {computed, defineModel, defineProps, inject, ref, reactive, provide, toRefs} from "vue"
 import {t} from "@oxylus/ox"
 
-import OxFormListItem from './OxFormListItem'
+import OxFormListItem from './OxFormListItem.vue'
 
 /** @model the list of items. **/
 const items = defineModel()

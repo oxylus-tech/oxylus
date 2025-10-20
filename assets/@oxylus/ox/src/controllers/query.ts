@@ -1,11 +1,10 @@
 import {Repository, Relation} from 'pinia-orm'
-import type {Model} from 'pinia-orm'
 import type {Response} from '@pinia-orm/axios'
 
 import {collectAttr} from '../utils'
 import type {IObject} from '../utils'
 import {asRelation, getSourceKey} from '../models'
-import type {Repos, ModelId} from '../models'
+import type {Repos, ModelId, Model} from '../models'
 
 
 /** Interface of {@link Query} class. */
@@ -22,6 +21,7 @@ export interface IQuery<M extends Model> {
     /** Default options to set to all {@link Query.fetch} calls */
     opts: IQueryFetch<M>
 }
+
 
 /** {@link Query.fetch} parameters. */
 export interface IQueryFetch<M extends Model> extends Partial<object> {
@@ -43,8 +43,11 @@ export interface IQueryFetch<M extends Model> extends Partial<object> {
     /** Fetch items from thoses relations. */
     relations?: string[]
     /** If true (default value), save items in Pinia repository */
-    save: boolean
+    save?: boolean
+    /** Get data under this response's data key **/
+    dataKey?: string
 }
+
 
 /**
  * {@link Query.all} parameters.
@@ -151,8 +154,9 @@ export default class Query<M extends Model> {
      * @return Response of the first request, whoses ``entities`` has \
      * model instances of all requests.
      */
-    async all({nextKey='next', limit=-1, flush=false, ...opts} : IQueryAll<M> ={}) : Promise<Response> {
-        const result = await this.fetch({flush, ...opts})
+    async all({nextKey='next', limit=-1, ...opts} : IQueryAll<M> ={}) : Promise<Response> {
+        // FIXME: removed `flush`
+        const result = await this.fetch({...opts})
 
         let url = result.response.data[nextKey]
         while(url) {
@@ -173,7 +177,7 @@ export default class Query<M extends Model> {
      *
      * Return null if no request has been made.
      */
-    async allOnce(options: IQueryAll<M> = {}) : Promise<Reponse|null> {
+    async allOnce(options: IQueryAll<M> = {}) : Promise<Response|null> {
         const repo = options.repo ?? this.repo
         if(!repo.first())
             return await this.all(options)
@@ -188,7 +192,7 @@ export default class Query<M extends Model> {
      * @param options.opts - options to pass down to {@link Quey.relation}.
      * @return the resulting entities.
      */
-    async relations(objs: M[], fields: string[], opts = {}) : Promise<{[s: string]: Response}>
+    async relations(objs: M[], fields: string[], opts: IQueryAll<M> = {}) : Promise<{[s: string]: Response}>
     {
         this._ensureRepos("relations")
         const entities: {[s: string]: Response} = {}
@@ -229,11 +233,11 @@ export default class Query<M extends Model> {
         if(!repo2)
             throw Error(`No repository "${key}" found.`)
 
-        const fk = getSourceKey(rel)
+        const fk = getSourceKey(rel) as string
         if(!fk)
             throw Error(`No source ids attributes for ${relation}.`)
         const id = [... new Set(collectAttr(objs, fk))]
-        const query = new Query(repo2, this.repos)
+        const query = new Query(repo2, this.repos, {save: this.opts.save})
         return query.all({...options, id, repo: repo2})
     }
 
@@ -242,7 +246,7 @@ export default interface Query<M extends Model> extends IQuery<M> {}
 
 
 /** Return a new {@link Query} based on repo's entity. */
-export function query<M extends Model>(repo: string|Repository<M>, repos?: Repos, opts?: IQueryFetch<M>=null): Query<M> {
+export function query<M extends Model>(repo: string|Repository<M>, repos?: Repos, opts: IQueryFetch<M>|null=null): Query<M> {
     if(typeof repo == "string") {
         if(!(repo in repos))
             throw Error(`Repository "${repo}" is not present in provided repositories.`)

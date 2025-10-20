@@ -107,8 +107,8 @@ export default class State {
             return this.data
 
         let msg = ""
-        for(var field in this.data) {
-            const errs = typeof this.data[field] == "string" ? [errs] : errs
+        for(var [field, val] of Object.entries(this.data)) {
+            const errs: Array<any> = typeof this.data[field] == "string" ? [val] : val
             if(typeof field == 'string')
                 msg += errs.map(v => `- ${field}: ${v}\n`)
             else

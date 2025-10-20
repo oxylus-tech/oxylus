@@ -21,8 +21,8 @@
 <script setup lang="ts">
 import { defineModel, ref, useAttrs, watch } from 'vue'
 import {OxAgentSelect} from '@oxylus/auth/components'
-import OxFolderNav from './OxFolderNav'
-import OxFolderNavEdit from './OxFolderNavEdit'
+import OxFolderNav from './OxFolderNav.vue'
+import OxFolderNavEdit from './OxFolderNavEdit.vue'
 
 const drawer = ref(true)
 const attrs = useAttrs()

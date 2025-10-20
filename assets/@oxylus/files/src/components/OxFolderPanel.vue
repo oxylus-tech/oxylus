@@ -33,9 +33,9 @@ import { query, t } from '@oxylus/ox'
 import type {IModelPanelProps} from '@oxylus/ox'
 import {OxModelPanel} from '@oxylus/ox/components'
 
-import OxFolderEdit from './OxFolderEdit'
-import OxFolderInput from './OxFolderInput'
-import OxFolderDrawer from './OxFolderDrawer'
+import OxFolderEdit from './OxFolderEdit.vue'
+import OxFolderInput from './OxFolderInput.vue'
+import OxFolderDrawer from './OxFolderDrawer.vue'
 import {useFilesModels} from '../composables'
 
 const slots = useSlots()

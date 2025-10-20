@@ -16,11 +16,11 @@ export class ContactList extends models.Model {
     static fields() {
         return {
             id: this.attr(null),
-            name: this.string(),
-            description: this.string(),
-            color: this.string(),
+            name: this.string(""),
+            description: this.string(""),
+            color: this.string(""),
             group: this.number(),
-            organisation: this.string(),
+            organisation: this.string(""),
             is_subscription: this.boolean(),
             contacts: this.attr([]),
             contact_count: this.number(),
@@ -39,8 +39,8 @@ class BaseContact extends models.Model {
     static fields() {
         return {
             id: this.attr(null),
-            name: this.string(),
-            email: this.string(),
+            name: this.string(""),
+            email: this.string(""),
 
             // Thoses values are nested and we keep them as is
             emails: this.attr([]),
@@ -64,8 +64,8 @@ export class Person extends BaseContact {
         return {
             ...super.fields(),
             user: this.number(),
-            first_name: this.string(),
-            last_name: this.string(),
+            first_name: this.string(""),
+            last_name: this.string(""),
             organisations: this.attr([]),
             contact_lists: this.attr([]),
             $organisations: this.hasManyBy(Organisation, 'organisations'),
@@ -91,11 +91,11 @@ export class OrganisationType extends models.Model {
     static fields() {
         return {
             id: this.attr(null),
-            name: this.string(),
-            country: this.string(),
-            abbreviation: this.string(),
-            language_code: this.string(),
-            code: this.string(),
+            name: this.string(""),
+            country: this.string(""),
+            abbreviation: this.string(""),
+            language_code: this.string(""),
+            code: this.string(""),
             $country: this.belongsTo(Country, 'country'),
         }
     }
@@ -113,14 +113,14 @@ export class Organisation extends BaseContact {
     static fields() {
         return {
             ...super.fields(),
-            short_name: this.string(),
-            color: this.string(),
-            reference: this.string(),
+            short_name: this.string(""),
+            color: this.string(""),
+            reference: this.string(""),
             group: this.number(),
-            vat: this.string(),
-            type: this.string(),
-            country: this.string(),
-            contact_list: this.string(),
+            vat: this.string(""),
+            type: this.string(""),
+            country: this.string(""),
+            contact_list: this.string(""),
             $type: this.belongsTo(OrganisationType, 'type'),
             $country: this.belongsTo(Country, 'country'),
         }
@@ -144,8 +144,8 @@ export class Contact extends models.Model {
     static fields() {
         return  {
             id: this.attr(null),
-            name: this.string(),
-            email: this.string(),
+            name: this.string(""),
+            email: this.string(""),
             person: this.attr(null),
             organisation: this.attr(null),
         }
@@ -181,12 +181,12 @@ export class Address extends ContactInfo {
     static fields() {
         return {
             ...super.fields(),
-            street: this.string(),
-            street_2: this.string(),
+            street: this.string(""),
+            street_2: this.string(""),
             number: this.number(),
-            box: this.string(),
-            city: this.string(),
-            country: this.string(),
+            box: this.string(""),
+            city: this.string(""),
+            country: this.string(""),
             $country: this.belongsTo(Country, 'country'),
         }
     }
@@ -202,7 +202,7 @@ export class Email extends ContactInfo {
     static fields() {
         return {
             ...super.fields(),
-            email: this.string()
+            email: this.string("")
         }
     }
 }
@@ -216,7 +216,7 @@ export class Phone extends ContactInfo {
     static fields() {
         return {
             ...super.fields(),
-            number: this.string()
+            number: this.string("")
         }
     }
 }
@@ -230,10 +230,10 @@ export class BankAccount extends ContactInfo {
     static fields() {
         return {
             ...super.fields(),
-            name: this.string(),
-            iban: this.string(),
-            bic: this.string(),
-            address: this.string(),
+            name: this.string(""),
+            iban: this.string(""),
+            bic: this.string(""),
+            address: this.string(""),
         }
     }
 }

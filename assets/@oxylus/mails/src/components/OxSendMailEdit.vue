@@ -72,7 +72,7 @@ import {OxModelEdit, OxField, OxAutocomplete, OxComponent} from '@oxylus/ox/comp
 import {OxContactInput} from '@oxylus/contacts/components'
 
 import {useMailModels} from '../composables'
-import OxFileList from './OxFileList'
+import OxFileList from './OxFileList.vue'
 
 const repos = useMailModels()
 const attrs = useAttrs()

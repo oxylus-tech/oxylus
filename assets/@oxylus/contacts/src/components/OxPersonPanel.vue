@@ -61,7 +61,7 @@ import {OxModelPanel} from '@oxylus/ox/components'
 import type {IModelPanelProps} from '@oxylus/ox'
 
 import {useContactModels} from '../composables'
-import OxPersonEdit from './OxPersonEdit'
+import OxPersonEdit from './OxPersonEdit.vue'
 
 const context = inject('context')
 const slots = useSlots()

@@ -26,8 +26,8 @@ import { t } from '@oxylus/ox'
 
 import { OxModelPanel } from '@oxylus/ox/components'
 import { useContactList } from '../composables'
-import OxContactListName from './OxContactListName'
-import OxContactListEdit from './OxContactListEdit'
+import OxContactListName from './OxContactListName.vue'
+import OxContactListEdit from './OxContactListEdit.vue'
 
 const slots = useSlots()
 

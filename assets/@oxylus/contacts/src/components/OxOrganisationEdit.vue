@@ -45,8 +45,8 @@ import {OxModelEdit, OxField} from '@oxylus/ox/components'
 import {OxCountryInput} from '@oxylus/locations/components'
 
 import {vatRule, useContactModels} from '../composables'
-import OxContactInfos from './OxContactInfos'
-import OxOrganisationTypeInput from './OxOrganisationTypeInput'
+import OxContactInfos from './OxContactInfos.vue'
+import OxOrganisationTypeInput from './OxOrganisationTypeInput.vue'
 
 const repos = useContactModels()
 const attrs = useAttrs()

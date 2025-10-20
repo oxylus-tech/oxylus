@@ -31,7 +31,7 @@ import {OxModelPanel} from '@oxylus/ox/components'
 import type {IModelPanelProps} from '@oxylus/ox'
 
 import {OxCountryInput} from '@oxylus/locations/components'
-import OxOrganisationTypeEdit from './OxOrganisationTypeEdit'
+import OxOrganisationTypeEdit from './OxOrganisationTypeEdit.vue'
 import {useContactModels} from '../composables'
 
 const slots = useSlots()

@@ -1,1 +1,1 @@
-export {default as OxRichEditor} from './OxRichEditor'
+export {default as OxRichEditor} from './OxRichEditor.vue'

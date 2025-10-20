@@ -33,7 +33,7 @@
 import {ref, defineExpose, defineEmits, watch, onMounted} from 'vue'
 import {query, useModelList} from '@oxylus/ox'
 import { useFolders } from '../composables'
-import OxFolderNavItem from './OxFolderNavItem'
+import OxFolderNavItem from './OxFolderNavItem.vue'
 
 
 const props = defineProps({

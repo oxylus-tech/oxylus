@@ -4,7 +4,7 @@ import { getActivePinia } from 'pinia'
 import { useRepo as $useRepo } from 'pinia-orm'
 
 import type {Repos} from '../models'
-import { Model, User, Repository } from '../models'
+import { Model, User, RefRepository } from '../models'
 
 
 export type Models = (typeof Model)[] | {[name: string]: (typeof Model)}
@@ -24,11 +24,11 @@ export interface IUseModelOpts {
 /**
  * Use repository for the provided model.
  */
-export function useRepo<M extends Model>(model: Constructor<M>): Repository<M> {
+export function useRepo<M extends Model>(model: Constructor<M>): RefRepository<M> {
     $useRepo(model)
     const pinia = getActivePinia()
-    Repository.useModel = model as unknown as typeof $Model
-    return $useRepo(Repository<Model>, pinia)
+    RefRepository.useModel = model as unknown as typeof $Model
+    return $useRepo(RefRepository<Model>, pinia)
 }
 
 /**
@@ -41,7 +41,7 @@ export function useRepo<M extends Model>(model: Constructor<M>): Repository<M> {
  *
  * `provide()` those values if not already provided.
  */
-export function useModels(models: Models, {useInject=true, useDefaults=true, key=null}: IUseModelOpts = {}): Record<str, Repository<Model>>
+export function useModels(models: Models, {useInject=true, useDefaults=true, key=null}: IUseModelOpts = {}): Record<str, RefRepository<Model>>
 {
     var repos : Repos = useInject && (inject('repos') || {}) as Repos
     const injected = (useInject && !!Object.keys(repos).length)

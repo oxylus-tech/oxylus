@@ -1,3 +1,7 @@
+/**
+ * This is the base module that provide common configuration to compile with
+ * Vite.
+ */
 import { resolve } from 'path'
 import { fileURLToPath, URL } from 'node:url'
 

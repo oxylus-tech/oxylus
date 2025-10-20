@@ -17,7 +17,7 @@
  */
 import {defineModel, useAttrs} from 'vue'
 import {OxFormList} from '@oxylus/ox/components'
-import OxBankAccountForm from './OxBankAccountForm'
+import OxBankAccountForm from './OxBankAccountForm.vue'
 
 const items = defineModel()
 const attrs = useAttrs()

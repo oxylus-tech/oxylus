@@ -69,8 +69,8 @@ import { query, t } from '@oxylus/ox'
 import type {IModelPanelProps} from '@oxylus/ox'
 import {OxModelPanel, OxAction} from '@oxylus/ox/components'
 
-import OxFileEdit from './OxFileEdit'
-import OxFolderDrawer from './OxFolderDrawer'
+import OxFileEdit from './OxFileEdit.vue'
+import OxFolderDrawer from './OxFolderDrawer.vue'
 import { formatBytes } from '../models'
 import {useFilesModels} from '../composables'
 

@@ -21,7 +21,7 @@
     "strictNullChecks": false,
 
     "lib": [
-        "es2022",
+        "esnext",
         "dom"
     ],
 

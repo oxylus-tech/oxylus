@@ -15,11 +15,11 @@ export class Folder extends Owned {
         return {
             ...super.fields(),
             level: this.number(),
-            parent: this.string(),
-            name: this.string(),
-            path: this.string(),
-            updated: this.string(),
-            created: this.string(),
+            parent: this.string(""),
+            name: this.string(""),
+            path: this.string(""),
+            updated: this.string(""),
+            created: this.string(""),
         }
     }
 }
@@ -37,18 +37,18 @@ export class File extends Owned {
     static fields() {
         return {
             ...super.fields(),
-            name: this.string(),
-            preview: this.string(),
-            file: this.string(),
+            name: this.string(""),
+            preview: this.string(""),
+            file: this.string(""),
             file_size: this.number(),
-            updated: this.string(),
-            created: this.string(),
-            folder: this.string(),
+            updated: this.string(""),
+            created: this.string(""),
+            folder: this.string(""),
 
-            description: this.string(),
-            caption: this.string(),
-            alternate: this.string(),
-            ariaDescription: this.string(),
+            description: this.string(""),
+            caption: this.string(""),
+            alternate: this.string(""),
+            ariaDescription: this.string(""),
 
             $folder: this.belongsTo(Folder, "folder")
         }

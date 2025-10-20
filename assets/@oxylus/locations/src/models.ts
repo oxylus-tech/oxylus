@@ -13,9 +13,9 @@ export class Currency extends models.Model {
     static fields() {
         return {
             id: this.attr(null),
-            name: this.string(),
-            code: this.string(),
-            numeric: this.string(),
+            name: this.string(""),
+            code: this.string(""),
+            numeric: this.string(""),
             decimals: this.number(),
             is_iso: this.boolean(),
             valid_to: this.string(null)
@@ -38,15 +38,15 @@ export class Country extends models.Model {
     static fields() {
         return {
             id: this.attr(null),
-            name: this.string(),
-            code: this.string(),
-            code_3: this.string(),
+            name: this.string(""),
+            code: this.string(""),
+            code_3: this.string(""),
             phone: this.number(),
             continent: this.number(),
-            currency_code: this.string(),
-            currency: this.string(),
+            currency_code: this.string(""),
+            currency: this.string(""),
 
-            iban_sample: this.string(),
+            iban_sample: this.string(""),
             iban_length: this.number(),
 
             $currency: this.belongsTo(Currency, 'currency')

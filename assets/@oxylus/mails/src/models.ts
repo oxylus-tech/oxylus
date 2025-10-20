@@ -21,23 +21,23 @@ export class MailAccount extends Owned {
     static fields() {
         return {
             ...super.fields(),
-            name: this.string(),
-            mail_header: this.string(),
-            mail_signature: this.string(),
-            mail_subscription_footer: this.string(),
+            name: this.string(""),
+            mail_header: this.string(""),
+            mail_signature: this.string(""),
+            mail_subscription_footer: this.string(""),
 
             // ---- smtp
-            smtp_host: this.string(),
+            smtp_host: this.string(""),
             smtp_port: this.number(587),
-            smtp_username: this.string(),
-            smtp_password: this.string(),
+            smtp_username: this.string(""),
+            smtp_password: this.string(""),
             smtp_encryption: this.number(),
 
             // ---- imap
-            imap_host: this.string(),
+            imap_host: this.string(""),
             imap_port: this.number(),
-            imap_username: this.string(),
-            imap_password: this.string(),
+            imap_username: this.string(""),
+            imap_password: this.string(""),
             imap_ssl: this.boolean(),
             imap_folder: this.string("INBOX"),
         }
@@ -64,15 +64,15 @@ export class SendMail extends Owned {
     static fields() {
         return {
             ...super.fields(),
-            account: this.string(),
-            template: this.string(),
+            account: this.string(""),
+            template: this.string(""),
             is_template: this.boolean(false),
             contacts: this.attr([]),
             contact_lists: this.attr([]),
             state: this.number(),
-            updated: this.string(),
-            created: this.string(),
-            subject: this.string(),
+            updated: this.string(""),
+            created: this.string(""),
+            subject: this.string(""),
             content: this.string(''),
             attachments: this.attr([]),
             $account: this.belongsTo(MailAccount, "account"),

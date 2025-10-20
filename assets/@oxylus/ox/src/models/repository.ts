@@ -6,6 +6,9 @@ import { difference, pull, union } from 'lodash'
 import { AxiosRepository } from '@pinia-orm/axios'
 
 
+/**
+ * Reference type used to identify an item and owner in the repository.
+ */
 export type RefKey = string|number
 
 
@@ -14,29 +17,38 @@ export type RefKey = string|number
  *
  * This allows to keep memory low by keeping a registry of items being used.
  *
+ * A single repository can be used for multiple purpose. The objects handling
+ * data acquisition (as {@link ModelList}) will acquire objects keeping reference count.
+ *
+ * **Remember to always clean before dropping since there is no clean automation
+ * from javascript (eg. on
+ * components unmount). This is already done by some components as {@link OxModelPanel}.**
+ *
  * An object released with not more reference is destroyed from database.
  *
  * **Note**: once an object is tagged as acquired, it will be destroyed on release
  * no matter if there are other use outside of it.
  */
-export class RefCounter<M extends Model> {
+export class RefCounter<M extends Model, R extends RefRepository<M>> {
     static _lastKey = 0
 
-    repo: Repository<M>
-    items: Record<RefId, RefKey[]>
+    repo: R
 
-    constructor(repo: Repository<M>) {
+    /** Acquired items */
+    items: Record<RefKey, RefKey[]>
+
+    constructor(repo: R) {
         this.repo = repo
         this.items = {}
     }
 
     /** Acquire a unique context key */
     acquireKey(): number {
-        return this.constructor._lastKey++
+        return RefCounter._lastKey++
     }
 
     /** Acquire provided ids for this key */
-    acquire(key: RefKey, ids: RefId[]) {
+    acquire(key: RefKey, ids: RefKey[]) {
         if(ids?.length)
             for(var id of ids) {
                 if(id in this.items) {
@@ -49,7 +61,7 @@ export class RefCounter<M extends Model> {
     }
 
     /** Release provided ids for this key */
-    release(key: RefKey, ids: RefId[]) {
+    release(key: RefKey, ids: RefKey[]) {
         if(!ids?.length)
             return
 
@@ -72,7 +84,7 @@ export class RefCounter<M extends Model> {
      *
      * This optimizes out ids
      */
-    releaseAcquire(key: RefKey, releaseIds: RefId[], acquireIds: RefId[]) {
+    releaseAcquire(key: RefKey, releaseIds: RefKey[], acquireIds: RefKey[]) {
         this.release(key, difference(releaseIds, acquireIds))
         this.acquire(key, difference(acquireIds, releaseIds))
     }
@@ -80,8 +92,8 @@ export class RefCounter<M extends Model> {
     /** Release all reference for the provided context key. */
     flush(key: RefKey) {
         const drop = []
-        for(var id in this.refs) {
-            const tags = this.refs[id]
+        for(var id in this.items) {
+            const tags = this.items[id]
             const idx = tags.indexOf(key)
             if(idx != -1) {
                 tags.splice(idx,1)
@@ -98,7 +110,7 @@ export class RefCounter<M extends Model> {
 
     /** Clear reference counter without destroying items. **/
     clear() {
-        this.refs = {}
+        this.items = {}
     }
 
 }
@@ -111,16 +123,16 @@ export class RefCounter<M extends Model> {
  * - provides a `counter` property: used for object reference tracking
  * - AxiosRepository: used to fetch items from api.
  */
-export class Repository<M extends Model> extends AxiosRepository<M> {
-    refs: RefCounter<M>
+export class RefRepository<M extends Model> extends AxiosRepository<M> {
+    refs: RefCounter<M, RefRepository<M>>
 
     constructor(database: Database, pinia?: Pinia) {
         super(database, pinia)
         this.refs = new RefCounter(this)
     }
 
-    flush() {
+    flush(): M[] {
         this.refs.clear()
-        super.flush()
+        return super.flush()
     }
 }

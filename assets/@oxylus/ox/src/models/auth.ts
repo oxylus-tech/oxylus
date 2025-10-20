@@ -2,6 +2,7 @@ import { unref } from 'vue'
 import type {Response} from '@pinia-orm/axios'
 import { Model, Meta } from './model'
 import type { IModel } from './model'
+import type { ClassType } from '../utils'
 
 
 /** Interface of {@link ContentType} model */
@@ -35,6 +36,8 @@ export class ContentType extends Model {
         }
     }
 
+    $permissions: Permission[]
+
     /** Label used as django identifier */
     get label(): string {
         return `${this.app}.${this.model}`
@@ -63,7 +66,7 @@ export interface IPermission extends IModel {
 }
 
 /** Argument of {@link Permission.getCodename} */
-export type IPermissionGetCodename = string | [ClassType<Model>, string]
+export type IPermissionGetCodename = string | [typeof Model, string]
 
 /** Represent `django.contrib.auth.models.Permission`. */
 export class Permission extends Model {
@@ -210,7 +213,7 @@ export class User extends Model {
      * @param obj - a `django-caps` `Owned` object: if provided and the object has an `access`, check for object permissions
      * @return whether user has permission or not.
      */
-    can(perm: IPermissionGetCodename, obj?: Record): boolean {
+    can(perm: IPermissionGetCodename, obj?: Record<string, any>): boolean {
         perm = Permission.getCodename(perm)
         const allowed = this.all_permissions?.includes(perm) || false
         if(allowed && obj && obj.access)

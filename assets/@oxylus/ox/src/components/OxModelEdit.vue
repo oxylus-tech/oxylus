@@ -37,7 +37,7 @@ import { t, useModelEditor } from '@oxylus/ox'
 
 import OxStateAlert from './OxStateAlert.vue'
 import OxValidationBtn from './OxValidationBtn.vue'
-import OxModelEditor from './OxModelEditor'
+import OxModelEditor from './OxModelEditor.vue'
 
 import type {IModelEditorProps} from '../controllers/modelEditor'
 

@@ -33,8 +33,8 @@ import {query, t, useModelList} from '@oxylus/ox'
 import {OxModelEdit, OxField} from '@oxylus/ox/components'
 
 import {useContactList} from '../composables'
-import OxContactListName from './OxContactListName'
-import OxContactModelList from './OxContactModelList'
+import OxContactListName from './OxContactListName.vue'
+import OxContactModelList from './OxContactModelList.vue'
 
 const repos = useContactList()
 const user = inject('user')

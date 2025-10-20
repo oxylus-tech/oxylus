@@ -8,7 +8,7 @@
 </template>
 <script setup lang="ts">
 import { defineModel, defineExpose, onMounted, ref, useAttrs, watch } from 'vue'
-import OxFolderNavItem from './OxFolderNavItem'
+import OxFolderNavItem from './OxFolderNavItem.vue'
 
 const attrs = useAttrs()
 const props = defineProps({

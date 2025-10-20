@@ -2,7 +2,7 @@ import {inject, provide, reactive as $reactive} from 'vue'
 
 
 export interface IFilterSlotOpts {
-    exclude?: string | string[] | ((name: string) => bool)
+    exclude?: string | string[] | ((name: string) => boolean)
 }
 
 export type IRFitlerSlot = {[k: string]: string}

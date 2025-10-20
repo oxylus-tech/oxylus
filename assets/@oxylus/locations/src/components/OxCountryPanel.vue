@@ -34,8 +34,8 @@ import {OxModelPanel} from '@oxylus/ox/components'
 import type {IModelPanelProps} from '@oxylus/ox'
 
 import {useLocationModels} from '../composables'
-import OxContinentInput from './OxContinentInput'
-import OxCountryEdit from './OxCountryEdit'
+import OxContinentInput from './OxContinentInput.vue'
+import OxCountryEdit from './OxCountryEdit.vue'
 
 const slots = useSlots()
 const forwardSlots = Object.keys(slots).filter(x => !(['list.filters', 'top'].includes(x)))

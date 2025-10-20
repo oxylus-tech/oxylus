@@ -35,7 +35,7 @@ import type {IModelPanelProps} from '@oxylus/ox'
 import {OxActionPost} from '@oxylus/ox/components'
 import {OxOwnedPanel} from '@oxylus/auth/components'
 
-import OxSendMailEdit from './OxSendMailEdit'
+import OxSendMailEdit from './OxSendMailEdit.vue'
 import {SendMail} from '../models'
 import {useMailModels} from '../composables'
 

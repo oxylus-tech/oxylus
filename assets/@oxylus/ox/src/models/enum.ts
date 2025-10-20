@@ -1,5 +1,9 @@
 import { t } from '../composables/i18n'
 
+
+/**
+ * Return string label for the provided enum.
+ */
 function toString(prefix: string, prop: string) {
     let key = `enums.${prefix}.${prop}`
     let val = t(key)
@@ -9,19 +13,25 @@ function toString(prefix: string, prop: string) {
     return t(`enums.${prefix}._.${prop}`)
 }
 
+export interface IEnum extends Record<string, any> {
+    __prefix: string
+}
+
+
 /**
  * Provide an enum and utilities for rendering enum in a list.
+ * See {@link Enum} function for more informations.
  */
 export const enumProxy = {
-    get(target: Record<string, any>, prop: string, receiver) {
+    get(target: Record<string, any>, prop: string, receiver: IEnum) {
         if(prop == "items")
             return Object.keys(target).filter(k => k[0] != '_').map(k => ({
                 value: target[k],
                 title: toString(target.__prefix, k)
             }))
         if(prop == "toString")
-            return (k) => toString(receiver.__prefix, k)
-        return Reflect.get(...arguments)
+            return (k: string) => toString(receiver.__prefix, k)
+        return Reflect.get(target, prop, receiver)
     },
 
 }

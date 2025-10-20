@@ -54,10 +54,10 @@ export type MapKeysPred = Record<string, any> | ((key: RecordKey) => any)
  * @property map - take value from this object or calling this function.
  * @return newly created object.
  */
-export function mapToObject(keys: Record<string, any> | Array<RecordKey>, map: MapKeysPred | Record<string, any>) : Record<RecordKey> {
+export function mapToObject(keys: Record<string, any> | Array<RecordKey>, map: MapKeysPred | Record<string, any>) : Record<RecordKey, any> {
     if(!Array.isArray(keys))
         keys = Object.keys(keys)
-    return keys.reduce((dest: Record, key: RecordKey) => {
+    return keys.reduce((dest: Record<RecordKey, any>, key: RecordKey) => {
         dest[key] = map instanceof Function ? map(key) : map[key];
         return dest
     }, {})
@@ -83,7 +83,7 @@ export function assignNonEmpty(target: Record<string, any>, source: Record<strin
  * @param [assign] assign using this object
  * @return the object passed as target.
  */
-export function reset(target: Record<string, any>, assign: Record<string, any>|undefined=undefined) : Record {
+export function reset(target: Record<RecordKey, any>, assign: Record<RecordKey, any>|undefined=undefined) : Record<RecordKey, any> {
     for(const key of Object.keys(target)) {
         const val = assign?.[key]
         if(!assign || val === undefined)
@@ -104,7 +104,7 @@ export function reset(target: Record<string, any>, assign: Record<string, any>|u
  *
  * Ensure that values are `toRaw` (vue).
  */
-export function ifNotEqual<R extends any>(a: any|Reactive<any>, b: any[]|Reactive<any>, func: (a,b) => R): R|void {
+export function ifNotEqual<R extends any>(a: any|Reactive<any>, b: any[]|Reactive<any>, func: (a: any, b: any) => R): R|void {
     a = toRaw(a)
     b = toRaw(b)
     if(!isEqual(a, b))

@@ -57,7 +57,7 @@ import type {IModelPanelProps} from '@oxylus/ox'
 import {OxCountryInput} from '@oxylus/locations/components'
 
 import {useContactModels} from '../composables'
-import OxOrganisationEdit from './OxOrganisationEdit'
+import OxOrganisationEdit from './OxOrganisationEdit.vue'
 
 const slots = useSlots()
 const forwardSlots = Object.keys(slots).filter(x => !(['list.filters', 'item.groups'].includes(x)))

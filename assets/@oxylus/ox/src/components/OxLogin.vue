@@ -43,7 +43,7 @@
 
 import {computed, inject, ref, reactive, defineModel, defineProps} from 'vue'
 
-import OxStateAlert from './OxStateAlert'
+import OxStateAlert from './OxStateAlert.vue'
 import OxValidationBtn from './OxValidationBtn.vue'
 import config from '../config'
 

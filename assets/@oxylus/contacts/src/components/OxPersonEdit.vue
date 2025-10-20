@@ -29,7 +29,7 @@ import { t, rules } from "@oxylus/ox"
 import {OxModelEdit, OxField} from '@oxylus/ox/components'
 
 import { useContactModels } from '../composables'
-import OxContactInfos from './OxContactInfos'
+import OxContactInfos from './OxContactInfos.vue'
 
 const repos = useContactModels()
 const attrs = useAttrs()

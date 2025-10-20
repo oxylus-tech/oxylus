@@ -93,8 +93,8 @@ import {OxModelEdit, OxField, OxValidationBtn} from '@oxylus/ox/components'
 import {OxAgentSelect} from '@oxylus/auth/components'
 
 import {useFilesModels} from '../composables'
-import OxFolderInput from './OxFolderInput'
-import OxFileUpload from './OxFileUpload'
+import OxFolderInput from './OxFolderInput.vue'
+import OxFileUpload from './OxFileUpload.vue'
 
 const repos = useFilesModels()
 const props = defineProps({

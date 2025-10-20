@@ -26,7 +26,7 @@ import { t } from '@oxylus/ox'
 import type {IModelPanelProps} from '@oxylus/ox'
 import {OxOwnedPanel} from '@oxylus/auth/components'
 
-import OxMailAccountEdit from './OxMailAccountEdit'
+import OxMailAccountEdit from './OxMailAccountEdit.vue'
 import {useMailModels} from '../composables'
 
 const slots = useSlots()

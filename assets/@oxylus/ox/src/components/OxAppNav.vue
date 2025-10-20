@@ -14,7 +14,7 @@
 <script setup>
 import { computed, defineModel, inject, ref } from 'vue'
 
-import OxAppNavItem from './OxAppNavItem'
+import OxAppNavItem from './OxAppNavItem.vue'
 
 const context = inject('context')
 const panels = inject('panels')

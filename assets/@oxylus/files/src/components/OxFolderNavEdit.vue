@@ -45,7 +45,7 @@ import {query, t} from '@oxylus/ox'
 import {OxModelEditor, OxActionModelDelete} from '@oxylus/ox/components'
 
 import {useFolders, fileNameRule} from '../composables'
-import OxFolderInput from './OxFolderInput'
+import OxFolderInput from './OxFolderInput.vue'
 
 const emits = defineEmits(['updated'])
 

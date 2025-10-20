@@ -36,10 +36,10 @@
 import { defineModel, inject } from 'vue'
 import { t } from '@oxylus/ox'
 import { ContactInfo, Email, Phone, Address, BankAccount } from '../models'
-import OxEmailFormList from './OxEmailFormList'
-import OxPhoneFormList from './OxPhoneFormList'
-import OxAddressFormList from './OxAddressFormList'
-import OxBankAccountFormList from './OxBankAccountFormList'
+import OxEmailFormList from './OxEmailFormList.vue'
+import OxPhoneFormList from './OxPhoneFormList.vue'
+import OxAddressFormList from './OxAddressFormList.vue'
+import OxBankAccountFormList from './OxBankAccountFormList.vue'
 
 const value = defineModel()
 const user = inject('user')

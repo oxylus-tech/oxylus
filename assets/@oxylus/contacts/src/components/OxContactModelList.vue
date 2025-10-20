@@ -24,8 +24,8 @@
 import {defineModel, inject, ref, useAttrs} from 'vue'
 import { t } from '@oxylus/ox'
 import { OxModelList } from '@oxylus/ox/components'
-import OxContactInput from './OxContactInput'
-import OxContactName from './OxContactName'
+import OxContactInput from './OxContactInput.vue'
+import OxContactName from './OxContactName.vue'
 
 const repos = inject('repos')
 const ids = defineModel()

@@ -71,7 +71,7 @@ import { computed, defineProps, inject, provide, reactive, watch } from 'vue'
 
 import {useAppContext, usePanels, t, filterSlots} from '@oxylus/ox'
 import type {Model} from '../models'
-import OxAppNav from './OxAppNav'
+import OxAppNav from './OxAppNav.vue'
 
 const slots = useSlots()
 const panelsSlots = filterSlots(slots, "panels.")

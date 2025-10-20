@@ -78,7 +78,7 @@ export class Model extends PModel {
         app: "ox_core",
     })
 
-    static config = {
+    static config: Record<string, any> = {
         axiosApi: { dataKey: 'results' }
     }
 

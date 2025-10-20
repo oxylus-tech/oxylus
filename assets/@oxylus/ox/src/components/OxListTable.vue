@@ -56,8 +56,8 @@ import { computed, defineProps, inject, ref, toRefs, useSlots } from 'vue'
 import { t, tKeys } from '@oxylus/ox'
 // import { Permissions } from '../models'
 import { filterSlots } from '../utils'
-import OxAction from './OxAction'
-import OxActionEdit from './OxActionEdit'
+import OxAction from './OxAction.vue'
+import OxActionEdit from './OxActionEdit.vue'
 
 const slots = useSlots()
 const itemSlots = filterSlots(slots, 'item.', {exclude: ['item.actions', 'item.image']})

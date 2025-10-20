@@ -14,7 +14,7 @@ export class Agent extends models.Model {
     static fields() {
         return {
             id: this.attr(null),
-            name: this.string(),
+            name: this.string(""),
             user: this.number(),
             group: this.number(),
 
@@ -30,10 +30,10 @@ export class Access extends models.Model {
     static fields() {
         return {
             id: this.attr(null),
-            receiver: this.string(),
-            emitter: this.string(),
+            receiver: this.string(""),
+            emitter: this.string(""),
             grants: this.attr(null),
-            expiration: this.string(),
+            expiration: this.string(""),
         }
     }
 }
@@ -44,7 +44,7 @@ export class Owned extends models.Model {
     static fields() {
         return {
             id: this.attr(null),
-            owner: this.string(),
+            owner: this.string(""),
             access: this.attr(null),
 
             $owner: this.belongsTo(Agent, 'owner'),

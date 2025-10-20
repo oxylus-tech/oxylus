@@ -39,7 +39,7 @@ import {OxModelEdit, OxField} from '@oxylus/ox/components'
 
 import {useLocationModels} from '../composables'
 import OxContinentInput from './OxContinentInput.vue'
-import OxCurrencyInput from './OxCurrencyInput'
+import OxCurrencyInput from './OxCurrencyInput.vue'
 
 const repos = useLocationModels()
 const attrs = useAttrs()
