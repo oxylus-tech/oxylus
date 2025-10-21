@@ -1,19 +1,25 @@
 import {provide} from 'vue'
 import {assignNonEmpty} from '../utils'
-import type Panel from './panel'
+import type {default as Panel, IPanelShow, IPanelParams} from './panel'
 
 
 export interface IPanels {
     /** Current panel's name. **/
     panel: string
+    /** Current panel's view name **/
+    view?: string
     /** Display/GET parameters for the current panel. */
-    params: Record
-    silent: boolean
+    params?: IPanelParams
 }
 
-
-export interface IPanelShow extends IPanels {
-    force?: boolean
+/** Options passed to {@link Panels.show} */
+export interface IPanelsShow extends IPanelShow {
+    /** Panel's name to display */
+    panel: string
+    /**
+     * Optional url name. This allows to provide actual app location to
+     * go to if the current page is not the specified one.
+     */
     href?: string
 }
 
@@ -80,7 +86,7 @@ export default class Panels {
      * When there is already a panel displayed, it will call {@link Panel.onLeave} in order to eventually prevent
      * unwanted page change.
      */
-    show({force=false, href=null, ...options}: IPanelShow) {
+    show({force=false, href=null, ...options}: IPanelsShow) {
         const proceed = force || this.canLeave()
         if(!proceed)
             return
@@ -104,7 +110,7 @@ export default class Panels {
         return this.current ? this.current.canLeave() : true
     }
 
-    reset({panel, silent=false, ...params}: IPanels) {
+    reset({panel, silent=false, ...params}: IPanelsShow) {
         const panelChanged = (panel && panel != this.panel)
         if(panelChanged && !this.canLeave())
             return

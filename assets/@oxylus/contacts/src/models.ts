@@ -1,6 +1,5 @@
 import { models, t } from "@oxylus/ox"
 import { Country } from '@oxylus/locations/models'
-import type { IModel } from "@oxylus/ox"
 
 
 /** Contact list */
@@ -19,11 +18,11 @@ export class ContactList extends models.Model {
             name: this.string(""),
             description: this.string(""),
             color: this.string(""),
-            group: this.number(),
+            group: this.number(null),
             organisation: this.string(""),
-            is_subscription: this.boolean(),
+            is_subscription: this.boolean(false),
             contacts: this.attr([]),
-            contact_count: this.number(),
+            contact_count: this.number(0),
 
             $organisation: this.belongsTo(Organisation, 'organisation'),
             $group: this.belongsTo(models.Group, 'group')
@@ -63,7 +62,7 @@ export class Person extends BaseContact {
     static fields() {
         return {
             ...super.fields(),
-            user: this.number(),
+            user: this.number(null),
             first_name: this.string(""),
             last_name: this.string(""),
             organisations: this.attr([]),
@@ -72,6 +71,9 @@ export class Person extends BaseContact {
             $contact_lists: this.hasManyBy(ContactList, 'contact_lists'),
         }
     }
+
+    first_name: string
+    last_name: string
 
     get full_name() {
         return `${this.last_name} ${this.first_name}`
@@ -116,7 +118,7 @@ export class Organisation extends BaseContact {
             short_name: this.string(""),
             color: this.string(""),
             reference: this.string(""),
-            group: this.number(),
+            group: this.number(null),
             vat: this.string(""),
             type: this.string(""),
             country: this.string(""),
@@ -183,7 +185,7 @@ export class Address extends ContactInfo {
             ...super.fields(),
             street: this.string(""),
             street_2: this.string(""),
-            number: this.number(),
+            number: this.number(null),
             box: this.string(""),
             city: this.string(""),
             country: this.string(""),

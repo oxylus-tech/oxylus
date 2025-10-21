@@ -6,11 +6,11 @@ import Config from '../config'
 import { assignNonEmpty, reset, State } from '../utils'
 
 
-export interface IEditorProps<T> {
+export interface IEditorProps<T extends Record<string, any>> {
     /**
      * @property initial - initial value provided to the editor
      */
-    initial: T & {[k: string]: any}
+    initial: T
     /**
      * @property name - editor name
      */
@@ -29,16 +29,16 @@ export interface IEditorProps<T> {
 /**
  * Editor class interface.
  */
-export interface IEditor<T,P extends IEditorProps<T>> extends IEditorProps<T> {
+export interface IEditor<T extends Record<string, any>,P extends IEditorProps<T>> extends IEditorProps<T> {
     [index: string]: any
 
     props: P
     /**
      * @property value - current edited value
      */
-    value: T & Record<string, any>
+    value: T
     /** Empty value, if not provided generated */
-    empty: T
+    empty?: T
     /**
     * @property state - current editor state. Set to `State.PROCESSING` when
     * saving instance.
@@ -57,9 +57,9 @@ export interface IEditor<T,P extends IEditorProps<T>> extends IEditorProps<T> {
  * Default implementation handles raw Object edition, but not saving data to the server.
  * Note: this might lead to errors due to reactivity when returned from composable.
  */
-export default class Editor<T extends Record, P extends IEditorProps<T>> {
+export default class Editor<T extends Record<string, any>, P extends IEditorProps<T>> {
     state = State.none()
-    value: T & Record<string, any> = {} as T
+    value: T = {} as T
 
     constructor(options: IEditor<T,P>)
     {
@@ -97,7 +97,7 @@ export default class Editor<T extends Record, P extends IEditorProps<T>> {
      * Reset editor data to provided value.
      * When value is provided, reset initial to this value.
      */
-    reset(value: T|null = null) {
+    reset(value: T = null) {
         reset(this.value, value ?? this.empty)
         this.state.none()
     }
@@ -116,7 +116,7 @@ export default class Editor<T extends Record, P extends IEditorProps<T>> {
      * @param [value] if provided use this instead of `this.value`. When a form is provided, it will get
      * @return state.
      */
-    async save(value: T|FormData|null = null, params:Record={}): Promise<State> {
+    async save(value: T|FormData|null = null, params:Record<string, any>={}): Promise<State> {
         this.state.processing()
 
         if(this.valid === false)
@@ -136,7 +136,7 @@ export default class Editor<T extends Record, P extends IEditorProps<T>> {
 
         const state = await this.send(value, params)
         if(state.isOk) {
-            this.reset(state.data as T, true)
+            this.reset(state.data as T)
             this.initial = cloneDeep(this.value)
             this.saved?.(this.value)
         }
@@ -159,7 +159,7 @@ export default class Editor<T extends Record, P extends IEditorProps<T>> {
     serialize<R>(value: T): any { return value }
 
     /** Send value (not implemented, MUST BE in subclasses). */
-    async send(_: Record|FormData, params: Record): State {
+    async send(_: Record<string, any>|FormData, params: Record<string, any>): Promise<State> {
         throw "not implemented"
     }
 }

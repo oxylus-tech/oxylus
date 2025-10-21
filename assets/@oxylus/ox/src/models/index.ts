@@ -9,9 +9,13 @@ export * from './auth'
 export * from './repository'
 
 import type { Model } from './model'
+import type { RefRepository } from './repository'
 
-/** Shortcut to an object of repositories by model entity. */
-export type Repos={[s: string]: Repository<Model>}
+/** Record of repositories by model entity. */
+export type Repos = Record<string, Repository<Model>>
+
+/** Record of {@link RefRepository} by model entity. */
+export type RefRepos = Record<string, RefRepository<Model>>
 
 /** Generic type for typing model classes. **/
 export type ModelType<T extends Model> = ClassType<T>

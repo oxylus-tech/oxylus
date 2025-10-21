@@ -14,7 +14,7 @@ export class Folder extends Owned {
     static fields() {
         return {
             ...super.fields(),
-            level: this.number(),
+            level: this.number(0),
             parent: this.string(""),
             name: this.string(""),
             path: this.string(""),
@@ -40,7 +40,7 @@ export class File extends Owned {
             name: this.string(""),
             preview: this.string(""),
             file: this.string(""),
-            file_size: this.number(),
+            file_size: this.number(0),
             updated: this.string(""),
             created: this.string(""),
             folder: this.string(""),
@@ -53,6 +53,8 @@ export class File extends Owned {
             $folder: this.belongsTo(Folder, "folder")
         }
     }
+
+    file_size: number
 
     /** File size as human readable string. */
     get displaySize(): string {

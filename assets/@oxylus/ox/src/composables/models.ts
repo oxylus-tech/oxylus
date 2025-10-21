@@ -3,7 +3,7 @@ import { inject, provide } from 'vue'
 import { getActivePinia } from 'pinia'
 import { useRepo as $useRepo } from 'pinia-orm'
 
-import type {Repos} from '../models'
+import type {RefRepos} from '../models'
 import { Model, User, RefRepository } from '../models'
 
 
@@ -17,18 +17,17 @@ export interface IUseModelOpts {
     useInject?: boolean
     /** Use default models */
     useDefaults?: boolean
-    /** Store subkey (see {@link useModel}) **/
 }
 
 
 /**
- * Use repository for the provided model.
+ * Use repository for the provided model, returning a {@link RefRepository}.
  */
 export function useRepo<M extends Model>(model: Constructor<M>): RefRepository<M> {
     $useRepo(model)
     const pinia = getActivePinia()
     RefRepository.useModel = model as unknown as typeof $Model
-    return $useRepo(RefRepository<Model>, pinia)
+    return $useRepo(RefRepository<M>, pinia)
 }
 
 /**
@@ -41,9 +40,9 @@ export function useRepo<M extends Model>(model: Constructor<M>): RefRepository<M
  *
  * `provide()` those values if not already provided.
  */
-export function useModels(models: Models, {useInject=true, useDefaults=true, key=null}: IUseModelOpts = {}): Record<str, RefRepository<Model>>
+export function useModels(models: Models, {useInject=true, useDefaults=true}: IUseModelOpts = {}): RefRepos
 {
-    var repos : Repos = useInject && (inject('repos') || {}) as Repos
+    var repos : RefRepos = useInject && (inject('repos') || {}) as RefRepos
     const injected = (useInject && !!Object.keys(repos).length)
 
     if(!Array.isArray(models))

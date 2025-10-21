@@ -31,7 +31,7 @@ export function defineAsyncComponent(url: string, name: string) {
 }
 
 /** Load CSS. */
-function loadCss(href): Promise {
+function loadCss(href: string): Promise<void> {
     return new Promise((resolve, reject) => {
         if (document.querySelector(`link[href="${href}"]`)) {
             resolve()

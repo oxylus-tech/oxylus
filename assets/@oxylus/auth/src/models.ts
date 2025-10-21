@@ -15,8 +15,8 @@ export class Agent extends models.Model {
         return {
             id: this.attr(null),
             name: this.string(""),
-            user: this.number(),
-            group: this.number(),
+            user: this.number(null),
+            group: this.number(null),
 
             $user: this.belongsTo(models.User, 'user'),
             $group: this.belongsTo(models.Group, 'group')
@@ -32,10 +32,12 @@ export class Access extends models.Model {
             id: this.attr(null),
             receiver: this.string(""),
             emitter: this.string(""),
-            grants: this.attr(null),
+            grants: this.attr({}),
             expiration: this.string(""),
         }
     }
+
+    grants: Record<string, number>
 }
 
 
@@ -51,9 +53,11 @@ export class Owned extends models.Model {
         }
     }
 
+    access: Access
+
     /** Return True if permission is granted. **/
-    has_perm(perm) {
+    has_perm(perm: string) {
         // when access is not provided user is owner.
-        return !self.access || perm in self.access.grants
+        return !this.access || perm in this.access.grants
     }
 }

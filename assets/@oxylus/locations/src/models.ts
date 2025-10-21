@@ -16,8 +16,8 @@ export class Currency extends models.Model {
             name: this.string(""),
             code: this.string(""),
             numeric: this.string(""),
-            decimals: this.number(),
-            is_iso: this.boolean(),
+            decimals: this.number(2),
+            is_iso: this.boolean(false),
             valid_to: this.string(null)
         }
     }
@@ -41,17 +41,19 @@ export class Country extends models.Model {
             name: this.string(""),
             code: this.string(""),
             code_3: this.string(""),
-            phone: this.number(),
-            continent: this.number(),
+            phone: this.number(null),
+            continent: this.number(1),
             currency_code: this.string(""),
             currency: this.string(""),
 
             iban_sample: this.string(""),
-            iban_length: this.number(),
+            iban_length: this.number(34),
 
             $currency: this.belongsTo(Currency, 'currency')
         }
     }
+
+    code: string
 
     static Continent = models.Enum('continent', {
         AFRICA: 1,
@@ -69,7 +71,7 @@ export class Country extends models.Model {
 
         const OFFSET = 0x1F1E6
         const chars = this.code.toUpperCase().split('')
-        const isValid = chars.every(c => c >= 'A' && c <= 'Z')
+        const isValid = chars.every((c: string) => c >= 'A' && c <= 'Z')
 
         return isValid
             ? String.fromCodePoint(...chars.map(c => OFFSET + c.charCodeAt(0) - 65))

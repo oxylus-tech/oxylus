@@ -1,10 +1,20 @@
 import { unref, watch } from 'vue'
 import {useI18n as $useI18n, createI18n as $createI18n} from 'vue-i18n'
 import type { Composer } from 'vue-i18n'
-import type { Model } from 'pinia-orm'
 
 import config from '../config'
+import type { Model } from '../models'
 import {getCookieList} from '../utils'
+
+
+export type I18nMessages = Record<string, string>
+export type I18nLocaleMessages = Record<string, I18nMessages>
+
+declare global {
+    interface Window {
+        __i18n_messages: I18nMessages
+    }
+}
 
 
 /**
@@ -55,10 +65,16 @@ export interface IUseI18n {
  * @return ``t()`` function.
  */
 export function useI18n({path="./", fallback=true, composer=null}: IUseI18n={}) {
+    // Note: composer.messages is a computed value that return the value of
+    // an internal Ref _messages. We directly change this inner object here.
+    // This maybe has to change in the future if it is found to be buggy.
     composer ??= i18n.global
-    composer.messages.value[composer.locale.value] = window.__i18n_messages
-    watch(composer.locale, (locale) => {
-        composer.messages.value[locale] = window.__i18n_messages
+
+    const _messages: I18nLocaleMessages = composer.messages.value
+    _messages[composer.locale.value] = window.__i18n_messages as I18nMessages
+
+    watch(composer.locale, (locale: string) => {
+        _messages[locale] = (window.__i18n_messages as I18nMessages)
     })
     return composer
 }

@@ -2,7 +2,7 @@ import { computed, ref } from 'vue'
 
 import type { Ref } from 'vue'
 
-import { User, Model } from '../models'
+import { User, Model, type IPermissionGetCodename } from '../models'
 
 
 export type ActionRun<M extends Model, R> = (user: User, item: M, ...args: any[]) => Promise<R>
@@ -57,7 +57,7 @@ export interface IAction<M extends Model, R> {
     /**
      * Action properties
      */
-    props: ActionProps<M, R>
+    props: IActionProps<M, R>
 }
 
 /**
@@ -84,16 +84,18 @@ export function useAction<M extends Model,R>({props, user, emits=null}: IAction<
     const allowed = computed(() => !props.permission || user.can(props.permission, props.item))
 
     /** Execute the action. */
-    const run = async (...args: any[]): Promise<R> => {
+    const run = async (...args: any[]): Promise<R|void> => {
         if(props.confirm && !confirm(props.confirm))
             return
 
-        if(props.href)
-            return window.open(props.href, '_blank')
+        if(props.href) {
+            window.open(props.href, '_blank')
+            return
+        }
 
         processing.value = true
 
-        let result : R = props.run(user, props.item, ...args)
+        let result : R|Promise<R> = props.run(user, props.item, ...args)
         if(result instanceof Promise)
             result = await result
 

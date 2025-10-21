@@ -1,5 +1,6 @@
 import {models as oxModels, useModels, query} from '@oxylus/ox'
-import type {Repos, IUseModelOpts} from '@oxylus/ox'
+import type {IUseModelOpts} from '@oxylus/ox'
+import type {Model, Repos} from '@oxylus/ox/models'
 import {Agent} from './models'
 
 /**
@@ -7,10 +8,10 @@ import {Agent} from './models'
  *
  * Fetch content types and permissions if not already present.
  */
-export function useAuthModels(models: Array<models.Model> = [], opts: IUseModelOpts = {}) : Repos {
+export function useAuthModels(items: Array<typeof Model> = [], opts: IUseModelOpts = {}) : Repos {
     const repos = useModels([
         oxModels.User, oxModels.Group, oxModels.Permission, oxModels.ContentType,
-        ...models
+        ...items
     ], opts)
 
     query(repos.contentTypes).allOnce()

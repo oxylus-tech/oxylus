@@ -17,7 +17,7 @@ export function useFolders() : Object {
 }
 
 /** Validate file and folder names **/
-export function fileNameRule(val) {
+export function fileNameRule(val: string) {
     if(val.includes('/'))
         return t('fields.file_name.rules.invalid_characters')
 }

@@ -10,7 +10,7 @@ import type ModelList from './modelList'
 import type Query from './query'
 import type {Repos} from '../models'
 
-import type {IPanel, IPanelProps} from './panel'
+import type {default as IPanel, IPanelProps, IPanelParams, IPanelShow} from './panel'
 import type Panels from './panels'
 
 import Panel from './panel'
@@ -41,11 +41,21 @@ export interface IModelPanelProps<M extends Model> extends IPanelProps {
     warning?: string
 }
 
+/** Display/GET parameters for displaying a view on {@link ModelPanel} */
+export interface IModelPanelParams extends IPanelParams {
+    id?: number|string
+}
+
+/** Options for {@link ModelPanel.show} */
+export interface IModelPanelShow<M extends Model> extends IPanelShow<M> {
+    id?: number|string
+}
+
 /** Model panel interface. */
 export interface IModelPanel<
     M extends Model,
     P extends IModelPanelProps<M> = IModelPanelProps<M>
-> extends IPanel<P>
+> extends IPanel<M, P>
 {
     /** List controller used to load and handle multiple items from the server. */
     list: ModelList<M>
@@ -58,7 +68,7 @@ export interface IModelPanel<
 export default class ModelPanel<
     M extends Model,
     P extends IModelPanelProps<M> = IModelPanelProps<M>,
-> extends Panel<P>
+> extends Panel<M, P>
 {
     showFilters: boolean = false
 
@@ -82,7 +92,7 @@ export default class ModelPanel<
     /** Return panel's title based on view and current item. */
     get title(): string {
         const {props, list} = this
-        const model = this.repo.use
+        const model = this.repo.use as typeof Model
         if(model) {
             // many items
             if(this.view?.startsWith('list.'))
@@ -101,7 +111,7 @@ export default class ModelPanel<
         return super.title
     }
 
-    getUrlParams() {
+    getUrlParams(): IModelPanelParams {
         const {value=null, ...params} = super.getUrlParams()
         if(value?.id)
             params.id = value.id
@@ -123,10 +133,11 @@ export default class ModelPanel<
         this.show({view, value})
     }
 
-    show({id=null, ...params}: {view?: string, value?: M, id: number}) {
+    show({id=null, ...params}: IModelPanelShow<M>): boolean {
         if(id) {
-            query(this.repo).fetch({id, relations: this.relations}).then(r => {
-                super.show({...params, value: r.entities[0]})
+            // FIXME: this.relations or this.props.relations
+            query(this.repo).fetch({id, relations: this.props.relations}).then(r => {
+                super.show({...params, value: r.entities[0] as M})
                 return r
             })
         }

@@ -2,7 +2,7 @@ import type {Repository, Query as $Query} from 'pinia-orm'
 import type {Response} from '@pinia-orm/axios'
 
 import {State, assignNonEmpty} from '../utils'
-import type {Model} from '../models'
+import type {Model, ModelId} from '../models'
 
 import Query from './query'
 import type {IQueryFetch} from './query'
@@ -10,7 +10,7 @@ import type {IQueryFetch} from './query'
 
 export interface IModelController<M extends Model> {
     /** Response's key used to return data */
-    dataKey: string
+    dataKey?: string
     /** {@link Query} used to fetch list items. */
     query: Query<M>
     /** Related fields to get from pinia orm's database and eventually fetch when items are retrieved from API.  */
@@ -20,7 +20,7 @@ export interface IModelController<M extends Model> {
     /** Fetch related fields from API when queried */
     fetchRelations: boolean
     /** If true (default value), save items in Pinia repository */
-    save: boolean
+    save?: boolean
 }
 
 export interface IModelFetch<M extends Model> extends IQueryFetch<M> {
@@ -46,7 +46,7 @@ export interface IModelFetch<M extends Model> extends IQueryFetch<M> {
  */
 export default class ModelController<M extends Model, O=IModelController<M>> {
     state = State.none()
-    save = true
+    save?: boolean = true
 
     /** The repository of contained items. */
     get repo(): Repository<M> { return this.query.repo }
@@ -61,10 +61,9 @@ export default class ModelController<M extends Model, O=IModelController<M>> {
     /** Return orm's query to object. This will includes declared {@link List.relations}.
      *
      *   @param ids - optional id lookup
-     *   @param first - if true, return the first item
      *   @return orm's query
      */
-    queryset(ids: number|number[]|null=null, first=false) : $Query<M> {
+    queryset(ids: ModelId|ModelId[]|null=null) : $Query<M> {
         let query = this.repo.query()
         if(this.relations)
             for(const relation of this.relations)
@@ -72,8 +71,7 @@ export default class ModelController<M extends Model, O=IModelController<M>> {
 
         if(ids !== null)
             query = query.whereId(ids)
-
-        return first ? query.first() : query
+        return query
     }
 
     /**
@@ -88,7 +86,7 @@ export default class ModelController<M extends Model, O=IModelController<M>> {
      * - {@link ModelController.fetch}
      * - {@link ModelController.handleResponse}
      */
-    async load(options: IModelFetch<M> = {}): Promise<Response|null> {
+    async load(options: IModelFetch<M> = {all: false}): Promise<Response|null> {
         this.state.processing()
         let response = null
         try {
@@ -110,7 +108,7 @@ export default class ModelController<M extends Model, O=IModelController<M>> {
      * - {@link ModelController.getQueryParams}
      * - {@link Query.fetch}
      */
-    async fetch(options: IModelFetch<M> = {}) : Promise<Response> {
+    async fetch(options: IModelFetch<M> = {all: false}) : Promise<Response> {
         const opts = this.getQueryOptions(options)
         const func = options.all ? this.query.fetch : this.query.all
         return await this.query.fetch(opts)

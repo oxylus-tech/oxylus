@@ -3,7 +3,7 @@ import {
     onMounted, onUnmounted, provide, reactive
 } from 'vue'
 
-import type {ComputedRef, Reactive, Ref, WatchHandle} from 'vue'
+import type {ComputedRef, Reactive, Ref, WatchHandle, UnwrapRef} from 'vue'
 import type {Repository} from 'pinia-orm'
 
 import {State, ifNotEqualFn} from '../utils'
@@ -69,7 +69,7 @@ export function usePanels(options: IPanels) {
 * - provide `panel`;
 * - watch on {@link Panel.view} calling {@link Panel.onViewChange}
 */
-export function usePanel<P extends IPanelProps>(options: IPanel<P>, cls: typeof Panel<P>) {
+export function usePanel<V, P extends IPanelProps>(options: IPanel<P>, cls: typeof Panel<V,P>) {
     const panel = reactive(new cls(options))
 
     provide('panel', panel)
@@ -80,10 +80,21 @@ export function usePanel<P extends IPanelProps>(options: IPanel<P>, cls: typeof 
     return {panel}
 }
 
-/** Create a new {@link ModelPanel}. */
+
+export interface IUseModelPanel<M extends Model, P extends IModelPanelProps<M>> extends IModelPanel<M,P> {
+    /** Provide this query for the {@link ModelList}. **/
+    query?: Query<M>
+    /** Provide this repositories to create a {@link Query} used by {@link ModelList}. */
+    repos?: Repos
+}
+
+/**
+ * Create a new {@link ModelPanel}.
+ * Return `{panels, panel, list, items, next, prev}` (next and prev are items related to the current selected one by `panel.value`).
+ */
 // TODO: allow to pass list down
 export function useModelPanel<M extends Model, P extends IModelPanelProps<M>>(
-    {query, repos, ...options}: IModelPanel<M,P>
+    {query, repos, ...options}: IUseModelPanel<M,P>
 )
 {
     repos ??= inject('repos')
@@ -95,7 +106,7 @@ export function useModelPanel<M extends Model, P extends IModelPanelProps<M>>(
         relations: options.props.relations,
         fetchRelations: options.props.fetchRelations
     })
-    const {panel} = usePanel({list, ...options}, ModelPanel)
+    const {panel} = usePanel({list, name: options.props.name, ...options}, ModelPanel<M, P>)
 
     const next = computed(() => {
         const index = list.getSiblingIndex(unref(panel.value), 1)
@@ -175,12 +186,15 @@ export function useQuery<M extends Model>(repo: Repository<M>, repos: Repos|null
 /**
  * This composable create an new Editor and returns it as reactive object.
  *
- * - provide `editor`
+ * - provide: {@link Editor} `editor`, computed value `edited`.
  * - set default `saved` method if emits is provided
  * - watch on edition to update panel's editions
+ *
+ * @param {IEditor} options - editor options;
+ * @param cls - class to instanciate the editor;
  */
 export function useEditor<
-    T extends Record<string,any>,
+    T extends Record<string, any>,
     P extends IEditorProps<T>,
 >(
     options: IEditor<T,P>,
@@ -193,9 +207,10 @@ export function useEditor<
     provide('editor', editor)
 
     const edited = computed(() => editor.isEdited())
-    watch(() => editor.props.initial, (val) => {
-        editor.initial = val || editor.empty
-        editor.reset(val || editor.empty)
+    watch(() => editor.props.initial, (val: UnwrapRef<T>) => {
+        const value : UnwrapRef<T> = val || editor.empty
+        editor.initial = value
+        editor.reset(value as T)
     })
 
     const panel = inject('panel') as Panel
@@ -205,7 +220,10 @@ export function useEditor<
     return {editor, edited}
 }
 
-/** Return a new reactive {@link ModelEditor} */
+/**
+ * Return a new reactive {@link ModelEditor}.
+ * Wrapper around {@link useEditor}.
+ */
 export function useModelEditor<
     T extends Model,
     P extends IModelEditorProps<T>

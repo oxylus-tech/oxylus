@@ -31,13 +31,36 @@ export interface IPanelProps extends IPanelInfo {
 }
 
 
+/** Display/GET parameters for displaying a view. */
+export interface IPanelParams<V=any> extends Record<string, any> {
+    view?: string
+    value?: V
+}
+
+
+/** Options passed to {@link Panel.show} */
+export interface IPanelShow<V=any> {
+    /** Name of the view to display. */
+    view?: string
+    /** Value to provide to the view. */
+    value?: V
+    /** Do not update current location using history API. */
+    silent?: boolean
+    /**
+     * Force displaying the view, eg. don't ask for user confirmation
+     * when something has been edited.
+     */
+    force?: boolean
+}
+
+
 export interface IPanel<P> extends IPanelInfo {
     /** Panel component properties. */
     props: P
     /**
-    * {@link Panels} used to specify current view and value.
+    * The {@link Panels} controller used to specify current view and value.
     *
-    * This element may be shared among multiple panels.
+    * This element may be shared among multiple Panel instances.
     */
     panels: Panels
     /**
@@ -50,8 +73,14 @@ export interface IPanel<P> extends IPanelInfo {
 
 /**
  * This is the base class used by panels.
+ *
+ * Template parameters:
+ *
+ * - `P`: type of panel properties ({@link IPanelProps});
+ * - `V`: type for value;
+ *
  */
-export default class Panel<P extends IPanelProps = IPanelProps>
+export default class Panel<V=any, P extends IPanelProps = IPanelProps>
 {
     index: string = 'list.table'
     view: string = ''
@@ -82,9 +111,9 @@ export default class Panel<P extends IPanelProps = IPanelProps>
         this.view ??= this.index || ''
     }
 
-    /** Return URL GET parameters for the current view */
-    getUrlParams(): IObject {
-        const params = {panel: this.name}
+    /** Return URL GET parameters for the current view. */
+    getUrlParams(): IPanelParams {
+        const params : IPanelParams = {panel: this.name}
         if(this.view != this.index)
             params.view = this.view
         if(this.view.startsWith('detail.') && this.value)
@@ -103,7 +132,7 @@ export default class Panel<P extends IPanelProps = IPanelProps>
      * Show a view, providing optional value.
      * @return - true if view changed
      */
-    show({view=null, value=null, silent=false, force=false}: {view?: string, value?: any, silent?: boolean, force?: boolean}={}) {
+    show({view=null, value=null, silent=false, force=false}: IPanelShow<V>={}): boolean {
         if((view != this.view || value != this.value) && (force || this.canLeave())) {
             this.view = view || this.index
             this.value = value
@@ -113,7 +142,7 @@ export default class Panel<P extends IPanelProps = IPanelProps>
         return false
     }
 
-    /** Update current location using History api */
+    /** Update current location using History api (push state). */
     updateLocation() {
         const params = this.getUrlParams()
         if(params) {
@@ -137,4 +166,4 @@ export default class Panel<P extends IPanelProps = IPanelProps>
         return confirm(msg)
     }
 }
-export default interface Panel<P extends IPanelProps=IPanelProps> extends IPanel<P> {}
+export default interface Panel<V=any, P extends IPanelProps=IPanelProps> extends IPanel<P> {}

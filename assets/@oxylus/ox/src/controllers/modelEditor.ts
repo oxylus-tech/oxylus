@@ -7,7 +7,7 @@ import { State } from '../utils'
 import Editor from './editor'
 import type { IObject } from '../utils'
 import type { Model } from '../models'
-import type {IEditor, IEditorProps, IEditorSend} from './editor'
+import type {IEditor, IEditorProps} from './editor'
 
 
 /**
@@ -18,7 +18,7 @@ export interface IModelEditorProps<T extends Model> extends IEditorProps<T> {
     repo: Repository<T>
 }
 
-export interface IModelEditorSend extends Record {
+export interface IModelEditorSend extends Record<string, any> {
     id: number
 }
 
@@ -34,7 +34,7 @@ export interface IModelEditorSend extends Record {
 export default class ModelEditor<T extends Model, P extends IModelEditorProps<T>> extends Editor<T,P> {
     constructor(options : IEditor<T,P>) {
         options.fields = Object.keys((options.props.repo.use as typeof Model).fields())
-        options.empty ??= new options.props.repo.use()
+        options.empty ??= new options.props.repo.use() as T
         super(options)
     }
 
@@ -51,12 +51,12 @@ export default class ModelEditor<T extends Model, P extends IModelEditorProps<T>
         return url
     }
 
-    reset(value: T|null): void {
+    reset(value: T = null): void {
         if(!value || !Object.keys(value).length)
             value = this.empty
 
         const fields = this.fields.filter(k => k in value)
-        this.value = cloneDeep(pick(value, fields)) || {}
+        this.value = (cloneDeep(pick(value, fields)) || {}) as T
         this.state.none()
     }
 
@@ -66,7 +66,7 @@ export default class ModelEditor<T extends Model, P extends IModelEditorProps<T>
         return obj.$toJson(null, {relations: false})
     }
 
-    async send(value: IModelEditorSend|FormData, params: Record = {}) : State {
+    async send(value: IModelEditorSend|FormData, params: Record<string, any> = {}) : Promise<State> {
         let [func, url] = ["post", this.url]
         if(this.value.id) {
             url = `${url}${this.value.id}/`

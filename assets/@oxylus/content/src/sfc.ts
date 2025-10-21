@@ -1,1 +1,1 @@
-import('./components/OxRichEditor')
+import('./components/OxRichEditor.vue')

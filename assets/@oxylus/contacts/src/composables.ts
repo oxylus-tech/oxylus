@@ -1,26 +1,27 @@
 import {models as oxModels, useModels, t} from '@oxylus/ox'
 import {Country} from '@oxylus/locations/models'
-import * as models_ from './models'
-import type {IUseModelOpts, models} from '@oxylus/ox'
+import * as models from './models'
+import type {IUseModelOpts} from '@oxylus/ox'
+import type {Model, Repos} from '@oxylus/ox/models'
 
 
 /**
  * Use contact models (wrapper over {@link useModel}).
  */
-export function useContactModels(models: Array<models.Model> =[], opts: IUseModelOpts = {}) : models.Repos {
+export function useContactModels(items: Array<typeof Model> =[], opts: IUseModelOpts = {}) : Repos {
     return useModels([
         oxModels.User, oxModels.Group,
 
-        Country, models_.Person,
-        models_.Organisation, models_.OrganisationType,
-        ...models
+        Country, models.Person,
+        models.Organisation, models.OrganisationType,
+        ...items
     ], opts)
 }
 
 
-export function useContactList() : models.Repos {
+export function useContactList() : Repos {
     return useModels([
-        oxModels.Group, models_.Organisation, models_.Person, models_.Contact, models_.ContactList
+        oxModels.Group, models.Organisation, models.Person, models.Contact, models.ContactList
     ])
 }
 
@@ -60,6 +61,6 @@ const vatReg = new RegExp(
 )
 
 /** Rule validating VAT number for European countries. */
-export function vatRule(value) {
+export function vatRule(value: string) {
     return vatReg.test(value) || t(`fields.vat.rule`)
 }

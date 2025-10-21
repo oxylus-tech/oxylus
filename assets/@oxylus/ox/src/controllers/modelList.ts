@@ -17,11 +17,11 @@ export interface IModelList<M extends Model> extends IModelController<M> {
     /** Provide extra GET parameters. */
     filters?: Filters
     /** Response's key used to return URL to previous paginated items. */
-    prevKey: string
+    prevKey?: string
     /** Response's key used to return URL to next paginated items.  */
-    nextKey: string
+    nextKey?: string
     /** Response's key used to return total items count. */
-    countKey: string
+    countKey?: string
 }
 
 /**
@@ -45,7 +45,6 @@ export interface IModelListFetch<M extends Model> extends IModelFetch<M> {
  * It uses {@link Query} object in order to fetch items and relations.
  *
  * Items references are tracked using repo's {@link RefCounter}.
- *
  *
  * @example
  * const value = ref(null)
@@ -75,9 +74,6 @@ export default class ModelList<M extends Model> extends ModelController<M, IMode
 
     get length() { return this.ids.length }
 
-    constructor(...args) {
-        super(...args)
-    }
 
     /** Return index for id */
     indexOf(id: number) { return this.ids.indexOf(id) }
@@ -104,7 +100,7 @@ export default class ModelList<M extends Model> extends ModelController<M, IMode
     * @param index - if provided insert at this position
     * @return item index if already in the list, else insertion one
     */
-    add(id: ModelId, index?: number = null): number {
+    add(id: ModelId, index: number = null): number {
         const idx = this.ids.indexOf(id)
         if(idx != -1)
             return idx
@@ -204,14 +200,14 @@ export default class ModelList<M extends Model> extends ModelController<M, IMode
      * @param {Model[]} items - The items to insert and add to the list.
      * @param ...args - Arguments passed down to {@link ModelList.update}.
      */
-    updateWith(items: Model[], ...args) {
+    updateWith(items: Model[], append: boolean|number = false) {
         this.repo.insert(items)
-        this.update(items.map(v => v.id), ...args)
+        this.update(items.map(v => v.id), append)
     }
 }
 
 export default interface ModelList<M extends Model> extends IModelList<M> {
-    ids: number[]
+    ids: ModelId[]
     nextUrl: string|null
     prevUrl: string|null
     count: number|null

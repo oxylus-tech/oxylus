@@ -89,7 +89,7 @@ export default class Query<M extends Model> {
     * @param {Repos} [repos] all models repositories
     * @param {Repository<M>} [repo] the main repository
     */
-    constructor(repo: Repository<M>, repos: Repos|null=null, opts: IQueryFetch<M>) {
+    constructor(repo: Repository<M>, repos: Repos|null=null, opts: IQueryFetch<M>={}) {
         this.repo = repo
         this.repos = repos
         this.opts = opts
@@ -138,7 +138,7 @@ export default class Query<M extends Model> {
     }
 
     /** Get entities from response **/
-    getEntities(response) {
+    getEntities(response: Response) {
         const data = response.getDataFromResponse()
         if(Array.isArray(data))
             return data.map((dat) => this.repo.make(dat))

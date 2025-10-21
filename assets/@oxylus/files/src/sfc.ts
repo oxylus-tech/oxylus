@@ -1,1 +1,1 @@
-import('./components/OxFileSelect')
+import('./components/OxFileSelect.vue')

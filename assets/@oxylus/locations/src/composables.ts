@@ -4,7 +4,7 @@ import { Country, Currency } from './models'
 
 /** Use @oxylus/locations models. */
 export function useLocationModels() {
-    const repos = useModels([Country, Currency], {withDefaults: false})
+    const repos = useModels([Country, Currency], {useDefaults: false})
     //query(repos.countries).allOnce()
     //query(repos.currencies).allOnce()
     return repos
@@ -13,7 +13,7 @@ export function useLocationModels() {
 
 /** Return repository of Country and load data if not there yet */
 export function useCountries() {
-    const { countries } = useModels([Country], {withDefaults: false})
+    const { countries } = useModels([Country], {useDefaults: false})
     //query(countries).allOnce()
     return {countries}
 }
@@ -21,7 +21,7 @@ export function useCountries() {
 
 /** Return repository of Country and load data if not there yet */
 export function useCurrencies() {
-    const { currencies } = useModels([Currency], {withDefaults: false})
+    const { currencies } = useModels([Currency], {useDefaults: false})
     //query(currencies).allOnce()
     return {currencies}
 }

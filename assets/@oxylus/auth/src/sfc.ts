@@ -1,2 +1,2 @@
-import('./components/OxUserPanel')
-import('./components/OxUserEdit')
+import('./components/OxUserPanel.vue')
+import('./components/OxUserEdit.vue')

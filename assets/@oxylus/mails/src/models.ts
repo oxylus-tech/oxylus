@@ -31,14 +31,14 @@ export class MailAccount extends Owned {
             smtp_port: this.number(587),
             smtp_username: this.string(""),
             smtp_password: this.string(""),
-            smtp_encryption: this.number(),
+            smtp_encryption: this.number(465),
 
             // ---- imap
             imap_host: this.string(""),
-            imap_port: this.number(),
+            imap_port: this.number(993),
             imap_username: this.string(""),
             imap_password: this.string(""),
-            imap_ssl: this.boolean(),
+            imap_ssl: this.boolean(true),
             imap_folder: this.string("INBOX"),
         }
     }
@@ -69,7 +69,7 @@ export class SendMail extends Owned {
             is_template: this.boolean(false),
             contacts: this.attr([]),
             contact_lists: this.attr([]),
-            state: this.number(),
+            state: this.number(0),
             updated: this.string(""),
             created: this.string(""),
             subject: this.string(""),

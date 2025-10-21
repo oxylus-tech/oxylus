@@ -32,7 +32,7 @@ describe("mapToObject", () => {
     })
 
     test("map keys and function", () => {
-        expect(utils.mapToObject(["a", "b", "c"], (v) => v.toUpperCase()))
+        expect(utils.mapToObject(["a", "b", "c"], (v) => typeof v == "string" ? v.toUpperCase() : v))
             .toEqual({"a": "A", "b": "B", "c": "C"})
     })
 })
@@ -41,7 +41,7 @@ describe("mapToObject", () => {
 describe("assignNonEmpty", () => {
     test("assign keys except null and undefined"), () => {
         const target = {}
-        const source = {"a": 12, "b": 0.0, "c": null, "d": [], "e": 0}
+        const source = {"a": 12, "b": 0.0, "c": null, "d": [], "e": 0} as Record<string, any>
 
         expect(utils.assignNonEmpty(target, source)).toEqual({"a": 12, "b": 0.0, "d": [], "e": 0})
     }
