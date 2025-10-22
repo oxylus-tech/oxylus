@@ -1,6 +1,6 @@
-import type { Model, Database, Repository } from 'pinia-orm'
+import type { Database, Repository as $Repository } from 'pinia-orm'
 import type { Pinia } from 'pinia'
-import type { ModelId } from './model'
+import type { ModelId, Model, ModelType } from './model'
 
 import { difference, pull, union } from 'lodash'
 import { AxiosRepository } from '@pinia-orm/axios'
@@ -117,6 +117,15 @@ export class RefCounter<M extends Model, R extends RefRepository<M>> {
 
 
 /**
+ * This interface shall be used whenever you required Model's features
+ * under the repository. It ensure the model fields are available
+ */
+export interface Repository<M extends Model> extends $Repository<M> {
+    declare use?: ModelType
+}
+
+
+/**
  * Base repository used by Oxylus application.
  *
  * It:
@@ -124,6 +133,7 @@ export class RefCounter<M extends Model, R extends RefRepository<M>> {
  * - AxiosRepository: used to fetch items from api.
  */
 export class RefRepository<M extends Model> extends AxiosRepository<M> {
+    declare use?: ModelType
     refs: RefCounter<M, RefRepository<M>>
 
     constructor(database: Database, pinia?: Pinia) {

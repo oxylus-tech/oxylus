@@ -1,5 +1,5 @@
 import {Relation, BelongsTo, HasMany, HasManyBy, HasOne} from 'pinia-orm'
-import type {Repository, PrimaryKey, Model as $Model} from 'pinia-orm'
+import type {PrimaryKey, Model as $Model} from 'pinia-orm'
 
 import type { ClassType } from '../utils'
 
@@ -9,16 +9,13 @@ export * from './auth'
 export * from './repository'
 
 import type { Model } from './model'
-import type { RefRepository } from './repository'
+import type { Repository, RefRepository } from './repository'
 
 /** Record of repositories by model entity. */
 export type Repos = Record<string, Repository<Model>>
 
 /** Record of {@link RefRepository} by model entity. */
 export type RefRepos = Record<string, RefRepository<Model>>
-
-/** Generic type for typing model classes. **/
-export type ModelType<T extends Model> = ClassType<T>
 
 /** Return relation based on field name or Relation field. */
 export function asRelation<M extends $Model>(repo: Repository<M>, relation: string|Relation): Relation|null {

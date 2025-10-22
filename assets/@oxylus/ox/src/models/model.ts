@@ -35,7 +35,7 @@ export class Meta {
     }
 
     /** Return API url based on id and path. **/
-    getUrl({path=null, id=null}: {path?: string, id?: number|string}): string {
+    getUrl({path=null, id=null}: {path?: string, id?: ModelId}): string {
         let url = this.url
         if(!url)
             throw Error("No url declared on this model.")
@@ -131,5 +131,17 @@ export class Model extends $Model {
     /** Get API's model instance url */
     $url(path?: string): string { return this.$meta.getUrl({path, id: this.id}) }
 }
-
 export interface Model extends IModel {}
+
+/**
+ * Static interface of a model, to be used with {@link TypeofModel}.
+ */
+export interface IModelStatic {
+    meta: Meta
+    config: Record<string, any>
+}
+
+/**
+ * Type of Model, ensuring statics are correctly specified.
+ */
+export type ModelType = IModelStatic & typeof Model

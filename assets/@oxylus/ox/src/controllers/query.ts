@@ -1,10 +1,10 @@
-import {Repository, Relation} from 'pinia-orm'
+import {Relation} from 'pinia-orm'
 import type {Response} from '@pinia-orm/axios'
 
 import {collectAttr} from '../utils'
 import type {IObject} from '../utils'
 import {asRelation, getSourceKey} from '../models'
-import type {Repos, ModelId, Model} from '../models'
+import type {Repos, ModelId, Model, Repository} from '../models'
 
 
 /** Interface of {@link Query} class. */
@@ -112,8 +112,10 @@ export default class Query<M extends Model> {
             }
         }
 
-        if(!url)
-            url = repo.use?.meta?.getUrl({path, id})
+        if(!url) {
+            const _id = id as ModelId
+            url = repo.use?.meta?.getUrl({path, id: _id})
+        }
 
         if(!id) {
             if(!("dataKey" in opts))
