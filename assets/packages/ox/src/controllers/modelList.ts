@@ -1,7 +1,7 @@
 import type {Response} from '@pinia-orm/axios'
 import {union, map} from 'lodash'
 
-import type {Model, ModelId} from '../models'
+import type {ModelType, ModelId} from '../models'
 
 import type {IQueryFetch} from './query'
 import type {IModelController, IModelFetch} from './modelController'
@@ -13,7 +13,7 @@ export type Filters = Record<string,FilterValue>
 
 
 /** Base interface of a ModelList */
-export interface IModelList<M extends Model> extends IModelController<M> {
+export interface IModelList<MT extends ModelType> extends IModelController<MT> {
     /** Provide extra GET parameters. */
     filters?: Filters
     /** Response's key used to return URL to previous paginated items. */
@@ -27,7 +27,7 @@ export interface IModelList<M extends Model> extends IModelController<M> {
 /**
  * Arguments of {@link ModelList.fetch}. It is passed down to {@link Query.fetch}.
  */
-export interface IModelListFetch<M extends Model> extends IModelFetch<M> {
+export interface IModelListFetch<MT extends ModelType> extends IModelFetch<MT> {
     /** Query's GET parameters used to filter the list. */
     filters?: Filters
     /**
@@ -56,7 +56,7 @@ export interface IModelListFetch<M extends Model> extends IModelFetch<M> {
  *
  * await list.load({url: '/users'})
  */
-export default class ModelList<M extends Model> extends ModelController<M, IModelList<M>> {
+export default class ModelList<MT extends ModelType> extends ModelController<MT, IModelList<MT>> {
     // /** Reference counter key **/
     // $id: number
 
@@ -127,7 +127,7 @@ export default class ModelList<M extends Model> extends ModelController<M, IMode
      * @param step - increment or decrement item index by this value.
      * @return the target item id or null if not found.
      */
-    getSiblingIndex(item: M|null, step: number): number {
+    getSiblingIndex(item: InstanceType<MT>|null, step: number): number {
         if(item === null)
             return -1
 
@@ -139,18 +139,18 @@ export default class ModelList<M extends Model> extends ModelController<M, IMode
     /**
      * Fetch next items from API, override `url` using {@link ModelList.nextUrl}.
      */
-    async loadNext(options: IModelListFetch<M>): Promise<Response> {
+    async loadNext(options: IModelListFetch<MT>): Promise<Response> {
         return await this.load({...options, url: this.nextUrl})
     }
 
     /**
      * Fetch previous items from API, override `url` using {@link ModelList.prevUrl}.
      */
-    async loadPrev(options: IModelListFetch<M>): Promise<Response> {
+    async loadPrev(options: IModelListFetch<MT>): Promise<Response> {
         return await this.load({...options, url: this.prevUrl})
     }
 
-    protected getQueryOptions(options: IModelFetch<M>): IQueryFetch<M> {
+    protected getQueryOptions(options: IModelFetch<MT>): IQueryFetch<MT> {
         if(!("filters" in options) && this.filters)
             options.params = {...this.filters, ...(options.params ?? [])}
         if(this.page_size)
@@ -164,7 +164,7 @@ export default class ModelList<M extends Model> extends ModelController<M, IMode
      * Theses informations will not be set if `options.save == false`. You
      * can however call this method later if you need to defer persistence.
      */
-    async handleResponse({append=false, ...options}: IModelListFetch<M>, response: Response): Promise<Response> {
+    async handleResponse({append=false, ...options}: IModelListFetch<MT>, response: Response): Promise<Response> {
         response = await super.handleResponse(options, response)
         if(!this.state.isError && options.save !== false) {
             const ids = map(response.entities, 'id')
@@ -200,13 +200,13 @@ export default class ModelList<M extends Model> extends ModelController<M, IMode
      * @param {Model[]} items - The items to insert and add to the list.
      * @param ...args - Arguments passed down to {@link ModelList.update}.
      */
-    updateWith(items: Model[], append: boolean|number = false) {
+    updateWith(items: InstanceType<MT>[], append: boolean|number = false) {
         this.repo.insert(items)
         this.update(items.map(v => v.id), append)
     }
 }
 
-export default interface ModelList<M extends Model> extends IModelList<M> {
+export default interface ModelList<MT extends ModelType> extends IModelList<MT> {
     ids: ModelId[]
     nextUrl: string|null
     prevUrl: string|null

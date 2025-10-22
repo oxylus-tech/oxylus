@@ -1,19 +1,6 @@
 import {isEqual} from 'lodash'
 import {toRaw, type Reactive} from 'vue'
 
-// TODO: remove in favor of TS' Record
-/**
- * {@link IObject}'s key
- */
-export type IObjectKey = string|number
-
-/**
- * Helper interface that is used to designate an object as
- * `{key_string_or_number: any_value}`.
- */
-export type IObject<V=any> = {[k: IObjectKey]: V}
-
-
 export type RecordKey = string|number
 
 
@@ -42,7 +29,6 @@ export function collectAttr(objs: Record<string, any>[], attr: string): Set<any>
 
 /**
  * Either a function returning the created value or an object to take values from
- * @name MapKeysPred
  */
 export type MapKeysPred = Record<string, any> | ((key: RecordKey) => any)
 
@@ -79,8 +65,8 @@ export function assignNonEmpty(target: Record<string, any>, source: Record<strin
 /**
  * Reset an object inplace, using provided assignement values.
  *
- * @param [target] object to reset
- * @param [assign] assign using this object
+ * @param {Object} target - object to reset
+ * @param {Object} assign - ssign using this object
  * @return the object passed as target.
  */
 export function reset(target: Record<RecordKey, any>, assign: Record<RecordKey, any>|undefined=undefined) : Record<RecordKey, any> {

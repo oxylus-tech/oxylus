@@ -21,7 +21,7 @@
     "./components": "./src/components/index.ts",
     "./composables": "./src/composables/index.ts",
     "./controllers": "./src/controllers/index.ts",
-    "./models": "./src/models.ts",
+    "./models": "./src/models/index.ts",
     "./utils": "./src/utils/index.ts"
   },
   "dependencies": {

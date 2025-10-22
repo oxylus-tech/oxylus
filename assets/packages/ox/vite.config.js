@@ -20,7 +20,7 @@ export default defineConfig(({mode}) => {
                     // - composables
                     // - utils
                     // - app
-                    index: resolve(__dirname , 'src/lib.ts'),
+                    index: resolve(__dirname , 'src/index.ts'),
                     // main library components
                     components: resolve(__dirname, 'src/components/index.ts'),
                     vendor: resolve(__dirname, 'src/vendor.ts'),

@@ -2,29 +2,17 @@ import {Relation} from 'pinia-orm'
 import type {Response} from '@pinia-orm/axios'
 
 import {collectAttr} from '../utils'
-import type {IObject} from '../utils'
 import {asRelation, getSourceKey} from '../models'
-import type {Repos, ModelId, Model, Repository} from '../models'
+import type {Repos, ModelId, Model, ModelType, Repository} from '../models'
 
 
 /** Interface of {@link Query} class. */
-export interface IQuery<M extends Model> {
-    /** Model repository used to store results. */
-    repo: Repository<M>
-    /**
-     * Repositories used to store relations.
-     *
-     * This argument may be ignored if there is no need to fetch
-     * relations.
-     */
-    repos: Repos
-    /** Default options to set to all {@link Query.fetch} calls */
-    opts: IQueryFetch<M>
-}
+/*export interface IQuery<MT extends ModelType> {
+}*/
 
 
 /** {@link Query.fetch} parameters. */
-export interface IQueryFetch<M extends Model> extends Partial<object> {
+export interface IQueryFetch<MT extends ModelType> extends Partial<object> {
     /**
      * Fetch from this url.
      * Usage of this argument is exclusive from {@link IQueryFetch.id} and {@link IQueryFetch.path}.
@@ -35,11 +23,11 @@ export interface IQueryFetch<M extends Model> extends Partial<object> {
     /** Extra path to append on url. */
     path?: string,
     /** Model repository (instead of `Query.repo`'s one). */
-    repo?: Repository<M>
+    repo?: Repository<MT>
     /** Lookup field for ids (default: `id__in`). */
     lookup?: string
     /** Extra GET parameters. */
-    params?: IObject
+    params?: Record<string, any>
     /** Fetch items from thoses relations. */
     relations?: string[]
     /** If true (default value), save items in Pinia repository */
@@ -52,7 +40,7 @@ export interface IQueryFetch<M extends Model> extends Partial<object> {
 /**
  * {@link Query.all} parameters.
  */
-export interface IQueryAll<M extends Model> extends IQueryFetch<M> {
+export interface IQueryAll<MT extends ModelType> extends IQueryFetch<MT> {
     /**
      * Key of object returned by server that provide url to next items.
      */
@@ -84,19 +72,19 @@ export interface IQueryAll<M extends Model> extends IQueryFetch<M> {
  * // this fetch User model objects from API, then the related groups.
  * const result = await query.fetch({url: '/users', relations: ['groups']})
  */
-export default class Query<M extends Model> {
+export default class Query<MT extends ModelType> {
     /**
     * @param {Repos} [repos] all models repositories
     * @param {Repository<M>} [repo] the main repository
     */
-    constructor(repo: Repository<M>, repos: Repos|null=null, opts: IQueryFetch<M>={}) {
+    constructor(repo: Repository<MT>, repos: Repos|null=null, opts: IQueryFetch<MT>={}) {
         this.repo = repo
         this.repos = repos
         this.opts = opts
     }
 
     /** Fetch items from api. */
-    async fetch(options: IQueryFetch<M> = {}) : Promise<Response> {
+    async fetch(options: IQueryFetch<MT> = {}) : Promise<Response> {
         options = {...this.opts, ...options}
         let {url, id, repo, lookup, params, relations, path, ...opts} = options
 
@@ -156,7 +144,7 @@ export default class Query<M extends Model> {
      * @return Response of the first request, whoses ``entities`` has \
      * model instances of all requests.
      */
-    async all({nextKey='next', limit=-1, ...opts} : IQueryAll<M> ={}) : Promise<Response> {
+    async all({nextKey='next', limit=-1, ...opts} : IQueryAll<MT> ={}) : Promise<Response> {
         // FIXME: removed `flush`
         const result = await this.fetch({...opts})
 
@@ -179,7 +167,7 @@ export default class Query<M extends Model> {
      *
      * Return null if no request has been made.
      */
-    async allOnce(options: IQueryAll<M> = {}) : Promise<Response|null> {
+    async allOnce(options: IQueryAll<MT> = {}) : Promise<Response|null> {
         const repo = options.repo ?? this.repo
         if(!repo.first())
             return await this.all(options)
@@ -194,7 +182,7 @@ export default class Query<M extends Model> {
      * @param options.opts - options to pass down to {@link Quey.relation}.
      * @return the resulting entities.
      */
-    async relations(objs: M[], fields: string[], opts: IQueryAll<M> = {}) : Promise<{[s: string]: Response}>
+    async relations(objs: InstanceType<MT>[], fields: string[], opts: IQueryAll<MT> = {}) : Promise<{[s: string]: Response}>
     {
         this._ensureRepos("relations")
         const entities: {[s: string]: Response} = {}
@@ -223,7 +211,7 @@ export default class Query<M extends Model> {
      * @param relation - objects' field or field name.
      * @param options - options to pass down to `all()`.
      */
-    async relation(objs: Array<M>, relation: string | Relation, options: IQueryAll<M> ={}) : Promise<Response> {
+    async relation(objs: Array<InstanceType<MT>>, relation: string | Relation, options: IQueryAll<MT> ={}) : Promise<Response> {
         this._ensureRepos("relations")
 
         const rel = asRelation(this.repo, relation)
@@ -244,15 +232,27 @@ export default class Query<M extends Model> {
     }
 
 }
-export default interface Query<M extends Model> extends IQuery<M> {}
+export default interface Query<MT extends ModelType> {
+    /** Model repository used to store results. */
+    repo: Repository<MT>
+    /**
+     * Repositories used to store relations.
+     *
+     * This argument may be ignored if there is no need to fetch
+     * relations.
+     */
+    repos: Repos
+    /** Default options to set to all {@link Query.fetch} calls */
+    opts: IQueryFetch<MT>
+}
 
 
 /** Return a new {@link Query} based on repo's entity. */
-export function query<M extends Model>(repo: string|Repository<M>, repos?: Repos, opts: IQueryFetch<M>|null=null): Query<M> {
+export function query<MT extends ModelType>(repo: string|Repository<MT>, repos?: Repos, opts: IQueryFetch<MT>|null=null): Query<MT> {
     if(typeof repo == "string") {
         if(!(repo in repos))
             throw Error(`Repository "${repo}" is not present in provided repositories.`)
-        return new Query(repos[repo] as unknown as Repository<M>, repos, opts)
+        return new Query(repos[repo] as unknown as Repository<MT>, repos, opts)
     }
     return new Query(repo, repos, opts)
 }

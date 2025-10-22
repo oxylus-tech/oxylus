@@ -5,7 +5,6 @@ import {toRaw} from 'vue'
 
 import { State } from '../utils'
 import Editor from './editor'
-import type { IObject } from '../utils'
 import type { Model } from '../models'
 import type {IEditor, IEditorProps} from './editor'
 

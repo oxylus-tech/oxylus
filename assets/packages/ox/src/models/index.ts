@@ -8,17 +8,17 @@ export * from './model'
 export * from './auth'
 export * from './repository'
 
-import type { Model } from './model'
+import type { Model, ModelType } from './model'
 import type { Repository, RefRepository } from './repository'
 
 /** Record of repositories by model entity. */
-export type Repos = Record<string, Repository<Model>>
+export type Repos = Record<string, Repository<ModelType>>
 
 /** Record of {@link RefRepository} by model entity. */
-export type RefRepos = Record<string, RefRepository<Model>>
+export type RefRepos = Record<string, RefRepository<ModelType>>
 
 /** Return relation based on field name or Relation field. */
-export function asRelation<M extends $Model>(repo: Repository<M>, relation: string|Relation): Relation|null {
+export function asRelation<MT extends ModelType>(repo: Repository<MT>, relation: string|Relation): Relation|null {
     if(typeof relation == "string") {
         const fields = repo.use?.fields()
         const field = fields && fields[relation] || null

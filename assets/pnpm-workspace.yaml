@@ -1,2 +1,2 @@
 packages:
-  - '@oxylus/*'
+  - 'packages/*'

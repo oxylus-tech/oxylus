@@ -144,4 +144,10 @@ export interface IModelStatic {
 /**
  * Type of Model, ensuring statics are correctly specified.
  */
-export type ModelType = IModelStatic & typeof Model
+// TODO: use this a generic parameter of Query and other stuffs
+export type ModelType<M extends Model = Model> = typeof Model & {
+    new (...args: any[]): M
+
+    meta: Meta
+    config: Record<string, any>
+}

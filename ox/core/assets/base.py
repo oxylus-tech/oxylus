@@ -88,7 +88,7 @@ class Assets(Owned):
     name: str = ""
     """ Package name """
     path: Path | None = None
-    """ Path of the package (or workspace).
+    """ Path of the package (or workspace's packages dir).
 
     The actual package path is retrieved using :py:prop:`package_path`.
     """
@@ -106,9 +106,11 @@ class Assets(Owned):
     @cached_property
     def package_path(self) -> Path:
         """Get path to package directory"""
-        if str(self.path).endswith(self.name):
+        # trim organisation scope from package name if present
+        name = self.name.split("/", 1)[1] if "/" in self.name else self.name
+        if str(self.path).endswith(name):
             return self.path
-        return self.path / self.name
+        return self.path / name
 
     def contribute(self, owner):
         """TODO"""

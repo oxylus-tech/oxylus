@@ -3,11 +3,11 @@ import { inject, provide } from 'vue'
 import { getActivePinia } from 'pinia'
 import { useRepo as $useRepo } from 'pinia-orm'
 
-import type {RefRepos} from '../models'
-import { Model, User, RefRepository } from '../models'
+import type {ModelType, RefRepos} from '../models'
+import { User, RefRepository } from '../models'
 
 
-export type Models = (typeof Model)[] | {[name: string]: (typeof Model)}
+export type Models = ModelType[] | Record<string, ModelType>
 
 /**
  * {@link useModels} options.
@@ -23,11 +23,11 @@ export interface IUseModelOpts {
 /**
  * Use repository for the provided model, returning a {@link RefRepository}.
  */
-export function useRepo<M extends Model>(model: Constructor<M>): RefRepository<M> {
+export function useRepo<MT extends ModelType>(model: MT): RefRepository<MT> {
     $useRepo(model)
     const pinia = getActivePinia()
     RefRepository.useModel = model as unknown as typeof $Model
-    return $useRepo(RefRepository<M>, pinia)
+    return $useRepo(RefRepository<MT>, pinia)
 }
 
 /**

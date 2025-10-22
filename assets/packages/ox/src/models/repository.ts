@@ -29,7 +29,7 @@ export type RefKey = string|number
  * **Note**: once an object is tagged as acquired, it will be destroyed on release
  * no matter if there are other use outside of it.
  */
-export class RefCounter<M extends Model, R extends RefRepository<M>> {
+export class RefCounter<MT extends ModelType, R extends RefRepository<MT>> {
     static _lastKey = 0
 
     repo: R
@@ -120,8 +120,8 @@ export class RefCounter<M extends Model, R extends RefRepository<M>> {
  * This interface shall be used whenever you required Model's features
  * under the repository. It ensure the model fields are available
  */
-export interface Repository<M extends Model> extends $Repository<M> {
-    declare use?: ModelType
+export interface Repository<MT extends ModelType> extends $Repository<InstanceType<MT>> {
+    use?: MT
 }
 
 
@@ -132,16 +132,16 @@ export interface Repository<M extends Model> extends $Repository<M> {
  * - provides a `counter` property: used for object reference tracking
  * - AxiosRepository: used to fetch items from api.
  */
-export class RefRepository<M extends Model> extends AxiosRepository<M> {
-    declare use?: ModelType
-    refs: RefCounter<M, RefRepository<M>>
+export class RefRepository<MT extends ModelType> extends AxiosRepository<InstanceType<MT>> {
+    refs: RefCounter<MT, RefRepository<MT>>
+    declare use?: MT
 
     constructor(database: Database, pinia?: Pinia) {
         super(database, pinia)
         this.refs = new RefCounter(this)
     }
 
-    flush(): M[] {
+    flush(): InstanceType<MT>[] {
         this.refs.clear()
         return super.flush()
     }

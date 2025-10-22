@@ -4,10 +4,9 @@ import {
 } from 'vue'
 
 import type {ComputedRef, Reactive, Ref, WatchHandle, UnwrapRef} from 'vue'
-import type {Repository} from 'pinia-orm'
 
 import {State, ifNotEqualFn} from '../utils'
-import type {Repos, Model} from '../models'
+import type {Repos, Model, ModelType, Repository} from '../models'
 
 import {
     Panels, Panel, ModelPanel,
@@ -81,9 +80,9 @@ export function usePanel<V, P extends IPanelProps>(options: IPanel<P>, cls: type
 }
 
 
-export interface IUseModelPanel<M extends Model, P extends IModelPanelProps<M>> extends IModelPanel<M,P> {
+export interface IUseModelPanel<MT extends ModelType, P extends IModelPanelProps<MT>> extends IModelPanel<MT,P> {
     /** Provide this query for the {@link ModelList}. **/
-    query?: Query<M>
+    query?: Query<MT>
     /** Provide this repositories to create a {@link Query} used by {@link ModelList}. */
     repos?: Repos
 }
@@ -93,8 +92,8 @@ export interface IUseModelPanel<M extends Model, P extends IModelPanelProps<M>> 
  * Return `{panels, panel, list, items, next, prev}` (next and prev are items related to the current selected one by `panel.value`).
  */
 // TODO: allow to pass list down
-export function useModelPanel<M extends Model, P extends IModelPanelProps<M>>(
-    {query, repos, ...options}: IUseModelPanel<M,P>
+export function useModelPanel<MT extends ModelType, P extends IModelPanelProps<MT>>(
+    {query, repos, ...options}: IUseModelPanel<MT,P>
 )
 {
     repos ??= inject('repos')
@@ -106,7 +105,7 @@ export function useModelPanel<M extends Model, P extends IModelPanelProps<M>>(
         relations: options.props.relations,
         fetchRelations: options.props.fetchRelations
     })
-    const {panel} = usePanel({list, name: options.props.name, ...options}, ModelPanel<M, P>)
+    const {panel} = usePanel({list, name: options.props.name, ...options}, ModelPanel<MT, P>)
 
     const next = computed(() => {
         const index = list.getSiblingIndex(unref(panel.value), 1)
@@ -135,7 +134,7 @@ export function useModelPanel<M extends Model, P extends IModelPanelProps<M>>(
  * - `listId`: the list id used to track items acquisition and release;
  *
  */
-export function useModelList<M extends Model>(options : IModelList<M>, cls: typeof ModelList = ModelList)
+export function useModelList<MT extends ModelType>(options : IModelList<MT>, cls: typeof ModelList = ModelList)
 {
     const list = reactive(new cls(options))
     const listId = list.repo.refs.acquireKey()
@@ -163,11 +162,11 @@ export function useModelList<M extends Model>(options : IModelList<M>, cls: type
  * This composable return a new {@link Query}, {@link State} and a fetch
  * function that combines them.
  */
-export function useQuery<M extends Model>(repo: Repository<M>, repos: Repos|null=null, opts: IQueryFetch<M>) {
+export function useQuery<MT extends ModelType>(repo: Repository<MT>, repos: Repos|null=null, opts: IQueryFetch<MT>) {
     const query = new Query(repo, repos, opts)
     const state = State.none()
 
-    async function fetch(opts: IQueryFetch<M>) {
+    async function fetch(opts: IQueryFetch<MT>) {
         state.processing()
         let resp = null
         try {

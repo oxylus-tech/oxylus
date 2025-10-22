@@ -2,10 +2,9 @@ import {computed, reactive, provide} from 'vue'
 import type {ComputedRef, Reactive} from 'vue'
 
 import {User, Model} from '../models'
-import type {Repos} from '../models'
+import type {ModelType, Repos} from '../models'
 import { useModels } from './models'
 import { State } from '../utils'
-import type {IObject} from '../utils'
 
 
 /**
@@ -14,9 +13,9 @@ import type {IObject} from '../utils'
  * Application data is initial data passed down to application from
  * Django generated page.
  */
-export interface IAppData extends IObject {
-    //! User's data.
-    user?: IObject
+export interface IAppData extends Record<string, any> {
+    /** User's data. */
+    user?: Record<string, any>
 }
 
 /**
@@ -34,7 +33,7 @@ export interface IApp {
     /**
      * Models used by application.
      */
-    models?: (typeof Model)[]
+    models?: ModelType[]
     /**
      * Extra application data.
      */
@@ -53,7 +52,9 @@ export interface IApp {
  * to access global information, such as current user or Panel.
  */
 export class AppContext {
+    /** Reactive version of AppContext */
     static reactive(opts: IApp) : IRAppContext {
+        // TODO: move to composables
         const obj = reactive(new this(opts)) as IRAppContext
         obj.user = computed(() => new User(obj.data?.user || {}))
         return obj
@@ -84,7 +85,7 @@ export class AppContext {
 
     /**
      * Read data from the context of provided source element.
-     * @param {String} el - id of the DOM element.
+     * @param {String} dataEl - id of the DOM element.
      * @return {Object} read data
      */
     readData(dataEl: string): any {

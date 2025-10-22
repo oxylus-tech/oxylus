@@ -59,15 +59,16 @@ function samePassword() {
 async function save() {
     state.processing()
     try {
-        const resp = await repos.users.api().updatePassword(props.user.id, password.value)
+        const resp = await repos.users.api().post(
+            `${props.user.$url}password`, {password: value}, {save:false}
+        )
         if(resp.response.status == 200) {
             password.value = ""
             confirm.value = ""
             state.ok(resp.response)
         }
-        else {
+        else
             state.error(resp.response.data)
-        }
     }
     catch(error) {
         state.error(error?.message || error)

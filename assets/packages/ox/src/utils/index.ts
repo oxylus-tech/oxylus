@@ -12,7 +12,7 @@ export type ClassType<T = any> = new (...args: any[]) => T;
 /**
  * Return cookie with provided key
  *
- * @param {String} key: cookie name
+ * @param {string} key - cookie name
  */
 export function getCookie(key: string) : string | null {
     if(document.cookie && document.cookie !== '') {
@@ -26,8 +26,8 @@ export function getCookie(key: string) : string | null {
 /**
  * Return cookie with provided key as list
  *
- * @param {String} key: cookie name
- * @param {String|null} split: split cookie value using this character.
+ * @param {String} key - cookie name
+ * @param {String|null} split - split cookie value using this character.
  */
 export function getCookieList(key: string, split: string): string[] {
     const cookie = getCookie(key)

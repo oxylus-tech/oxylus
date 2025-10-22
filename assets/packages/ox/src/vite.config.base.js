@@ -72,7 +72,7 @@ export default defineConfig({
         extensions: ['.js', '.ts', '.json', '.vue', '.scss'],
         alias: {
             '@': fileURLToPath(new URL('./src', import.meta.url)),
-            //'@oxylus': fileURLToPath(new URL('./ox/src/', import.meta.url)),
+            // '@oxylus': resolve(__dirname, '.') // fileURLToPath(new URL('./ox/src/', import.meta.url)),
             //'@oxylus_locations': fileURLToPath(new URL('./@oxylus/locations/src/', import.meta.url)),
         }
     }

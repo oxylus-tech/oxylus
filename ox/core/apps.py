@@ -66,7 +66,7 @@ class AppMeta(Owned):
 
 
 ox_assets = Assets(
-    settings.BASE_DIR / "assets",
+    settings.BASE_DIR / "assets" / "packages",
     "@oxylus/ox",
     includes=[
         Asset("", "index.js", css="style.css"),

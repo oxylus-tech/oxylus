@@ -1,18 +1,18 @@
-import type {Repository, Query as $Query} from 'pinia-orm'
+import type {Query as $Query} from 'pinia-orm'
 import type {Response} from '@pinia-orm/axios'
 
 import {State, assignNonEmpty} from '../utils'
-import type {Model, ModelId} from '../models'
+import type {ModelType, ModelId, Repository} from '../models'
 
 import Query from './query'
 import type {IQueryFetch} from './query'
 
 
-export interface IModelController<M extends Model> {
+export interface IModelController<MT extends ModelType> {
     /** Response's key used to return data */
     dataKey?: string
     /** {@link Query} used to fetch list items. */
-    query: Query<M>
+    query: Query<MT>
     /** Related fields to get from pinia orm's database and eventually fetch when items are retrieved from API.  */
     relations?: string[]
     /** Use this URL instead of model's defined one. */
@@ -23,7 +23,7 @@ export interface IModelController<M extends Model> {
     save?: boolean
 }
 
-export interface IModelFetch<M extends Model> extends IQueryFetch<M> {
+export interface IModelFetch<MT extends ModelType> extends IQueryFetch<MT> {
     /** Response's key used to return data */
     dataKey?: string
     /** If true, force loading all items */
@@ -44,17 +44,17 @@ export interface IModelFetch<M extends Model> extends IQueryFetch<M> {
  *
  * This is used for {@link ModelDetail} and {@link ModelList}.
  */
-export default class ModelController<M extends Model, O=IModelController<M>> {
+export default class ModelController<MT extends ModelType, O=IModelController<MT>> {
     state = State.none()
     save?: boolean = true
 
     /** The repository of contained items. */
-    get repo(): Repository<M> { return this.query.repo }
+    get repo(): Repository<MT> { return this.query.repo }
 
     /** Current model. */
-    get model(): typeof Model { return (this.repo.use as typeof Model) }
+    get model(): MT { return (this.repo.use as MT) }
 
-    constructor(options: IModelController<M>|null = null) {
+    constructor(options: IModelController<MT>|null = null) {
         options && assignNonEmpty(this, options)
     }
 
@@ -63,7 +63,7 @@ export default class ModelController<M extends Model, O=IModelController<M>> {
      *   @param ids - optional id lookup
      *   @return orm's query
      */
-    queryset(ids: ModelId|ModelId[]|null=null) : $Query<M> {
+    queryset(ids: ModelId|ModelId[]|null=null) : $Query<InstanceType<MT>> {
         let query = this.repo.query()
         if(this.relations)
             for(const relation of this.relations)
@@ -86,7 +86,7 @@ export default class ModelController<M extends Model, O=IModelController<M>> {
      * - {@link ModelController.fetch}
      * - {@link ModelController.handleResponse}
      */
-    async load(options: IModelFetch<M> = {all: false}): Promise<Response|null> {
+    async load(options: IModelFetch<MT> = {all: false}): Promise<Response|null> {
         this.state.processing()
         let response = null
         try {
@@ -108,20 +108,20 @@ export default class ModelController<M extends Model, O=IModelController<M>> {
      * - {@link ModelController.getQueryParams}
      * - {@link Query.fetch}
      */
-    async fetch(options: IModelFetch<M> = {all: false}) : Promise<Response> {
+    async fetch(options: IModelFetch<MT> = {all: false}) : Promise<Response> {
         const opts = this.getQueryOptions(options)
         const func = options.all ? this.query.fetch : this.query.all
         return await this.query.fetch(opts)
     }
 
     /** Handle response from the {@link ModelContainer.fetch}'s request. */
-    async handleResponse(options: IModelFetch<M>, response: Response): Promise<Response> {
+    async handleResponse(options: IModelFetch<MT>, response: Response): Promise<Response> {
         // TODO: handle status code
         return response
     }
 
     /** Get {@link Query.fetch} options. */
-    protected getQueryOptions(options: IModelFetch<M>): IQueryFetch<M> {
+    protected getQueryOptions(options: IModelFetch<MT>): IQueryFetch<MT> {
         if(!options.relations && this.relations && this.fetchRelations)
             options.relations = this.relations
         // if(!("dataKey" in options))
@@ -133,7 +133,7 @@ export default class ModelController<M extends Model, O=IModelController<M>> {
         return options
     }
 }
-export default interface ModelController<M extends Model, O> extends IModelController<M> {
+export default interface ModelController<MT extends ModelType, O> extends IModelController<MT> {
     /** Current request's state. */
     state: State
 }

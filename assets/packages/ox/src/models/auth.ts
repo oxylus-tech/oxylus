@@ -170,20 +170,6 @@ export class User extends Model {
         title: "username",
     })
 
-    static config = {
-        axiosApi: {
-            dataKey: 'results',
-            actions: {
-                updatePassword(id: number, value: string): Response {
-                    return this.post(
-                        `${this.repository.use.meta.getUrl({id})}password/`, {password: value},
-                        {save:false}
-                    )
-                }
-            }
-        }
-    }
-
     static fields() {
         return {
             id: this.attr(null),

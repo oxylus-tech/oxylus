@@ -1,12 +1,14 @@
 const path = require('path');
 
+const outDir = path.resolve(__dirname, './docs/api')
+
 module.exports = {
     componentsRoot: path.resolve(__dirname),
-    components: '@oxylus/*/src/components/**/[A-Z]*.vue',
-    outDir: path.resolve(__dirname, './docs/api'), // notice: up one level to docs package
+    components: 'packages/*/src/components/**/[a-zA-Z]*.vue',
+    outDir: outDir,
     apiOptions: {
         alias: {
-            '@': path.resolve(__dirname, 'src'),
+            '@oxylus/ox': path.resolve(__dirname, 'packages/ox/src/index.ts'),
         },
         jsx: false,
     },
@@ -15,14 +17,14 @@ module.exports = {
         const parsed = path.parse(componentPath)
 
         const parts = componentPath.split(path.sep)
-        const oxylusIndex = parts.indexOf('@oxylus')
-        console.log(">>>", oxylusIndex, parts, parsed.name)
+        const oxylusIndex = parts.indexOf('packages')
         if (oxylusIndex === -1)
             return `${parsed.name}.md`
 
         const packageName = parts[oxylusIndex + 1]  // e.g., contacts
         const componentName = parsed.name            // OxKindInput
-        const result = path.join('@oxylus', packageName, 'components', `${componentName}.md`)
+        const result = path.join(outDir, packageName, 'src', 'components', `${componentName}.md`)
+        console.log(result)
         return result
     }
 };
