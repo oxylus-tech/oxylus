@@ -1,22 +1,32 @@
 {
-    "entryPoints": [
-        "packages/ox/src/lib.ts",
-        "packages/*/src/composables/index.ts",
-        "packages/*/src/composables.ts",
-        "packages/*/src/models/index.ts",
-        "packages/*/src/models.ts",
-        "packages/*/src/index.ts"
-    ],
-    "entryPointStrategy": "expand",
+    "entryPointStrategy": "packages",
+    "entryPoints": ["packages/*"],
+    "packageOptions": {
+        "entryPointStrategy": "merge",
+        "entryPoints": [
+            "src/lib.ts",
+            "src/controllers/index.ts",
+            "src/composables/index.ts",
+            "src/composables.ts",
+            "src/models/index.ts",
+            "src/models.ts",
+            "src/index.ts"
+        ],
+        "entryFileName": "index"
+    },
+    "entryFileName": "index",
     "out": "docs/api/",
+    "docsRoot": "docs/",
     "exclude": ["**/*.spec.ts", "**/*.test.ts"],
     "externalPattern": ["**/*.spec.ts", "**/*.test.ts"],
     "excludeExternals": true,
     "excludePrivate": true,
     "excludeProtected": true,
+    "excludeReferences": true,
     "includeVersion": true,
     "hideGenerator": true,
     "hideBreadcrumbs": true,
     "theme": "markdown",
-    "plugin": ["typedoc-plugin-markdown"]
+
+    "plugin": ["typedoc-plugin-markdown", "typedoc-vitepress-theme"]
 }

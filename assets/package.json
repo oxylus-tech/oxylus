@@ -1,6 +1,6 @@
 {
   "private": true,
-  "name": "oxylus-monorepo",
+  "name": "@oxylus",
   "workspaces": [
     "@oxylus/*"
   ],
@@ -25,6 +25,7 @@
     "@vuedoc/md": "4.0.0-beta8",
     "@vuedoc/parser": "4.0.0-beta9",
     "add": "^2.0.6",
+    "commander": "^14.0.1",
     "concurrently": "^9.2.1",
     "eslint": "^7.32.0",
     "eslint-plugin-vue": "^8.7.1",
@@ -33,6 +34,7 @@
     "sass": "^1.91.0",
     "typedoc": "^0.28.14",
     "typedoc-plugin-markdown": "^4.9.0",
+    "typedoc-vitepress-theme": "^1.1.2",
     "typescript": "^5.9.3",
     "vite": "^5.4.19",
     "vite-plugin-babel-macros": "^1.0.6",

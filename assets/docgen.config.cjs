@@ -1,10 +1,30 @@
-const path = require('path');
+const path = require('path')
+const fs = require('fs')
 
-const outDir = path.resolve(__dirname, './docs/api')
+const outDir = path.resolve(__dirname, './docs/components')
+
+
+const packages = {}
+
+function getPackageName(baseDir, filePath) {
+    const parts = filePath.split(path.sep)
+    const baseIndex = parts.indexOf(baseDir)
+    parts.splice(baseIndex+2)
+
+    packagePath = parts.join('/')
+    if(!packages[packagePath]) {
+        const package = JSON.parse(fs.readFileSync(path.resolve(packagePath, "package.json")))["name"]
+        packages[packagePath] = package
+    }
+    return packages[packagePath]
+}
+
 
 module.exports = {
     componentsRoot: path.resolve(__dirname),
-    components: 'packages/*/src/components/**/[a-zA-Z]*.vue',
+    /** This is an extra field used to specify where are mono-repo packages */
+    // baseDir: 'packages',
+    components: '**/[a-zA-Z]*.vue',
     outDir: outDir,
     apiOptions: {
         alias: {
@@ -13,17 +33,10 @@ module.exports = {
         jsx: false,
     },
 
-    getDestFile: (componentPath) => {
+    __getDestFile: (componentPath) => {
         const parsed = path.parse(componentPath)
-
-        const parts = componentPath.split(path.sep)
-        const oxylusIndex = parts.indexOf('packages')
-        if (oxylusIndex === -1)
-            return `${parsed.name}.md`
-
-        const packageName = parts[oxylusIndex + 1]  // e.g., contacts
-        const componentName = parsed.name            // OxKindInput
-        const result = path.join(outDir, packageName, 'src', 'components', `${componentName}.md`)
+        const name = getPackageName("packages", componentPath).replace('/', path.sep)
+        const result = path.join(outDir, name, 'components', `${parsed.name}.md`)
         console.log(result)
         return result
     }

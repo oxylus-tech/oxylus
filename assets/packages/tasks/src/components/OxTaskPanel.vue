@@ -36,6 +36,10 @@
     </ox-model-panel>
 </template>
 <script setup lang="ts">
+/**
+ * @component
+ * {@link ModelPanel} for tasks management.
+ */
 import { ref, useSlots, withDefaults } from 'vue'
 
 import { t, filterSlots } from '@oxylus/ox'
@@ -50,7 +54,9 @@ const repos = useTasksModels()
 const modelPanel = ref(null)
 
 const props = withDefaults(defineProps<IModelPanelProps>(), {
+    /** Name of the panel */
     name: 'tasks',
+    /** Headers */
     headers: ['status', 'queue_name', 'task_path', 'priority', 'date', 'return_value'],
 })
 
