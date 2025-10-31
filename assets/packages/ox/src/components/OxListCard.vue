@@ -88,18 +88,18 @@ const itemSlots = filterSlots(slots, "item.", {exclude: ["item.actions", "item.i
 
 
 const props = defineProps({
-    /** ModelList used to display objects **/
+    /** ModelList used to display objects */
     list: Object,
-    /** List items (cf. {@link useModelList}) **/
+    /** List items (cf. {@link useModelList}) */
     items: Array,
     /**
      * Displayed fields, where the first value is set as title.
      * Two formats: a string (as field name), or `{key: "fieldName", title: "Field Title"}`.
      **/
     headers: Array,
-    /** If True, display edit/view button **/
+    /** If True, display edit/view button */
     edit: Boolean,
-    /** Field name used as image **/
+    /** Field name used as image */
     image: String,
 })
 

@@ -7,21 +7,13 @@ import { assignNonEmpty, reset, State } from '../utils'
 
 
 export interface IEditorProps<T extends Record<string, any>> {
-    /**
-     * @property initial - initial value provided to the editor
-     */
+    /** Initial value provided to the editor */
     initial: T
-    /**
-     * @property name - editor name
-     */
+    /** Editor name */
     name?: string
-    /**
-     * @property url - url to send value to
-     */
+    /** Url to send value to */
     url?: string
-    /**
-     * @property saved - callback to run after object has been saved
-     */
+    /** Callback to run after object has been saved */
     saved?: (item: T, editor: IEditor<T,IEditorProps<T>>) => void
 }
 
@@ -33,16 +25,11 @@ export interface IEditor<T extends Record<string, any>,P extends IEditorProps<T>
     [index: string]: any
 
     props: P
-    /**
-     * @property value - current edited value
-     */
+    /** Current edited value */
     value: T
     /** Empty value, if not provided generated */
     empty?: T
-    /**
-    * @property state - current editor state. Set to `State.PROCESSING` when
-    * saving instance.
-    */
+    /** Current editor state. Set to `State.PROCESSING` when saving instance. */
     state: State
 }
 

@@ -74,15 +74,15 @@ const slots = useSlots()
 const itemSlots = filterSlots(slots, 'item.', {exclude: ['item.actions', 'item.image']})
 
 const props = defineProps({
-    /** ModelList used to display objects **/
+    /** ModelList used to display objects */
     list: Object,
-    /** List items (cf. {@link useModelList}) **/
+    /** List items (cf. {@link useModelList}) */
     items: Array,
-    /** Table headers **/
+    /** Table headers */
     headers: Array,
-    /** If True, display edit/view button **/
+    /** If True, display edit/view button */
     edit: Boolean,
-    /** If provided, use this item field as image **/
+    /** If provided, use this item field as image */
     image: String,
 })
 
