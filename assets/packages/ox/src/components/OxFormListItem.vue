@@ -27,24 +27,25 @@
 </template>
 <script setup lang="ts">
 /**
- * An element inside an {@link OxFormList}.
+ * @component An element inside an {@link OxFormList}.
  *
- * Attributes will be forwarded to inner `v-list-item`.
+ * Attributes are bounded to inner `v-list-item`.
  */
 import { defineModel, defineEmits, useAttrs } from 'vue'
 import { t } from '@oxylus/ox'
 
-const props = defineProps({
+const props = defineProps<{
     /** Item being displayed. **/
-    item: Object,
+    item: object,
     /** Display remove button. **/
-    remove: Boolean,
-})
-/**
- * Remove item button has been clicked. The click event data is passed along.
- * @event remove
- */
-const emits = defineEmits('remove')
+    remove: boolean,
+}>()
+const emits = defineEmits([
+    /**
+     * Remove item button has been clicked. The click event data is passed along.
+     */
+    'remove'
+])
 
 const attrs = useAttrs()
 </script>

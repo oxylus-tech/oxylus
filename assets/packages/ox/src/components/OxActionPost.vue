@@ -3,6 +3,14 @@
 </template>
 <script setup lang="ts">
 /**
+ * @component An action button used to make a POST request for the related
+ * model item.
+ *
+ * Required injections: `user`.
+ *
+ * Attributes bound to inner {@link OxAction}.
+ */
+/**
  * This action is used to make POST request for a specified model item.
  */
 import { useAttrs } from "vue"
@@ -30,6 +38,6 @@ async function run(user, item) {
     // For some reason directly call api()[props.method] does not pass down
     // this argument.
     const api = props.repo.api()
-    return await api[props.method].apply(api, [item.$url(props.path), props.data, props.options])
+    return await api[props.method.toLowerCase()].apply(api, [item.$url(props.path), props.data, props.options])
 }
 </script>

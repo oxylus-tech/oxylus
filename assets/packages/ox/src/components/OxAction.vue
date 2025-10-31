@@ -13,16 +13,33 @@
     </template>
 </template>
 <script setup lang="ts">
+/**
+ * @component A button that aims to execute an action that can be related to
+ * an item.
+ *
+ * It provides permissions checks and user confirmation. A function can be provided
+ * as well as an URL. The action can be rendered as a `v-btn` or `v-list-item`.
+ *
+ * This is the base component used for most actions to execute in user interfaces.
+ *
+ * Required injections: `user`
+ */
 import {computed, defineProps, defineEmits, inject, useAttrs} from 'vue'
 import {useAction} from '@oxylus/ox'
 
-import type {ActionCompleted} from '@oxylus/ox'
-import type {IActionProps} from '../composables/actions'
+import type {IActionProps, ActionCompleted} from '../composables/actions'
 
 const props = defineProps<IActionProps>()
 const attrs = useAttrs()
 
 const emits = defineEmits<{
+    /**
+     * Callback when an action has been completed.
+     *
+     * @param {User} user - user running the action.
+     * @param {Model|null} item - item on which the action was run.
+     * @param {any} result - result of the action (return value of the called function).
+     */
     completed: ActionCompleted
 }>()
 const user = inject('user')

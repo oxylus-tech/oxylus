@@ -11,8 +11,17 @@
         :run="show"/>
 </template>
 <script setup lang="ts">
-import { defineProps, inject, useAttrs } from 'vue'
+/**
+ * @component An action button to view or edit the related
+ * item, depending on the user's permissions. It uses `detail.edit` by default.
+ *
+ * Required injections: `panel`, `repos` and `user`.
+ *
+ * Attributes bound to inner {@link OxAction}.
+ */
+import { defineProps, inject, useAttrs, withDefaults } from 'vue'
 import { t } from '@oxylus/ox'
+import type { Model } from '@oxylus/ox/models'
 
 import OxAction from './OxAction.vue'
 
@@ -21,12 +30,22 @@ const repos = inject('repos')
 const user = inject('user')
 
 const attrs = useAttrs()
-const props = defineProps<{
-    item: Object
-    edit: Boolean
-}>()
+const props = withDefaults(defineProps<{
+    /**
+     * The related model instance to edit/view.
+     */
+    item: Model
+    /**
+     * Show edit button if user has permissions.
+     */
+    edit: boolean
+    /**
+     * View to display
+     */
+    view: string
+}>(), { view: "detail.edit" })
 
 function show(user, item) {
-    panel.show({view: 'detail.edit', value: item})
+    panel.show({view: props.view, value: item})
 }
 </script>

@@ -20,7 +20,7 @@ async function get_title(file) {
     const lines = (await fs.readFile(file, "utf8")).split("\n")
     for(const line of lines)
         if(line.startsWith("# "))
-            return line.substr(2).trim()
+            return line.substr(2).replaceAll('\\', '').trim()
     return path.basename(file, ".md")
 }
 
@@ -28,6 +28,14 @@ async function get_title(file) {
 async function fileExists(path) {
     try { await fs.access(path); return true }
     catch { return false }
+}
+
+async function replaceAsync(string, regexp, replacerFunction) {
+    const replacements = await Promise.all(
+        Array.from(string.matchAll(regexp),
+            match => replacerFunction(...match)));
+    let i = 0;
+    return string.replace(regexp, () => replacements[i++]);
 }
 
 
@@ -48,30 +56,6 @@ class PackageInfo {
         console.log(`\x1b[36m\x1b[1m[${this.name}]\x1b[0m`, ...args)
     }
 
-    /*
-    async typedoc(out, config, basePath) {
-        this.log("Run typedoc")
-        config = {
-            ...config,
-            entryPoints: config.entryPoints.map(v => path.join(this.path, v)),
-            docsRoot: out,
-            out: resolve(out, config.out || "", this.name),
-        }
-        this.log(config)
-
-        const app = await Application.bootstrapWithPlugins(config)
-
-        app.options.addReader(new TSConfigReader());
-        app.options.addReader(new TypeDocReader());
-
-        const project = await app.convert()
-        if(project) {
-            await app.generateOutputs(project)
-            this.log(`✅ Typedoc for ${this.name}`);
-        }
-    }
-    */
-
     /**
      * Generate vue-docgen and return summary (as sidebar nav)
      */
@@ -86,28 +70,38 @@ class PackageInfo {
 
         await docGen(config)
 
-        /*
         if(!await fileExists(config.outDir))
             // Nothing generated
-            return []
+            return
 
-        // Index
-        const summary = []
-        const files = await fs.readdir(config.outDir)
+        const files = (await fs.readdir(config.outDir)).map(f => path.join(config.outDir, f))
+        await this.docGenPostProcess(out, files)
+    }
+
+    async docGenPostProcess(out, files) {
         for(const file of files) {
-            const fullPath = path.join(config.outDir, file)
-            const stat = file.endsWith('.md') && await fs.stat(fullPath)
-            if(stat?.isFile) {
-                const name = await get_title(fullPath)
-                summary.push({
-                    text: name,
-                    link: path.join(basePath, file).replace(/\\/g, '/')
-                })
-            }
-        }
+            let content = await fs.readFile(file, 'utf8')
+            // Resolve and replace `{@link XXXX}` by a link.
+            content = await replaceAsync(content, /\{@link *([^}]+) *}/g, async (text, p1) => {
+                let path = await this._resolve_link(out, file, p1)
+                return path ? `[${p1}](${path})` : text
+            })
 
-        return summary
-        */
+            await fs.writeFile(file, content)
+        }
+    }
+
+    async _resolve_link(out, file, name) {
+        const cwds = [
+            path.resolve(file, '..', '..'),
+            out,
+        ]
+
+        for(const cwd of cwds) {
+            const fileDir = path.resolve(file, '..')
+            for await (const match of fs.glob(`**/${name}.md`, {cwd}))
+                return path.relative(fileDir, path.join(cwd, match))
+        }
     }
 }
 
@@ -360,11 +354,10 @@ const vueApiOptions = {
                 .find(() => true);
             if(componentDoc) {
                 const text = componentDoc.value
-                    .replaceAll("\r", "")
                     .replace(/@component */, "")
+                    .replaceAll(/\n *\* ?/g, "\n")
                     .replace(/^[*\n ]*/, "")
                     .replace(/[*\n ]*$/, "")
-                    .replaceAll(/\n *\* +/g, " ");
                 documentation.set('description', text);
             }
         }

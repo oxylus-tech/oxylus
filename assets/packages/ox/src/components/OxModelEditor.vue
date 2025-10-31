@@ -1,26 +1,34 @@
 <template>
-    <!-- @slot Before v-form. -->
+    <!-- @slot Before v-form. See `default` slot for bindings. -->
     <slot name="prepend" v-bind="bind"/>
     <v-form ref="form" v-model="editor.valid" :disabled="!editable">
         <template #default>
-            <!-- @slot Inside v-form. -->
+            <!-- @slot Inside v-form.
+                 @binding {ModelEditor} editor the editor instance.
+                 @binding {boolean} edited whether content has been edited
+                 @binding {v-form} form the inner `v-form`
+                 @binding {boolean} editable whether content is editable
+                 @binding {boolean} disabled whether content is not editable
+                 @binding {typeof Model} model current model type
+            -->
             <slot name="default" v-bind="bind"/>
         </template>
     </v-form>
-    <!-- @slot After v-form. -->
+    <!-- @slot After v-form. See `default` slot for bindings. -->
     <slot name="append" v-bind="bind"/>
 </template>
 <script setup lang="ts">
 /**
- * This component provides a wrapper around a `v-form` that uses
- * {@link ModelEditor} in order to edit and save data to the server.
+ * @component A wrapper around a `v-form` that uses * {@link ModelEditor} to
+ * edit and save data on the server.
+ *
+ * It checks on user permissions in order to allow edition. If user has no right
+ * for it, the form will be disabled.
  *
  * It requires a `repo` to be provided.
  * Properties are defined using {@link IModelEditorProps} interface.
  *
- * Exposed:
- * - `editor`: the {@link ModelEditor} instance
- * - `editable`: a boolean computed value defining if user can edit the component.
+ * Required injections: `user`.
  */
 import { computed, defineExpose, inject, watch, ref } from 'vue'
 import { t, useModelEditor } from '@oxylus/ox'
@@ -47,5 +55,14 @@ const bind = computed(() => ({
 
 watch(() => editor.errors && Object.values(editor.errors), () => form.value.validate())
 
-defineExpose({editor, edited, form, editable})
+defineExpose({
+    /** The {@link ModelEditor} instance. */
+    editor,
+    /** A computed boolean indicating if content has been edited. */
+    edited,
+    /** A computed boolean indicating if content can be edited. */
+    editable,
+    /** Reference to inner `v-form`. */
+    form
+})
 </script>

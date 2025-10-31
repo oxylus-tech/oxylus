@@ -47,11 +47,9 @@ export interface IModelListFetch<MT extends ModelType> extends IModelFetch<MT> {
  * Items references are tracked using repo's {@link RefCounter}.
  *
  * @example
- * const value = ref(null)
- * const list = new ModelList.reactive({
+ * const {list, items} = useModelList({
  *     query: new Query(repos.users, repos),
  *     relations: ['groups'],
- *     value,
  * })
  *
  * await list.load({url: '/users'})

@@ -21,6 +21,9 @@
                 v-model="props.editor.value[props.name]">
                 <template v-for="_, name in slots" :key="slot"
                     #[name]="bind">
+                    <!--
+                        @slot Slots are passed down to the inner component. Currently it is only supported for the `ox-autocomplete` component.
+                    -->
                     <slot :name="name" v-bind="bind"/>
                 </template>
             </ox-autocomplete>
@@ -33,14 +36,20 @@
 </template>
 <script setup lang="ts">
 /**
- * This is a simple wrapper around form input in order to ease integration
- * with {@link Editor}, translation.
+ * @component A simple wrapper around form input in order to ease integration
+ * with {@link Editor} and translation.
  *
- * Slots:
- * - `default`: props, editor
+ * Based on the `type` attribute, a difference component can be used.
  *
- * Event:
- * - `update:modelValue`: value has changed
+ * Supported types:
+ * - `textarea`: creates a `v-textarea`;
+ * - `select`: creates a `v-select`;
+ * - `checkbox`: create a `v-checkbox`;
+ * - `date`: create a `v-date-input`;
+ * - `autocomplete`: create a `ox-autocomplete`;
+ * - any other value: `v-text-field` with supplied type;
+ *
+ * Attributes are bounded to the inner component.
  */
 
 import {computed, defineEmits, defineAsyncComponent, useAttrs, useSlots} from 'vue'
@@ -48,7 +57,10 @@ import {t, rules} from '@oxylus/ox'
 
 const OxAutocomplete = defineAsyncComponent(() => import('./OxAutocomplete.vue'))
 
-const emits = defineEmits(['update:modelValue'])
+const emits = defineEmits([
+    /** Value has changed */
+    'update:modelValue'
+])
 const attrs = useAttrs()
 const slots = useSlots()
 const props = defineProps({
@@ -58,20 +70,9 @@ const props = defineProps({
     editor: Object,
     /** If true, add a required rule */
     required: Boolean,
-    /**
-     * If provided, will by default generate a field depending on the value:
-     *
-     * - `textarea`: creates a `v-textarea`;
-     * - `select`: creates a `v-select`;
-     * - `checkbox`: create a `v-checkbox`;
-     * - `date`: create a `v-date-input`;
-     * - `autocomplete`: create a `ox-autocomplete`;
-     * - any other value: `v-text-field` with supplied type;
-     */
+    /** Field type */
     type: String,
-    /**
-     * Field rules as provided to Vuetify field inputs.
-     */
+    /** Field rules as provided to Vuetify field inputs. */
     rules: Array
 })
 

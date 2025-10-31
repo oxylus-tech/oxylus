@@ -96,6 +96,7 @@ type IRelations = Record<string, Relation>
  *     icon: 'mdi-account', // Model icon
  *     title: 'username',   // Used to display instance's as string
  * })
+ * ```
  *
  * # API
  *

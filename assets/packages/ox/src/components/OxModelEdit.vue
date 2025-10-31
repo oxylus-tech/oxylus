@@ -24,12 +24,14 @@
 </template>
 <script setup lang="ts">
 /**
- * This component is a wrapper around {@link OxModelEditor}, providing a more
+ * @component A wrapper around {@link OxModelEditor}, providing a more
  * complete interface to handle object edition.
  *
  * It is used as standard edition component in edit views, and provides buttons
  * for validation ({@link OxValidationBtn}) and an alert.
  *
+ * Slots are the same as the inner OxModelEditor, with two extra values: `save` and
+ * `reset` which are used to save and reset current edited item.
  */
 import { computed, defineExpose, defineEmits, watch, ref, onMounted } from 'vue'
 import type { State } from '@oxylus/ox'
@@ -51,7 +53,10 @@ interface IModelEdit extends IModelEditorProps {
     hideValidationBtn: boolean
 }
 
-const emits = defineEmits('saved')
+const emits = defineEmits([
+    /** Item was saved `(editor: ModelEditor): void`. */
+    'saved'
+])
 const props = defineProps<IModelEdit>()
 const modelEditor = ref(null)
 const modelEditorProps = computed(() => {
@@ -83,11 +88,18 @@ async function save(): State {
 // watch(() => modelEditor.edited, (val) => panel.setEdition(""))
 
 defineExpose({
-    save, reset,
+    /** Save edited item. */
+    save,
+    /** Reset edited item to initial value */
+    reset,
 
+    /** {@link ModelEditor} controller */
     get editor() { return modelEditor.value.editor },
+    /** Item is edited */
     get edited() { return modelEditor.value.edited },
+    /** Edition is allowed */
     get editable() { return modelEditor.value.editable },
+    /** Inner OxModelEditor's form */
     get form() { return modelEditor.value.form },
 })
 </script>

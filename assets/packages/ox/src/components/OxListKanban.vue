@@ -27,6 +27,10 @@
     </v-sheet>
 </template>
 <script setup>
+/**
+ * @component Provide a kanban list, with API * similar to {@link OxListTable}.
+ *
+ */
 import { computed, defineEmits, defineProps, inject } from 'vue'
 
 const emits = defineEmits(['click'])

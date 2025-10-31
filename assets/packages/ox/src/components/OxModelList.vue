@@ -41,15 +41,17 @@
 </template>
 <script setup lang="ts">
 /**
- * This component renders a list of items provided by id using a {@link ModelList}.
+ * @component Renders a list of items provided by id using a {@link ModelList}.
  *
  * The default implementation renders a `v-list`.
+ *
+ * When the list is editable, a remove button is displayed.
  */
 import { defineModel, defineExpose, onMounted, watch, useSlots, useAttrs } from 'vue'
 import { useModelList, Query, t, ifNotEqual } from '@oxylus/ox'
 
 /**
- * The list of ids to fetch.
+ * @model The list of ids to fetch.
  */
 const ids = defineModel()
 const slots = useSlots()
@@ -82,5 +84,10 @@ onMounted(() => ids.value.length && list.load({id: ids.value}))
 watch(ids, (val) => val.length && ifNotEqual(val, list.ids, (val) => val.length && list.load({id: val})))
 watch(() => list.ids, (val) => (ids.value = [...val]))
 
-defineExpose({ list, items })
+defineExpose({
+    /** The used {@link ModelList} controller. */
+    list,
+    /** The actual list of items. */
+    items
+})
 </script>

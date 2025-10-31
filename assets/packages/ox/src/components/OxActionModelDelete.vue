@@ -7,8 +7,16 @@
     />
 </template>
 <script setup lang="ts">
+/**
+ * @component An action button used to delete the provided item.
+ *
+ * Required injections: `panel`, `repos` and `user`.
+ *
+ * Attributes bound to inner {@link OxAction}.
+ */
 import { defineProps, inject, useAttrs } from 'vue'
 import { t } from '@oxylus/ox'
+import type { Model } from '@oxylus/ox/models'
 
 import OxAction from './OxAction.vue'
 
@@ -17,7 +25,8 @@ const repos = inject('repos')
 
 const attrs = useAttrs()
 const props = defineProps<{
-    item: Object
+    /** The object to delete. */
+    item: Model
 }>()
 
 async function run(user, item) {

@@ -27,7 +27,7 @@
 </template>
 <script setup lang="ts">
 /**
- * This represent a single view inside a Panel.
+ * @component This represent a single view inside a Panel.
  *
  * A view can have multiple windows, in such case it is displayed using tabs.
  * Tabs are hidden when there is only one window slot in it.
@@ -39,7 +39,7 @@ import { ref, defineProps, onMounted, useSlots } from 'vue'
 import { filterSlots } from '@oxylus/ox'
 
 const props = defineProps({
-    /** default tab title */
+    /** Default tab title. */
     title: String,
 })
 

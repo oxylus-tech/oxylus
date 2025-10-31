@@ -4,6 +4,7 @@
             {{ context.state.toString() }}
         </v-snackbar>
         <v-app-bar color="primary">
+            <!-- @slot Prepend on app bar -->
             <template v-slot:prepend>
                 <v-app-bar-nav-icon v-if="slots['nav-start'] || slots['nav-end']" icon="mdi-apps"
                     :title="t('nav.panels')" :aria-label="t('nav.panels')"
@@ -11,10 +12,13 @@
             </template>
             <v-app-bar-title id="app-bar-sheet-title"/>
             <v-app-bar-title id="app-bar-title">
+                <!-- @slot App bar bar title -->
                 <slot name="title"/>
             </v-app-bar-title>
+            <!-- @slot Left side of app bar -->
             <slot name="app-bar-left"></slot>
             <div id="app-bar-right" class="mr-3"></div>
+            <!-- @slot Right side of app bar -->
             <slot name="app-bar-right"></slot>
         </v-app-bar>
         <ox-app-nav v-if="slots['nav-start'] || slots['nav-end']" v-model:drawer="nav.drawer" :items="context.data.nav">
@@ -22,21 +26,26 @@
                 <a class="nav-home" href="/">
                     <v-img v-if="logo" :src="logo" class="logo"/>
                 </a>
+                <!-- @slot Top of navigation drawer -->
                 <slot name="nav-start" :context="context"></slot>
             </template>
             <template #append v-if="slots['nav-end']">
                 <v-list v-model:opened="nav.opened">
+                    <!-- @slot Bottom of navigation drawer -->
                     <slot name="nav-end" :context="context"></slot>
                 </v-list>
             </template>
         </ox-app-nav>
         <v-main>
+            <!-- @slot Inside `v-main` -->
             <slot name="main">
                 <v-tabs-window v-model="panels.panel">
                     <template #default="bind">
+                        <!-- @slot Inside `v-tabs-window` -->
                         <slot name="default" v-bind="bind" :context="context"></slot>
 
                         <v-tabs-window-item v-for="(name, slot) in panelsSlots" :key="slot" :value="name">
+                            <!-- @slot Each slot declared with prefix `panels.` will be put in a `v-tabs-window-item`. -->
                             <slot :name="slot" v-bind="bind" :context="context"/>
                         </v-tabs-window-item>
                     </template>
@@ -57,13 +66,30 @@
 </style>
 <script setup lang="ts">
 /**
- * Application component, handling navigation and page layout.
+ * @component Application component, handling navigation and page layout.
  *
- * It is responsible of:
+ * This is the main component loading application data and context, while
+ * providing the page layout.
  *
- * - initialize application data and context (provide `context` and `user`)
- * - displays errors in `v-snackbar`
+ * Provide: `context`, `user`.
  *
+ * ## Application layout
+ *
+ * **App bar**: bar at the top of the page, using `v-app-bar` and friends;
+ *
+ * **Sidebar**: uses {@link OxAppNav}
+ *
+ * **Main**: a `v-main` which has by default a `v-tabs-window` in which each panel
+ * will be put. To add a panel, use template prefix `panels.`
+ *
+ * ```xml
+ * <ox-app>
+ *     <template #panels.custom="{}">
+ *         <!-- my-custom-panel -->
+ *     </template>
+ * </ox-app>
+ *
+ * ```
  */
 
 import { useSlots, withDefaults, onErrorCaptured, onMounted } from 'vue'

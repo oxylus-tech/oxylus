@@ -6,11 +6,21 @@
         v-model:search="search"
         >
         <template v-for="_, slot in slots" #[slot]="bind">
+            <!-- @slot All slots are passed down to `v-autocomplete`. -->
             <slot :name="slot" v-bind="bind"/>
         </template>
     </v-autocomplete>
 </template>
 <script setup lang="ts">
+/**
+ * @component Autocompletion field, fetching model's data from the provided server.
+ *
+ * It is a wrapper around `v-autocomplete` which items are model instance.
+ * It also has an hidden `<input>` field which allows it to be used with forms.
+ *
+ * Items are not saved on the repository in order to keep it clean and avoid to flood
+ * memory.
+ */
 import { debounce, unionBy } from 'lodash'
 
 import type { Reactive, Ref } from 'vue'
@@ -33,7 +43,7 @@ const search: Ref<string> = ref("")
 interface IAutoCompleteProps {
     /** Model's repository */
     repo: Repository
-    /** Search lookup */
+    /** GET parameter for passing the search lookup. */
     lookup: string
     /** Field name */
     name: string
@@ -51,12 +61,13 @@ const repos = inject('repos')
 // list props are not expected to change, only `filters`
 const {state, query, fetch} = useQuery(props.repo, repos, {save: false})
 
-/** List items **/
+/** List of items **/
 const items: Reactive<Model[]> = reactive([])
 /** Selected items **/
 const selected: Ref<Model[]> = ref([])
 
 
+/** Get items by id, fetching missing ones */
 async function getItems(ids: ModelId|ModelId[]) {
     const missingIds = ids && getMissing(ids)
     if(missingIds?.length) {
@@ -67,6 +78,7 @@ async function getItems(ids: ModelId|ModelId[]) {
     updateSelected(ids)
 }
 
+/** From the provided list of ids, returns thoses not present in the list */
 function getMissing(ids: ModelId|ModelId[]): ModelId[]|null {
     if(!Array.isArray(ids))
         return items.findIndex((v) => v.id == ids) == -1 ? [ids] : null
@@ -75,6 +87,7 @@ function getMissing(ids: ModelId|ModelId[]): ModelId[]|null {
     return ids.filter(id => !itemIds.has(id))
 }
 
+/** Update selection based on provided list of items. */
 function updateSelected(ids: ModelId|ModelId[]) {
     if(Array.isArray(ids))
         selected.value = items.filter(v => ids.includes(v.id))
@@ -86,6 +99,13 @@ function updateSelected(ids: ModelId|ModelId[]) {
 
 
 let lastSearch = null
+
+/**
+ * Load the list of items from the server based on search value.
+ * Avoids to reload if the search is the same a the previous one.
+ *
+ * @param {boolean} reset - force loading event despite search did not changed.
+ */
 const load = debounce(async ({reset=false}={}) => {
     // Using debounce is tricky: it delays calling function
     // This means:
@@ -140,5 +160,14 @@ watch(value, (val, old) => {
 })
 
 
-defineExpose({ value, selected, load, items })
+defineExpose({
+    /** Selected models ids. */
+    value,
+    /** Selected items. */
+    selected,
+    /** Load list of items. */
+    load,
+    /** All fetched items (displayed in the selection list). */
+    items
+})
 </script>

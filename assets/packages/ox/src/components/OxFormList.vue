@@ -8,30 +8,14 @@
                                 :remove="can.delete"
                                 @remove="removeItem(index)">
                             <template #default="{item}">
-                                <!--
-                                    @slot Item's content
-                                    @binding {Object} item item being displayed
-                                    @binding {Number} index item's index.
-                                -->
                                 <slot name="item" :item="item" :index="index"/>
                             </template>
                             <template #actions="{item}">
-                                <!--
-                                    @slot Item' actions content
-                                    @binding {Object} item item being displayed
-                                    @binding {Number} index item's index.
-                                -->
                                 <slot name="item.actions" :item="item" :index="index"/>
                             </template>
                         </ox-form-list-item>
                     </template>
                     <v-form :disabled="!can.change">
-                        <!--
-                            @slot Item' edit and add form
-                            @binding {Object} item item being edited
-                            @binding {Number} index item's index.
-                            @binding {Boolean} editable true if content is editable.
-                        -->
                         <slot name="item.form" :item="item" :index="index" :editable="can.change"/>
                     </v-form>
                 </v-list-group>
@@ -43,9 +27,17 @@
                             :remove="can.delete"
                             @remove="removeItem(index)">
                         <template #default="{item}">
+                            <!--
+                                @slot Item's content.
+                                     @binding {object} item item being displayed
+                                     @binding {number} index item's index.
+                             -->
                             <slot name="item" :item="item" :index="index"/>
                         </template>
                         <template #actions="{item}">
+                            <!-- @slot Item' actions content.
+                                 @binding {object} item item being displayed
+                                 @binding {number} index item's index. -->
                             <slot name="item.actions" :item="item" :index="index"/>
                         </template>
                     </ox-form-list-item>
@@ -62,6 +54,10 @@
                     <v-list-item v-bind="props" :title="t('actions.add_item')" prepend-icon="mdi-plus"/>
                 </template>
                 <v-form>
+                    <!-- @slot Item' edit and add form.
+                         @binding {object} item item being edited
+                         @binding {number} index item's index.
+                         @binding {boolean} editable true if content is editable. -->
                     <slot name="item.form" :item="newItem" :edit="true"/>
                 </v-form>
                 <v-list-item v-if="newItem">
@@ -85,9 +81,19 @@
 </template>
 <script setup lang="ts">
 /**
- * This component provides simple list rendering and edition.
+ * @component An editable list of items.
  *
- * It wraps around `v-list` and uses {@link OxFormListItem} as items.
+ * It wraps around `v-list` and uses {@link OxFormListItem} as items of the list.
+ *
+ * In a nutshell:
+ * - list can be edited (remove/add item)
+ * - items can be edited in place (a form is expanded);
+ * - extra actions can be added on the list;
+ * - add/change/delete actions will be checked agains't user permissions;
+ *
+ * Example of a custom form list:
+ *
+ * ![OxFormList Screenshot](../../../../statics/OxFormList.png)
  */
 import {computed, defineModel, defineProps, inject, ref, reactive, provide, toRefs} from "vue"
 import {t} from "@oxylus/ox"
@@ -98,12 +104,12 @@ import OxFormListItem from './OxFormListItem.vue'
 const items = defineModel()
 const user = inject('user')
 const newItem = ref({})
-const props = defineProps({
-    /** Use this model **/
+const props = defineProps<{
+    /** Model class Use this model class **/
     useModel: Function,
     /** Content is editable **/
-    editable: Boolean,
-})
+    editable: boolean,
+}>()
 
 const can = computed(() => ({
     add: props.editable && user.can([props.useModel, 'add']),

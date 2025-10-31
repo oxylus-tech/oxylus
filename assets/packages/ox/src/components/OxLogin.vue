@@ -27,7 +27,13 @@
                 >
         </v-text-field>
         <div class="text-right mt-3">
-            <slot name="default" :value="credentials.password">
+            <!-- @slot Bottom of the form.
+                 @binding {string} password entered password
+                 @binding {string} username entered username
+                 @binding {async (): void} login run login
+                 @binding {Function} reset reset form
+                  -->
+            <slot name="bottom" :password="credentials.password" :username="credentials.username" :login="login" :reset="reset">
                 <ox-validation-btn v-if="credentials.username && credentials.password"
                     validate-label="Login!"
                     @validate="login()" @reset="reset()"
@@ -38,7 +44,7 @@
 </template>
 <script setup>
 /**
- * A form handling user login.
+ * @component A form handling user login.
  */
 
 import {computed, inject, ref, reactive, defineModel, defineProps} from 'vue'
@@ -61,7 +67,6 @@ const props = defineProps({
     url: {type: String},
 })
 
-const emit = defineEmits(['save', 'saved'])
 const credentials = reactive({
     username: '',
     password: '',
@@ -101,5 +106,12 @@ async function login() {
     }
 }
 
-defineExpose({login, reset, state})
+defineExpose({
+    /** Run login. */
+    login,
+    /** Reset login form. */
+    reset,
+    /** Current state. */
+    state
+})
 </script>

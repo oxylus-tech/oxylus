@@ -2,7 +2,6 @@
     "entryPointStrategy": "packages",
     "entryPoints": ["packages/*"],
     "packageOptions": {
-        "entryPointStrategy": "merge",
         "entryPoints": [
             "src/lib.ts",
             "src/controllers/index.ts",
@@ -28,5 +27,5 @@
     "hideBreadcrumbs": true,
     "theme": "markdown",
 
-    "plugin": ["typedoc-plugin-markdown", "typedoc-vitepress-theme"]
+    "plugin": ["typedoc-plugin-no-inherit", "typedoc-plugin-markdown", "typedoc-vitepress-theme"]
 }

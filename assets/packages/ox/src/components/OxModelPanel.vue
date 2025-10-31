@@ -2,23 +2,28 @@
     <ox-panel :name="props.name" :title="panel.title" :icon="panel.icon"
             :state="list.state" :index="props.index">
         <template #append-title v-if="slots['append-title']">
+            <!-- @slot After the panel title -->
             <slot name="append-title" v-bind="bind" />
         </template>
 
         <template #prepend v-if="slots['prepend']">
+            <!-- @slot At the top of the panel, between the OxStateAlert and the sheet. -->
             <slot name="prepend" v-bind="bind" />
         </template>
 
         <template #append v-if="slots['append']">
+            <!-- @slot At the end of the panel. -->
             <slot name="append" v-bind="bind" />
         </template>
 
         <template #app-bar-right>
+            <!-- @slot At the right of the app bar, before all other buttons. -->
             <slot name="app-bar-right" v-bind="bind"/>
 
             <template v-if="panel.view.startsWith('list.')">
                 <v-btn-group class="ml-3" color="secondary"
                         density="compact" variant="tonal">
+                    <!-- @slot Navigation buttons for list views. -->
                     <slot name="nav.list" v-bind="bind"/>
                     <v-btn :title="t('actions.list.reload')"
                         :aria-label="t('actions.list.reload')"
@@ -35,6 +40,7 @@
             </template>
             <template v-else-if="panel.view.startsWith('detail.') && panel.value">
                 <v-btn-group class="ml-3" color="secondary" density="compact" variant="tonal">
+                    <!-- @slot Navigation buttons for detail views. -->
                     <slot name="nav.detail" v-bind="bind"/>
 
                     <template v-if="panel.view == 'detail.edit' && panel.value">
@@ -100,20 +106,24 @@
                         :aria-label="t('panels.nav.add')">
                     <v-icon>mdi-plus-box</v-icon>
                 </v-btn>
+                <!-- @slot Inside the `v-btn-toggle` used to switch views. -->
                 <slot name="nav.views" v-bind="bind"/>
             </v-btn-toggle>
 
+            <!-- @slot After button toggle used for switching views. -->
             <slot name="app-bar-end" v-bind="bind"/>
         </template>
 
         <template #top>
             <v-alert v-if="props.warning" type="warning" variant="tonal" :text="props.warning" />
+            <!-- @slot At the top of the panel, before list filters. -->
             <slot name="top"/>
             <ox-list-filters ref="filters"
                     v-show="panel.view.startsWith('list.') && showFilters"
                     :search="props.search"
                     teleport-to="#panel-list-actions">
                 <template #default="bind">
+                    <!-- @slot Where to put the lists filters. Bindings are thoses provided by default slot of {@link OxListFilters} -->
                     <slot name="list.filters" v-bind="bind"/>
                 </template>
             </ox-list-filters>
@@ -138,6 +148,14 @@
         </template>
 
         <template v-for="(name, slot) in viewsListSlots" v-slot:[slot]>
+            <!-- @slot Views are prefixed with `views.`
+                 @binding {Panel} panel the panel controller
+                 @binding {Panels} panels the panels controller
+                 @binding {ModelList} list the model list
+                 @binding {Model[]} items the list of items fetched by the model list
+                 @binding {(Model): void} saved the function called once an item is saved
+                 @binding {Model} value current item being edited/displayed
+            -->
             <slot :name="slot" v-bind="bind"/>
         </template>
 
@@ -152,6 +170,24 @@
     </ox-panel>
 </template>
 <script setup lang="ts">
+/**
+ * @component A panel for displaying model views, linked to a provided repository.
+ *
+ * It provides different views by default: `views.list.table` ({@link OxListTable}), `views.list.cards` ({@link OxListCard}). You want to implement `views.detail.edit` slot.
+ *
+ * It is responsible to fetch data from the server, display the items, switch between different
+ * views.
+ *
+ * Required injections: `panels`, `panel`, `user`.
+ *
+ * ## Views
+ *
+ * Views are provided as slots, using prefix `views.[list|detail].[name]`. Views are of two type: list and detail.
+ *
+ * For `views.list.table`, `views.list.kanban`, `views.list.cards`, `views.detail.edit`, button will be provided in the top bar if the slots are present. Extra buttons can be added in `nav.views` slot.
+ *
+ * Slots prefixed with `item.` will be forwarded down to all list views.
+ */
 import { computed, defineProps, defineExpose, inject, useTemplateRef, useSlots, toRefs, withDefaults, watch } from 'vue'
 import { Teleport } from 'vue'
 
@@ -179,12 +215,11 @@ const props = withDefaults(defineProps<IModelPanelProps>(), {
     fetchRelations: true,
 })
 
-const context = inject('context')
 const user = inject('user')
-const {panel, list, items, next, prev} = inject('panel') ?? useModelPanel({props})
+const {panel, list, items, next, prev} = useModelPanel({props})
 const panels = panel.panels
 
-const canEdit = computed(() =>  context.user.can([panel.model, panel.value?.id ? "change": "add"]))
+const canEdit = computed(() =>  user.can([panel.model, panel.value?.id ? "change": "add"]))
 
 const {showFilters} = toRefs(panel)
 
@@ -202,12 +237,23 @@ function saved(item) {
 }
 
 const bind = computed(() => ({
-    panel, panels, list, items, context,
+    panel, panels, list, items,
     saved,
     value: panel.value,
 }))
 
 watch(() => Object.values(list.filters), () => list.load())
 
-defineExpose({list, panel, items, next, prev})
+defineExpose({
+    /** The ModelList being used across all views */
+    list,
+    /** The {@link OxModelPanel} controller */
+    panel,
+    /** The actual list of items */
+    items,
+    /** URL to next page. */
+    next,
+    /** URL to prev page. */
+    prev
+})
 </script>

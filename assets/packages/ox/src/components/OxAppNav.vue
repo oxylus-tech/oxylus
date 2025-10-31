@@ -1,5 +1,6 @@
 <template>
     <v-navigation-drawer v-model="drawer" theme="dark">
+        <!-- @slot At the top of the list -->
         <slot name="prepend"/>
         <v-list v-model:opened="opened" density="compact">
             <template v-for="(item,i) in items" :key="i">
@@ -7,21 +8,33 @@
             </template>
         </v-list>
         <template #append>
-            <v-list><slot name="append"/></v-list>
+            <v-list>
+                <!-- @slot After the list (inside another `v-list`) -->
+                <slot name="append"/>
+            </v-list>
         </template>
     </v-navigation-drawer>
 </template>
 <script setup>
+/**
+ * @component A navigation sidebar using `v-navigation-drawer`, based on a
+ * provided list of navigation items.
+ *
+ * Each item is provided as properties to an {@link OxAppNavItem}.
+ *
+ * Required injections: `panels`.
+ */
 import { computed, defineModel, inject, ref } from 'vue'
 
 import OxAppNavItem from './OxAppNavItem.vue'
 
-const context = inject('context')
 const panels = inject('panels')
+/** @model drawer - This controls wether the panel is opened or not. */
 const drawer = defineModel('drawer')
 const opened = ref([])
 
 const props = defineProps({
+    /** The list of items */
     items: Array
 })
 

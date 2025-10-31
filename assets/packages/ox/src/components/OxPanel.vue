@@ -2,6 +2,7 @@
     <ox-state-alert v-if="props.state" :state="props.state" delay/>
 
     <template v-if="slots.prepend && panels.panel == panel.name">
+        <!-- @slot At the top of the panel, between the OxStateAlert and the sheet. -->
         <slot name="prepend"/>
     </template>
 
@@ -9,16 +10,20 @@
         <Teleport to="#app-bar-sheet-title" :disabled="!mounted || panels.panel != props.name">
             <v-icon v-if="props.icon" :icon="props.icon"/>
             {{ props.title }}
+
+            <!-- @slot After the panel title -->
             <slot name="append-title"/>
         </Teleport>
 
         <Teleport to="#app-bar-right" :disabled="!mounted || panels.panel != props.name">
+            <!-- @slot At the right of the app bar, before all other buttons. -->
             <slot name="app-bar-right"/>
             <v-btn v-if="props.help" class="ml-3"
                 :href="props.help" panels="new"
                 icon="mdi-information-outline" />
         </Teleport>
 
+        <!-- @slot At the top of the panel, inside the sheet -->
         <slot name="top"/>
 
         <slot name="default">
@@ -26,6 +31,7 @@
                 <v-window v-model="panel.view">
                     <template v-for="(name, slot) in views" :key="name">
                         <v-window-item :value="name">
+                            <!-- @slot Views are nested under a `v-window-item`. -->
                             <slot :name="slot"></slot>
                         </v-window-item>
                     </template>
@@ -33,23 +39,20 @@
             </template>
         </slot>
 
+        <!-- @slot At the bottom of the panel, inside the sheet. -->
         <slot name="bottom"></slot>
     </v-sheet>
 
     <template v-if="slots.append && panels.panel == panel.name">
+        <!-- @slot At the end of the panel, after the sheet. -->
         <slot name="append"/>
     </template>
 </template>
 <script setup lang="ts">
 /**
- * Base component for displaying a panel.
+ * @component Base component for displaying a panel.
  *
- *
- * Slots:
- * - side: if provided create a navigation drawer in which slot is put.
- * - top: at the top of all views
- * - bottom: at the bottom of all views
- * - views.[name]: a slot for each view
+ * Required injections: `panels`, `panel`.
  */
 
 

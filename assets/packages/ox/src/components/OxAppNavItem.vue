@@ -28,10 +28,26 @@
     </template>
 </template>
 <script setup lang="ts">
+/**
+ * @component An navigation item used by {@link OxAppNav}.
+ *
+ * There are three type of items:
+ * - `item`: a single simple item, represented by a `v-list-item`.
+ * - `subheader`: a group of items with a `v-list-subheader` on the top.
+ * - `group`: a group of items collapsable under a `v-list-group`.
+ *
+ * For `subheader` and `group`, it will used provided (nested) items.
+ *
+ * Note that those values are actually those provided by Django applications'
+ * `panels` module.
+ *
+ *
+ * Required injections: `user`, `panels`.
+ */
 import { computed, defineProps, inject, ref } from 'vue'
 import type {IPanelInfo} from '../controllers'
 
-interface INavItemProps extends IPanelInfo {
+export interface INavItemProps extends IPanelInfo {
     /** Panel name */
     name: string
     /** Panels page **/
@@ -62,6 +78,7 @@ function shouldShow(item) {
 }
 
 
+/** Show this panel */
 function show() {
     const vals = { panel: props.name, href: props.url }
     panels.show(vals)

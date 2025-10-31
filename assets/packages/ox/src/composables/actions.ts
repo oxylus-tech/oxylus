@@ -5,10 +5,29 @@ import type { Ref } from 'vue'
 import { User, Model, type IPermissionGetCodename } from '../models'
 
 
+/**
+ * A function to call when an action has been called.
+ *
+ * @param {User} user - user running the action.
+ * @param {Model|null} item - item on which the action is run.
+ * @param {any[]} ...args - extra arguments passed to the action.
+ */
 export type ActionRun<M extends Model, R> = (user: User, item: M, ...args: any[]) => Promise<R>
-export type ActionCompleted<M extends Model, R> = (user: User, item: Model, result: R) => void
 
 
+/**
+ * Callback when an action has been completed.
+ *
+ * @param {User} user - user running the action.
+ * @param {Model|null} item - item on which the action was run.
+ * @param {any} result - result of the action (return value of the called function).
+ */
+export type ActionCompleted<M extends Model, R> = (user: User, item: M, result: R) => void
+
+
+/**
+ * Properties of an action.
+ */
 export interface IActionProps<M extends Model, R>
 {
     /**
@@ -49,6 +68,7 @@ export interface IActionProps<M extends Model, R>
 }
 
 
+/** Interface of an action */
 export interface IAction<M extends Model, R> {
     /**
      * Wether the action is running.

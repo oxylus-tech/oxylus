@@ -12,7 +12,7 @@ export default defineConfig({
     srcDirs: resolve(__dirname, '..'),
     themeConfig: {
         nav: [
-            { text: 'Home', link: '/' },
+            // { text: 'Home', link: '/' },
             { text: 'Guide', link: '/guide/' },
             { text: 'API', link: '/api/' },
         ],
