@@ -2,7 +2,7 @@
   "private": true,
   "name": "@oxylus",
   "workspaces": [
-    "@oxylus/*"
+    "packages/*"
   ],
   "scripts": {
     "dev": "pnpm -r --sort run dev",

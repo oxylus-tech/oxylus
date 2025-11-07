@@ -14,7 +14,8 @@ Before digging in technical aspects, lets see what is required to create an appl
     - If specific :doc:`assets <assets>` are required append them. There is no need to declare an `Asset` for the project being built, and default :py:attr:`~ox.core.apps.AppConfig.assets` already provide what you would use.
 
 - views: you'd certainly use only one :py:class:`ox.core.views.base.AppView` subclass, plus Django Rest Framework viewsets.
-- setup up a Vite project into ``assets/`` directory. Soon will a tool come that will do the job for us. For the moment, just copy-paste an existing one.
+- urls: urls are automatically discovered by Oxylus at initialization.
+- assets: setup up a Vite project into ``assets/`` directory.
 - add application to django's setting ``INSTALLED_APPS``.
 
 
@@ -22,16 +23,16 @@ Before digging in technical aspects, lets see what is required to create an appl
 AppConfig
 ---------
 
-The `AppConfig` in Oxylus is responsible of different extra things:
+The ``AppConfig`` in Oxylus is responsible of different extra things:
 
     - specifying application dependencies and metadata: this will later be used in order to create a user interface for installing and creating application.
     - information displayed for the user (icon, root url).
     - assets: provide Vite project built for the client application.
 
-After the application has been created, in ``apps.py``, some changes will be needed. Lets take :py:class:`ox.apps.auth.apps.AppConfig` as an example:
+After the application has been created, in ``apps.py``, some changes will be needed. Lets take at this example:
 
 
-.. code-block:: python
+..code-block:: python
 
 
     from ox.core import apps
@@ -43,26 +44,63 @@ After the application has been created, in ``apps.py``, some changes will be nee
 
 
     class AppConfig(apps.AppConfig):
-        # regular attributes existing in Django's AppConfig:
-        name = "ox.apps.auth"
-        label = "ox_auth"
-        verbose_name = _("Users & Groups")
+        name = "ox.apps.contacts"
+        label = "ox_contacts"
+        verbose_name = _("Contacts")
 
-        # Oxylus ones:
-        #
-        # provide an icon used for the application
-        icon = "mdi-account-group-outline"
+        # Declare an icon used for rendering, using Material design icon
+        icon = "mdi-card-account-mail"
 
-        # prepend application's urls using this path (default's to ``app.label``).
-        path_label = "ox/auth"
-        # url name of the application's main page.
-        index_urlname = "ox_auth:index"
+        # Root url to use for API, templates and statics
+        root_url = "ox/contacts"
 
-        class Meta:
-            dependencies = ("ox.core",)
+        # Name of the npm package used for frontend apps
+        npm_package = "@oxylus/contacts"
 
 
-There are one attribute hidden here, but inherited from the parent class: :py:attr:`~ox.core.apps.AppConfig.assets`. This is because there is no need for the ``ox.auth`` application of extra dependencies or specific customization. The ``assets/`` directory will be discovered where it should, and required dependencies (including ``ox`` libraries).
+
+Application Assets
+..................
+
+Oxylus handles assets management, using declaration :py:attr:`~ox.core.apps.AppConfig.assets`. It uses two classes here:
+
+- :py:class:`~ox.core.assets.base.Asset`: declaration for a npm package, with specified distributed file (js, js for development, and css);
+- :py:class:`~ox.core.assets.base.Assets`: this is the actual declaration for an application of its npm package, with entry points, dependencies and so on.
+
+Those classes are used for multiple purposes:
+
+- Automatically include relevant javascript and stylesheets into the rendered Django template;
+- Generate importmap, which is mandatory if you don't bundle all javascript code;
+- Finding statics in development mode, and collect them for production;
+
+
+..code-block:: python
+
+    from pathlib import Path
+    # ...
+    from ox.core.assets import Asset, Assets
+
+    class AppConfig(apps.AppConfig):
+        # ... other attribute
+
+        assets = Assets(
+            # Assets directory
+            Path(__file__).parent / "assets",
+            includes=[
+                # Application entry point
+                Asset("", "index.js"),
+            ],
+            dependencies=[
+                # We require Oxylus dependencies
+                apps.ox_assets,
+                # We don't bundle chat.js in the compiled javascript app
+                # So we provide it here
+                Asset("chart", "chart.umd.min.js", dev_js="chart.umd.js"),
+            ]
+        )
+
+
+The :py:class:`~ox.core.assets.base.Assets` has an extra attribute ``name`` that we don't need to provide at this point: it will be set at the AppConfig instanciation. This allows to reuse the same assets declaration for multiple applications.
 
 
 Models
