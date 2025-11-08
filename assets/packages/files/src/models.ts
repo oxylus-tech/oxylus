@@ -54,8 +54,6 @@ export class File extends Owned {
         }
     }
 
-    file_size: number
-
     /** File size as human readable string. */
     get displaySize(): string {
         return formatBytes(this.file_size)

@@ -14,11 +14,16 @@ def send_mail(uuid: str, model: str, context={}):
     :return SendMail status
     """
     cls = apps.get_model(model)
-    if not isinstance(cls, models.Mail):
+    if not issubclass(cls, models.BaseMail):
         raise ValueError(f"The provided model `{model}` is not a subclass of mails.Mail.")
 
-    obj = cls.objects.get(uuid=uuid)
-    mail_send = MailSend(obj)
-    mail_send.send(context)
+    try:
+        obj = cls.objects.get(uuid=uuid)
+        mail_send = MailSend(obj)
+        mail_send.send(context)
+    except Exception:
+        obj.state = cls.State.ERROR
+        obj.save()
+        raise
     obj.refresh_from_db()
     return obj.state

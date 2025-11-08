@@ -49,7 +49,7 @@ export class MailAccount extends Owned {
  * Counterpart of `ox_mails.models.BaseMail`.
  */
 export class BaseMail extends Owned {
-    static State = models.Enum("basemail.state", {
+    static State = models.Enum("mail.state", {
         DRAFT: 0,
         SENDING: 1,
         SENT: 2,

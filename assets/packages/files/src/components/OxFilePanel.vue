@@ -41,7 +41,7 @@
             <small v-if="item.$folder">{{ item.$folder.path }}</small>
         </template>
 
-        <template #item.file_size="{item}">{{ formatBytes(item.file_size) }}</template>
+        <template #item.file_size="{item, ...o}">{{ formatBytes(item.file_size) }}</template>
 
         <template #item.actions="{item, ...bind}">
             <ox-action :href="item.file" icon="mdi-download"

@@ -49,7 +49,7 @@ class BaseMailViewSet(OwnedViewSet):
             raise ValueError("Permission for this action MUST be specified by `perms_map`. ")
 
         obj = self.get_object()
-        tasks.send_mail.enqueue(uuid=str(obj.uuid), model=self.model._meta.label_lower)
+        tasks.send_mail.enqueue(uuid=str(obj.uuid), model=type(obj)._meta.label_lower)
         obj.state = obj.State.SENDING
         obj.save()
         serializer = self.get_serializer(instance=obj)

@@ -70,6 +70,17 @@ default:
     - django.contrib.staticfiles.finders.AppDirectoriesFinder
     - ox.core.assets.finders.AssetsFinder
 
+  LOGGING:
+    version: 1
+    disable_existing_loggers: false
+    handlers:
+        console:
+            class: logging.StreamHandler
+    root:
+        handlers:
+            - console
+        level: INFO
+
   REST_FRAMEWORK:
     DEFAULT_FILTER_BACKENDS:
       - django_filters.rest_framework.DjangoFilterBackend

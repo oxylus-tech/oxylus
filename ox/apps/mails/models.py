@@ -133,6 +133,17 @@ class Mail(BaseMail):
     )
     """ Recipients, as a list of email strings. """
 
+    # Ensure to be detected by vue-i18n util
+    State = BaseMail.State
+
     class Meta:
         verbose_name = _("Mail")
         verbose_name_plural = _("Mails")
+
+    def get_recipients(self):
+        emails = [e.strip() for e in self.recipients.split(",") if e.strip()]
+        recipients = []
+        for raw in emails:
+            name, email = parseaddr(raw)
+            recipients.append((email, {"name": name or email.split("@")[0]}))
+        return recipients
