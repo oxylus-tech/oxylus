@@ -7,8 +7,8 @@ from django.db import models
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 
-from ox.utils.models import Named, Timestamped, ChildOwned, ChildOwnedQuerySet
-from ox.utils.models.tree import TreeNode, TreeNodeQuerySet
+from ox.utils.models import Named, Timestamped
+from ox.utils.models.tree import OwnedTreeNode, OwnedTreeNodeQuerySet
 
 from ..conf import ox_files_settings
 
@@ -26,13 +26,13 @@ def validate_name(value):
         raise ValidationError(_("The character `/` is forbidden in name."))
 
 
-class FolderQuerySet(ChildOwnedQuerySet, TreeNodeQuerySet):
+class FolderQuerySet(OwnedTreeNodeQuerySet):
     def find_clone(self, node, **lookups) -> FolderQuerySet:
         lookups["owner_id"] = node.owner_id
         return super().find_clone(node, **lookups)
 
 
-class Folder(Named, Timestamped, ChildOwned, TreeNode):
+class Folder(Named, Timestamped, OwnedTreeNode):
     """
     Represent a folder in which files are stored.
 
@@ -73,7 +73,6 @@ class Folder(Named, Timestamped, ChildOwned, TreeNode):
 
     objects = FolderQuerySet.as_manager()
 
-    parent_attr = "parent"
     root_grants = {
         "ox_files.view_folder": 3,
         "ox_files.add_folder": 1,

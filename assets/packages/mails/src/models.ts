@@ -34,27 +34,22 @@ export class MailAccount extends Owned {
             smtp_encryption: this.number(465),
 
             // ---- imap
-            imap_host: this.string(""),
+            /*imap_host: this.string(""),
             imap_port: this.number(993),
             imap_username: this.string(""),
             imap_password: this.string(""),
             imap_ssl: this.boolean(true),
-            imap_folder: this.string("INBOX"),
+            imap_folder: this.string("INBOX"),*/
         }
     }
 }
 
 
-export class SendMail extends Owned {
-    static entity = "sendMails"
-    static meta = new models.Meta({
-        app: "ox_mails",
-        model: "sendmail",
-        url: "ox/mails/sendmail/",
-        title: "subject",
-    })
-
-    static State = models.Enum("sendmail.state", {
+/**
+ * Counterpart of `ox_mails.models.BaseMail`.
+ */
+export class BaseMail extends Owned {
+    static State = models.Enum("basemail.state", {
         DRAFT: 0,
         SENDING: 1,
         SENT: 2,
@@ -65,10 +60,6 @@ export class SendMail extends Owned {
         return {
             ...super.fields(),
             account: this.string(""),
-            template: this.string(""),
-            is_template: this.boolean(false),
-            contacts: this.attr([]),
-            contact_lists: this.attr([]),
             state: this.number(0),
             updated: this.string(""),
             created: this.string(""),
@@ -76,8 +67,29 @@ export class SendMail extends Owned {
             content: this.string(''),
             attachments: this.attr([]),
             $account: this.belongsTo(MailAccount, "account"),
-            $template: this.belongsTo(SendMail, "template"),
             $attachments: this.hasManyBy(File, "attachments"),
+        }
+    }
+}
+
+
+/**
+ * Counterpart of `ox_mails.models.Mail`.
+ */
+
+export class Mail extends Owned {
+    static entity = "mails"
+    static meta = new models.Meta({
+        app: "ox_mails",
+        model: "mail",
+        url: "ox/mails/mail/",
+        title: "subject",
+    })
+
+    static fields() {
+        return {
+            ...super.fields(),
+            recipients: this.string(""),
         }
     }
 }

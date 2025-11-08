@@ -11,11 +11,10 @@ from encrypted_fields.fields import EncryptedCharField
 from caps.models import Owned
 from ox.utils.models import Named, Timestamped, ChildOwned
 from ox.apps.content.models import RichTextField
-from ox.apps.contacts.models import Contact, ContactList
 from ox.apps.files.models import File
 
 
-__all__ = ("MailAccount", "SendMail", "validate_email_list")
+__all__ = ("MailAccount", "Mail", "validate_email_list")
 
 
 def validate_email_list(value):
@@ -65,20 +64,24 @@ class MailAccount(Named, Owned):
     )
 
     # IMAP Configuration (optional)
-    imap_host = models.CharField(_("Host (IMAP)"), max_length=255, blank=True, null=True)
-    imap_port = models.PositiveIntegerField(_("Port (IMAP)"), blank=True, null=True)
-    imap_username = EncryptedCharField(_("Username (IMAP)"), max_length=255, blank=True, null=True)
-    imap_password = EncryptedCharField(_("Password (IMAP)"), max_length=128, blank=True, null=True)
-    imap_ssl = models.BooleanField(_("Use SSL (IMAP)"), default=True, null=True, blank=True)
-    imap_folder = models.CharField(_("Folder (IMAP)"), max_length=255, default="INBOX")
+    # imap_host = models.CharField(_("Host (IMAP)"), max_length=255, blank=True, null=True)
+    # imap_port = models.PositiveIntegerField(_("Port (IMAP)"), blank=True, null=True)
+    # imap_username = EncryptedCharField(_("Username (IMAP)"), max_length=255, blank=True, null=True)
+    # imap_password = EncryptedCharField(_("Password (IMAP)"), max_length=128, blank=True, null=True)
+    # imap_ssl = models.BooleanField(_("Use SSL (IMAP)"), default=True, null=True, blank=True)
+    # imap_folder = models.CharField(_("Folder (IMAP)"), max_length=255, default="INBOX")
 
     class Meta:
         verbose_name = _("Email Account")
         verbose_name_plural = _("Email Accounts")
 
 
-class SendMail(Timestamped, ChildOwned):
-    """Outgoing mail to a set of contacts"""
+class BaseMail(Timestamped, ChildOwned):
+    """
+    Base class for outgoing emails. Later is it planned for incoming too.
+
+    This is an abstract model as it shall be subclassed.
+    """
 
     class State(models.IntegerChoices):
         DRAFT = 0x00, _("Draft")
@@ -87,26 +90,26 @@ class SendMail(Timestamped, ChildOwned):
         ERROR = 0x03, _("Error")
 
     account = models.ForeignKey(MailAccount, models.CASCADE, verbose_name=_("Account"))
-    template = models.ForeignKey("self", models.SET_NULL, null=True, blank=True, limit_choices_to={"is_template": True})
-    is_template = models.BooleanField(
-        _("Is template"), default=False, help_text=_("This mail is used as a template of other mails.")
-    )
     state = models.PositiveSmallIntegerField(_("State"), choices=State.choices, default=State.DRAFT)
 
-    contacts = models.ManyToManyField(Contact, verbose_name=_("Contacts"))
-    contact_lists = models.ManyToManyField(ContactList, verbose_name=_("Contact Lists"))
     context = models.JSONField(_("Context"), default=dict)
     subject = models.TextField(_("Subject"), default="", help_text=_("When provided, overrides template's content"))
     content = RichTextField(_("Message"), default="", help_text=_("When provided, overrides template's content."))
     attachments = models.ManyToManyField(File, related_name="+", verbose_name=_("Attach files"))
 
+    # From ChildOwned
     parent_attr = "account"
 
     class Meta:
+        abstract = True
         verbose_name = _("Mail")
         verbose_name_plural = _("Mails")
 
     # TODO: validate owner from template
+
+    def get_recipients(self) -> list[tuple[str, Context]]:
+        """Return the recipients of the mail."""
+        raise NotImplementedError("This method must be implemented by subclass.")
 
     def get_content(self):
         """Return raw content."""
@@ -119,3 +122,17 @@ class SendMail(Timestamped, ChildOwned):
     def get_context(self, **context) -> Context:
         """Return mail context."""
         return Context({**self.context, **context})
+
+
+class Mail(BaseMail):
+    recipients = models.CharField(
+        _("Recipients"),
+        max_length=512,
+        validators=[validate_email_list],
+        help_text=_("A list of recipients, separated by a comma."),
+    )
+    """ Recipients, as a list of email strings. """
+
+    class Meta:
+        verbose_name = _("Mail")
+        verbose_name_plural = _("Mails")

@@ -1,6 +1,8 @@
 default:
   INSTALLED_APPS:
     # ox
+    - ox.apps.mails
+    - ox.apps.content
     - ox.apps.files
     - ox.apps.tasks
     - ox.apps.auth
@@ -19,11 +21,6 @@ default:
     - django.contrib.sites
     - django.contrib.messages
     - django.contrib.staticfiles
-
-  PLUGINS_APPS:
-    - ox.apps.mails
-    - ox.apps.contacts
-    - ox.apps.locations
 
   MIDDLEWARE:
     - django.middleware.security.SecurityMiddleware

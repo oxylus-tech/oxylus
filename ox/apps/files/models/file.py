@@ -4,7 +4,7 @@ from uuid import uuid4
 
 from django.db import models
 from django.conf import settings
-from django.core.exceptions import ValidationError
+from django.core.exceptions import ValidationError, PermissionDenied
 from django.utils.translation import gettext_lazy as _
 
 from ox.utils.models import Described, Timestamped, ChildOwned, ChildOwnedQuerySet
@@ -137,6 +137,9 @@ class File(Described, Timestamped, ChildOwned):
 
         if query.exists():
             raise ValidationError({"name": "Another file exists for this path."})
+
+        if self.folder and self.folder.owner_id != self.owner_id:
+            raise PermissionDenied("File's owner must be the same as its folder.")
 
         if Folder.objects.filter(parent_id=self.folder_id, **kw):
             raise ValidationError({"name": "A folder exists for this path."})

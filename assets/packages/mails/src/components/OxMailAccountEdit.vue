@@ -65,6 +65,9 @@
     </ox-model-edit>
 </template>
 <script setup lang="ts">
+/**
+ * @component Editor for a mail account.
+ */
 import { computed, ref, watch, onMounted, useAttrs } from 'vue'
 import { t, query, rules} from "@oxylus/ox"
 import {OxModelEdit, OxField, OxComponent} from '@oxylus/ox/components'

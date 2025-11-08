@@ -1,11 +1,15 @@
 from __future__ import annotations
-from django.core.exceptions import ValidationError
+from django.core.exceptions import ValidationError, PermissionDenied
 from django.db import models
 from django.db.models import Max, Value, Q
 from django.db.models.functions import Concat, Substr
 from django.utils.translation import gettext_lazy as _
 
 from ox.utils.models.save_hook import SaveHook, SaveHookQuerySet
+from .owned import ChildOwned, ChildOwnedQuerySet
+
+
+__all__ = ("TreeNodeQuerySet", "TreeNode", "OwnedTreeNodeQuerySet", "OwnedTreeNode")
 
 
 class TreeNodeQuerySet(SaveHookQuerySet):
@@ -177,3 +181,28 @@ class TreeNode(SaveHook):
         :param inclusive: whether to include self.
         """
         return type(self).objects.ancestors(self, inclusive)
+
+
+class OwnedTreeNodeQuerySet(ChildOwnedQuerySet, TreeNodeQuerySet):
+    pass
+
+
+class OwnedTreeNode(ChildOwned, TreeNode):
+    """
+    This combines a :py:class:`TreeNode` with a :py:class:`~.owned.ChildOwned` one.
+
+    It ensures that the owner of the node is the same as its
+    parent.
+    """
+
+    objects = OwnedTreeNodeQuerySet.as_manager()
+    parent_attr = "parent"
+
+    def validate_node(self):
+        if self.parent and self.parent.owner_id != self.owner_id:
+            label = str(type(self)._meta.verbose_name)
+            raise PermissionDenied(f"{label}'s owner must be the same as its parent.")
+        super().validate_node()
+
+    class Meta:
+        abstract = True

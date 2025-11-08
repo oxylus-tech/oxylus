@@ -79,7 +79,11 @@ class BasePanel:
     """ """
 
     type: str = ""
-    """ Menu item type: "group", "subheader", "item". """
+    """
+    Menu item type: ``group``, ``subheader``, ``item``.
+
+    Use by frontend ``OxNavItem``.
+    """
     name: str = ""
     """ Item name or panel. """
     title: str = ""
@@ -151,14 +155,16 @@ class PanelsMixin:
     items: dict[str, BasePanel] = None
     """ Groups' nested items. """
 
-    def reset_items(self, items: ResetItems | None = None):
+    def reset_items(self, items: ResetItems | None = None) -> dict[str, BasePanel]:
         """Reset items.
 
         :param items: can be a list or a dict
+        :return self's items.
         """
-        if isinstance(items, (list, tuple)):
+        if items and not isinstance(items, dict):
             items = {item.name: item for item in items}
         self.items = items or {}
+        return self.items
 
     def append(self, item: BasePanel) -> BasePanel:
         """Add new item to group.
@@ -173,11 +179,7 @@ class PanelsMixin:
     def get_panels(self) -> Generator[Panel]:
         """Yield over all nested items using DFS order."""
         for item in self.items.values():
-            if isinstance(item, Panels):
-                for item_ in item.get_panels():
-                    yield item_
-            else:
-                yield item
+            yield from item.get_panels()
 
     def serialize_items(self) -> list[dict[str, Any]]:
         items = [item.serialize() for item in self.items.values()]
@@ -211,11 +213,18 @@ class Panels(PanelsMixin, BasePanel):
 
 
 class Registry(PanelsMixin):
-    """Register all applications' panels."""
+    """Register all applications' panels.
+
+    The following registry methods reset the cached property :py:meth:`nav_data`:
+    :py:meth:`append`, :py:meth:`__getitem__`, :py:meth:`__setitem__`. Those are
+    the public methods used to update the registry, whilst ``nav_data`` is used
+    to provide navigation data to the user and is cached for performance.
+    """
 
     def __init__(self, items: PanelsMixin.ResetItems | None = None):
         self.reset_items(items)
 
+    # Note: this exposes all application to users.
     @cached_property
     def nav_data(self) -> list[dict[str, Any]]:
         """Menu data as provided to frontend application."""
@@ -227,14 +236,15 @@ class Registry(PanelsMixin):
             delattr(self, "nav_data")
         return item
 
-    def __getitem__(self, key):
+    def __getitem__(self, key) -> BasePanel:
         # assume that whenever a child is accessed, this is for update.
         # we ensure cached `nav_data` is cleared.
+        #
         if "nav_data" in self.__dict__:
             delattr(self, "nav_data")
         return super().__getitem__(key)
 
-    def __setitem__(self, key, value):
+    def __setitem__(self, key, value: BasePanel):
         if "nav_data" in self.__dict__:
             delattr(self, "nav_data")
         return super().__setitem__(key, value)

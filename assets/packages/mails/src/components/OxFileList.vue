@@ -45,11 +45,11 @@
 </template>
 <script setup lang="ts">
 /**
- * Provide a list of mail attachments, wrapping around {@link OxFormList}.
+ * @component Provide a list of mail attachments.
  */
 import { computed, defineModel, onMounted, ref, watch } from 'vue'
 import {useModelList, query, t} from '@oxylus/ox'
-import {OxFormList, OxComponent} from '@oxylus/ox/components'
+import {OxComponent} from '@oxylus/ox/components'
 import {useFilesModels} from '@oxylus/files/composables'
 import {formatBytes} from '@oxylus/files/models'
 

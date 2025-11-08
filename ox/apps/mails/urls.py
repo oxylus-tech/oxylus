@@ -6,7 +6,7 @@ from . import panels, views
 
 router = DefaultRouter()
 router.register("account", views.MailAccountViewSet)
-router.register("sendmail", views.SendMailViewSet)
+router.register("mail", views.MailViewSet)
 
 api_urls = router.urls
 
@@ -14,7 +14,7 @@ urls = [
     path(
         "",
         UserAppView.as_view(
-            default_panel="sendmails",
+            default_panel="mails",
             panels=panels.panels,
         ),
         name="index",

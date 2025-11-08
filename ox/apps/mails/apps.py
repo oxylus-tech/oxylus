@@ -15,5 +15,5 @@ class AppConfig(apps.AppConfig):
     root_url = "ox/mails"
     npm_package = "@oxylus/mails"
 
-    class Meta:
-        dependencies = ("ox.auth", "ox.contacts", "ox.content")
+    # class Meta:
+    #    dependencies = ("ox.auth", "ox.content")

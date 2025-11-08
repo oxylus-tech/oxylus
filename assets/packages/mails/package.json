@@ -1,7 +1,7 @@
 {
   "name": "@oxylus/mails",
   "version": "0.0.1",
-  "private": true,
+  "private": false,
   "type": "module",
   "scripts": {
     "dev": "pnpm exec vite",
@@ -22,7 +22,6 @@
   "dependencies": {
     "@oxylus/ox": "workspace:*",
     "@oxylus/auth": "workspace:*",
-    "@oxylus/contacts": "workspace:*",
     "@oxylus/content": "workspace:*",
     "@oxylus/files": "workspace:*",
     "vuetify": "^3.8.3"

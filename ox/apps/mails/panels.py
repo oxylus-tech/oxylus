@@ -8,12 +8,12 @@ panels = Panels(
     _("Mails"),
     items=[
         Panel(
-            "sendmails",
-            _("Send"),
+            "mails",
+            _("Mails"),
             "mdi-email-arrow-right",
-            "ox-send-mail-panel",
+            "ox-mail-panel",
             url="ox_mails:index",
-            permissions="ox_mails.view_sendmail",
+            permissions="ox_mails.view_mail",
         ),
         Panels(
             "settings",

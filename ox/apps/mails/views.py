@@ -5,7 +5,7 @@ from caps.views import OwnedViewSet
 from . import models, serializers, tasks
 
 
-__all__ = ("MailAccountViewSet", "SendMailViewSet")
+__all__ = ("MailAccountViewSet", "BaseMailViewSet", "MailViewSet")
 
 
 class MailAccountViewSet(OwnedViewSet):
@@ -18,26 +18,49 @@ class MailAccountViewSet(OwnedViewSet):
     ]
 
 
-class SendMailViewSet(OwnedViewSet):
-    queryset = models.SendMail.objects.all().order_by("-updated")
-    serializer_class = serializers.SendMailSerializer
+class BaseMailViewSet(OwnedViewSet):
+    """
+    Base viewset to use for editing and sending emails.
 
-    perms_map = {
-        "send": ["ox_mails.change_sendmail"],
-    }
+    **You must specify permissions for the action ``send``!** For example:
+
+    .. code-block:: python
+
+        perms_map = {
+            # Adapt for your own model
+            "send": ["ox_mails.change_mail"],
+        }
+
+    """
 
     filterset_fields = {
         "owner__uuid": ["in", "exact"],
-        "template__uuid": ["in", "exact"],
         "account__uuid": ["in", "exact"],
-        "is_template": ["exact"],
     }
 
     @action(detail=True, methods=["POST", "PUT"])
     def send(self, request, uuid=None):
+        """
+        Trigger django task to send a mail and return an updated mail instance.
+
+        Task is :py:meth:`.send.send_mail`.
+        """
+        if not self.perms_map.get("send"):
+            raise ValueError("Permission for this action MUST be specified by `perms_map`. ")
+
         obj = self.get_object()
-        tasks.send_mail.enqueue(uuid=str(obj.uuid))
+        tasks.send_mail.enqueue(uuid=str(obj.uuid), model=self.model._meta.label_lower)
         obj.state = obj.State.SENDING
         obj.save()
         serializer = self.get_serializer(instance=obj)
         return Response(serializer.data)
+
+
+class MailViewSet(BaseMailViewSet):
+    """View set for the :py:class:`.models.Mail`."""
+
+    queryset = models.Mail.objects.all().order_by("-updated")
+    serializer_class = serializers.MailSerializer
+    perms_map = {
+        "send": ["ox_mails.change_mail"],
+    }

@@ -1,7 +1,7 @@
 from django.db import models
 
 from ox.core.models import Model
-from ox.utils.models.tree import TreeNode as _TreeNode
+from ox.utils.models.tree import TreeNode as _TreeNode, OwnedTreeNode as _OwnedTreeNode
 from ox.apps.content.models import TemplatePack
 
 
@@ -21,6 +21,10 @@ class Value(Model):
 
 
 class TreeNode(_TreeNode):
+    name = models.CharField(max_length=32, default="")
+
+
+class OwnedTreeNode(_OwnedTreeNode):
     name = models.CharField(max_length=32, default="")
 
 

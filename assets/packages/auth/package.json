@@ -1,7 +1,7 @@
 {
   "name": "@oxylus/auth",
   "version": "0.0.1",
-  "private": true,
+  "private": false,
   "type": "module",
   "scripts": {
     "dev": "pnpm exec vite",

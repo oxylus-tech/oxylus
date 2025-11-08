@@ -77,6 +77,7 @@ sphinx-autodoc-typehints = "*"
 DJANGO_SETTINGS_MODULE = "ox.settings.test"
 OX_ENV = "tests"
 python_files = ["tests.py", "test_*.py", "*_tests.py"]
+testpaths = ["tests"]
 
 
 [tool.black]

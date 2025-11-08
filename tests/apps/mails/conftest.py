@@ -1,8 +1,7 @@
 import pytest
 from django.conf import settings
 
-from ox.apps.contacts.models import Person
-from ox.apps.mails.models import MailAccount, SendMail
+from ox.apps.mails.models import MailAccount, Mail
 from ox.apps.files.models import File
 
 
@@ -19,26 +18,25 @@ def mail_account(agent):
 
 
 @pytest.fixture
-def contact_1(transactional_db):
-    return Person.objects.create(first_name="France", last_name="Degale", email="france@degale.be")
+def recipients_list():
+    return ["Thomas <thomas@foo.bar>", "Alice <alice@foo.bar>"]
 
 
 @pytest.fixture
-def contact_2(transactional_db):
-    return Person.objects.create(first_name="Philippe", last_name="Pinpon", email="philippe@pinpon.fr")
+def recipients(recipients_list):
+    return ", ".join(recipients_list)
 
 
 @pytest.fixture
-def send_mail(agent, mail_account, contact_1, contact_2):
-    obj = SendMail.objects.create(
+def mail(agent, mail_account, recipients):
+    return Mail.objects.create(
         owner=agent,
         account=mail_account,
-        subject="Welcome {{ contact.full_name }}!",
-        content="Welcome {{ contact.first_name }}! {{ foo }}?",
+        recipients=recipients,
+        subject="Welcome {{ recipient }}!",
+        content="Welcome {{ recipient }}! {{ foo }}?",
         context={"foo": "bar"},
     )
-    obj.contacts.set([contact_1, contact_2])
-    return obj
 
 
 @pytest.fixture
@@ -53,6 +51,6 @@ def files(agent, image_000, pdf_000):
 
 
 @pytest.fixture
-def with_attachments(send_mail, owner, files):
-    send_mail.attachments.set(files)
-    return send_mail
+def with_attachments(mail, owner, files):
+    mail.attachments.set(files)
+    return mail
