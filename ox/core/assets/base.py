@@ -106,6 +106,8 @@ class Assets(Owned):
     @cached_property
     def package_path(self) -> Path:
         """Get path to package directory"""
+        # TODO: if pnpm-workspace.yml => monorepo, else package itself
+
         # trim organisation scope from package name if present
         name = self.name.split("/", 1)[1] if "/" in self.name else self.name
         if str(self.path).endswith(name):

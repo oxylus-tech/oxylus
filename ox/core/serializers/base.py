@@ -16,6 +16,33 @@ class RelatedField(serializers.SlugRelatedField):
 
 
 class ModelSerializer(serializers.ModelSerializer):
+    """
+    This ModelSerializer provides ``id`` field defaulted to model's uuid
+    and save nested items.
+
+    Nested model serializers
+    ------------------
+
+    When you have relationship with other models, lets a foreignkey from B to A,
+    you can declare nested model serializers on A's serializers that allows
+    to save related elements. Update is also handled.
+
+    .. code-block::
+
+            class BSerializer(ModelSerializer):
+                # ...
+
+            class ASerializer(ModelSerializer):
+                b_items = BSerializer(source="b_set", many=True, required=False)
+
+                class Meta:
+                    # Declaring fields as nested allows them to be automatically
+                    # create/updated.
+                    nested = ("b_items",)
+                    # ...
+
+    """
+
     id = serializers.UUIDField(source="uuid", read_only=True)
 
     def __init__(self, *args, **kwargs):

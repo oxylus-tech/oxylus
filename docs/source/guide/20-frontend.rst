@@ -7,25 +7,22 @@ The basic project structure looks like this:
 
 .. code-block:: bash
 
-    my-app /
+    assets /
         package.json       # package information
         tsconfig.js
-        vite.conf.js       # vite project configuration
+        vite.config.js     # vite project configuration
         src /              # source
-            app.ts         # Vue application if it needs to be extened
             index.ts       # entry point: creates Vue application
-            sfc.ts         # entry point: single file components
+            sfc.ts         # optional entry point: single file components
             models.ts      # pinia-orm models definition
-            composables /  # vue composabls
+            composables.ts # vue composables
             components /   # vue components
         tests /            # tests
         node_modules /     # created when installing dependencies
 
 
-Note: the ``django-admin assets`` command can be used in order build the project.
 
-
-The goal of the client application is to provide an interface to the end-user. This throws multiple requirements:
+The goal of the client application is to provide an interface to the end-user. This raises multiple requirements:
 
 - user interface:
 
@@ -176,3 +173,8 @@ Actions
 -------
 
 Actions are buttons that can execute a specific behaviour. It checks user's permission in order to execute, and can display in two different ways: as select list item, or as a button.
+
+
+
+Monorepo setup
+--------------
