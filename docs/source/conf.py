@@ -30,7 +30,7 @@ extensions = [
     "sphinx.ext.autosummary",
     "sphinx_autodoc_typehints",
     "sphinx_rtd_theme",
-    "sphinx_js",
+    # "sphinx_js",
 ]
 
 templates_path = ["_templates"]

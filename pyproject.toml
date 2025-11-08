@@ -68,7 +68,7 @@ pytest-mock = "^3.14.1"
 
 [tool.poetry.group.docs.dependencies]
 Sphinx = "*"
-sphinx-js = "*"
+# sphinx-js = "*"
 sphinx-rtd-theme = "*"
 sphinx-autodoc-typehints = "*"
 
