@@ -71,7 +71,7 @@ export default class Editor<T extends Record<string, any>, P extends IEditorProp
     error(field: string): string|string[] {
         const data = this.state.isError && this.state.data?.[field]
         if(data)
-            return this.initial[field] != this.value[field] && data.join('\n') || ''
+            return this.state.data.__value?.[field] == this.value[field] && data.join('\n') || ''
         return ''
     }
 
@@ -127,8 +127,12 @@ export default class Editor<T extends Record<string, any>, P extends IEditorProp
             this.initial = cloneDeep(this.value)
             this.saved?.(this.value)
         }
-        else
+        else {
             this.state = state
+            // keep sent value here (will be reset on next try)
+            // this allows to handle error display correctly
+            this.state.data = { ...this.state.data, __value: value }
+        }
         return this.state
     }
 

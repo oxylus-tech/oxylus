@@ -77,7 +77,7 @@ export class BaseMail extends Owned {
  * Counterpart of `ox_mails.models.Mail`.
  */
 
-export class Mail extends Owned {
+export class Mail extends BaseMail {
     static entity = "mails"
     static meta = new models.Meta({
         app: "ox_mails",

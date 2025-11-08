@@ -29,7 +29,7 @@ class Command(BaseCommand):
     apps = None
 
     def add_arguments(self, parser):
-        parser.add_argument("apps", metavar="APP", action="append", help="Select those applications (by label)")
+        parser.add_argument("apps", metavar="APPS", nargs="*", help="Select those applications (by label)")
         parser.add_argument("-l", "--locale", action="append", help="Specify a locale")
         parser.add_argument(
             "-o", "--out", type=Path, help="Specify an output directory instead of default (ox/static/locales)."

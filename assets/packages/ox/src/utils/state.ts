@@ -29,9 +29,18 @@ StateColors[States.ERROR] = 'error'
  * This class handle state management with associated data.
  *
  * The different states and methods correspond to {@link States}.
+ *
  */
 export default class State {
+    /**
+     * The actual state as one of {@link States}.
+     */
     state: symbol
+    /**
+     * Data related to the state.
+     *
+     * Note: if you need to attach extra data to the current state and don't want it to be displayed, just prefix it with an underscore.
+     */
     data: IStateData
 
     constructor(state:symbol=States.NONE, data:IStateData=null) {
@@ -108,6 +117,9 @@ export default class State {
 
         let msg = ""
         for(var [field, val] of Object.entries(this.data)) {
+            if(field.startsWith('_'))
+                continue
+
             const errs: Array<any> = typeof this.data[field] == "string" ? [val] : val
             if(typeof field == 'string')
                 msg += errs.map(v => `- ${field}: ${v}\n`)

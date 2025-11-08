@@ -56,8 +56,11 @@ export function mapToObject(keys: Record<string, any> | Array<RecordKey>, map: M
 export function assignNonEmpty(target: Record<string, any>, source: Record<string, any>) : Record<string, any> {
     // FIXME: what about empty objects and arrays?
     for(const key of Object.keys(source))
-        if(source[key] && source[key] !== 0 && source[key] !== 0.0)
-            target[key] = source[key]
+        try {
+            if(source[key] && source[key] !== 0 && source[key] !== 0.0)
+                target[key] = source[key]
+        }
+        catch(e) { console.warn(e) }
     return target
 }
 

@@ -34,7 +34,7 @@ class MailAccountSerializer(OwnedSerializer):
 class BaseMailSerializer(OwnedSerializer):
     # TODO: filter owner for account and attachments
 
-    account = RelatedField(queryset=models.MailAccount.objects.all(), allow_null=True, required=False)
+    account = RelatedField(queryset=models.MailAccount.objects.all(), allow_null=True)
     # contacts = RelatedField(many=True, queryset=models.Contact.objects.all(), required=False)
     # contact_lists = RelatedField(many=True, queryset=models.ContactList.objects.all(), required=False)
     subject = StripCharField()
@@ -48,7 +48,11 @@ class BaseMailSerializer(OwnedSerializer):
 
 
 class MailSerializer(BaseMailSerializer):
-    recipients = serializers.ListField(child=serializers.CharField())
+    recipients = serializers.CharField()
 
-    class Meta(BaseMailSerializer):
+    class Meta(BaseMailSerializer.Meta):
         model = models.Mail
+
+    def validate_recipients(self, value):
+        models.validate_email_list(value)
+        return value

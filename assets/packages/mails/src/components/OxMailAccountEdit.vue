@@ -10,7 +10,7 @@
                     <template #text>
                         <ox-field :editor="editor" name="mail_header" type="custom">
                             <template #default="{props}">
-                                <ox-component src="../ox_content/OxRichEditor.js" v-bind="props"
+                                <ox-component src="../content/OxRichEditor.js" v-bind="props"
                                     height="150px"
                                      v-model="editor.value.mail_header"/>
                             </template>
@@ -18,7 +18,7 @@
 
                         <ox-field :editor="editor" name="mail_signature" type="custom">
                             <template #default="{props}">
-                                <ox-component src="../ox_content/OxRichEditor.js" v-bind="props"
+                                <ox-component src="../content/OxRichEditor.js" v-bind="props"
                                     height="150px"
                                      v-model="editor.value.mail_signature"/>
                             </template>
@@ -26,17 +26,17 @@
 
                         <ox-field :editor="editor" name="mail_subscription_footer" type="custom">
                             <template #default="{props}">
-                                <ox-component src="../ox_content/OxRichEditor.js" v-bind="props"
+                                <ox-component src="../content/OxRichEditor.js" v-bind="props"
                                     height="150px"
                                      v-model="editor.value.mail_subscription_footer"/>
                             </template>
                         </ox-field>
 
                         <!--
-                        <ox-component src="../ox_content/OxRichEditor.js"
+                        <ox-component src="../content/OxRichEditor.js"
                             v-model="editor.value.mail_signature"/>
 
-                        <ox-component src="../ox_content/OxRichEditor.js"
+                        <ox-component src="../content/OxRichEditor.js"
                             v-model="editor.value.mail_subscription_footer"/> -->
                     </template>
                 </v-expansion-panel>
