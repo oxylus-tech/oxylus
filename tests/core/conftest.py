@@ -4,7 +4,7 @@ from django.apps import apps
 from django.test import RequestFactory
 import pytest
 
-from ox.core.assets.base import Assets
+from ox.assets.base import Assets
 
 # TODO: use parent conftest req_factory
 request_factory = RequestFactory()

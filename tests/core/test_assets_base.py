@@ -2,7 +2,7 @@ from django.apps import apps
 from django.templatetags.static import static
 
 from ox.utils.tests import track_calls
-from ox.core.assets.base import Asset, order_assets, unique_dfs
+from ox.assets.base import Asset, order_assets, unique_dfs
 
 
 class TestAssets:

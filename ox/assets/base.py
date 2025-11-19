@@ -64,24 +64,22 @@ class Asset(Owned):
 
 class Assets(Owned):
     """
-    This class represent an assets package for a Django application.
+    This class represent a package for a Django application.
 
     It is responsible to:
 
         - provide a list of CSS, JS to include;
         - generate the import map (in ``ox/core/base.html``);
-        - provide list of directories used for statics;
+        - provide list of directories and dependencies to include in statics;
+        - provide list of exported files to include into the rendered templates;
 
-    It defines:
+    A package can be related to a Django application or not:
 
-        - the Django application's related package
-        - a source directory where to get npm packages;
-        - dependencies to collect;
-        - exported files to include into the rendered templates;
-
-    When it contributes to an AppConfig (see :py:class:`ox.utils.functional.Owned`, :py:meth:`contribute`), it
-    will use its parameters to get the actual package name (if not
-    already provided).
+        - related to a Django app: in this case it is expected that the
+          package resides in ``app_dir/assets`` (see :py:class:`ox.utils.functional.Owned`, and
+          :py:meth:`contribute`);
+        - not related to a Django app: in this case, a path to the package
+          is provided;
     """
 
     name: str = ""
@@ -96,22 +94,32 @@ class Assets(Owned):
     dependencies: list[Asset] | None = None
     """ Dependencies. """
 
-    def __init__(self, path, name="", includes=None, dependencies=None, base_dir=None):
-        self.path = path
+    def __init__(self, name="", path=None, includes=None, dependencies=None, base_dir=None):
         self.name = name
+        self.path = path
         self.includes = includes or []
         self.dependencies = dependencies or []
 
     @cached_property
     def package_path(self) -> Path:
-        """Get path to package directory"""
-        # TODO: if pnpm-workspace.yml => monorepo, else package itself
+        """Get the actual path to package directory.
 
-        # trim organisation scope from package name if present
-        name = self.name.split("/", 1)[1] if "/" in self.name else self.name
-        if str(self.path).endswith(name):
+        :raises RuntimeError: assets is related to an app and the assets directory \
+            does not exists or when not related to a path and no :py:attr:`path` \
+            is provided.
+        """
+        if self.path:
             return self.path
-        return self.path / name
+
+        if self._owner:
+            # First look in app's `assets` directory
+            path = Path(self._owner.path) / "assets" / "package.json"
+            if path and path.exists():
+                return path.parent
+
+            raise RuntimeError(f"Assets directory ({path}) does not exists for `{self._owner.name}`.")
+
+        raise RuntimeError("Assets is not linked to an application and no path is provided.")
 
     def contribute(self, owner):
         """TODO"""

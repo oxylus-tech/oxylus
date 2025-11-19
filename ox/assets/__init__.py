@@ -17,10 +17,28 @@ By technical convention, Oxylus only handles building Vue based Vite.js projects
 However it allows to run other frameworks.
 """
 
+from django.conf import settings
+
 from .base import Asset, Assets
 
 
-__all__ = (
-    "Asset",
-    "Assets",
+__all__ = ("Asset", "Assets", "ox_assets")
+
+
+ox_assets = Assets(
+    "@oxylus/ox",
+    settings.BASE_DIR / "assets" / "packages" / "ox",
+    includes=[
+        Asset("", "index.js", css="style.css"),
+        Asset("components", "components.js"),
+        Asset("vendor", "vendor.js"),
+    ],
+    dependencies=[
+        Asset("axios", "esm/axios.min.js"),
+        Asset("vue", "vue.esm-browser.prod.js", dev_js="vue.esm-browser.js"),
+        Asset("@mdi/font", css="css/materialdesignicons.min.css", dist=""),
+        # FIXME: required?
+        Asset("vuetify", css="vuetify.min.css"),
+    ],
 )
+""" Common assets for all applications, as it provides the ``@oxylus/ox`` package. """

@@ -15,6 +15,8 @@ class Owned:
     copy of self that can be referenced by owner class.
     """
 
+    _owner = None
+
     def contribute(self, owner):
         """Copy self, assign owner and return."""
         self = copy(self)

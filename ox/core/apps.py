@@ -13,11 +13,10 @@ from functools import cached_property
 from typing import Type
 
 from django import apps
-from django.conf import settings
 from django.utils.translation import gettext_lazy as _
 
 from ..utils.functional import Owned
-from .assets import Asset, Assets
+from ..assets import Asset, Assets, ox_assets
 
 
 __all__ = ("AppMeta", "AppConfig", "CoreAppConfig", "ox_assets")
@@ -66,25 +65,6 @@ class AppMeta(Owned):
         return md
 
 
-ox_assets = Assets(
-    settings.BASE_DIR / "assets" / "packages",
-    "@oxylus/ox",
-    includes=[
-        Asset("", "index.js", css="style.css"),
-        Asset("components", "components.js"),
-        Asset("vendor", "vendor.js"),
-    ],
-    dependencies=[
-        Asset("axios", "esm/axios.min.js"),
-        Asset("vue", "vue.esm-browser.prod.js", dev_js="vue.esm-browser.js"),
-        Asset("@mdi/font", css="css/materialdesignicons.min.css", dist=""),
-        # FIXME: required?
-        Asset("vuetify", css="vuetify.min.css"),
-    ],
-)
-""" Common assets for all applications, as it provides the ``@oxylus/ox`` package. """
-
-
 class AppConfig(apps.AppConfig):
     """
     Base AppConfig application to use for Oxylus applications.
@@ -103,7 +83,6 @@ class AppConfig(apps.AppConfig):
     # or package metadata."""
 
     assets: Assets = Assets(
-        ox_assets.path,
         includes=[
             Asset("", "index.js"),
         ],
@@ -114,7 +93,7 @@ class AppConfig(apps.AppConfig):
         - building and managing assets, through ``./manage.py assets``;
         - rendering scripts and stylesheets includes into templates
 
-    Note: there is no need to provide an extra :py:class:`~ox.core.assets.Asset`
+    Note: there is no need to provide an extra :py:class:`~ox.assets.Asset`
     specifying the application to be compiled, since it is what the Assets class does.
     """
     npm_package: str | None = None

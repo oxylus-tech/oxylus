@@ -2,7 +2,7 @@ from django.apps import apps
 from django.conf import settings
 import pytest
 
-from ox.core.assets.finders import AssetsFinder
+from ox.assets.finders import AssetsFinder
 
 
 @pytest.fixture

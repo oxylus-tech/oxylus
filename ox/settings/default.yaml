@@ -68,7 +68,7 @@ default:
   STATICFILES_FINDERS:
     - django.contrib.staticfiles.finders.FileSystemFinder
     - django.contrib.staticfiles.finders.AppDirectoriesFinder
-    - ox.core.assets.finders.AssetsFinder
+    - ox.assets.finders.AssetsFinder
 
   LOGGING:
     version: 1

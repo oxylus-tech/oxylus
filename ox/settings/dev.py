@@ -6,7 +6,7 @@ ALLOWED_HOSTS = ["127.0.0.1"]
 
 # ---- oxylus dev
 STATICFILES_FINDERS = [
-    "ox.core.assets.finders.AssetsFinder",
+    "ox.assets.finders.AssetsFinder",
 ] + STATICFILES_FINDERS
 
 # ---- django-fernet-encrypted-fields
