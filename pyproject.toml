@@ -49,6 +49,7 @@ django-versatileimagefield = "^3.1"
 python-magic = "^0.4.27"
 pymupdf = "^1.26.0"
 rich = "^14.1.0"
+oxylus-erp = {path = "../oxylus-erp"}
 
 
 [tool.poetry.group.prod.dependencies]

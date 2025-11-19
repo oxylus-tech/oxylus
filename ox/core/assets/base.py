@@ -2,7 +2,6 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from functools import cached_property
-from graphlib import TopologicalSorter
 import itertools
 import logging
 from typing import Generator, Iterable
@@ -15,7 +14,7 @@ from django.templatetags.static import static
 from ox.utils.functional import Owned
 
 
-__all__ = ("Asset", "Assets", "order_assets", "unique_dfs")
+__all__ = ("Asset", "Assets", "unique_dfs")
 
 
 logger = logging.getLogger()
@@ -195,20 +194,6 @@ class Assets(Owned):
             else:
                 prefix = self.name
             return prefix, static(f"{self.name}/{val}")
-
-
-def order_assets(assets_list: Iterable[Assets]) -> list[Assets]:
-    """:return: a list of assets topologically sorted by dependency."""
-    graph = TopologicalSorter()
-    todo = [*assets_list]
-    done = set()
-    for assets in assets_list:
-        deps = [dep for dep in assets.dependencies if isinstance(dep, Assets)]
-        graph.add(assets, *deps)
-
-        done.add(assets)
-        todo.extend(a for a in deps if a not in done)
-    return list(graph.static_order())
 
 
 def unique_dfs(assets_list: Iterable[Assets]) -> list[Assets]:

@@ -10,6 +10,7 @@ application installation by end-users.
 
 from __future__ import annotations
 from functools import cached_property
+from typing import Type
 
 from django import apps
 from django.conf import settings
@@ -129,6 +130,10 @@ class AppConfig(apps.AppConfig):
 
     For example Oxylus will nest template directories as ``ox/core/``
     instead of ``ox_core``. The same happens for urls.
+    """
+    dependencies: list[Type[apps.AppConfig]] | None = None
+    """
+    List of required dependencies for this application.
     """
 
     def __init__(self, *args, **kwargs):

@@ -2,7 +2,7 @@ from pathlib import Path
 
 from django.conf import settings
 
-from ox.core import conf
+from ox.utils import conf
 
 
 class Settings(conf.Settings):

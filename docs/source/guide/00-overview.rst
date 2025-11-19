@@ -49,6 +49,11 @@ Lets take a look at basic application structure:
         urls.py         # Define urls & api_urls here
         views.py        # AppView & viewsets
 
+        # Various data
+        data /
+            fixture*.{yaml,json} # Fixture to import on install
+            settings.yaml        # Settings added to project's one (dynaconf)
+
         # Frontend application
         assets /
             package.json        # NPM package configuration

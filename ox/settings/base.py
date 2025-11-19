@@ -21,13 +21,12 @@ ENV = os.environ.get("OX_ENV", "default")
 settings = Dynaconf(
     environments=True,
     # We provide defaults
-    settings_file=[
-        Path(__file__).resolve().parent / "default.yaml",
-    ],
+    settings_file=[Path(__file__).resolve().parent / "default.yaml", OX["SETTINGS_DIR"] / "plugins.yaml"],
     includes=[
         OX["SETTINGS_DIR"] / "*",
         OX["SETTINGS_DIR"] / ".*",
-        "/etc/oxylus/apps/*",
+        OX["SETTINGS_DIR"] / "tmp" / "*",
+        # "/etc/oxylus/apps/*",
         "/etc/oxylus/conf/*",
         "/etc/oxylus/conf/.*",
     ],
@@ -38,12 +37,14 @@ settings = Dynaconf(
     BASE_DIR=BASE_DIR,
     OX=OX,
 )
+
 globals().update(settings.as_dict())
 
 # ensure BASE_DIR is a path when provided by yaml settings
 BASE_DIR = Path(BASE_DIR)
 
 if plugins := getattr(settings, "PLUGINS_APPS", None):
+    plugins = [p for p in plugins.keys() if p not in INSTALLED_APPS]
     INSTALLED_APPS = plugins + INSTALLED_APPS
 
 # ---- Forced values

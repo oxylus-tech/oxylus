@@ -1,4 +1,3 @@
-from __future__ import annotations
 from pathlib import Path
 
 from rich import print as rprint
@@ -7,40 +6,13 @@ from django.core.management.base import BaseCommand
 
 
 class Command(BaseCommand):
-    """Oxylus management command.
+    """Oxylus management command."""
 
-    It adds following features:
-
-        - :py:meth:`log` and :py:attr:`verbosity` management;
-        - :py:attr:`dry_run``: run command in dry run mode;
-        - when using subparsers with default ``func`` will execute it.
-
-    """
-
-    dry_run: None | bool = None
-    """
-    Dry run mode activated.
-
-    If you want to use this functionality, set it to a boolean value.
-    """
+    dry_run: bool = False
     verbosity: int = 1
-    """ Verbosity level. """
-
-    #     subcommands: list[SubCommand] = []
-    #     """
-    #     List of sub-commands to add to the command handler.
-    #     """
 
     def add_arguments(self, parser):
-        if self.dry_run is not None:
-            parser.add_argument("--dry-run", action="store_true", help="Dry run.")
-
-    #        for subcommand in self.subcommands:
-    #            if not subcommand.name:
-    #                raise ValueError(f"{subcommand} has no name")
-    #
-    #            subparser = subparsers.add_parser(subcommand.name, help=subcommand.description)
-    #            subcommand.add_arguments(subparser)
+        parser.add_argument("--dry-run", action="store_true", help="Dry run.")
 
     def handle(self, func=None, **kwargs):
         """
@@ -52,8 +24,7 @@ class Command(BaseCommand):
             - ``func(**kwargs)``
         """
         self.set_options(**kwargs)
-        context = self.get_context(**kwargs)
-        return func and func(**context)
+        return func and func(**kwargs)
 
     def set_options(self, **options):
         """Set class instance values based on user's options."""
@@ -62,10 +33,6 @@ class Command(BaseCommand):
 
         if self.dry_run:
             self.log("[yellow]*** You have chosen to run this command in dry mode. ***[/yellow]")
-
-    def get_context(self, **kwargs):
-        """Provide extra context arguments to running command."""
-        return kwargs
 
     def log(self, msg, level=1):
         """Log provided message."""
@@ -96,26 +63,3 @@ class AppsCommand(Command):
             self.apps = [app for app in self.apps if app.label in apps]
         if root := options.get("root"):
             self.apps = [app for app in self.apps if app.path in root or any(p in root for p in app.path.parents)]
-
-    def get_context(self, **kwargs):
-        kwargs["apps"] = self.apps
-        return super().get_context(**kwargs)
-
-
-#
-# @dataclass
-# class SubCommand:
-#     """ This class provide interface for a sub-command. """
-#
-#     name = ""
-#     """ Command name (as used in cli) """
-#     description = ""
-#     """ Command description. """
-#
-#     def add_arguments(self, parser):
-#         """ Add command argument to provided parser. """
-#         raise NotImplementedError("This method must be implemented")
-#
-#     def handle(self, command: Command, **kwargs):
-#         raise NotImplementedError("This method must be implemented")
-#

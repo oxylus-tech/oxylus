@@ -1,3 +1,8 @@
+from functools import cached_property
+from pathlib import Path
+from typing import Any
+
+import yaml
 from django.conf import settings
 
 
@@ -60,3 +65,40 @@ class Settings:
             if overrides and name in overrides:
                 return overrides[name]
         return object.__getattribute__(self, name)
+
+
+class SettingsEditor:
+    """Helper class to work with dynaconf settings files."""
+
+    def __init__(self, name, dir=None):
+        self.name = name
+        self.dir = Path(dir or settings.OX["SETTINGS_DIR"])
+
+    @classmethod
+    def from_app(cls, app, *args, **kwargs):
+        """Return SettingsEditor for the provided file."""
+        name = f"{app.label}.yaml"
+        return cls(name, *args, **kwargs)
+
+    @cached_property
+    def path(self):
+        """ """
+        return self.dir / self.name
+
+    def _ensure(self):
+        """Ensure directory exists."""
+        self.dir.mkdir(parents=True, exist_ok=True)
+
+    def read(self) -> dict[str, Any] | None:
+        """Read data from settings."""
+        if not self.path.exists():
+            return None
+
+        with open(self.path, "r") as stream:
+            return yaml.load(stream, Loader=yaml.Loader)
+
+    def write(self, data):
+        """Write data to settings file."""
+        self._ensure()
+        with open(self.path, "w") as stream:
+            yaml.dump(data, stream)

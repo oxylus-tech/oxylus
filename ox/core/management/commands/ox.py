@@ -1,12 +1,14 @@
 from pathlib import Path
-import shutil
+import subprocess
 
-from django.apps import apps
+from django.apps import apps as d_apps, AppConfig
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.management import call_command
 import yaml
 
+from ox.utils.conf import SettingsEditor
+from ox.utils.functional import dependency_order
 from ox.utils.commands import Command
 
 
@@ -29,12 +31,19 @@ class Command(Command):
         subparser = subparsers.add_parser("setup", help="Setup or update project")
         subparser.set_defaults(func=self.project_setup)
         subparser.add_argument("-a", "--admin", action="store_true", help="Create super user")
+        subparser.add_argument("--no-update-secrets", action="store_true", help="Don't update secrets")
         subparser.add_argument("--default-admin", action="store_true", help="Create default super user (admin:admin).")
         subparser.add_argument(
             "--once",
             action="store_true",
             help="Run setup if it hasn't been set up yet (check against `.secrets.yaml` settings file).",
         )
+        subparser.add_argument("apps", metavar="APPS", nargs="*", type=self.get_app, help="Selected applications.")
+
+        # install
+        subparser = subparsers.add_parser("install", help="Install an Oxylus application by package name or path.")
+        subparser.set_defaults(func=self.install_app)
+        subparser.add_argument("packages", metavar="PACKAGE", nargs="+", help="Package name to install.")
 
         # update-secrets
         subparser = subparsers.add_parser("update-secrets", help="Update secrets settings (used for encryption).")
@@ -43,22 +52,15 @@ class Command(Command):
             "path", metavar="PATH", nargs="?", help="Secret settings file to read and update (YAML file)."
         )
 
-        # collect-settings
-        subparser = subparsers.add_parser(
-            "collect-settings",
-            help="Collect settings from declared applications. Settings are in `app_dir/data/settings.yaml`.",
-        )
-        subparser.set_defaults(func=self.collect_settings)
-        subparser.add_argument("-f", "--force", action="store_true", help="Force existing files overwrite.")
-
         # import-fixtures
         subparser = subparsers.add_parser(
             "import-fixtures",
             help="Collect fixtures from declared applications. Settings are in `app_dir/data/fixture*`.",
         )
         subparser.set_defaults(func=self.import_fixtures)
+        subparser.add_argument("apps", metavar="APPS", nargs="*", type=self.get_app, help="Selected applications.")
 
-    def project_setup(self, admin=False, default_admin=False, once=False, **kwargs):
+    def project_setup(self, apps=None, admin=False, default_admin=False, once=False, no_update_secrets=False, **kwargs):
         """Initialize the whole project."""
         self.log("[b]🌱️ Start Oxylus setup...[/b]")
 
@@ -68,10 +70,10 @@ class Command(Command):
                 return
 
         print("")
-        self.update_secrets()
+        not no_update_secrets and self.update_secrets()
 
         self.log("\n[b underline]🍂 Run database migrations[/b underline]")
-        call_command("migrate")
+        call_command("migrate", *(app.label for app in apps))
 
         if admin:
             self.log("\n[b underline]🐣 Create super user[/b underline]")
@@ -88,12 +90,87 @@ class Command(Command):
                 self.log(f"User {user.username} already exists. Skip")
 
         print("")
-        self.import_fixtures()
+        self.import_fixtures(apps=apps)
 
         self.log("\n[b underline]🦋 Collect statics[/b underline]")
         call_command("collectstatic", "--noinput")
 
         self.log("[b]🌳 Setup done![/b]")
+
+    def get_app(self, app: str) -> AppConfig:
+        """Return AppConfig for provided app names."""
+        return d_apps.get_app_config(app)
+
+    def install_app(self, packages=None, **_):
+        """Install an application. The python package must already be present in
+        python's packages.
+        """
+        self.log("[b underline]🐢 Install applications.[/b underline]")
+
+        apps, errors = self._get_install_apps(packages)
+        if errors:
+            self.log("The following applications couldn't not be loaded:\n" + "\n".join(errors))
+            return -1
+
+        self.log(f"{len(apps)} will be installed.")
+
+        # Update installed apps
+        settings_editor = SettingsEditor("plugins.yaml")
+
+        plugins = settings_editor.read() or {}
+        plugins_apps = plugins.setdefault("default", {}).setdefault("PLUGINS_APPS", {})
+
+        prev_plugins_apps = list(plugins_apps)
+
+        # first, get existing installed apps
+        installed = {app: plugins_apps[app.name] for app in d_apps.get_app_configs() if app.name in plugins_apps}
+        all_apps = {
+            **installed,
+            **{
+                app: {
+                    # App may have already been installed
+                    **plugins_apps.get(name, {}),
+                    "as_dependency": name not in packages
+                    or (name in plugins_apps and plugins_apps[name].get("as_dependency", False)),
+                }
+                for name, app in apps.items()
+            },
+        }
+
+        plugins["default"]["PLUGINS_APPS"] = {
+            app.name: all_apps[app] for app in reversed(dependency_order(all_apps.keys()))
+        }
+        self.log(f"Update {settings_editor.path} with: {', '.join(plugins['default']['PLUGINS_APPS'])}")
+
+        settings_editor.write(plugins)
+
+        try:
+            # Run in a new process
+            cmd = [settings.BASE_DIR / "manage.py", "ox", "setup", *(app.label for app in all_apps)]
+            subprocess.run(cmd, check=True)
+        except subprocess.CalledProcessError as err:
+            self.log(f"[b red]An error occured on setup:[/b red] {err}")
+            self.log("Restore previous settings")
+            plugins["default"]["PLUGINS_APPS"] = prev_plugins_apps
+            settings_editor.write(plugins)
+
+    def _get_install_apps(self, packages) -> tuple[list[AppConfig], list[str]]:
+        errors, apps = [], {}
+        for package in packages:
+            if d_apps.is_installed(package):
+                self.log(f"{package} already installed, skip it.")
+                continue
+
+            try:
+                app = AppConfig.create(package)
+                apps[package] = app
+
+                # also include dependencies
+                if deps := getattr(app, "dependencies", None):
+                    packages.extend(p for p in deps if p not in apps)
+            except Exception as err:
+                errors.append(f"`{package}`: {err}")
+        return apps, errors
 
     def update_secrets(self, path=None, **_):
         """Update ``.secrets.yaml` file and related keys.`"""
@@ -136,7 +213,7 @@ class Command(Command):
         data["SALT_KEY"] = get_random_secret_key()
         return data
 
-    def collect_settings(self, force=False, target=None, **_):
+    def collect_settings(self, apps, force=False, target=None, **_):
         """
         Collect settings from applications (as `app_dir/data/settings.yaml`) and
         copy them to settings directory (as `target_dir/app_label.yaml`).
@@ -149,24 +226,24 @@ class Command(Command):
 
         target.mkdir(parents=True, exist_ok=True)
 
-        self.log("[b underline]🐢 Collect settings from applications[/b underline]")
+        self.log("[b underline] Collect settings from applications[/b underline]")
         self.log(f"Target directory: {target}")
-        for app in apps.get_app_configs():
-            path = Path(app.path) / "data/settings.yaml"
-            target_path = target / f"{app.label}.yaml"
-            if path.exists():
-                self.log(f"Settings found for {app.label}")
-                if not force and target_path.exists():
-                    self.log(f"Target file already exists at {target_path}. Skip")
-                    continue
-                shutil.copy(str(path), str(target_path))
 
-    def import_fixtures(self, **_):
+        apps = apps or d_apps.get_app_configs()
+        for app in apps:
+            path = Path(app.path) / "data/settings.yaml"
+            if path.exists():
+                editor = SettingsEditor.from_app(app, target)
+                self.log(f"Settings found for {app.label}")
+                editor.copy_from(path, force)
+
+    def import_fixtures(self, apps, **_):
         """Import fixtures from apps."""
         self.log("[b underline]🐝 Import fixtures from applications[/b underline]")
 
         # we go in reverse order to ensure we have dependencies first if any
-        for app in reversed(apps.get_app_configs()):
+        apps = apps or reversed(d_apps.get_app_configs())
+        for app in apps:
             paths = list((Path(app.path) / "data").glob("fixture*"))
             if not paths:
                 continue

@@ -1,8 +1,10 @@
 from __future__ import annotations
 from copy import copy
+from graphlib import TopologicalSorter
+from typing import Any, Iterable
 
 
-__all__ = ("Owned",)
+__all__ = ("Owned", "dependency_order")
 
 
 class Owned:
@@ -18,3 +20,20 @@ class Owned:
         self = copy(self)
         self._owner = owner
         return self
+
+
+def dependency_order(items: Iterable[Any], attr: str = "dependencies") -> list[Any]:
+    """:return: a list of items topologically sorted by dependency."""
+    graph = TopologicalSorter()
+    todo = [*items]
+    done = set()
+    for item in todo:
+        if deps := getattr(item, attr, None):
+            deps = [dep for dep in deps]
+        else:
+            deps = []
+        graph.add(item, *deps)
+
+        done.add(item)
+        todo.extend(a for a in deps if a not in done)
+    return list(graph.static_order())
