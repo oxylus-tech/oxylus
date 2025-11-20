@@ -71,3 +71,10 @@ User documentation
 - Authentication:
 
     - the regular users should mostly never be marked as is_staff: this gives access to data that should not be available to everyone (see AdminBrowsableAPIRenderer)
+
+
+Future improvements
+===================
+
+- Locales: currently the ``base.html`` view tries to load application locale even if it does not exists. Optimize it in order to reduce 404 errors
+- Content RichEditor: provide a plugin for adding a context object.

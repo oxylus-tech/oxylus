@@ -5,50 +5,59 @@ from typing import Iterable
 from django.apps import apps, AppConfig
 
 
-__all__ = ("DiscoverModules",)
+__all__ = (
+    "get_or_create_app_config",
+    "order_apps_dependencies",
+    "DiscoverModules",
+)
 
 
-def order_dependencies_name(app_configs: None | Iterable[AppConfig] = None) -> Iterable[str]:
-    """Return an iterator over AppConfig names based on they declaration order
-    and dependency relationships.
+def get_or_create_app_config(module: str) -> AppConfig:
+    """Get AppConfig based on app module.
 
-    For more info, look at :py:func:`order_dependencies`.
+    It looks up in apps registry, if not found tries to import it (using ``AppConfig.create``).
+
+    :param module: app module path
+    :return: the AppConfig instance
+
+    :raises ImportError: module couldn't be imported;
+    :raises ImproperlyConfigured: app was not configured properly;
     """
+    try:
+        return apps.get_app_config(module)
+    except (KeyError, LookupError):
+        return AppConfig.create(module)
 
-    # Django apps registry returns an iterator from dependent to dependencies (assumption based on
-    # template and lookup overload system). In order to avoid mismatching with TopologicalSorter, we need to reverse.
-    app_configs = app_configs or reversed(apps.get_app_configs())
+
+def order_apps_dependencies(app_configs: None | Iterable[AppConfig | str] = None) -> list[AppConfig]:
+    """
+    Return applications ordered by dependencies (topological sort).
+
+    :param app_configs: an iterable of AppConfig to look dependencies for (defaults to apps registry)
+    :return: a list of ordered app configs by dependencies.
+    """
+    app_configs = list(app_configs or reversed(apps.get_app_configs()))
     graph = TopologicalSorter()
+
+    done = {}
     for app in app_configs:
-        if isinstance(app, AppConfig) and app.meta.dependencies:
-            graph.add(app.name, *app.meta.dependencies)
+        if isinstance(app, str):
+            if app in done:
+                continue
+            app = get_or_create_app_config(app)
+
+        if app.name in done:
+            continue
+
+        if deps := getattr(app, "dependencies", None):
+            app_configs.extend(deps)
+            graph.add(app.name, *deps)
         else:
             graph.add(app.name)
-    return graph.static_order()
 
+        done[app.name] = app
 
-def order_dependencies(
-    app_configs: None | Iterable[AppConfig] = None, no_exc: bool = False
-) -> Iterable[tuple[str, AppConfig]]:
-    """
-    Yield app's ``(name, AppConfig)`` ordered from dependency and dependent, preserving declaration order, using
-    :py:attr:`ox.core.apps.AppMeta.dependencies` when provided.
-
-    When ``app_configs`` is not provided, use Django's registry.
-
-    :param app_configs: iterable from dependency to dependent order AppConfig.
-    :param no_exc: if True, yield ``name, None`` instead of raising a LookupError.
-    :yield ``(name, app_config)`` for each app.
-    """
-    names = order_dependencies_name(app_configs)
-    for name in names:
-        try:
-            yield name, apps.get_app_config(name)
-        except LookupError:
-            if no_exc:
-                yield name, None
-            else:
-                raise
+    return [done[name] for name in graph.static_order()]
 
 
 class DiscoverModules:

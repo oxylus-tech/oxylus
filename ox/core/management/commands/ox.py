@@ -1,14 +1,16 @@
+from copy import deepcopy
 from pathlib import Path
 import subprocess
 
 from django.apps import apps as d_apps, AppConfig
 from django.conf import settings
 from django.contrib.auth.models import User
+from django.core.management.base import CommandError
 from django.core.management import call_command
 import yaml
 
 from ox.utils.conf import SettingsEditor
-from ox.utils.functional import dependency_order
+from ox.utils.apps import order_apps_dependencies
 from ox.utils.commands import Command
 
 
@@ -73,7 +75,13 @@ class Command(Command):
         not no_update_secrets and self.update_secrets()
 
         self.log("\n[b underline]🍂 Run database migrations[/b underline]")
-        call_command("migrate", *(app.label for app in apps))
+        for app in apps:
+            try:
+                call_command("migrate", app.label)
+            except CommandError as err:
+                if "does not have migrations" in str(err):
+                    continue
+                raise
 
         if admin:
             self.log("\n[b underline]🐣 Create super user[/b underline]")
@@ -92,6 +100,9 @@ class Command(Command):
         print("")
         self.import_fixtures(apps=apps)
 
+        self.log("\n[b underline]🌍 Collect assets translations[/b underline]")
+        call_command("vue-i18n")
+
         self.log("\n[b underline]🦋 Collect statics[/b underline]")
         call_command("collectstatic", "--noinput")
 
@@ -107,42 +118,29 @@ class Command(Command):
         """
         self.log("[b underline]🐢 Install applications.[/b underline]")
 
-        apps, errors = self._get_install_apps(packages)
-        if errors:
-            self.log("The following applications couldn't not be loaded:\n" + "\n".join(errors))
-            return -1
-
-        self.log(f"{len(apps)} will be installed.")
-
         # Update installed apps
         settings_editor = SettingsEditor("plugins.yaml")
 
-        plugins = settings_editor.read() or {}
-        plugins_apps = plugins.setdefault("default", {}).setdefault("PLUGINS_APPS", {})
-
-        prev_plugins_apps = list(plugins_apps)
+        original_settings = settings_editor.read() or {}
+        new_settings = deepcopy(original_settings)
+        plugins = new_settings.setdefault("default", {}).setdefault("PLUGINS_APPS", {})
 
         # first, get existing installed apps
-        installed = {app: plugins_apps[app.name] for app in d_apps.get_app_configs() if app.name in plugins_apps}
-        all_apps = {
-            **installed,
-            **{
-                app: {
-                    # App may have already been installed
-                    **plugins_apps.get(name, {}),
-                    "as_dependency": name not in packages
-                    or (name in plugins_apps and plugins_apps[name].get("as_dependency", False)),
-                }
-                for name, app in apps.items()
-            },
-        }
+        installed = {app: plugins[app.name] for app in d_apps.get_app_configs() if app.name in plugins}
 
-        plugins["default"]["PLUGINS_APPS"] = {
-            app.name: all_apps[app] for app in reversed(dependency_order(all_apps.keys()))
-        }
-        self.log(f"Update {settings_editor.path} with: {', '.join(plugins['default']['PLUGINS_APPS'])}")
+        all_apps = [app for app in installed.keys()] + list(packages)
+        all_apps = list(reversed(order_apps_dependencies(all_apps)))
 
-        settings_editor.write(plugins)
+        new_plugins = {
+            app.name: self._get_plugin(packages, plugins, app)
+            for app in all_apps
+            if app.name not in settings.INSTALLED_APPS or app.name in plugins
+        }
+        plugins.clear()
+        plugins.update(new_plugins)
+        self.log(f"Update {settings_editor.path} with: {', '.join(plugins)}")
+
+        settings_editor.write(new_settings)
 
         try:
             # Run in a new process
@@ -151,26 +149,11 @@ class Command(Command):
         except subprocess.CalledProcessError as err:
             self.log(f"[b red]An error occured on setup:[/b red] {err}")
             self.log("Restore previous settings")
-            plugins["default"]["PLUGINS_APPS"] = prev_plugins_apps
-            settings_editor.write(plugins)
+            settings_editor.write(original_settings)
 
-    def _get_install_apps(self, packages) -> tuple[list[AppConfig], list[str]]:
-        errors, apps = [], {}
-        for package in packages:
-            if d_apps.is_installed(package):
-                self.log(f"{package} already installed, skip it.")
-                continue
-
-            try:
-                app = AppConfig.create(package)
-                apps[package] = app
-
-                # also include dependencies
-                if deps := getattr(app, "dependencies", None):
-                    packages.extend(p for p in deps if p not in apps)
-            except Exception as err:
-                errors.append(f"`{package}`: {err}")
-        return apps, errors
+    def _get_plugin(self, packages, plugins, app) -> list[AppConfig]:
+        plugin = plugins.get(app.name, {})
+        return {**plugin, "as_dependency": app.name not in packages or plugin.get("as_dependency", False)}
 
     def update_secrets(self, path=None, **_):
         """Update ``.secrets.yaml` file and related keys.`"""

@@ -112,6 +112,7 @@ export default class Query<MT extends ModelType> {
         else
             opts.dataKey = null
 
+        // TODO: multiple request for the different ids
         if(ids && lookup !== undefined) {
             if(id)
                 throw Error("Both `ids` and `id` are provided while only one of those arguments is accepted.")
