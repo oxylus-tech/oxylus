@@ -169,50 +169,6 @@ targeting another model instance.
             fields = ["author", "title", "summary", "published"]
 
 
-models.ts
-.........
-
-# TODO: move to frontend app
-
-This is where pinia-orm models are declared. Please refer to `Pinia ORM's documentation <https://pinia-orm.codedredd.de/>`_ for more info.
-
-In ``assets/src/models.ts``
-
-
-.. code-block:: typescript
-
-    import { models } from '@oxylus/ox'
-
-
-    export class Author extends models.Model {
-        static entity = "authors"
-        // ...
-    }
-
-    export class Book extends models.Model {
-        static entity = "books"
-
-        // The junction between Django and Vue/Pinia-ORM
-        static meta = new models.Meta({
-            app: "my_app",      // Django app name
-            model: "book",      // Django model name (as in label)
-            url: "my_app/book/",// API entry point to model's viewset
-            title: "title"      // Specify a field or func to use as verbose_name
-        })
-
-        static fields() {
-            id: this.attr(null),       // will be object's uuid
-            author: this.string(""),   // uuid to related author
-            title: this.string(""),
-            summary: this.string(""),
-            published: this.string(""),
-
-            $author: this.belongsTo(Author, 'authors') // Related author's object
-        }
-    }
-
-
-
 Views
 -----
 
@@ -431,5 +387,30 @@ Also remember:
 
 - internationalize everything you can (aka what is rendered to users);
 - use provided classes as they ensure better security (eg. avoid db primary keys exposure);
+
+
+Install the app
+---------------
+
+Lets install the app. Grosso modo, the server is ran from the oxylus application. The packages need to be installed inside its environment. Then setup the application as regular Django app (migrations/collectstatic/etc) needs to be run.
+
+The first step might differ depending whether you on development instance or on a production one:
+
+- *Development*: what you want is to be able to run the server and have change taken in account in the running instance. In such case, just create a symbolic link to the application module inside the instance's virtual environment.
+- *Production*: what you want is to install a package from pip inside the
+
+Once it is done, just run the following command:
+
+.. code-block:: bash
+
+    # replace `module.appN` with the module path to the app
+    ./manage.py ox install module.app1 module.app2 # ...
+
+This commands ensure to:
+
+- setup settings, enabling the app in the ``conf/plugins.yaml`` file.
+- run migration, collect assets and statics, install application fixtures.
+- revert in case of error.
+
 
 Well done! What's next? Let go dive to the frontend application development.

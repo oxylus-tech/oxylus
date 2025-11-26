@@ -52,7 +52,6 @@ Lets take a look at basic application structure:
         # Various data
         data /
             fixture*.{yaml,json} # Fixture to import on install
-            settings.yaml        # Settings added to project's one (dynaconf)
 
         # Frontend application
         assets /

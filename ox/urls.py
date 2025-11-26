@@ -27,13 +27,7 @@ from ox.core.views import core, accounts
 from ox.utils.apps import DiscoverModules
 
 
-AppUrls = namedtuple(
-    "AppUrls",
-    [
-        "urls",
-        "api",
-    ],
-)
+AppUrls = namedtuple("AppUrls", ["urls", "api"])
 
 
 class Router:

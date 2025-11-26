@@ -21,7 +21,7 @@ class Settings:
 
     .. code-block:: python
 
-        from ox.core import conf
+        from ox.utils import conf
 
         __all__ = ("MyAppSettings", "app_settings")
 

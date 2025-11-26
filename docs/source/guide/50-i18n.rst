@@ -8,6 +8,7 @@ On the backend, the :py:class:`ox.core.middleware.I18nMiddleware` class will set
 
 Client-side
 -----------
+
 Message are provided under project's root ``public/locales/[locale].json`` files. This allows Vite to copy them at building into django's application ``static`` directory where lies all generated statics.
 
 Lazy loading is done through the ``ox.useI18n`` composable. It internally call ``vue-i18n``'s homonymous function, and dynamically load the files based on configured locale (using fallback locale if the user selected one has failed). When locale change, the corresponding file will be loaded.

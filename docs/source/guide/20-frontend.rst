@@ -27,16 +27,105 @@ The goal of the client application is to provide an interface to the end-user. T
 - user interface:
 
     - this is handled by Vue and Vuetify;
-    - integrated into Oxylus framework: this is the ``ox`` libraries;
+    - integrated into Oxylus framework: this is the ``@oxylus/ox`` libraries;
 
 - manipulate objects from the backend:
 
-    - modelize and handle data: using ``pinia-orm`` models
+    - modelize and handle data: using ``pinia-orm`` based models
     - synchronization with the server through API: (``@pinia-orm/axios`` in conjunction with ``rest_framework`` on the backend)
 
 - quality: tests integration
 
 The goal of the Oxylus layer is to make this integration happens, by providing for the assets a set of components and composables.
+
+
+Setup
+-----
+
+Dependencies
+............
+
+You'll need at least the ``@oxylus/ox`` npm package that provides all core elements to make it run. Some other: ``@oxylus/mails``, ``@oxylus/tasks``, etc.
+
+Ensure to configure your ``package.json``, ``tsconfig.json`` and ``typedoc.json``.
+
+Regarding, we already provide a  ``vite.config.js`` as template:
+
+.. code-block:: javascript
+
+    import baseConfig from '../ox/src/vite.config.base'
+
+    export default baseConfig
+
+
+For more customizations, use vite's ``mergeConfig`` method:
+
+.. code-block:: javascript
+
+    import { defineConfig, mergeConfig } from 'vite'
+    import baseConfig from '../ox/src/vite.config.base'
+
+
+    export default mergeConfig(
+        baseConfig,
+        defineConfig({
+            build: {
+                rollupOptions: {
+                    input: {
+                        // example: add an entry point for SFC.
+                        sfc: 'src/sfc.ts'
+                    }
+                }
+            },
+        })
+    )
+
+
+Models
+------
+
+Models are stored in ``models.ts``. We use a custom version on pinia-orm's models.
+
+Please refer to `Pinia ORM's documentation <https://pinia-orm.codedredd.de/>`_ for more info.
+
+
+In ``assets/src/models.ts``:
+
+.. code-block:: typescript
+
+    import { models } from '@oxylus/ox'
+
+
+    export class Author extends models.Model {
+        static entity = "authors"
+        // ...
+    }
+
+    export class Book extends models.Model {
+        static entity = "books"
+
+        // The junction between Django and Vue/Pinia-ORM
+        static meta = new models.Meta({
+            app: "my_app",      // Django app name
+            model: "book",      // Django model name (as in label)
+            url: "my_app/book/",// API entry point to model's viewset
+            title: "title"      // Specify a field or func to use as verbose_name
+        })
+
+        static fields() {
+            id: this.attr(null),       // will be object's uuid
+            author: this.string(""),   // uuid to related author
+            title: this.string(""),
+            summary: this.string(""),
+            published: this.string(""),
+
+            $author: this.belongsTo(Author, 'authors') // Related author's object
+        }
+    }
+
+
+Providing ``meta`` attributes allows the different utility classes to make the junction with Django, such as get API entry points.
+
 
 
 Application Layout
@@ -165,16 +254,12 @@ list filters. Note: filters are available for all list views, while the list its
 Panels can have a provided state which will be rendered when required (such as processing API request, or error display).
 
 
-Models
-------
-
-
 Actions
 -------
 
 Actions are buttons that can execute a specific behaviour. It checks user's permission in order to execute, and can display in two different ways: as select list item, or as a button.
 
-
+[TODO] Where to put actions & extensibility
 
 Monorepo setup
 --------------
