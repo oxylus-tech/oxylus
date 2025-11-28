@@ -14,7 +14,7 @@ from ox.apps.content.models import RichTextField
 from ox.apps.files.models import File
 
 
-__all__ = ("MailAccount", "Mail", "validate_email_list")
+__all__ = ("MailAccount", "BaseMail", "Mail", "validate_email_list")
 
 
 def validate_email_list(value):
@@ -125,6 +125,8 @@ class BaseMail(Timestamped, ChildOwned):
 
 
 class Mail(BaseMail):
+    """A simple mail sending to a list of recipients as string."""
+
     recipients = models.CharField(
         _("Recipients"),
         max_length=512,

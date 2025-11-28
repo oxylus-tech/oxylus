@@ -87,7 +87,7 @@ class Assets(Owned):
     path: Path | None = None
     """ Path of the package (or workspace's packages dir).
 
-    The actual package path is retrieved using :py:prop:`package_path`.
+    The actual package path is retrieved using :py:attr:`package_path`.
     """
     includes: list[Asset] | None = None
     """ Exported assets. """

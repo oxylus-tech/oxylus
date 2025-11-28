@@ -1,6 +1,8 @@
-# Troubleshooting
+Troubleshooting
+===============
 
-## Panel not displayed
+Panel not displayed
+-------------------
 
 There might be different issues. Checklist:
 

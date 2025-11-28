@@ -6,6 +6,9 @@ from django.db import models
 from django.utils.translation import gettext_lazy as _
 
 
+__all__ = ("ClassField", "ClassPath")
+
+
 class ClassPath:
     """
     This object represent a class stored in the database.

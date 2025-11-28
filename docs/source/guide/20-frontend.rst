@@ -1,6 +1,12 @@
 Client Application
 ==================
 
+The client application is per Django app. This is in order to reduce load time and memory usage. It means that:
+
+- You can't access from application A to B on UI point of view;
+- You still can dynamically load what you need or bundle the other applications' components;
+- What is loaded is only your bundled application's views and components;
+
 Oxylus uses the following frameworks: Vue (composition API), Vuetify, Pinia, Pinia-ORM. A client application is a javascript/typescript Vite project.
 
 The basic project structure looks like this:
@@ -36,7 +42,9 @@ The goal of the client application is to provide an interface to the end-user. T
 
 - quality: tests integration
 
-The goal of the Oxylus layer is to make this integration happens, by providing for the assets a set of components and composables.
+The Oxylus layer makes this integration, and provides for the assets a set of components and composables.
+
+
 
 
 Setup
@@ -131,26 +139,27 @@ Providing ``meta`` attributes allows the different utility classes to make the j
 Application Layout
 ------------------
 
-The client application provide the following layout using ``OxApp`` component. The screenshot is of a model panel (``OxUserPanel``).
+The client application provide the following layout using ``OxApp`` component. The screenshot is of a model panel (``OxOrganisationTypePanel``, the view is ``list.table``).
 
-.. image:: ../static/layout-1.png
+.. image:: ../static/layout-000.png
 
 
-- **A**: top bar, providing quick access and navigation
-- **B**: all panels displaying only the current one. A panel can provide multiple views [6]
-- **C**: applications menu (which can be hidden by button [1]
-- **1**: button to show/hide applications menu
-- **2**: current panel's title and icon
-- **3**: current panel's actions
-- **4**: current panel's views navigation buttons
-- **5**: user menu
-- **6**: current panel's content or view
+- **A**: top bar, providing quick access and navigation;
+- **B**: applications menu (which can be hidden by button [1]);
+- **C**: all panels displaying only the current one. A panel can provide multiple views [7];
+- **1**: button to show/hide applications menu;
+- **2**: panel or view's title and icon;
+- **3**: view's actions;
+- **4**: panel's views navigation buttons;
+- **5**: applications navigation (reflect the structure provided by ``panels.py``);
+- **6**: user menu;
+- **7**: panel's content or views;
 
 
 Panels
 ......
 
-The client interface is composed of multiple panels which represent a specific use case. Panels are provided by applications and can be sub-divised into multiple views. The base component for panels is ``OxPanel``, which is extendable by its slots.
+The client interface is composed of multiple panels, one per use-case or model. Panels are provided by applications and can be sub-divised into multiple views. The base component for panels is ``OxPanel``, which is extendable by its slots.
 As an example, a common case is to provide CRUD for models, which is what does ``OxModelPanel``: it provides views for listing (with search and filtering facilities), edition and creation.
 
 Panels and nested views are named, and accessible through their path. A panel has a default view falling back to ``list.tables`` when none is provided (it can be configured through component's attribute ``view``).
@@ -236,13 +245,20 @@ Views are put in a different slot each named as ``views.[name]``. The ``[name]``
 Path & Navigation
 .................
 
-The panel navigation is handled using ``path`` and ``href`` options.
+The ``OxApp`` provide the ``panels`` object (``Panels`` controller), which is used to reset and assign a current value to panels among other things. You can use the method ``show()`` to change current panel.
 
-- **path**: path targets the actual panel (and optional view), following the convention ``[panel](.[view])?``. This way, ``user-panel`` will targets default view of the user model panel, while ``user-panel.edit`` will target the edit view.
+.. code-block:: typescript
 
-  The ``OxApp`` provide the ``panel`` object, which is used to reset and assign a current value to panels among other things. The method ``reset(path, value?, options?)`` will reset panel to the provided argument. ``path`` can be relative in order to target views of the current panel. Calling ``reset('.list.table')`` will show the ``list.table`` view of the current panel (note: list views names starts with the ``list.`` prefix). Calling ``reset('group-panel.list.table)`` targets the view ``list.table`` of the ``group-panel`` panel.
+    panels = inject("panels") // get provided panels from component
 
-- **href**: it provides page url to access to the panel. It is used in order to be able to load panels and views on other pages. When ``reset`` is called with this option, it will check whether the page needs to be reloaded. If so, it will do this, providing ``panel`` GET parameter targetting the actual panel and view.
+    // view and value are optional
+    panels.show({panel: "my_panel", view: "list.detail", value: "object-uuid"})
+
+    // you should provide href when targetting a panel that is on another page
+    panels.show({panel: "my_panel", href: "path_to_app"})
+
+
+View names are usually composed of two parts joined by a dot: view type (``list``, ``detail``) and the actual name. Such as you'll have ``detail.edit``, ``list.table``, ``list.kanban``, etc.
 
 
 Interface integration
