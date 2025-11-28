@@ -1,6 +1,18 @@
 Overview
 ========
 
+What Oxylus is
+--------------
+
+Oxylus is a platform hosting Django applications using modern web interface. It provides different base applications that
+are reusables in most use-cases, such as background tasks execution, users management, file upload.
+
+Despite its learning curve, its provides many features that allows to ease new application implementation into an ecosystem
+without having to worry about different things. It provide coherent interface among applications.
+
+In short: what you only have to worry is your application scope.
+
+
 Applications
 ------------
 
@@ -13,8 +25,8 @@ Before digging in technical aspects, lets see what is required to create an appl
 
     - ``apps.py``:
 
-        - Inherit the ``AppConfig`` from :py:class:`~ox.core.apps.AppConfig`.
-        - Provide more info (:py:class:`~ox.core.apps.AppConfig` and  :py:class:`~ox.core.apps.AppMeta`)
+        - Inherit the ``AppConfig`` from Oxylus' :py:class:`~ox.core.apps.AppConfig`.
+        - Provide more info (:py:class:`~ox.core.apps.AppConfig` and  :py:class:`~ox.assets.base.Assets`)
         - If specific :doc:`assets <assets>` are required append them. There is no need to declare an ``Asset`` for the project being built, and default :py:attr:`~ox.core.apps.AppConfig.assets` already provides what you would use.
 
 - a frontend application: a Vite/Vue project the source of the package is usually put in Django app's ``assets`` sub-directory;
@@ -32,6 +44,15 @@ Before digging in technical aspects, lets see what is required to create an appl
     - *On the frontend*: create a ``ModelPanel`` for each model;
 
 - Urls: urls are automatically discovered by Oxylus at initialization (app's ``urls`` module).
+
+Ah! Also, we're using Poetry to setup and run Oxylus projects.
+
+.. important:: *Be prepared to dig into multiple technologies, fullstack wide!*
+
+    In the following guide we assume you already know a minimum about Django and Vue technologies. Basic knowledge of
+    Pinia/Pinia-ORM is strongly advised, as well as Vuetify components.
+
+    I know this might seems to be a lot, but indeed this is what is required to have a powerful dynamic web application.
 
 
 What does it means?
@@ -75,72 +96,5 @@ As you can see its a regular Django app + few extra files (``panels.py``, ``urls
 
 We'll go through it step by step in the next sections.
 
-#. :doc:`Create the Django application <./10-backend.py>`
-#. :doc:`Create the frontend <./20-frontend.py>`
-
-
-Oxylus Organisation
--------------------
-
-Directories & files structure
-.............................
-
-The Oxylus project follows the following convention:
-
-- ``ox``: contains the whole python project
-
-    - ``core``: base django application, providing both basic models, interface and core tools.
-    - ``apps``: directory containing other applications, such as authentication one.
-    - ``settings``: project settings
-    - ``utils``: utilities
-    - ``static``: statics directories.
-
-- ``assets/``: client side projects, whose directory name corresponds to the related Django ``AppConfig.label``. They are expected to be ViteJS project.
-- ``docs/``
-
-Frontend code can also be nested under application's directory (as ``assets``).
-
-
-Backend
-.......
-
-Oxylus applications inherits from different classes and templates provided by ``ox.core``.
-
-- ``ox.core.apps``: handle assets management, application dependencies among other things.
-- ``ox.core.views``, ``ox.core.serializers``, ...:
-
-    - common classes and mixins (app views, viewsets, etc.);
-    - basic use cases such user authentication, errors handling;
-
-- ``ox.core.management``: tools used to manage and develop Oxylus applications, such as assets management.
-
-- ``ox/core/app.html``: base page template;
-- ``ox/core/components/``: contains multiple base template for components. This allows to extend dynamic Vue ones using Django templates.
-
-The templates are used for two main purposes, render web pages and allows further application to extends the user interface using templates' blocks (Django) and components slots (Vue).
-
-
-Client application
-..................
-
-Client applications use the following libraries among others: ``Vue``, ``pinia``, ``pinia-orm``, ``vuetify``. And of course the main Oxylus javascript library ``@oxylus/ox``.
-The concept is that an application provide panels in which there are views. Application data are articulated around ORM models, fetched through Django Rest Framework API. Composables and components are used for the UX part.
-
-The name of the models should reflect what exists in the backend.
-
-Application interface is structured as there is:
-
-- top bar:
-
-    - application title
-
-- panels navigation: navigation over the panels of all providing applications;
-- panels window:
-
-    - ``OxPanel``: a panel is an interface specific to a use case;
-    - ``OxModelPanel`` panels: provide basic CRUD interface with item actions, different list views, customizable ``add`` and ``edit`` view;
-
-- components:
-
-    - ``OxModelEdit``: provide model edition interface and utilities.
-    - ``OxListKanban``, ``OxListTable``, ...: list views
+#. :doc:`Create the Django application <./10-backend>`
+#. :doc:`Create the frontend <./20-frontend>`

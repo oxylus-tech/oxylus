@@ -9,7 +9,7 @@ The client application is per Django app. This is in order to reduce load time a
 
 Oxylus uses the following frameworks: Vue (composition API), Vuetify, Pinia, Pinia-ORM. A client application is a javascript/typescript Vite project.
 
-The basic project structure looks like this:
+The basic project structure looks like this (from the app folder):
 
 .. code-block:: bash
 
@@ -24,8 +24,8 @@ The basic project structure looks like this:
             composables.ts # vue composables
             components /   # vue components
         tests /            # tests
+        dist /             # bundles builts by vite
         node_modules /     # created when installing dependencies
-
 
 
 The goal of the client application is to provide an interface to the end-user. This raises multiple requirements:
@@ -44,14 +44,19 @@ The goal of the client application is to provide an interface to the end-user. T
 
 The Oxylus layer makes this integration, and provides for the assets a set of components and composables.
 
+.. note::
 
+    Default configuration ensures that built files are put in ``dist`` directory.
 
+    The Oxylus' static files finder looks up in this directory for the application's bundled files.
+    Regarding dependencies declared by AppConfig's :py:attr:`~ox.core.apps.AppConfig.assets`, it looks up in the
+    ``node_module`` folder.
 
 Setup
 -----
 
-Dependencies
-............
+Configuration
+.............
 
 You'll need at least the ``@oxylus/ox`` npm package that provides all core elements to make it run. Some other: ``@oxylus/mails``, ``@oxylus/tasks``, etc.
 
@@ -81,12 +86,44 @@ For more customizations, use vite's ``mergeConfig`` method:
                 rollupOptions: {
                     input: {
                         // example: add an entry point for SFC.
+                        // see How-to's section for more info about SFC
                         sfc: 'src/sfc.ts'
                     }
                 }
             },
         })
     )
+
+
+Entry point & App
+.................
+
+Default configuration uses ``src/index.ts`` as entry point of the application -- aka:
+this is the module being loaded for initializing the application.
+
+.. code-block:: typescript
+
+        import {init, createPinia} from '@oxylus/ox'
+        import {App as OxApp} from '@oxylus/ox/components'
+        import * as components from './components'
+
+        // Vue Application
+        const App = {
+            extends: OxApp,
+            components,
+        }
+
+        // Initialize pinia
+        const pinia = createPinia()
+        init({App, plugins: [pinia] })
+
+Few explanations about what's going on here:
+
+- ``OxApp``: this is the default Vue application configuration;
+- ``init``: initialize Vue, Vuetify and mount the app to default entrypoint.
+  It also runs various setups as for translations.
+- ``createPinia``: initialize Pinia-ORM with Oxylus specific customizations (such
+  as include authentication models used for permissions, etc.)
 
 
 Models
@@ -103,11 +140,6 @@ In ``assets/src/models.ts``:
 
     import { models } from '@oxylus/ox'
 
-
-    export class Author extends models.Model {
-        static entity = "authors"
-        // ...
-    }
 
     export class Book extends models.Model {
         static entity = "books"
@@ -131,13 +163,42 @@ In ``assets/src/models.ts``:
         }
     }
 
+    export class Author extends models.Model {
+        static entity = "authors"
+        static meta = new models.Meta({
+            app: "my_app",
+            model: "book",
+            url: "my_app/book/",
+            title: (obj) => `${obj.first_name} ${obj.last_name}`
+        })
+        // ...
+    }
+
 
 Providing ``meta`` attributes allows the different utility classes to make the junction with Django, such as get API entry points.
 
+You also need to add composable to allow usage of the models' repositories. In ``composables.ts``:
 
+
+.. code-block:: typescript
+
+    import {useModels, t} from '@oxylus/ox'
+    import * as models from './models'
+
+    /** Use our models. */
+    export function useMyAppModels() : Object {
+        return useModels([...models])
+    }
+
+    // You can also add field validation rules used by Vuetify here.
+
+
+
+User Interface
+--------------
 
 Application Layout
-------------------
+...................
 
 The client application provide the following layout using ``OxApp`` component. The screenshot is of a model panel (``OxOrganisationTypePanel``, the view is ``list.table``).
 
@@ -154,6 +215,12 @@ The client application provide the following layout using ``OxApp`` component. T
 - **5**: applications navigation (reflect the structure provided by ``panels.py``);
 - **6**: user menu;
 - **7**: panel's content or views;
+
+
+Panel and view title and navigations will be rendered in the top bar. A view can also provide extra actions and buttons there, such as showing
+list filters. Note: filters are available for all list views, while the list itself is handled by the model panel component.
+
+Panels can have a provided state which will be rendered when required (such as processing API request, or error display).
 
 
 Panels
@@ -179,58 +246,127 @@ Here is a simple example of a panel:
         </template>
     </ox-panel>
 
-Another example with a model panel, taken from the ``OxUserPanel`` used for users management. For more detailed usage, please look at the ``OxModelPanel``
-documentation.
+
+Lets apply it to our own example. We will prefix our components with ``Ma``.
+
+``components/MaBook.vue``:
 
 .. code-block:: xml
 
-    <ox-model-panel :name="props.name" :tabbed="props.tabbed"
-            :repo="repos.users"
-            :headers="props.headers"
-            :relations="props.relations"
-            search="search">
-        <!-- forward slots to the inner component -->
-        <template v-for="name in forwardSlots" :key="name" #[name]="bind">
-            <slot :name="name" v-bind="bind"/>
-        </template>
+    <template>
+        <ox-model-panel v-bind="props" :repo="repos.files">
+            <!-- forward slots provided by parent node -->
+            <template v-for="name in forwardSlots" :key="name" #[name]="bind">
+                <slot :name="name" v-bind="bind"/>
+            </template>
 
-        <template #list.filters="{list,filters}">
-            <!-- example extending list filters -->
-            <v-select class="ml-3" density="compact"
-                v-model="filters.groups__id__in" multiple
-                label="Groups"
-                :items="groups" item-title="$title" item-value="id"
-                hide-details />
+            <!--
+                [Optional] Put custom filters here.
 
-            <slot name="list.filters" :list="list" :filters="filters"/>
-        </template>
+                Filters are used for list rendering. They map to actual `django-filter`
+                fields of a `filterset`.
+            -->
+            <template #list.filters="{list,filters, owner}">
+                <slot name="list.filters" :list="list" :filters="filters"/>
+                <!-- Example of input field, just remember to add `hide-details` -->
+                <ox-field v-model="filters.year__eq" type="number"
+                    label="t('fields.published')"
+                    hide-details />
+            </template>
 
-        <template #item.groups="{item}" v-if="!slots['item.groups']">
-            <!-- list item slot used to display groups -->
-             <v-chip color="primary" v-for="group of item.groups" variant="tonal" class="mr-2">
-                 {{ group.name }}
-             </v-chip>
-        </template>
+            <!-- Override how an item's field will be rendered -->
+            <template #item.author="{item}">
+                {{ item.$author.first_name }} {{ item.$author.last_name }}
+            </template>
 
-        <template #views.list.kanban="{panel,items,list}">
-            <!-- add kanban list view which is not provided by default on OxModelPanel -->
-            <ox-list-kanban :items="items" field="groups_id" :headers="kanbanHeaders"
-                item-title="username"
-                @click="(item) => panel.reset('.edit', item)"/>
-        </template>
+            <!--
+                You should provide an edit view which will be used for view/edit an item.
 
-        <template #views.add="{value,saved}"
-               v-if="!slots['views.add'] && context.user.can('auth.add_user')">
-            <!-- creation view, displayed only if user has the permission and slots has not already been provided. -->
-            <ox-user-edit :initial="value" @saved="saved"/>
-        </template>
+                `saved`: this method is called when the user saves the item;
+                `value`: initial item's values.
+            -->
 
-        <template #views.edit.window.default="{value}"
-                v-if="context.user.can('auth.change_user')">
-            <!-- edit view -->
-            <ox-user-edit :initial="value"/>
-        </template>
-    </ox-model-panel>
+            <template #views.detail.edit.default="{value, saved}">
+                <ma-book-edit :initial="value" :saved="saved" />
+            </template>
+        </ox-model-panel>
+    </template>
+    <!-- We use typescript! -->
+    <script setup lang="ts">
+    import { ref, reactive, useSlots, withDefaults } from 'vue'
+
+    // This is used to provide model panel properties
+    import type {IModelPanelProps} from '@oxylus/ox'
+
+    // `t` is used for translations
+    import { t } from '@oxylus/ox'
+    import {OxModelPanel, OxField} from '@oxylus/ox/components'
+
+    import MaBookEdit from './MaBookEdit.vue'
+    import {useMyAppModels} from '../composables'
+
+    const slots = useSlots()
+
+    // Filter out slots you are actually overriding. If None, you can avoid the use of forwardSlots and
+    // adapt template's code.
+    const forwardSlots = Object.keys(slots).filter(x => !(['list.filters', 'top', 'item.actions'].includes(x)))
+
+    // Use our models
+    const repos = useMyAppModels()
+
+    // Then declare component props
+    const props = withDefaults(defineProps<IModelPanelProps>(), {
+        // Set to model's entity
+        name: 'books',
+        // When you need relations in the list, add it here: they will be loaded as the list is loaded
+        relations: ['$author'],
+        // List of fields to be rendered in the list views
+        headers: ['name', 'published', 'author'],
+    })
+    </script>
+
+
+.. note::
+    Regarding user permissions, using the attributes provided by ``model.meta``, the different components will
+    automatically check for user allowances. For example, if user has right to view but not edit an object,
+    on the edit view, all items are rendered as non-editable fields.
+
+
+Editor
+......
+
+As you might have seen, we also need to declare an `MaBookEdit` component. This one is used to render
+the form for edition/view.
+
+In `components/MaBookEdit.vue`:
+
+.. code-block:: xml
+
+    <template>
+        <ox-model-edit ref="model-editor" v-bind="attrs" :repo="repos.books">
+            <template #default="{editor}">
+                <ox-field :editor="editor" name="title" required/>
+                <ox-field :editor="editor" name="published" type="number" required/>
+                <ox-field :editor="editor" name="summary" required/>
+
+                <!-- Use autocompletion for the author -->
+                <ox-autocomplete :repo="repos.author" lookup="search"
+                    item-value="id" item-title="$title"
+                    v-model="editor.value.author"/>
+            </template>
+        </ox-model-edit>
+    </template>
+    <script setup lang="ts">
+    import { useAttrs } from 'vue'
+    import {OxModelEdit, OxField, OxAutoComplete} from '@oxylus/ox/components'
+
+    import {useMyAppModels} from '../composables'
+
+    const repos = useMyAppModels()
+
+    // we just forward all attribute to inner OxModelEdit
+    const attrs = useAttrs()
+    </script>
 
 Views
 .....
@@ -259,15 +395,6 @@ The ``OxApp`` provide the ``panels`` object (``Panels`` controller), which is us
 
 
 View names are usually composed of two parts joined by a dot: view type (``list``, ``detail``) and the actual name. Such as you'll have ``detail.edit``, ``list.table``, ``list.kanban``, etc.
-
-
-Interface integration
-.....................
-
-Panel and view title and navigations will be rendered in the top bar. A view can also provide extra actions and buttons there, such as showing
-list filters. Note: filters are available for all list views, while the list itself is handled by the model panel component.
-
-Panels can have a provided state which will be rendered when required (such as processing API request, or error display).
 
 
 Actions

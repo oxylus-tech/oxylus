@@ -15,7 +15,6 @@ ox.core.exceptions
 .. automodule:: ox.core.exceptions
    :members:
 
-
 ox.core.models
 --------------
 

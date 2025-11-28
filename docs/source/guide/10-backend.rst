@@ -39,6 +39,10 @@ After the application has been created, in ``apps.py``, some changes will be nee
         # Name of the npm package used for frontend apps
         npm_package = "my_app"
 
+        # Declare app dependencies (only Django applications)
+        # This is used by installer to install/setup the dependencies
+        # dependencies = ("django.contrib.auth", "ox.apps.auth")
+
 
 Application Assets
 ..................
@@ -134,7 +138,7 @@ Oxylus provide models with a uuid that can then be used from views and viewsets 
 Regarding the permission systems being used, Oxylus uses two:
 
 - Django's basic permission system: simple groups and users permissions;
-- Object permission system based on `Django Caps <https://pypi.org/project/django-caps/>`
+- Object permission system based on `Django Caps <https://pypi.org/project/django-caps/>`__
 
 
 Serializers
@@ -211,13 +215,14 @@ However, lets take a look to what it might looks like:
             return super().get_app_data(**kwargs)
 
 
-We can directly provide some data to the client application, as this avoids extra
- request and we already have fetched elements from the database. This is what Oxylus
- does when it provides the current user information behind the scene, or the panel
- to be displayed. The use should be limited, taking into consideration that API may
- avoids deduplication of concerns and complexity.
+.. hint::
+    We can directly provide some data to the client application, as this avoids extra
+    request and we already have fetched elements from the database. This is what Oxylus
+    does when it provides the current user information behind the scene, or the panel
+    to be displayed. The use should be limited, taking into consideration that API may
+    avoids deduplication of concerns and complexity.
 
-They will be accessible from the application context's data. [TODO/FIXME]
+    They will be accessible from the application context's data. [TODO/FIXME]
 
 
 ViewSets
@@ -270,7 +275,8 @@ Lets take the example of ``ox_contacts`` application: it will extend ``ox/core/c
 Panels
 ------
 
-A client application contains one or more panels, each dedicated to a specific user task. For a CRUD there will be three of them at least: one or more list panels, one to create, one to edit (equivalent to both detail and edit by default). The delete view is not necessary as it is considered as an action; a button appearing in list and edit view.
+A client application contains one or more panels, each dedicated to a specific use case or a model. A panel may contains multiple view, eg. for CRUD there will be at least two: ``list.table`` (default list view), and ``detail.edit`` (used for: create, edit and display).
+The delete view is not necessary as it is considered as an action; a button appearing in list and edit view.
 
 Panels are declared inside ``panels.py``. This module will be loaded at initialization and is used to declare :py:class:`~ox.core.panels.Panels` and nested :py:class:`~ox.core.panels.Panel` - registered to a :py:class:`ox.core.panels.Registry`.
 
@@ -279,6 +285,8 @@ This allows two things in a declarative manner:
 - Automate server-side rendering of the application view: components will be integrated based on the provided configuration;
 - Generate navigation menu;
 
+
+Example of ``panels.py``:
 
 .. code-block:: python
 
@@ -373,6 +381,16 @@ For example:
 The generated urls will look like: ``/my_app/``, ``/my_app/settings/``, or ``/api/my_app/author/``.
 
 
+.. important::
+    In Oxylus the url names and paths match the lower case model name (without snake/camel case).
+
+    The api views are generated using the DRF's router, which appends ``-list``, ``-create``, etc. the url name. They
+    will be namespaced under ``{app.label}-api``.
+
+    Example: ``ox_contacts-api:organisationtype-list`` for ``api/ox/contacts/organisationtype/`` (because:
+    ``ox_erp.contacts.apps.AppConfig.root_url == "ox/contacts"``)
+
+
 
 There we are...
 ---------------
@@ -396,8 +414,8 @@ Lets install the app. Grosso modo, the server is ran from the oxylus application
 
 The first step might differ depending whether you on development instance or on a production one:
 
-- *Development*: what you want is to be able to run the server and have change taken in account in the running instance. In such case, just create a symbolic link to the application module inside the instance's virtual environment.
-- *Production*: what you want is to install a package from pip inside the
+- *Development*: what you want is to be able to run the server and have change taken in account in the running instance. In such case, just create a symbolic link to the application module inside the instance's environment.
+- *Production*: what you want is to install a package from pip inside the environment.
 
 Once it is done, just run the following command:
 
@@ -411,6 +429,7 @@ This commands ensure to:
 - setup settings, enabling the app in the ``conf/plugins.yaml`` file.
 - run migration, collect assets and statics, install application fixtures.
 - revert in case of error.
+- handle dependencies install declared in :py:attr:`ox.core.apps.AppConfig.dependencies`;
 
 
 Well done! What's next? Let go dive to the frontend application development.

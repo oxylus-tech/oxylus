@@ -4,31 +4,24 @@ Current dev
 ===========
 
 - login: on error 500, success message is provided as "Congrats! Data have been updated."
+- SFC: translations
 
-Mails
------
-
-- SendMail:
-
-    - Set the template: copy informations from it;
-    - list view: action to create a mail from this template;
-    - remove template attribute? Just generate from a mail
-
-        - add tags in such case
 
 Contacts
 --------
 
 - Contact list filters: is subscription, related to a group, or an organisation
+- ContactMail
 
-Files
------
+
+Auth
+----
+
+- Share access
 
 
 Bugs
 ----
-
-- rules.errors
 
 - OxModelEdit / modelEditor:
 
