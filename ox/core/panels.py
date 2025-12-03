@@ -132,8 +132,6 @@ class Panel(BasePanel):
     """ Vue component. """
     template = "ox/core/components/model_panel.html"
     """ Django template file used to render the panel """
-    actions_template = "ox/core/components/model_actions.html"
-    """ Django template file used to render the panel's actions. """
 
     type = "item"
 

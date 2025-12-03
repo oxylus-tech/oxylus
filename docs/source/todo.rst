@@ -5,6 +5,7 @@ Current dev
 
 - login: on error 500, success message is provided as "Congrats! Data have been updated."
 - SFC: translations
+- FIXME templates: remove model_actions.html template in favor of overriding model_component.html
 
 
 Contacts

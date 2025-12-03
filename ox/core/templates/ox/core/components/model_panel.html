@@ -25,13 +25,11 @@ Block:
 
     <template #item.actions="bind">
         {% block actions %}
-        {% if panel.actions_template %}
-            {% include panel.actions_template %}
-        {% endif %}
-        {% endblock %}
+        <ox-action-model-delete v-bind="bind"></ox-action-model-delete>
         {% endblock %}
     </template>
 
     <template #nav.detail="{panels,panel,list,item}">{% block nav-detail %}{% endblock %}</template>
+    {% endblock %}
 </{{ panel.component }}>
 {% endblock %}

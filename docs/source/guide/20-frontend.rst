@@ -326,6 +326,16 @@ Lets apply it to our own example. We will prefix our components with ``Ma``.
     </script>
 
 
+What does happens here?
+
+- Property ``headers``: this list fields to be rendered by list views (table, card, etc.).
+- Slots with name prefixed ``item.`` will be used to render fields by list views.
+- Other slots will be nested under the ``OxModelPanel`` components, allowing for extensibility.
+  You may want to filter some properly, for example ``list.filters``.
+- The ``detail.edit`` view is provided for viewing/creating/updating a single item. In this view,
+  you will provide the component used for edition (see next section).
+
+
 .. note::
     Regarding user permissions, using the attributes provided by ``model.meta``, the different components will
     automatically check for user allowances. For example, if user has right to view but not edit an object,
@@ -400,9 +410,50 @@ View names are usually composed of two parts joined by a dot: view type (``list`
 Actions
 -------
 
-Actions are buttons that can execute a specific behaviour. It checks user's permission in order to execute, and can display in two different ways: as select list item, or as a button.
+Actions are buttons that can execute a specific behaviour. It checks user's permission in order to execute, and can display in two different ways: as select list item, or as a button. This actually depends on the context: they are displayed in list views (usually as button, eg. in list view, a button a list row), and in detail view (in a select menu).
 
-[TODO] Where to put actions & extensibility
+The ``OxAction`` component handles the following:
+
+- User permission check (including object permission when required);
+- Running an action, eventually asking user for confirmation;
+- Can be used as link;
+- Can be rendered as ``v-list-item`` or ``v-btn``;
+
+There are different places where you might want to put action, so lets split it down in different use cases:
+
+- Provide an action from the model panel component: directly add the action into the model panel's template for ``item.actions``;
+- An external application want to provide the action to another app's model panel: in such case you'll extends and override the django template for model panel;
+
+
+Extend Django model panel template
+----------------------------------
+
+The model panel declared in ``panels.py`` (:py:class:`ox.core.panels.Panel`) specifies
+a :py:attr:`~ox.core.panels.Panel.template`, defaulting to ``ox/core/components/model_panel.html``.
+This is the template to extend to add your custom action.
+
+Lets just take a quick look at templates inclusion chart:
+
+- ``ox/core/app.html``: includes ``model_panel.html`` for each panel declared in app's ``panels.py``;
+- ``ox/core/components/model_panel.html``: uses provided ``panel`` (as :py:class:`ox.core.panels.Panel`) to render the actual panel. Includes the panel's ``action_template`` as:
+
+    .. code-block:: jinja2
+
+        <template #item.actions="bind">
+            {% block actions %}
+            <ox-action-model-delete v-bind="bind"></ox-action-model-delete>
+            {% endblock %}
+        </template>
+
+By now you should know what to do for extending: override the template. Eventually,
+you can use ``panel.name`` for conditional rendering (when extending default ``model_panel.html``).
+
+Don't forget to provide ``bind`` to the action! This ensure the action will be correctly rendered and is used for the right item.
+
 
 Monorepo setup
 --------------
+
+You may take example on the Oxylus' setup for this one. Few notes:
+
+- Symbolic link from the package to the app's ``assets``, eg. ``ox/apps/contacts/assets => assets/packages/contacts``.
