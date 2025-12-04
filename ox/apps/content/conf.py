@@ -37,6 +37,8 @@ class Settings(conf.Settings):
         "a": ["href", "title", "target"],
         "td": ["colspan", "rowspan"],
         "th": ["colspan", "rowspan"],
+        # Oxylus specifics
+        "span": ["data-placeholder"],
     }
     ALLOWED_STYLES = ["text-align", "font-weight", "font-style", "color", "background-color"]
     ALLOWED_PROTOCOLS = ["https", "mailto", "tel"]

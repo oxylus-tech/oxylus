@@ -13,10 +13,6 @@ export const Placeholder = Node.create({
         }
     },
 
-    getPlaceholder(name) {
-        return this.options.placeholders.find(p => p.name == name)
-    },
-
     addAttributes() {
         return {
             name: { default: null, },
@@ -30,8 +26,8 @@ export const Placeholder = Node.create({
             {
                 tag: 'span[data-placeholder]',
                 getAttrs: el => {
-                    const name = element.datalist.get("placeholder")
-                    const ph = this.getPlaceholder(name)
+                    const name = el.dataset.placeholder
+                    const ph = this.options.placeholders.find(p => p.name == name)
 
                     if(!ph)
                         return false

@@ -20,16 +20,16 @@
                         </div>
                     </template>
 
-                    <v-menu v-if="placeholders">
+                    <v-menu v-if="placeholders?.length">
                         <template #activator="{props}">
                             <v-btn v-bind="props"
                                 variant="text" size="small" rounded="0"
-                                title="Insert a dynamic value" aria-label="Insert a dynamic value"
+                                :title="t('actions.content.placeholder')"
+                                :aria-label="t('actions.content.placeholder')"
                                 icon="mdi-variable"/>
                         </template>
                         <v-list
                             density="compact" size="small" menu-icon="mdi-variable"
-                            label="Value"
                             :items="props.placeholders"
                             :itemProps="placeholderProps"
                             return-object

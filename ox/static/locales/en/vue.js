@@ -57,6 +57,9 @@ window.__i18n_messages = { ...window.__i18n_messages, ...{
     "fields.agent.select": "Select a user or a group",
     "actions.password.reset": "Reset Password",
 
+    // ---- @ox/content
+    "actions.content.placeholder": "Insert a value",
+
     // ---- @ox/locations
     "fields._.from_user": "This contact is linked to a user, you can't change this value",
     "fields.iban.invalid_checksum": "Invalid IBAN checksum",
