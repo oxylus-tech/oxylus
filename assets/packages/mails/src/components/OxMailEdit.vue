@@ -23,6 +23,7 @@
             <ox-field :editor="editor" name="content" type="custom">
                 <template #default="{props}">
                     <ox-component src="../content/OxRichEditor.js" v-bind="props"
+                        :placeholders="props.placeholders"
                         v-model="editor.value.content"/>
                 </template>
             </ox-field>
@@ -50,7 +51,9 @@ const repos = useMailModels()
 const attrs = useAttrs()
 const props = defineProps({
     /** Owner uuid **/
-    owner: String
+    owner: String,
+
+    placeholders: {type: Array, default: () => []}
 })
 
 const templateField = ref(null)

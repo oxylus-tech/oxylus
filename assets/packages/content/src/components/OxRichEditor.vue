@@ -19,6 +19,23 @@
                             </template>
                         </div>
                     </template>
+
+                    <v-menu v-if="placeholders">
+                        <template #activator="{props}">
+                            <v-btn v-bind="props"
+                                variant="text" size="small" rounded="0"
+                                title="Insert a dynamic value" aria-label="Insert a dynamic value"
+                                icon="mdi-variable"/>
+                        </template>
+                        <v-list
+                            density="compact" size="small" menu-icon="mdi-variable"
+                            label="Value"
+                            :items="props.placeholders"
+                            :itemProps="placeholderProps"
+                            return-object
+                            @click:select="actions.insertPlaceholder($event.id)">
+                        </v-list>
+                    </v-menu>
                 </v-row>
                 <v-row>
                     <editor-content class="editor" :editor="editor"
@@ -51,6 +68,19 @@
 }
 
 .editor .tiptap ul { list-style: disc }
+
+
+.tiptap-placeholder-node-view {
+    background: #e5f4ff;
+    padding: 0.2rem;
+    border-radius: 0.2rem;
+    color: #0072b1;
+    font-weight: 500;
+}
+
+.tiptap-placeholder-node {
+    color: transparent; /* hide backend text in editor */
+}
 </style>
 <script setup lang="ts">
 import { defineEmits, reactive, ref, onUnmounted, useAttrs, watch } from 'vue'
@@ -66,12 +96,15 @@ import TableRow from '@tiptap/extension-table-row'
 import TableHeader from '@tiptap/extension-table-header'
 import TableCell from '@tiptap/extension-table-cell'
 
+import {Placeholder} from '../tiptap'
+
 
 const emits = defineEmits(['update:modelValue'])
 const attrs = useAttrs()
 const props = defineProps({
     modelValue: {type: String, default: ''},
     height: {type: String, default: "300px;"},
+    placeholders: {type: Array, default: () => []},
 })
 const focused = ref(false)
 
@@ -118,6 +151,9 @@ const editor = new Editor({
         TableRow,
         TableHeader,
         TableCell,
+
+        // oxylus
+        Placeholder.configure({placeholders: props.placeholders}),
     ],
 })
 
@@ -133,6 +169,14 @@ const actions = {
     setLink() {
         // this.edit("setLink", {href: this.$refs['link-url']})
     },
+
+    insertPlaceholder(obj) {
+        editor.chain().focus().insertContent({
+            type: "placeholder",
+            attrs: obj,
+        })
+        .run()
+    },
 }
 
 
@@ -140,6 +184,17 @@ function modelValueUpdated(val) {
     if (editor.getHTML() !== val)
         editor.commands.setContent(val, false)
 }
+
+
+function placeholderProps(item) {
+    return {
+        title: item.label,
+        subtitle: item.description
+            ? `${item.description} | {{ ${item.name} }}`
+            : `{{ ${item.name} }}`
+    }
+}
+
 
 watch(() => props.modelValue, modelValueUpdated)
 
