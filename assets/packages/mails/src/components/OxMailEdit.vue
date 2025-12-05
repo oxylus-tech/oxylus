@@ -1,5 +1,5 @@
 <template>
-    <ox-model-edit ref="modelEditor" v-bind="attrs" :repo="repos.mails">
+    <ox-model-edit ref="modelEditor" v-bind="attrs" :repo="attrs.repo || repos.mails">
         <template #default="{editor, editable}">
             <ox-field :editor="editor" name="account" required>
                 <template #default="{props: props_}">

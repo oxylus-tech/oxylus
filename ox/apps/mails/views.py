@@ -33,6 +33,7 @@ class BaseMailViewSet(OwnedViewSet):
 
     """
 
+    ordering_fields = ["subject", "created", "updated"]
     filterset_fields = {
         "owner__uuid": ["in", "exact"],
         "account__uuid": ["in", "exact"],

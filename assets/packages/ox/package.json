@@ -17,7 +17,7 @@
     "src/"
   ],
   "exports": {
-    "./vite.config.base": "./src/vite.config.base.ts",
+    "./vite.config.base": "./src/vite.config.base.js",
     "./components": "./src/components/index.ts",
     "./composables": "./src/composables/index.ts",
     "./controllers": "./src/controllers/index.ts",

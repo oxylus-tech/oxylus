@@ -57,6 +57,10 @@ window.__i18n_messages = { ...window.__i18n_messages, ...{
     "fields.agent.select": "Select a user or a group",
     "actions.password.reset": "Reset Password",
 
+    "rules.username": "Username must not be empty. It only can contain letters, numbers and \"@+.-\" special characters",
+    "rules.http_url": "Invalid HTTP url, ensure that it start with \"http\" or \"https\".",
+    "rules.url": "Invalid URL",
+
     // ---- @ox/content
     "actions.content.placeholder": "Insert a value",
 
@@ -99,6 +103,8 @@ window.__i18n_messages = { ...window.__i18n_messages, ...{
     "actions.format.align.left": "Align left",
     "actions.format.align.center": "Align center",
     "actions.format.align.right": "Align right",
+    "actions.format.set_link": "Add a link to selection",
+    "actions.format.unset_link": "Remove link from selection",
 
 
     // ---- @ox/mails

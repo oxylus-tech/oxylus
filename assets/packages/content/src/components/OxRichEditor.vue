@@ -12,7 +12,7 @@
                         <div class="button-group d-inline-block mr-3">
                             <template v-for="info, index in group" :key="index">
                                 <v-btn
-                                    variant="text" size="small" rounded="0"
+                                    variant="text" size="small"
                                     :title="t(info.label)" :aria-label="t(info.label)"
                                     :icon="info.icon"
                                     @click="actions.edit(info.action, ...(info.args || []))" />
@@ -20,10 +20,23 @@
                         </div>
                     </template>
 
+                    <v-btn v-if="!editor.isActive('link')"
+                        variant="text" size="small"
+                        :title="t('actions.format.set_link')"
+                        :aria-label="t('actions.format.set_link')"
+                        icon="mdi-link-variant-plus"
+                        @click="actions.setLink()"/>
+                    <v-btn v-else
+                        variant="text" size="small"
+                        :title="t('actions.format.set_link')"
+                        :aria-label="t('actions.format.set_link')"
+                        icon="mdi-link-variant-minus"
+                        @click="editor.chain().focus().unsetLink().run()" />
+
                     <v-menu v-if="placeholders?.length">
                         <template #activator="{props}">
                             <v-btn v-bind="props"
-                                variant="text" size="small" rounded="0"
+                                variant="text" size="small"
                                 :title="t('actions.content.placeholder')"
                                 :aria-label="t('actions.content.placeholder')"
                                 icon="mdi-variable"/>
@@ -84,7 +97,7 @@
 </style>
 <script setup lang="ts">
 import { defineEmits, reactive, ref, onUnmounted, useAttrs, watch } from 'vue'
-import { t } from '@oxylus/ox'
+import { t, rules } from '@oxylus/ox'
 
 import { Editor, EditorContent } from '@tiptap/vue-3'
 import StarterKit from '@tiptap/starter-kit'
@@ -108,6 +121,10 @@ const props = defineProps({
 })
 const focused = ref(false)
 
+const data = reactive({
+    // add link input
+    link: { url: "", text: "", }
+})
 
 const menu = reactive([
     [
@@ -168,6 +185,23 @@ const actions = {
 
     setLink() {
         // this.edit("setLink", {href: this.$refs['link-url']})
+        const previousUrl = editor.getAttributes('link').href
+        const url = window.prompt(t('actions.format.set_link'), previousUrl)
+        if(url === null)
+            return
+
+        if(url === '') {
+            editor.chain().focus().extendMarkRange('link').unsetLink().run()
+            return
+        }
+
+        const test = rules.url(url)
+        if(test !== true) {
+            alert(test)
+            return this.setLink()
+        }
+
+        editor.chain().focus().extendMarkRange('link').setLink({ href: url }).run()
     },
 
     insertPlaceholder(obj) {

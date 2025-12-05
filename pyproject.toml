@@ -5,7 +5,7 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.poetry]
 name = "oxylus"
-description = "Back-office framework."
+description = "Oxylus back-office framework."
 version = "0.0.1"
 authors = ["Thomas Baquet <thomas oxylus app>"]
 readme = "README.rst"
@@ -36,13 +36,10 @@ Django = "^5"
 djangorestframework = "^3"
 django-filter = "*"
 django-model-utils="*"
-django-caps = {git = "https://github.com/oxylus-tech/django-caps.git"}
+django-caps = "0.0.1"
 django-tasks = "^0.7.0"
 django-fernet-encrypted-fields = "^0.3.0"
 drf-spectacular = "^0.28.0"
-pycountry = "^24.6.1"
-phonenumbers = "^9.0.4"
-python-stdnum = "^2.0"
 bleach = {extras = ["css"], version = "^6.2.0"}
 dynaconf = {extras = ["yaml"], version = "^3.2.11"}
 django-versatileimagefield = "^3.1"

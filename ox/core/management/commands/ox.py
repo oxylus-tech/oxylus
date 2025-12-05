@@ -180,20 +180,22 @@ class Command(Command):
         # access rights
         path.chmod(0o700)
 
+    _secret_keys = (
+        ("SECRET_KEY", "SECRET_KEY_FALLBACKS"),
+        ("SALT_KEY", "SALT_KEY_FALLBACKS"),
+        ("JWT_KEY", "JWT_KEY_FALLBACKS"),
+    )
+
     def get_updated_secrets(self, data):
-        """Update provided data for ``SECRET_KEY`` and ``SALT_KEY``."""
+        """Update provided data for ``SECRET_KEY``, ``SALT_KEY`` and ``JWT_KEY``."""
         from django.core.management.utils import get_random_secret_key
 
-        data.setdefault("SECRET_KEY_FALLBACKS", [])
-        data.setdefault("SALT_KEY_FALLBACKS", [])
+        for key, fallback in self._secret_keys:
+            data.setdefault(fallback, [])
+            if val := data.get(key):
+                data[fallback].insert(0, val)
+            data[key] = get_random_secret_key()
 
-        if key := data.get("SECRET_KEY"):
-            data["SECRET_KEY_FALLBACKS"].insert(0, key)
-        data["SECRET_KEY"] = get_random_secret_key()
-
-        if key := data.get("SALT_KEY"):
-            data["SALT_KEY_FALLBACKS"].insert(0, key)
-        data["SALT_KEY"] = get_random_secret_key()
         return data
 
     def collect_settings(self, apps, force=False, target=None, **_):
