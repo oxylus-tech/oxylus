@@ -15,15 +15,15 @@
                 @slot Place the field for recipients list here.
                 @binding {ModelEditor} editor the model editor
             -->
-            <slot name="recipients" :editor="editor">
+            <slot name="recipients" :editor="editor" :editable="editable">
                 <ox-field :editor="editor" name="recipients" />
             </slot>
             <ox-field :editor="editor" name="subject"/>
 
             <ox-field :editor="editor" name="content" type="custom">
-                <template #default="{props}">
-                    <ox-component src="../content/OxRichEditor.js" v-bind="props"
-                        :placeholders="props.placeholders"
+                <template #default="{props: fieldProps}">
+                    <ox-component src="../content/OxRichEditor.js" v-bind="fieldProps"
+                        :variables="props.variables"
                         v-model="editor.value.content"/>
                 </template>
             </ox-field>
@@ -53,7 +53,7 @@ const props = defineProps({
     /** Owner uuid **/
     owner: String,
 
-    placeholders: {type: Array, default: () => []}
+    variables: {type: Array, default: () => []}
 })
 
 const templateField = ref(null)

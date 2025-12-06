@@ -6,26 +6,26 @@
         <slot name="none" :state="state"></slot>
     </v-alert>
     <v-alert v-else-if="displayProcessing" type="info" variant="tonal" class="mb-3" closable
-            :state="state" :title="processingTitle">
+            :state="state" :title="processingTitle || t('state.processing.title')">
         <!-- @slot When state is `processing`. -->
         <slot name="processing" :state="state">
-            Data are being sent to server, please be patient. If this message persist you might wan't to retry.
+            <p>{{ t('state.processing.detail') }}</p>
         </slot>
     </v-alert>
     <v-alert v-else-if="props.state.isError" type="error" variant="tonal" class="mb-3" closable
-            :state="state" :title="errorTitle" >
+            :state="state" :title="errorTitle || t('state.error.title')" >
         <!-- @slot When state is `error`. -->
         <slot name="error" :state="state">
-            Oups... something wrong happened.
-        </slot>
+            {{ state.toString() || t('state.error.detail') }}
+    </slot>
         <!-- @slot Detail when state is `error`. -->
         <slot name="error-detail" :state="state"></slot>
     </v-alert>
     <v-alert v-else-if="props.state.isOk" type="success" variant="tonal" class="mb-3" closable
-            :state="state" :title="okTitle">
+            :state="state" :title="okTitle || t('state.ok.title')">
         <!-- @slot When state is `ok`. -->
         <slot name="ok" :state="state">
-            <p>Congrats! Data have been updated.</p>
+            <p>{{ t('state.ok.detail') }}</p>
         </slot>
         <template v-if="messages">
             <v-divider/>
@@ -45,7 +45,8 @@
 // TODO: expandable detail error
 import {defineProps, useSlots, computed, ref, watch} from 'vue'
 import {VAlert} from 'vuetify/components/VAlert'
-import {States} from '../utils/state'
+
+import {t, States} from '@oxylus/ox'
 
 const slots = useSlots()
 const props = defineProps({
@@ -58,9 +59,9 @@ const props = defineProps({
     /** Alert title on state `none`. */
     noneTitle: {type: String, default: ""},
     /** Alert title on state `error`. */
-    errorTitle: {type: String, default: "Oups..."},
+    errorTitle: {type: String, default: ""},
     /** Alert title on state `processing`. */
-    processingTitle: {type: String, default: "Processing..."},
+    processingTitle: {type: String, default: ""},
 })
 
 

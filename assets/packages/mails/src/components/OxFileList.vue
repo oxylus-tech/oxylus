@@ -1,6 +1,6 @@
 <template>
     <v-dialog v-model="showSelect" height="80%" scrollable>
-        <ox-component src="../ox_files/OxFileSelect.js"
+        <ox-component src="../files/OxFileSelect.js"
             :owner="props.owner" multiple
             @select="onSelect"
             @close="showSelect = false"/>

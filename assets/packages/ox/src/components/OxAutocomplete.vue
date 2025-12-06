@@ -9,6 +9,14 @@
             <!-- @slot All slots are passed down to `v-autocomplete`. -->
             <slot :name="slot" v-bind="bind"/>
         </template>
+
+        <template #item="slotProps" v-if="slots['item']">
+            <slot name="item" v-bind="slotProps" />
+        </template>
+
+        <template #selection="slotProps" v-if="slots['selection']">
+            <slot name="selection" v-bind="slotProps" />
+        </template>
     </v-autocomplete>
 </template>
 <script setup lang="ts">

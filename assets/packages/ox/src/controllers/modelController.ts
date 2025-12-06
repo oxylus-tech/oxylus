@@ -95,7 +95,7 @@ export default class ModelController<MT extends ModelType, O=IModelController<MT
         }
         catch(error) {
             console.log(error)
-            this.state.error(error)
+            this.state.error(error.message || `${error}`)
         }
         if(!this.state.isError)
             this.state.none()

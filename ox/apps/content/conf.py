@@ -39,6 +39,7 @@ class Settings(conf.Settings):
         "th": ["colspan", "rowspan"],
         # Oxylus specifics
         "span": ["data-placeholder"],
+        "div": ["data-condition"],
     }
     ALLOWED_STYLES = ["text-align", "font-weight", "font-style", "color", "background-color"]
     ALLOWED_PROTOCOLS = ["https", "mailto", "tel"]

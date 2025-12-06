@@ -61,6 +61,13 @@ window.__i18n_messages = { ...window.__i18n_messages, ...{
     "rules.http_url": "Invalid HTTP url, ensure that it start with \"http\" or \"https\".",
     "rules.url": "Invalid URL",
 
+    "state.processing.title": "Processing",
+    "state.processing.detail": "Sending and processing data, please be patient. If this message persist you might retry.",
+    "state.error.title": "Oups...",
+    "state.error.detail": "Something wrong happened. Please contact your administrator if this persists.",
+    "state.ok.title": "Success!",
+    "state.ok.detail": "Congrats! Data have been updated.",
+
     // ---- @ox/content
     "actions.content.placeholder": "Insert a value",
 
@@ -103,8 +110,10 @@ window.__i18n_messages = { ...window.__i18n_messages, ...{
     "actions.format.align.left": "Align left",
     "actions.format.align.center": "Align center",
     "actions.format.align.right": "Align right",
-    "actions.format.set_link": "Add a link to selection",
-    "actions.format.unset_link": "Remove link from selection",
+    "actions.format.link.set": "Add a link to selection",
+    "actions.format.link.unset": "Remove link from selection",
+    "actions.format.conditional": "Render text if this value is present",
+    "actions.format.conditional.variable.label": "Render text if <b>{condition}</b> is set",
 
 
     // ---- @ox/mails

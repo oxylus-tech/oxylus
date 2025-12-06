@@ -22,33 +22,53 @@
 
                     <v-btn v-if="!editor.isActive('link')"
                         variant="text" size="small"
-                        :title="t('actions.format.set_link')"
-                        :aria-label="t('actions.format.set_link')"
+                        :title="t('actions.format.link.set')"
+                        :aria-label="t('actions.format.link.set')"
                         icon="mdi-link-variant-plus"
                         @click="actions.setLink()"/>
                     <v-btn v-else
                         variant="text" size="small"
-                        :title="t('actions.format.set_link')"
-                        :aria-label="t('actions.format.set_link')"
+                        :title="t('actions.format.link.unset')"
+                        :aria-label="t('actions.format.link.unset')"
                         icon="mdi-link-variant-minus"
                         @click="editor.chain().focus().unsetLink().run()" />
 
-                    <v-menu v-if="placeholders?.length">
-                        <template #activator="{props}">
-                            <v-btn v-bind="props"
-                                variant="text" size="small"
-                                :title="t('actions.content.placeholder')"
-                                :aria-label="t('actions.content.placeholder')"
-                                icon="mdi-variable"/>
-                        </template>
-                        <v-list
-                            density="compact" size="small" menu-icon="mdi-variable"
-                            :items="props.placeholders"
-                            :itemProps="placeholderProps"
-                            return-object
-                            @click:select="actions.insertPlaceholder($event.id)">
-                        </v-list>
-                    </v-menu>
+                    <template v-if="props.variables?.length">
+                        <v-spacer/>
+                        <v-menu>
+                            <template #activator="{props}">
+                                <v-btn v-bind="props"
+                                    variant="text" size="small"
+                                    :title="t('actions.content.placeholder')"
+                                    :aria-label="t('actions.content.placeholder')"
+                                    icon="mdi-variable"/>
+                            </template>
+                            <v-list
+                                density="compact" size="small" menu-icon="mdi-variable"
+                                :items="props.variables"
+                                :itemProps="variablesProps"
+                                return-object
+                                @click:select="actions.insertPlaceholder($event.id)">
+                            </v-list>
+                        </v-menu>
+
+                        <v-menu>
+                            <template #activator="{props}">
+                                <v-btn v-bind="props"
+                                    variant="text" size="small"
+                                    :title="t('actions.content.conditional')"
+                                    :aria-label="t('actions.content.conditional')"
+                                    icon="mdi-variable-box"/>
+                            </template>
+                            <v-list
+                                density="compact" size="small" menu-icon="mdi-variable"
+                                :items="props.variables"
+                                :itemProps="variablesProps"
+                                return-object
+                                @click:select="actions.insertConditional($event.id)">
+                            </v-list>
+                        </v-menu>
+                    </template>
                 </v-row>
                 <v-row>
                     <editor-content class="editor" :editor="editor"
@@ -83,6 +103,7 @@
 .editor .tiptap ul { list-style: disc }
 
 
+/* ---- Oxylus' specifics ---- */
 .tiptap-placeholder-node-view {
     background: #e5f4ff;
     padding: 0.2rem;
@@ -94,8 +115,31 @@
 .tiptap-placeholder-node {
     color: transparent; /* hide backend text in editor */
 }
+
+.tiptap-conditional-node {
+  border: 1px dashed #aaa;
+  margin: 0.2rem;
+  border-radius: 4px;
+}
+
+.tiptap-conditional-label {
+  font-size: 0.85em;
+  font-style: italic;
+  background-color: rgb(var(--v-theme-warning), 0.4);
+  padding: 0.2rem;
+}
+
+.tiptap-conditional-content {
+  padding: 0.2rem;
+}
 </style>
 <script setup lang="ts">
+/**
+ * @component Render a rich text editor.
+ *
+ * When `variables` property is provided, it adds support for adding variable
+ * content. However, **this value is expected not to change once mounted.**
+ */
 import { defineEmits, reactive, ref, onUnmounted, useAttrs, watch } from 'vue'
 import { t, rules } from '@oxylus/ox'
 
@@ -109,7 +153,7 @@ import TableRow from '@tiptap/extension-table-row'
 import TableHeader from '@tiptap/extension-table-header'
 import TableCell from '@tiptap/extension-table-cell'
 
-import {Placeholder} from '../tiptap'
+import {Placeholder, Conditional} from '../tiptap'
 
 
 const emits = defineEmits(['update:modelValue'])
@@ -117,8 +161,9 @@ const attrs = useAttrs()
 const props = defineProps({
     modelValue: {type: String, default: ''},
     height: {type: String, default: "300px;"},
-    placeholders: {type: Array, default: () => []},
+    variables: {type: Array, default: () => []},
 })
+console.log(props.variables)
 const focused = ref(false)
 
 const data = reactive({
@@ -170,7 +215,8 @@ const editor = new Editor({
         TableCell,
 
         // oxylus
-        Placeholder.configure({placeholders: props.placeholders}),
+        Placeholder.configure({variables: props.variables}),
+        Conditional,
     ],
 })
 
@@ -211,6 +257,19 @@ const actions = {
         })
         .run()
     },
+
+    insertConditional(obj) {
+        editor.chain().focus().insertContent({
+            type: "conditional",
+            attrs: {
+                condition: obj.name,
+                label: t('actions.format.conditional.variable.label', {condition: obj.label})
+            },
+            content: [
+            ],
+        })
+        .run()
+    },
 }
 
 
@@ -220,7 +279,7 @@ function modelValueUpdated(val) {
 }
 
 
-function placeholderProps(item) {
+function variablesProps(item) {
     return {
         title: item.label,
         subtitle: item.description

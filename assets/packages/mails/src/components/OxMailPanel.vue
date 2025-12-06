@@ -1,5 +1,5 @@
 <template>
-    <ox-owned-panel v-bind="props" :repo="attrs.repo || repos.mails">
+    <ox-owned-panel v-bind="props" :repo="props.repo || repos.mails">
         <template #item.state="{item}">
             <v-chip :color="colors[item.state]">{{ BaseMail.State.toString(item.state) }}</v-chip>
         </template>
@@ -49,7 +49,6 @@ const props = withDefaults(defineProps<IModelPanelProps>(), {
     headers: ['subject', 'state', 'updated'],
 })
 const attrs = useAttrs()
-console.log(props, attrs)
 
 const State = BaseMail.State
 const colors = {
