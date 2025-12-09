@@ -9,6 +9,8 @@ from django.template import Template, Context
 from django.utils.html import strip_tags
 
 from ox.apps.files.models import File
+from ox.apps.content.renderers import Renderer
+
 from .models import BaseMail, MailAccount
 
 
@@ -22,11 +24,21 @@ class MailSend:
 
     mail: BaseMail
     """ Outgoing mail """
+    renderer: Renderer
+    """
+    Renderer used for user content.
+
+    .. important::
+
+        The variables must match context provided by this class and the method
+        :py:meth:`.models.BaseMail.get_recipients` of :py:attr:`mail` instance.
+    """
     account: MailAccount
     """ Email account used to send the message. Defaults to mail's one. """
 
-    def __init__(self, mail: BaseMail, account: MailAccount | None = None):
+    def __init__(self, mail: BaseMail, renderer: Renderer, account: MailAccount | None = None):
         self.mail = mail
+        self.renderer = renderer
         self.account = account or mail.account
 
     @cached_property
@@ -40,8 +52,8 @@ class MailSend:
             subscription = f"{{% if is_subscription %}}{subscription}{{% endif %}}"
 
         return {
-            "subject": Template(self.mail.get_subject()),
-            "content": Template(
+            "subject": self.renderer.compile(self.mail.get_subject()),
+            "content": self.renderer.compile(
                 "<br><br>".join(
                     v
                     for v in (

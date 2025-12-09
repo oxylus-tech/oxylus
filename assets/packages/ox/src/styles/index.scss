@@ -81,3 +81,53 @@ table tbody th {
         margin-left: 0.6rem;
     }
 }
+
+
+// OxRichEditor
+.ox-rich-editor {
+    .editor {
+        width: 100%;
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .editor .tiptap:focus {
+        border-style: solid;
+    }
+
+    .editor .tiptap {
+        padding: 0.3em;
+        border: 1px black dotted;
+        flex-grow: 1;
+    }
+    .editor .tiptap ul, .editor .tiptap ol {
+        margin-left: 1.3em;
+    }
+
+    .editor .tiptap ul { list-style: disc }
+
+
+    .tiptap-block-node {
+
+        /*.tiptap-variable-node {
+            color: transparent;
+        }*/
+
+        &:not(.inline) {
+            border: 1px dashed #aaa;
+            margin: 0.2rem;
+            border-radius: 0.2rem;
+
+            .tiptap-block-label {
+                font-size: 0.85em;
+                background-color: rgb(var(--v-theme-warning), 0.4);
+                padding: 0.2rem;
+            }
+
+            .tiptap-block-content {
+                padding: 0.2rem;
+            }
+        }
+    }
+}

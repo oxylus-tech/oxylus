@@ -68,9 +68,6 @@ window.__i18n_messages = { ...window.__i18n_messages, ...{
     "state.ok.title": "Success!",
     "state.ok.detail": "Congrats! Data have been updated.",
 
-    // ---- @ox/content
-    "actions.content.placeholder": "Insert a value",
-
     // ---- @ox/locations
     "fields._.from_user": "This contact is linked to a user, you can't change this value",
     "fields.iban.invalid_checksum": "Invalid IBAN checksum",
@@ -98,22 +95,21 @@ window.__i18n_messages = { ...window.__i18n_messages, ...{
     "actions.tasks.restart": "Restart this task",
 
     // ---- @ox/content
-    "actions.format.bold": "Bold",
-    "actions.format.italic": "Italic",
-    "actions.format.underline": "Underline",
-    "actions.format.strike": "Strike",
-    "actions.format.list": "List",
-    "actions.format.list.numbered": "List Numbered",
-    "actions.format.heading.1": "Heading 1",
-    "actions.format.heading.2": "Heading 2",
-    "actions.format.heading.3": "Heading 3",
-    "actions.format.align.left": "Align left",
-    "actions.format.align.center": "Align center",
-    "actions.format.align.right": "Align right",
-    "actions.format.link.set": "Add a link to selection",
-    "actions.format.link.unset": "Remove link from selection",
-    "actions.format.conditional": "Render text if this value is present",
-    "actions.format.conditional.variable.label": "Render text if <b>{condition}</b> is set",
+    "actions.content.bold": "Bold",
+    "actions.content.italic": "Italic",
+    "actions.content.underline": "Underline",
+    "actions.content.strike": "Strike",
+    "actions.content.list": "List",
+    "actions.content.list.numbered": "List Numbered",
+    "actions.content.heading.1": "Heading 1",
+    "actions.content.heading.2": "Heading 2",
+    "actions.content.heading.3": "Heading 3",
+    "actions.content.align.left": "Align left",
+    "actions.content.align.center": "Align center",
+    "actions.content.align.right": "Align right",
+    "actions.content.link.set": "Add a link to selection",
+    "actions.content.link.unset": "Remove link from selection",
+    "actions.content.ifvariable.block.title": "Render if <b>{label}</b> is set",
 
 
     // ---- @ox/mails

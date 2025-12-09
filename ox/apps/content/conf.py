@@ -32,17 +32,26 @@ class Settings(conf.Settings):
         "pre",
         "code",
     ]
+    """ Allowed tags """
     ALLOWED_ATTRIBUTES = {
         "*": ["style"],
         "a": ["href", "title", "target"],
         "td": ["colspan", "rowspan"],
         "th": ["colspan", "rowspan"],
         # Oxylus specifics
-        "span": ["data-placeholder"],
-        "div": ["data-condition"],
+        "span": ["data-block", "data-block-variable"],
+        "div": ["data-block", "data-block-variable"],
     }
+    """
+    Allowed tags attributes.
+
+    Pay attention to allow `data-block*` attribute as they are used by
+    Oxylus.
+    """
     ALLOWED_STYLES = ["text-align", "font-weight", "font-style", "color", "background-color"]
+    """ Allowed inline tags styles. """
     ALLOWED_PROTOCOLS = ["https", "mailto", "tel"]
+    """ Allowed URL protocols. """
 
     STATIC_DIR = "ox_content/bundles"
     """ Directory in static where to store bundles. """

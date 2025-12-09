@@ -1,8 +1,19 @@
 ox.apps.content
 ===============
 
-This application provides features for content edition such as rich text edition.
-To come later: template edition.
+This application provides basis to allow content edition for different kind of media.
+
+It allows user to edit rich text, ensuring input sanitization. The rich text content may
+also contains custom blocks as defined by :py:class:`.blocks.DynamicBlock`. Those are translated in Django template code.
+
+So what does it provides?
+
+- RichTextField (for models and serializers);
+- Renderer that containerize user's django templates;
+- Dynamic blocks that can be reused by user for rich text edition (such as variable, conditional variables);
+
+It is planned later to also add support for template packs (eg. for CMS).
+
 
 
 Models

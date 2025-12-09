@@ -47,6 +47,7 @@ python-magic = "^0.4.27"
 pymupdf = "^1.26.0"
 rich = "^14.1.0"
 oxylus-erp = {path = "../oxylus-erp"}
+beautifulsoup4 = "^4.14.3"
 
 
 [tool.poetry.group.prod.dependencies]

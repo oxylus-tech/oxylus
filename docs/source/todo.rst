@@ -3,6 +3,7 @@
 Current dev
 ===========
 
+
 - login: on error 500, success message is provided as "Congrats! Data have been updated."
 - SFC: translations
 - FIXME templates: remove model_actions.html template in favor of overriding model_component.html
@@ -14,6 +15,12 @@ Contacts
 - Contact list filters: is subscription, related to a group, or an organisation
 - ContactMail
 
+Content
+-------
+
+- dynamic block data attribute: normalize, as "data-block", "data-block-*"
+- insert url from variable
+- better url edition
 
 Auth
 ----

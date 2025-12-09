@@ -6,37 +6,40 @@
                 :disabled="editor.value.id"/>
 
             <v-expansion-panels :model-value="['settings', 'smtp']">
-                <v-expansion-panel :title="t('views.edit.mail.settings')" value="settings">
+                <v-expansion-panel :title="t('views.edit.mail.settings')" v-if="renderer" value="settings">
                     <template #text>
                         <ox-field :editor="editor" name="mail_header" type="custom">
                             <template #default="{props}">
-                                <ox-component src="../content/OxRichEditor.js" v-bind="props"
+                                <ox-component src="../content/OxBlockEditor.js" v-bind="props"
                                     height="150px"
+                                    :renderer="renderer"
                                      v-model="editor.value.mail_header"/>
                             </template>
                         </ox-field>
 
                         <ox-field :editor="editor" name="mail_signature" type="custom">
                             <template #default="{props}">
-                                <ox-component src="../content/OxRichEditor.js" v-bind="props"
+                                <ox-component src="../content/OxBlockEditor.js" v-bind="props"
                                     height="150px"
+                                    :renderer="renderer"
                                      v-model="editor.value.mail_signature"/>
                             </template>
                         </ox-field>
 
                         <ox-field :editor="editor" name="mail_subscription_footer" type="custom">
                             <template #default="{props}">
-                                <ox-component src="../content/OxRichEditor.js" v-bind="props"
+                                <ox-component src="../content/OxBlockEditor.js" v-bind="props"
                                     height="150px"
+                                    :renderer="renderer"
                                      v-model="editor.value.mail_subscription_footer"/>
                             </template>
                         </ox-field>
 
                         <!--
-                        <ox-component src="../content/OxRichEditor.js"
+                        <ox-component src="../content/OxBlockEditor.js"
                             v-model="editor.value.mail_signature"/>
 
-                        <ox-component src="../content/OxRichEditor.js"
+                        <ox-component src="../content/OxBlockEditor.js"
                             v-model="editor.value.mail_subscription_footer"/> -->
                     </template>
                 </v-expansion-panel>
@@ -72,6 +75,7 @@ import { computed, ref, watch, onMounted, useAttrs } from 'vue'
 import { t, query, rules} from "@oxylus/ox"
 import {OxModelEdit, OxField, OxComponent} from '@oxylus/ox/components'
 import {OxAgentSelect} from '@oxylus/auth/components'
+import {asyncLoadRenderer} from '@oxylus/content/composables'
 
 import {MailAccount} from '../models'
 import {useMailModels} from '../composables'
@@ -85,6 +89,9 @@ const initial = computed(() =>
     (props.initial?.id) ? props.initial : {
         ...attrs.initial, owner: props.owner,
     }
+)
+const renderer = asyncLoadRenderer(
+    repos.mailAccounts.use.meta.getUrl({path: '/renderer', abs:true})
 )
 
 const ports = {
