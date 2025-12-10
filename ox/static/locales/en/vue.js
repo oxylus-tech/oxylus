@@ -109,7 +109,10 @@ window.__i18n_messages = { ...window.__i18n_messages, ...{
     "actions.content.align.right": "Align right",
     "actions.content.link.set": "Add a link to selection",
     "actions.content.link.unset": "Remove link from selection",
-    "actions.content.ifvariable.block.title": "Render if <b>{label}</b> is set",
+    "actions.content.link.set_variable": "Add a link to selection with variable as url",
+
+    "content.variables.optional.label": "Optional",
+    "content.variables.optional.description": "This value is not always provided. You may use an optional block.",
 
 
     // ---- @ox/mails

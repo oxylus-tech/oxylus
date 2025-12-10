@@ -38,15 +38,16 @@ class DynamicBlock:
 
     @property
     def tag(self):
-        return self.metadata.inline and "span" or "div"
+        return self.inline and "span" or "div"
 
-    def run(self, renderer, node):
+    def run(self, renderer, soup):
         """Convert dynamic block into Django template code."""
-        for node in node.find_all(self.tag, {"data-block": self.name}):
+        for node in soup.find_all(self.tag, {"data-block": self.name}):
+            print(self.name, self.tag, node)
             values = self.validate(renderer, node)
             if values is not None:
                 self.convert_node(node, values)
-        return node
+        return soup
 
     def convert_node(self, node: Tag, values: dict[str, str]):
         """
@@ -85,13 +86,14 @@ class VariableBlock(DynamicBlock):
     name: str = "variable"
     group: str = "variable"
 
-    inline: bool = (True,)
+    inline: bool = True
     label: str = _("Insert a variable")
     icon: str = "mdi-variable"
 
     def validate(self, renderer, el):
         """Ensure provided attribute matches a renderer variable."""
-        if variable := el.get("data-variable"):
+        if variable := el.get("data-block-variable"):
+            # TODO: test if variables in renderer
             return {**super().validate(renderer, el), "variable": variable}
 
 
@@ -102,6 +104,7 @@ class IfVariableBlock(VariableBlock):
     repl: str = "{{% if {variable} %}}{content}{{% endif %}}"
     group: str = "variable"
     name: str = "ifvariable"
+    inline: bool = False
 
     label: str = _("Display content if variable is set.")
     icon: str = "mdi-application-variable-outline"

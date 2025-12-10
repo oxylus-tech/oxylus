@@ -47,6 +47,7 @@ class DynamicBlockSerializer(serializers.Serializer):
 class VariableInfoSerializer(serializers.Serializer):
     label = serializers.CharField()
     description = serializers.CharField()
+    optional = serializers.BooleanField()
 
 
 class RendererSerializer(serializers.Serializer):

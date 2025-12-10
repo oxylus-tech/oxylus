@@ -19,6 +19,13 @@
                     <v-chip size="small" density="compact" color="primary">
                         {{ item.name }}
                     </v-chip>
+                    <v-chip v-if="item.optional"
+                            size="small" density="compact" color="info"
+                            prepend-icon="mdi-information-outline"
+                            :title="t('content.variables.optional.description')"
+                            >
+                        {{ t('content.variables.optional.label') }}
+                    </v-chip>
                 </v-list-item-subtitle>
             </v-list-item>
         </v-list>
@@ -26,6 +33,7 @@
 </template>
 <script setup lang="ts">
 import { defineEmits } from 'vue'
+import { t } from "@oxylus/ox"
 
 const emits = defineEmits(["click:select"])
 const props = defineProps({

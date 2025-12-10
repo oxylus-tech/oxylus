@@ -113,6 +113,7 @@ class MailSend:
         :param context: extra context
         """
         content = self.get_content(context)
+        print("=" * 80, "\n", content, "=" * 80, "\n", context)
         content_text = self._strip_re_1.sub(" ", strip_tags(content))
         content_text = self._strip_re_2.sub("\n", content_text).strip()
 

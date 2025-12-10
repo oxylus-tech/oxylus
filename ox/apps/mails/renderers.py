@@ -8,8 +8,11 @@ renderer = Renderer(
     variables={
         "name": VariableInfo(_("Recipient Name")),
         "email": VariableInfo(_("Recipient Email")),
-        "subscription_url": VariableInfo(
-            _("Subscription Link"), _("Link to recipient's subscription preferences (eg. newsletter)")
+        "subscription.name": VariableInfo(
+            _("Mailing-list Name"), _("Name of the mailing-list from which mail was sent."), True
+        ),
+        "subscription.url": VariableInfo(
+            _("Mailing-list Preferences Link"), _("Link to recipient's mailing-list preferences."), True
         ),
     }
 )

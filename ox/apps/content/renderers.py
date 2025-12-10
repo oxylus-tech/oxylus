@@ -1,5 +1,6 @@
 from collections import namedtuple
 from dataclasses import dataclass, field
+from pathlib import Path
 from functools import cached_property
 from typing import Iterable
 
@@ -12,7 +13,7 @@ from . import blocks as o_blocks
 __all__ = ("Renderer",)
 
 
-VariableInfo = namedtuple("VariableInfo", ["label", "description"], defaults=("",))
+VariableInfo = namedtuple("VariableInfo", ["label", "description", "optional"], defaults=("", False))
 """ Informations related to a variable declared in :py:class:`Renderer`.
 
 Used to display information to user.
@@ -53,6 +54,8 @@ class Renderer:
     variables: dict[str, VariableInfo] = field(default_factory=dict)
     """ Allowed variables. """
 
+    template_dirs: list[Path | str] = field(default_factory=list)
+
     @cached_property
     def engine(self):
         """Engine to use in order to render templates."""
@@ -80,8 +83,10 @@ class Renderer:
 
             for block in self.blocks:
                 block.run(self, node)
+            print(">>>>", node)
 
         process(soup)
+        print("================", soup)
         return self.engine.from_string(str(soup))
 
     def get_template_dirs(self) -> Iterable[str]:

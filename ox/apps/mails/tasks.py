@@ -26,7 +26,7 @@ def send_mail(uuid: str, model: str, renderer: str, context={}):
 
     try:
         obj = cls.objects.get(uuid=uuid)
-        mail_send = MailSend(obj, renderer)
+        mail_send = MailSend(obj, _renderer)
         mail_send.send(context)
     except Exception:
         obj.state = cls.State.ERROR
