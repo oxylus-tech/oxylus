@@ -23,14 +23,14 @@
 
                         <v-btn
                             variant="text" size="small"
-                            :title="t('actions.content.link.unset')"
-                            :aria-label="t('actions.content.link.unset')"
+                            :title="t('content.actions.link.unset')"
+                            :aria-label="t('content.actions.link.unset')"
                             icon="mdi-link-variant-minus"
                             @click="editor.chain().focus().unsetLink().run()" />
                         <v-btn v-if="!editor.isActive('link')"
                             variant="text" size="small"
-                            :title="t('actions.content.link.set')"
-                            :aria-label="t('actions.content.link.set')"
+                            :title="t('content.actions.link.set')"
+                            :aria-label="t('content.actions.link.set')"
                             icon="mdi-link-variant-plus"
                             @click="actions.setLink()"/>
 
@@ -83,21 +83,21 @@ const focused = ref(false)
 
 const menu = reactive([
     [
-        {label: "actions.content.bold", icon: "mdi-format-bold", action: "toggleBold" },
-        {label: "actions.content.italic", icon: "mdi-format-italic", action: "toggleItalic" },
-        {label: "actions.content.underline", icon: "mdi-format-underline", action: "toggleUnderline" },
-        {label: "actions.content.strike", icon: "mdi-format-strikethrough", action: "toggleStrike" },
+        {label: "content.actions.bold", icon: "mdi-format-bold", action: "toggleBold" },
+        {label: "content.actions.italic", icon: "mdi-format-italic", action: "toggleItalic" },
+        {label: "content.actions.underline", icon: "mdi-format-underline", action: "toggleUnderline" },
+        {label: "content.actions.strike", icon: "mdi-format-strikethrough", action: "toggleStrike" },
     ],[
-        {label: "actions.content.list", icon: "mdi-format-list-bulleted", action: "toggleBulletList" },
-        {label: "actions.content.list.numbered", icon: "mdi-format-list-numbered", action: "toggleOrderedList" },
+        {label: "content.actions.list", icon: "mdi-format-list-bulleted", action: "toggleBulletList" },
+        {label: "content.actions.list.numbered", icon: "mdi-format-list-numbered", action: "toggleOrderedList" },
     ],[
-        {label: "actions.content.heading.1", icon: "mdi-format-header-1", action: "toggleHeading", args: [{level:3}] },
-        {label: "actions.content.heading.2", icon: "mdi-format-header-2", action: "toggleHeading", args: [{level:4}] },
-        {label: "actions.content.heading.3", icon: "mdi-format-header-3", action: "toggleHeading", args: [{level:5}] },
+        {label: "content.actions.heading.1", icon: "mdi-format-header-1", action: "toggleHeading", args: [{level:3}] },
+        {label: "content.actions.heading.2", icon: "mdi-format-header-2", action: "toggleHeading", args: [{level:4}] },
+        {label: "content.actions.heading.3", icon: "mdi-format-header-3", action: "toggleHeading", args: [{level:5}] },
     ], [
-        {label: "actions.content.align.left", icon: "mdi-format-align-left", action: "setTextAlign", args: ["left"]},
-        {label: "actions.content.align.center", icon: "mdi-format-align-center", action: "setTextAlign", args: ["center"]},
-        {label: "actions.content.align.right", icon: "mdi-format-align-right", action: "setTextAlign", args: ["right"]},
+        {label: "content.actions.align.left", icon: "mdi-format-align-left", action: "setTextAlign", args: ["left"]},
+        {label: "content.actions.align.center", icon: "mdi-format-align-center", action: "setTextAlign", args: ["center"]},
+        {label: "content.actions.align.right", icon: "mdi-format-align-right", action: "setTextAlign", args: ["right"]},
     ]
 
 ])
@@ -144,7 +144,7 @@ const actions = {
         // this.edit("setLink", {href: this.$refs['link-url']})
         if(prompt) {
             url = url || editor.getAttributes('link').href
-            url = window.prompt(t('actions.content.link.set'), url)
+            url = window.prompt(t('content.actions.link.set'), url)
         }
         if(url === null)
             return

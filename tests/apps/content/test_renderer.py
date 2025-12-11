@@ -1,5 +1,5 @@
 class TestRenderer:
-    user_content = """<p><span data-if-variable="name">Your email: <span data-variable="email"></span></span></p>"""
+    user_content = """<p><div data-block="ifvariable" data-block-variable="name">Your email: <span data-block="variable" data-block-variable="email"></span></div></p>"""
 
     def test_engine(self, renderer):
         engine = renderer.engine

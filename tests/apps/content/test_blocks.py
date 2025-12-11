@@ -7,7 +7,7 @@ from ox.apps.content import blocks
 
 @pytest.fixture
 def dyn_block():
-    return blocks.DynamicBlock("span", "data-test", "{attr}/{content}")
+    return blocks.DynamicBlock("test", inline=True, repl="--{content}--")
 
 
 @pytest.fixture
@@ -22,20 +22,17 @@ def ifvar_block():
 
 class TestDynamicBlock:
     soup = BeautifulSoup(
-        """<p><span data-test="value-0">content-0</span></p>""" """<p><span data-test="value-1">content-1</span></p>"""
+        """<p><span data-block="test">content-0</span></p><p><span data-block="test">content-1</span></p>"""
     )
 
     def test_run(self, renderer, dyn_block):
         soup = deepcopy(self.soup)
         dyn_block.run(renderer, soup)
-        assert str(soup) == "<p>value-0/content-0</p><p>value-1/content-1</p>"
-
-    def test_validate_fails_without_attr(self, renderer, dyn_block):
-        assert dyn_block.validate(renderer, self.soup) is None
+        assert str(soup) == "<p>--content-0--</p><p>--content-1--</p>"
 
 
 class TestVariableBlock:
-    soup = BeautifulSoup("""<p><span data-variable="name">some content</span></p>""")
+    soup = BeautifulSoup("""<p><span data-block="variable" data-block-variable="name">some content</span></p>""")
 
     def test_run(self, renderer, var_block):
         soup = deepcopy(self.soup)
@@ -44,17 +41,17 @@ class TestVariableBlock:
 
     def test_validate(self, renderer, var_block):
         el = self.soup.find("span")
-        assert var_block.validate(renderer, el) == {"attr": "name", "content": "some content"}
+        assert var_block.validate(renderer, el) == {"content": "some content", "variable": "name"}
 
     def test_validate_fails_with_unknown_var(self, renderer, var_block):
         soup = deepcopy(self.soup)
         el = soup.find("span")
-        el["data-variable"] = "fake_variable"
+        el["data-block-variable"] = "fake_variable"
         assert var_block.validate(renderer, el) is None
 
 
 class TestIfVariableBlock:
-    soup = BeautifulSoup("""<p><span data-if-variable="name">some content</span></p>""")
+    soup = BeautifulSoup("""<p><div data-block="ifvariable" data-block-variable="name">some content</div></p>""")
 
     def test_run(self, renderer, ifvar_block):
         soup = deepcopy(self.soup)

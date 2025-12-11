@@ -63,7 +63,7 @@ class Settings(conf.Settings):
         """Template directory path where to store bundle templates."""
         return Path(settings.BASE_DIR) / "templates" / self.TEMPLATE_DIR
 
-    @classmethod
+    @property
     def static_dir(self) -> Path:
         """Static directory path where to store bundles' statics."""
         return Path(settings.STATIC_DIR) / self.STATIC_DIR

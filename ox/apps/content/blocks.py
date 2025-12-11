@@ -18,8 +18,6 @@ class DynamicBlock:
     substitution string.
     """
 
-    repl: str
-    """ Replacement string formatted with the result of :py:meth:`validate` """
     name: str
     """ Programmatic name designating the block.
 
@@ -28,6 +26,9 @@ class DynamicBlock:
     """
     inline: bool = False
     """ Rendered block is inline. """
+    repl: str = ""
+    """ Replacement string formatted with the result of :py:meth:`validate` """
+
     label: str = ""
     """ Label displayed to user (as on menu activator). """
     icon: str = ""
@@ -92,7 +93,8 @@ class VariableBlock(DynamicBlock):
 
     def validate(self, renderer, el):
         """Ensure provided attribute matches a renderer variable."""
-        if variable := el.get("data-block-variable"):
+        variable = el.get("data-block-variable")
+        if variable and variable in renderer.variables:
             # TODO: test if variables in renderer
             return {**super().validate(renderer, el), "variable": variable}
 

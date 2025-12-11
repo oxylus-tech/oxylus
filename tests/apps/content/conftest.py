@@ -1,7 +1,7 @@
 from pathlib import Path
 import pytest
 
-from ox.apps.content.models import TemplatePack
+from tests.app.models import TemplatePack
 from ox.apps.content.renderers import Renderer, VariableInfo
 
 
