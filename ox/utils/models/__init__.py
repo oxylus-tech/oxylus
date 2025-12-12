@@ -9,7 +9,7 @@ from django.apps.registry import Apps
 
 
 from .color import HexColorValidator, ColorField, Colored
-from .common import Named, LongNamed, Described, Created, Updated, Timestamped, Versioned, PackageInfo
+from .common import Named, LongNamed, OnlyDescribed, Described, Created, Updated, Timestamped, Versioned, PackageInfo
 from .class_field import ClassField, ClassPath
 from .save_hook import SaveHook, SaveHookQuerySet
 from .owned import ChildOwned, ChildOwnedQuerySet
@@ -45,6 +45,7 @@ __all__ = (
     "Colored",
     "Named",
     "LongNamed",
+    "OnlyDescribed",
     "Described",
     "Created",
     "Updated",

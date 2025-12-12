@@ -1,3 +1,4 @@
+from asgiref.sync import sync_to_async
 from django.db import models
 
 __all__ = ("SaveHookQuerySet", "SaveHook")
@@ -60,7 +61,7 @@ class SaveHook(models.Model):
 
     async def on_asave(self, fields: list[str] | None = None):
         """Hook called when model is saved (async)."""
-        pass
+        sync_to_async(self.on_save)(fields)
 
     def save(self, *args, **kwargs):
         if self.on_save is not SaveHook.on_save:

@@ -25,6 +25,12 @@ ox.utils.functional
 .. automodule:: ox.utils.functional
    :members:
 
+ox.utils.jwt
+------------
+
+.. automodule:: ox.utils.jwt
+   :members:
+
 ox.utils.models
 ---------------
 

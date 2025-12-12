@@ -4,9 +4,15 @@ Current dev
 ===========
 
 
+- Serialization / API: start to nest data to avoid overload of http requests
+- Translations:
+    - SFC
+    - reorganize naming scheme, as default : "fields.{name}", and models / fields as "{app}.{model}.fields.{field}"
+- Contacts:
+    - "name" field usage
+
+To check:
 - login: on error 500, success message is provided as "Congrats! Data have been updated."
-- SFC: translations
-- FIXME templates: remove model_actions.html template in favor of overriding model_component.html
 
 
 Contacts
