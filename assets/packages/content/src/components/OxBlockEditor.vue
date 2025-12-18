@@ -1,5 +1,5 @@
 <template>
-    <ox-rich-editor ref="richEditor" v-if="renderer" v-bind="$attrs" v-on="$attrs"
+    <ox-rich-editor ref="richEditor" v-if="renderer" v-bind="richAttr" v-on="richEvent"
             :editor-extensions="extensions" v-model="value">
         <template #extra-actions="{editor}">
             <v-spacer/>
@@ -26,7 +26,8 @@
  * It fetches renderer capabilities using provided url, and display accordingly
  * different menu items.
  */
-import {defineModel, ref, onMounted, useAttrs, watch} from 'vue'
+import {defineModel, computed, ref, onMounted, useAttrs, watch} from 'vue'
+import {pickBy} from 'lodash'
 import {Selection} from "@tiptap/pm/state"
 
 import {t} from '@oxylus/ox'
@@ -52,6 +53,8 @@ const extensions = [
     blocks.IfVariable.configure({block: renderer.blocks?.ifvariable, variables: renderer.variables}),
 ]
 const richEditor = ref(null)
+const richAttr = computed(() => pickBy(attrs, (v, k) => !k.startsWith('on')))
+const richEvent = computed(() => pickBy(attrs, (v, k) => k.startsWith('on')))
 
 
 const actions = {

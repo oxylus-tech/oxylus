@@ -105,7 +105,7 @@ export function useModelPanel<MT extends ModelType, P extends IModelPanelProps<M
         relations: options.props.relations,
         fetchRelations: options.props.fetchRelations
     })
-    const {panel} = usePanel({list, name: options.props.name, ...options}, ModelPanel<MT, P>)
+    const {panel} = usePanel({list, ...options}, ModelPanel<MT, P>)
 
     const next = computed(() => {
         const index = list.getSiblingIndex(unref(panel.value), 1)

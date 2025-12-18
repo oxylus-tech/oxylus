@@ -134,7 +134,7 @@ export default class ModelPanel<
     show({id=null, ...params}: IModelPanelShow<MT>): boolean {
         if(id) {
             // FIXME: this.relations or this.props.relations
-            query(this.repo).fetch({id, relations: this.props.relations}).then(r => {
+            this.query.fetch({id, relations: this.props.relations}).then(r => {
                 super.show({...params, value: r.entities[0] as InstanceType<MT>})
                 return r
             })

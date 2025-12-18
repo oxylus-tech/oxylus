@@ -10,6 +10,8 @@ Current dev
     - reorganize naming scheme, as default : "fields.{name}", and models / fields as "{app}.{model}.fields.{field}"
 - Contacts:
     - "name" field usage
+    - Contact serializer: contact_lists is only on PersonSerializer => generalize or remove (simpler => depends on contact list editor)
+    - contact_lists m2m change of model: impact/fixes
 
 To check:
 - login: on error 500, success message is provided as "Congrats! Data have been updated."

@@ -70,6 +70,7 @@ import TableCell from '@tiptap/extension-table-cell'*/
 
 const emits = defineEmits(['update:modelValue'])
 const attrs = useAttrs()
+console.log(">>>", attrs)
 const props = defineProps({
     /** Actual model value to edit */
     modelValue: {type: String, default: ''},

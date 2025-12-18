@@ -19,7 +19,7 @@
         <template v-else-if="props.type == 'autocomplete'">
             <ox-autocomplete v-bind="fieldProps"
                 v-model="props.editor.value[props.name]">
-                <template v-for="_, name in slots" :key="slot"
+                <template v-for="_, name in slots" :key="name"
                     #[name]="bind">
                     <slot :name="name" v-bind="bind"/>
                 </template>
@@ -28,7 +28,7 @@
         <template v-else>
             <v-text-field v-bind="fieldProps" :type="props.type"
                 v-model="props.editor.value[props.name]">
-                <template v-for="_, name in slots" :key="slot"
+                <template v-for="_, name in slots" :key="name"
                     #[name]="bind">
                     <!--
                         @slot Slots are passed down to the inner component. Currently it is only supported for `autocomplete`, `text` component.

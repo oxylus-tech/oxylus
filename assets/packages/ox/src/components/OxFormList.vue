@@ -1,82 +1,54 @@
 <template>
+    <v-dialog v-model="dialog.open">
+        <v-card>
+            <v-card-text>
+                <v-form :disabled="!dialog.editable" v-if="dialog.item" v-model="dialog.valid">
+                    <slot name="item.form" :item="dialog.value" :index="index"/>
+                </v-form>
+            </v-card-text>
+            <v-card-actions>
+                <v-btn
+                    color="error" prepend-icon="mdi-cancel"
+                    :aria-label="t('actions.discard')"
+                    @click="close()" >
+                    {{ t('actions.discard') }}
+                </v-btn>
+                <v-btn :disabled="!dialog.valid"
+                    color="primary" prepend-icon="mdi-content-save"
+                    :aria-label="t('actions.save')"
+                    @click="save()" >
+                    {{ t('actions.save') }}
+                </v-btn>
+            </v-card-actions>
+        </v-card>
+    </v-dialog>
     <v-list v-model:opened="opened">
         <template v-if="items?.length">
-            <template v-if="can.change">
-                 <v-list-group v-for="item, index in items" :key="index" :value="index">
-                    <template #activator="{props}">
-                        <ox-form-list-item :item="item" v-bind="props"
-                                :remove="can.delete"
-                                @remove="removeItem(index)">
-                            <template #default="{item}">
-                                <slot name="item" :item="item" :index="index"/>
-                            </template>
-                            <template #actions="{item}">
-                                <slot name="item.actions" :item="item" :index="index"/>
-                            </template>
-                        </ox-form-list-item>
-                    </template>
-                    <v-form :disabled="!can.change">
-                        <slot name="item.form" :item="item" :index="index" :editable="can.change"/>
-                    </v-form>
-                </v-list-group>
-            </template>
-            <template v-else>
-                <template v-for="item, index in items" :key="index">
-                    <ox-form-list-item :item="item" v-bind="props"
-                            :value="index"
-                            :remove="can.delete"
-                            @remove="removeItem(index)">
-                        <template #default="{item}">
-                            <!--
-                                @slot Item's content.
-                                     @binding {object} item item being displayed
-                                     @binding {number} index item's index.
-                             -->
-                            <slot name="item" :item="item" :index="index"/>
-                        </template>
-                        <template #actions="{item}">
-                            <!-- @slot Item' actions content.
-                                 @binding {object} item item being displayed
-                                 @binding {number} index item's index. -->
-                            <slot name="item.actions" :item="item" :index="index"/>
-                        </template>
-                    </ox-form-list-item>
+            <ox-form-list-item v-for="item, index in items" :key="index" :value="index"
+                    :item="item" :remove="can.delete"
+                    @remove="removeItem(index)">
+                <template #default="bind">
+                    <slot name="item" v-bind="bind" :index="index" />
                 </template>
-            </template>
-        </template>
-        <template v-else>
-            <v-list-item :title="t('lists.empty')" />
-        </template>
-        <template v-if="can.add">
-            <v-divider v-if="items.length"/>
-            <v-list-group :value="-1">
-                <template #activator="{props}">
-                    <v-list-item v-bind="props" :title="t('actions.add_item')" prepend-icon="mdi-plus"/>
+                <template #actions="bind">
+                    <slot name="item.actions" :item="item" :index="index" :editable="can.change" />
+
+                    <v-btn size="small" color="primary" icon="mdi-pencil" class="ml-1"
+                        :title="t('actions.edit')"
+                        :aria-label="t('actions.edit')"
+                        @click="edit(item)" />
                 </template>
-                <v-form>
-                    <!-- @slot Item' edit and add form.
-                         @binding {object} item item being edited
-                         @binding {number} index item's index.
-                         @binding {boolean} editable true if content is editable. -->
-                    <slot name="item.form" :item="newItem" :edit="true"/>
-                </v-form>
-                <v-list-item v-if="newItem">
-                    <div v-if="Object.values(newItem).length"
-                            class="flex-row justify-right">
-                        <v-btn size="small" color="secondary" prepend-icon="mdi-backspace"
-                            @click="newItem={}"
-                            :aria-label="t('actions.discard')">
-                            {{ t('actions.discard') }}
-                        </v-btn>
-                        <v-btn  size="small" color="primary" prepend-icon="mdi-plus" class="ml-2"
-                            @click="addItem()"
-                            :aria-label="t('actions.add')">
-                            {{ t('actions.add') }}
-                        </v-btn>
-                    </div>
-                </v-list-item>
-            </v-list-group>
+            </ox-form-list-item>
         </template>
+        <v-list-item v-else :title="t('lists.empty')">
+            <template #append v-if="can.add">
+                <v-btn size="small" color="primary" prepend-icon="mdi-plus"
+                    @click="edit()"
+                    :aria-label="t('actions.discard')">
+                    {{ t('actions.add_item') }}
+                </v-btn>
+            </template>
+        </v-list-item>
     </v-list>
 </template>
 <script setup lang="ts">
@@ -118,14 +90,39 @@ const can = computed(() => ({
 }))
 
 const opened = ref([]);
+const dialog = reactive({
+    open: false,
+    item: null,
+    add: false
+})
 
 if(!items.value?.length)
     opened.value.push(-1)
 
-function addItem() {
-    items.value.push(newItem.value)
-    newItem.value = {}
+function edit(item=null) {
+    dialog.add = item === null
+    dialog.editable = dialog.add ? can.value.add : can.value.change
+    dialog.item = item || {}
+    dialog.value = {...dialog.item}
+    dialog.open = true
 }
+
+function close() {
+    dialog.open = false
+    dialog.item = null
+    dialog.value = null
+}
+
+function save() {
+    console.log(dialog.item, dialog.value)
+    if(dialog.add)
+        items.value.push({...dialog.value})
+    else
+        Object.assign(dialog.item, dialog.value)
+    console.log(items.value)
+    close()
+}
+
 
 function removeItem(index) {
     if(confirm(t('actions.delete.confirm')))
