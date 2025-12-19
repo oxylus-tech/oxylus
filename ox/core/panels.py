@@ -127,7 +127,7 @@ class Panel(BasePanel):
     """
 
     url: str = None
-    """ Url name to app view. """
+    """ Url name to app view. It MUST always be namespaced under app's name. """
     component: str = ""
     """ Vue component. """
     template = "ox/core/components/model_panel.html"

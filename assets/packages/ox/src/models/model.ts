@@ -1,4 +1,5 @@
 import { Model as $Model, Relation } from 'pinia-orm'
+import { t } from '../composables/i18n.ts'
 
 
 /** A model instance id **/
@@ -56,6 +57,12 @@ export class Meta {
     getPermission(action: string): string {
         return `${this.app}.${action}_${this.model}`
     }
+
+    /** Return translated verbose name of model */
+    get verbose_name() { return t(`models.${this.model}`) }
+
+    /** Return translated verbose name of model */
+    get verbose_name_plural() { return t(`models.${this.model}`, 2) }
 }
 export interface Meta extends IMeta {}
 

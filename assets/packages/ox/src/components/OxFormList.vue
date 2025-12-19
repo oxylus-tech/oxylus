@@ -1,9 +1,18 @@
 <template>
     <v-dialog v-model="dialog.open">
         <v-card>
+            <v-card-title v-if="dialog.value">
+                <template v-if="dialog.add && props.useModel">
+                    {{ t('actions.new_item', {name: props.useModel.meta.verbose_name}) }}
+                </template>
+                <template v-else-if="dialog.add">{{ t('actions.add_item') }}</template>
+                <template v-else>
+                    {{ t('actions.edit_item', {name: dialog.value.$title}) }}
+                </template>
+            </v-card-title>
             <v-card-text>
                 <v-form :disabled="!dialog.editable" v-if="dialog.item" v-model="dialog.valid">
-                    <slot name="item.form" :item="dialog.value" :index="index"/>
+                    <slot name="item.form" :item="dialog.value"/>
                 </v-form>
             </v-card-text>
             <v-card-actions>
@@ -68,7 +77,7 @@
  * ![OxFormList Screenshot](../../../../statics/OxFormList.png)
  */
 import {computed, defineModel, defineProps, inject, ref, reactive, provide, toRefs} from "vue"
-import {t} from "@oxylus/ox"
+import {t, tKey} from "@oxylus/ox"
 
 import OxFormListItem from './OxFormListItem.vue'
 
@@ -102,8 +111,8 @@ if(!items.value?.length)
 function edit(item=null) {
     dialog.add = item === null
     dialog.editable = dialog.add ? can.value.add : can.value.change
-    dialog.item = item || {}
-    dialog.value = {...dialog.item}
+    dialog.item = item || new props.useModel({})
+    dialog.value = new props.useModel({...dialog.item})
     dialog.open = true
 }
 
@@ -114,12 +123,10 @@ function close() {
 }
 
 function save() {
-    console.log(dialog.item, dialog.value)
     if(dialog.add)
-        items.value.push({...dialog.value})
+        items.value.push(props.useModel({...dialog.value}))
     else
         Object.assign(dialog.item, dialog.value)
-    console.log(items.value)
     close()
 }
 

@@ -1,11 +1,14 @@
 import pytest
 
+from django.core.exceptions import ValidationError
 from django.db import models
+from rest_framework import serializers
 
 from ox.core.apps import AppConfig, AppMeta
-from ox.utils.models.class_field import ClassField, ClassPath
+from ox.utils.models.fields import ClassField, ClassPath, SerializerField
 
 
+# --- ClassField & ClassPath
 class ModelTest(models.Model):
     handler = ClassField()
 
@@ -75,3 +78,28 @@ class TestClassField:
         assert model.handler == AppMeta
         assert model.handler.cls == AppMeta
         assert str(model.handler) == "ox.core.apps.AppMeta"
+
+
+# ---- SerializerField
+class Serializer(serializers.Serializer):
+    name = serializers.CharField()
+    value = serializers.IntegerField()
+
+
+@pytest.fixture
+def serializer_field():
+    return SerializerField(serializer_class=Serializer)
+
+
+class TestSerializerField:
+    def test___init__not_subclass_of_serializer_raises_type_error(self):
+        with pytest.raises(TypeError):
+            SerializerField(serializer_class=TestSerializerField)
+
+    def test_clean(self, serializer_field):
+        data = {"name": "Some Name", "value": 13}
+        assert serializer_field.clean(data, None) == data
+
+    def test_clean_raises_validation_error(self, serializer_field):
+        with pytest.raises(ValidationError):
+            serializer_field.clean({"name": 123, "value": "chile"}, None)

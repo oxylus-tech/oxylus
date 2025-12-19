@@ -5,6 +5,7 @@ from django import template, urls
 register = template.Library()
 
 
+# FIXME: remove?
 @register.simple_tag
 def panel_url(urlname: str, panel: str, view: str | None = None, id: str | int | None = None) -> str:
     """Return url to this panel.
@@ -36,3 +37,9 @@ def format_string(template_str, *args, **kwargs):
         return template_str.format(*args, **kwargs)
     except Exception as e:
         return f"[format error: {e}]"
+
+
+@register.filter("startswith")
+def do_startswith(text, search) -> bool:
+    """Return True when provided text start with `search`."""
+    return text.startswith(search)

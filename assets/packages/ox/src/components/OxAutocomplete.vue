@@ -7,15 +7,21 @@
         >
         <template v-for="_, slot in slots" #[slot]="bind">
             <!-- @slot All slots are passed down to `v-autocomplete`. -->
-            <slot :name="slot" v-bind="bind"/>
+            <slot :name="slot" v-bind="bind"
+                v-if="!slot.startsWith('item') && !slot.startsWith('selection')"/>
         </template>
 
-        <template #item="slotProps" v-if="slots['item']">
-            <slot name="item" v-bind="slotProps" />
+        <template #item="{item, props}">
+            <v-list-item v-bind="props">
+                <template v-for="slotName, slot in itemSlots" #[slotName]="bind" :key="name">
+                    <!-- @slot All slots "item." are passed down to `v-autocomplete`. -->
+                    <slot :name="slot" :item="item" v-bind="bind"/>
+                </template>
+            </v-list-item>
         </template>
 
-        <template #selection="slotProps" v-if="slots['selection']">
-            <slot name="selection" v-bind="slotProps" />
+        <template #selection="bind" v-if="slots['selection']">
+            <slot name="selection" v-bind="bind"/>
         </template>
     </v-autocomplete>
 </template>
@@ -36,11 +42,14 @@ import { defineExpose, defineModel, inject, reactive, ref, onMounted, useAttrs, 
 import type {Repository} from 'pinia-orm'
 import { VAutocomplete } from 'vuetify/components/VAutocomplete'
 
-import { useQuery, ifNotEqualFn } from '@oxylus/ox'
+import { useQuery, ifNotEqualFn, filterSlots } from '@oxylus/ox'
 import type {IModelList, State} from '@oxylus/ox'
 import type {Model, ModelId} from '@oxylus/ox/models'
 
 const slots = useSlots()
+const itemSlots = filterSlots(slots, 'item.')
+console.log(itemSlots, slots)
+const selectionSlots = filterSlots(slots, 'selection.')
 
 /** Model value **/
 const value: Ref<ModelId|ModelId[]> = defineModel()
@@ -135,6 +144,7 @@ const load = debounce(async ({reset=false}={}) => {
     filters[props.lookup] = q
     let resp = await fetch({params: filters})
 
+    console.log(selected.value)
     const entities = selected.value ?
         unionBy(resp.entities, selected.value, (v) => v.id) :
         resp.entities
