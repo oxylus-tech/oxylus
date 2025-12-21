@@ -6,7 +6,9 @@ window.__i18n_messages = { ...window.__i18n_messages, ...{
     "actions": "Actions",
     "actions.add": "Add",
     "actions.add_item": "Add an item",
+    "actions.new_item": "New {name}",
     "actions.edit": "Edit",
+    "actions.edit_model": "Edit: {name}",
     "actions.view": "View",
     "actions.delete": "Delete",
     "actions.delete.confirm": "Are you sure that you want to delete this item?",
@@ -57,6 +59,17 @@ window.__i18n_messages = { ...window.__i18n_messages, ...{
     "fields.agent.select": "Select a user or a group",
     "actions.password.reset": "Reset Password",
 
+    "rules.username": "Username must not be empty. It only can contain letters, numbers and \"@+.-\" special characters",
+    "rules.http_url": "Invalid HTTP url, ensure that it start with \"http\" or \"https\".",
+    "rules.url": "Invalid URL",
+
+    "state.processing.title": "Processing",
+    "state.processing.detail": "Sending and processing data, please be patient. If this message persist you might retry.",
+    "state.error.title": "Oups...",
+    "state.error.detail": "Something wrong happened. Please contact your administrator if this persists.",
+    "state.ok.title": "Success!",
+    "state.ok.detail": "Congrats! Data have been updated.",
+
     // ---- @ox/locations
     "fields._.from_user": "This contact is linked to a user, you can't change this value",
     "fields.iban.invalid_checksum": "Invalid IBAN checksum",
@@ -84,18 +97,24 @@ window.__i18n_messages = { ...window.__i18n_messages, ...{
     "actions.tasks.restart": "Restart this task",
 
     // ---- @ox/content
-    "actions.format.bold": "Bold",
-    "actions.format.italic": "Italic",
-    "actions.format.underline": "Underline",
-    "actions.format.strike": "Strike",
-    "actions.format.list": "List",
-    "actions.format.list.numbered": "List Numbered",
-    "actions.format.heading.1": "Heading 1",
-    "actions.format.heading.2": "Heading 2",
-    "actions.format.heading.3": "Heading 3",
-    "actions.format.align.left": "Align left",
-    "actions.format.align.center": "Align center",
-    "actions.format.align.right": "Align right",
+    "content.actions.bold": "Bold",
+    "content.actions.italic": "Italic",
+    "content.actions.underline": "Underline",
+    "content.actions.strike": "Strike",
+    "content.actions.list": "List",
+    "content.actions.list.numbered": "List Numbered",
+    "content.actions.heading.1": "Heading 1",
+    "content.actions.heading.2": "Heading 2",
+    "content.actions.heading.3": "Heading 3",
+    "content.actions.align.left": "Align left",
+    "content.actions.align.center": "Align center",
+    "content.actions.align.right": "Align right",
+    "content.actions.link.set": "Add a link to selection",
+    "content.actions.link.unset": "Remove link from selection",
+    "content.actions.link.set_variable": "Add a link to selection with variable as url",
+
+    "content.variables.optional.label": "Optional",
+    "content.variables.optional.description": "This value is not always provided. You may use an optional block.",
 
 
     // ---- @ox/mails

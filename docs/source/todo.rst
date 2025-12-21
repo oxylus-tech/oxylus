@@ -4,9 +4,16 @@ Current dev
 ===========
 
 - files: viewer => next & prev buttons;
+- Serialization / API: start to nest data to avoid overload of http requests?
+- Translations:
+    - SFC
+    - reorganize naming scheme, as default : "fields.{name}", and models / fields as "{app}.{model}.fields.{field}"
+- Contacts:
+    - Contact serializer: contact_lists is only on PersonSerializer => generalize or remove (simpler => depends on contact list editor)
+    - contact_lists m2m change of model: impact/fixes
+
+To check:
 - login: on error 500, success message is provided as "Congrats! Data have been updated."
-- SFC: translations
-- FIXME templates: remove model_actions.html template in favor of overriding model_component.html
 
 
 Contacts
@@ -15,6 +22,12 @@ Contacts
 - Contact list filters: is subscription, related to a group, or an organisation
 - ContactMail
 
+Content
+-------
+
+- dynamic block data attribute: normalize, as "data-block", "data-block-*"
+- insert url from variable
+- better url edition
 
 Auth
 ----

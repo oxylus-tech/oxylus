@@ -2,13 +2,14 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 
 from caps.views import OwnedViewSet
-from . import models, serializers, tasks
+from ox.apps.content.views import WithRendererViewSet
+from . import models, serializers, renderers, tasks
 
 
 __all__ = ("MailAccountViewSet", "BaseMailViewSet", "MailViewSet")
 
 
-class MailAccountViewSet(OwnedViewSet):
+class MailAccountViewSet(WithRendererViewSet, OwnedViewSet):
     queryset = models.MailAccount.objects.all().order_by("name")
     serializer_class = serializers.MailAccountSerializer
 
@@ -16,9 +17,10 @@ class MailAccountViewSet(OwnedViewSet):
     search_fields = [
         "name",
     ]
+    renderer = renderers.renderer
 
 
-class BaseMailViewSet(OwnedViewSet):
+class BaseMailViewSet(WithRendererViewSet, OwnedViewSet):
     """
     Base viewset to use for editing and sending emails.
 
@@ -33,10 +35,14 @@ class BaseMailViewSet(OwnedViewSet):
 
     """
 
+    ordering_fields = ["subject", "created", "updated"]
     filterset_fields = {
         "owner__uuid": ["in", "exact"],
         "account__uuid": ["in", "exact"],
     }
+    renderer = renderers.renderer
+    renderer_path = "ox.apps.mails.renderers.renderer"
+    """ Specify which renderer the MailSend class should use. """
 
     @action(detail=True, methods=["POST", "PUT"])
     def send(self, request, uuid=None):
@@ -49,7 +55,7 @@ class BaseMailViewSet(OwnedViewSet):
             raise ValueError("Permission for this action MUST be specified by `perms_map`. ")
 
         obj = self.get_object()
-        tasks.send_mail.enqueue(uuid=str(obj.uuid), model=type(obj)._meta.label_lower)
+        tasks.send_mail.enqueue(uuid=str(obj.uuid), model=type(obj)._meta.label_lower, renderer=self.renderer_path)
         obj.state = obj.State.SENDING
         obj.save()
         serializer = self.get_serializer(instance=obj)

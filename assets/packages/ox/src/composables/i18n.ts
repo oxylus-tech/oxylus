@@ -38,16 +38,31 @@ export function createI18n() {
 }
 
 
+export function loadI18nScripts({composer=null}=null) {
+    const elements = document.querySelectorAll("script[type='application/i18n']:not([data-loaded])")
+    composer ??= i18n.global
+
+    const allMessages: I18nLocaleMessages = composer.messages.value
+    allMessages[composer.locale.value] ??= {}
+
+    const messages = all[composer.locale.value]
+    elements.forEach((el) => {
+        const data = JSON.loads(el.innerText)
+        Object.assign(messages, data)
+        el.dataset["loaded"] = "1"
+    })
+}
+
+
 /**
  * Main vue-i18n instance used by Oxylus application.
  */
 export const i18n = createI18n()
 
 
-/**
- * Shortcut to {@link i18n} `t()` function.
- */
+/** Shortcut to {@link i18n} `t()` function. */
 export const t = i18n.global.t
+/** Shortcut to {@link i18n} `te()` function. */
 export const te = i18n.global.te
 
 export interface IUseI18n {

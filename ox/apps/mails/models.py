@@ -93,8 +93,8 @@ class BaseMail(Timestamped, ChildOwned):
     state = models.PositiveSmallIntegerField(_("State"), choices=State.choices, default=State.DRAFT)
 
     context = models.JSONField(_("Context"), default=dict)
-    subject = models.TextField(_("Subject"), default="", help_text=_("When provided, overrides template's content"))
-    content = RichTextField(_("Message"), default="", help_text=_("When provided, overrides template's content."))
+    subject = models.TextField(_("Subject"), default="")
+    content = RichTextField(_("Message"), default="")
     attachments = models.ManyToManyField(File, related_name="+", verbose_name=_("Attach files"))
 
     # From ChildOwned
@@ -143,9 +143,12 @@ class Mail(BaseMail):
         verbose_name_plural = _("Mails")
 
     def get_recipients(self):
+        """
+        Return recipients with context filled with ``name`` and ``email``.
+        """
         emails = [e.strip() for e in self.recipients.split(",") if e.strip()]
         recipients = []
         for raw in emails:
             name, email = parseaddr(raw)
-            recipients.append((email, {"name": name or email.split("@")[0]}))
+            recipients.append((email, {"name": name or email.split("@")[0], "email": email}))
         return recipients

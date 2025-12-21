@@ -20,7 +20,7 @@ export function defineAsyncComponent(url: string, name: string) {
         return import(url).then(mod => {
             // try to fetch css
             if(url.endsWith('.js'))
-                loadCss(import.meta.resolve(url.replace(/\.js$/, '.css')))
+                loadCss(import.meta.resolve(url.replace(/\.js$/, '.css'))).catch(() => {})
             if(!name)
                 return mod
 

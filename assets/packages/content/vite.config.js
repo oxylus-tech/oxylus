@@ -9,7 +9,17 @@ export default mergeConfig(
             rollupOptions: {
                 input: {
                     sfc: 'src/sfc.ts'
+                },
+
+                /*
+                output: {
+                    manualChunks: (id) => {
+                        if(id.includes('tiptap'))
+                            return 'tiptap'
+                        return null
+                    }
                 }
+                */
             }
         },
     })

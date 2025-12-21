@@ -42,4 +42,16 @@ export default {
         const allowed = /^[A-Za-z0-9@.+\-_]+$/
         return allowed.test(value) || "Username must not be empty. It only can contain letters, numbers and @/+/./- special characters"
     },
+
+    /** Rule validating url for HTTP protocol */
+    httpUrl(value: string) : boolean|string {
+        const allowed = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/
+        return allowed.test(value) || t("rules.http_url")
+    },
+
+    /** Rule validating url for other protocols */
+    url(value: string) : boolean|string {
+        const allowed = /[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/
+        return allowed.test(value) || t("rules.url")
+    },
 }

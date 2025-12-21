@@ -40,7 +40,7 @@ const props = defineProps({
     /** Button label for reset/discard */
     resetLabel: String,
     /** Button label for reset/discard */
-    resetIcon: {type: String, default: "mdi-close-circle"},
+    resetIcon: {type: String, default: "mdi-cancel"},
     /** Button label for validation/save */
     validateLabel: String,
     /** Button label for validation/save */

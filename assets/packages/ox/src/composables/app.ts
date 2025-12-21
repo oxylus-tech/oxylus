@@ -119,6 +119,10 @@ export interface IRAppContext extends Reactive<AppContext> {
  * Create a new {@link AppContext} and provide the following values:
  * - `context`: {@link AppContext} object;
  * - `user`: current {@link models.User};
+ *
+ * It updates the `window.oxylus` with those values:
+ * - `apiUrl`: API base url
+ * - `appData`: app's data (as loaded from AppContext)
  */
 export function useAppContext(opts: IApp, load: boolean = true): AppContext {
     const obj = AppContext.reactive(opts)
@@ -127,5 +131,6 @@ export function useAppContext(opts: IApp, load: boolean = true): AppContext {
     provide('context', obj)
     provide('user', obj.user)
     // provide('repos')
+    window.oxylus = {...window.oxylus, apiUrl: obj.apiUrl, appData: obj.data}
     return obj
 }

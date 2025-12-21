@@ -1,5 +1,5 @@
 {% extends "./base.html" %}
-{% load i18n %}
+{% load i18n ox %}
 
 {% block head-title %}
     {% block title %}{{ block.super }}{% endblock %} | {{ block.super }}
@@ -12,8 +12,10 @@
 {% endif %}
 
 {% for panel in panels.get_panels %}
+{% if panel.url|startswith:app_config.label %}
 <template #panels.{{ panel.name }}>
     {% include panel.template %}
 </template>
+{% endif %}
 {% endfor %}
 {% endblock %}

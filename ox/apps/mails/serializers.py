@@ -23,9 +23,14 @@ class MailAccountSerializer(OwnedSerializer):
             # "imap_password": {"write_only": True, "required": False, "allow_null": True},
         }
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if self.instance:
+            self.fields["smtp_password"].allow_blank = True
+
     def validate(self, data):
-        if "smtp_password" in data and data.get("smtp_password") is None:
-            del data["smtp_password"]
+        if self.instance:
+            data["smtp_password"] = data.get("smtp_password") or self.instance.smtp_password
         # if "imap_password" in data and data.get("imap_password") is None:
         #    del data["imap_password"]
         return super().validate(data)

@@ -5,7 +5,9 @@
                 @slot Item title
                 @binding {Object} item - item currently displayed
             -->
-            <slot name="default" :item="item"/>
+            <slot name="default" :item="props.item">
+                {{ props.title }}
+            </slot>
         </v-list-item-title>
         <template #append>
             <div @click.stop="">
@@ -13,9 +15,9 @@
                     @slot Item action
                     @binding {Object} item - item currently displayed
                 -->
-                <slot name="actions" :item="item"/>
+                <slot name="actions" :item="props.item"/>
                 <template v-if="props.remove">
-                    <v-btn type="button" class="ml-2" size="small"
+                    <v-btn type="button" class="ml-1" size="small"
                         @click.stop.prevent="emits('remove', $events)" color="error"
                         :aria-label="t('actions.remove')"
                         :title="t('actions.remove')"
@@ -39,7 +41,10 @@ const props = defineProps<{
     item: object,
     /** Display remove button. **/
     remove: boolean,
+    /** List item title */
+    title: string,
 }>()
+console.log(props.item)
 const emits = defineEmits([
     /**
      * Remove item button has been clicked. The click event data is passed along.

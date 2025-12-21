@@ -10,6 +10,7 @@ from django.utils.translation import gettext_lazy as _
 __all__ = (
     "Named",
     "LongNamed",
+    "OnlyDescribed",
     "Described",
     "Created",
     "Updated",
@@ -40,7 +41,16 @@ class LongNamed(models.Model):
         abstract = True
 
 
-class Described(Named):
+class OnlyDescribed(models.Model):
+    """Provide description field."""
+
+    description = models.CharField(_("Description"), max_length=256, blank=True, null=True, default="")
+
+    class Meta:
+        abstract = True
+
+
+class Described(Named, OnlyDescribed):
     """Provide name (mandatory) and description field."""
 
     description = models.CharField(_("Description"), max_length=256, blank=True, null=True, default="")

@@ -9,8 +9,8 @@ from django.apps.registry import Apps
 
 
 from .color import HexColorValidator, ColorField, Colored
-from .common import Named, LongNamed, Described, Created, Updated, Timestamped, Versioned, PackageInfo
-from .class_field import ClassField, ClassPath
+from .common import Named, LongNamed, OnlyDescribed, Described, Created, Updated, Timestamped, Versioned, PackageInfo
+from .fields import ClassField, ClassPath, SerializerField
 from .save_hook import SaveHook, SaveHookQuerySet
 from .owned import ChildOwned, ChildOwnedQuerySet
 
@@ -40,23 +40,30 @@ def get_models(models: list[str], apps: Apps | None = None) -> list[models.Model
 
 
 __all__ = (
+    "get_model",
+    "get_models",
+    # color
     "HexColorValidator",
     "ColorField",
     "Colored",
+    # common
     "Named",
     "LongNamed",
+    "OnlyDescribed",
     "Described",
     "Created",
     "Updated",
     "Timestamped",
     "Versioned",
     "PackageInfo",
+    # fields
     "ClassField",
     "ClassPath",
+    "SerializerField",
+    # save_hook
     "SaveHookQuerySet",
     "SaveHook",
+    # owned
     "ChildOwned",
     "ChildOwnedQuerySet",
-    "get_model",
-    "get_models",
 )

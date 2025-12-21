@@ -2,7 +2,7 @@ from django.db import models
 
 from ox.core.models import Model
 from ox.utils.models.tree import TreeNode as _TreeNode, OwnedTreeNode as _OwnedTreeNode
-from ox.apps.content.models import TemplatePack
+from ox.apps.content.models import TemplatePack as _TemplatePack
 
 
 __all__ = ("Value", "TreeNode")
@@ -28,5 +28,5 @@ class OwnedTreeNode(_OwnedTreeNode):
     name = models.CharField(max_length=32, default="")
 
 
-class Pack(TemplatePack):
+class TemplatePack(_TemplatePack):
     source_dir = "pack"

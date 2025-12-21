@@ -1,4 +1,5 @@
 import { Model as $Model, Relation } from 'pinia-orm'
+import { t } from '../composables/i18n.ts'
 
 
 /** A model instance id **/
@@ -34,8 +35,11 @@ export class Meta {
         return `${obj[this.title]}`
     }
 
-    /** Return API url based on id and path. **/
-    getUrl({path=null, id=null}: {path?: string, id?: ModelId}): string {
+    /** Return API url based on id and path.
+     *
+     * If `abs` is provided, prepend api endpoint url.
+     */
+    getUrl({path=null, id=null, abs=false}: {path?: string, id?: ModelId, abs?: boolean}): string {
         let url = this.url
         if(!url)
             throw Error("No url declared on this model.")
@@ -44,6 +48,8 @@ export class Meta {
             url += `/${id}/`
         if(path)
             url += path
+        if(abs)
+            url = `${window.oxylus.apiUrl}/${url}`
         return `${url}/`.replaceAll('//', '/')
     }
 
@@ -51,6 +57,12 @@ export class Meta {
     getPermission(action: string): string {
         return `${this.app}.${action}_${this.model}`
     }
+
+    /** Return translated verbose name of model */
+    get verbose_name() { return t(`models.${this.model}`) }
+
+    /** Return translated verbose name of model */
+    get verbose_name_plural() { return t(`models.${this.model}`, 2) }
 }
 export interface Meta extends IMeta {}
 

@@ -11,7 +11,6 @@ Internationalization is done at two places: at django level using the framework'
     duplicating translations).
 
 
-
 So what do we have here? Lets concentrate on frontend (for backend read the Django manual):
 
 - Regular Django translations for the backend;
@@ -26,8 +25,7 @@ Oxylus also provides other translations for frontend app in ``ox/static/locales/
 
 .. note::
 
-    The frontend translation files are stored as javascript objects. Though this might change later, this is used to ease
-    setup process from multiple files.
+    The frontend translation files are stored as javascript objects. This allows translations to be loaded as static files, enabling browser cache and avoiding glitches when application is mounted before translations are fetched.
 
 
 How to provide custom translations for the frontend

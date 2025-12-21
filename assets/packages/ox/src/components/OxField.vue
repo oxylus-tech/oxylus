@@ -19,18 +19,23 @@
         <template v-else-if="props.type == 'autocomplete'">
             <ox-autocomplete v-bind="fieldProps"
                 v-model="props.editor.value[props.name]">
-                <template v-for="_, name in slots" :key="slot"
+                <template v-for="_, name in slots" :key="name"
                     #[name]="bind">
-                    <!--
-                        @slot Slots are passed down to the inner component. Currently it is only supported for the `ox-autocomplete` component.
-                    -->
                     <slot :name="name" v-bind="bind"/>
                 </template>
             </ox-autocomplete>
         </template>
         <template v-else>
             <v-text-field v-bind="fieldProps" :type="props.type"
-                v-model="props.editor.value[props.name]"/>
+                v-model="props.editor.value[props.name]">
+                <template v-for="_, name in slots" :key="name"
+                    #[name]="bind">
+                    <!--
+                        @slot Slots are passed down to the inner component. Currently it is only supported for `autocomplete`, `text` component.
+                    -->
+                    <slot :name="name" v-bind="bind"/>
+                </template>
+            </v-text-field>
         </template>
     </slot>
 </template>
@@ -47,7 +52,7 @@
  * - `checkbox`: create a `v-checkbox`;
  * - `date`: create a `v-date-input`;
  * - `autocomplete`: create a `ox-autocomplete`;
- * - any other value: `v-text-field` with supplied type;
+ * - `text` or any other value: `v-text-field` with supplied type;
  *
  * Attributes are bounded to the inner component.
  */

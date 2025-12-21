@@ -46,6 +46,9 @@ export default defineConfig({
                 manualChunks: (id) => {
                     if(id.includes("vuetify"))
                         return "vuetify"
+                    if(id.includes("tiptap"))
+                        return "tiptap"
+                    return null
 
                     /*const match = id.match(/\/@oxylus\/([^/]+)\//)
                     if (match)
