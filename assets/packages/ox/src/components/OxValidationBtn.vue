@@ -1,17 +1,17 @@
 <template>
     <div class="text-right">
-        <v-btn color="error" class="me-2" :prepend-icon="props.resetIcon"
+        <v-btn v-bind="attrs" color="error" class="me-2" :prepend-icon="props.resetIcon"
                 @click="emit('reset')"
                 :disabled="props.disabled">
             <!-- @slot Discard button default slot. -->
             <slot name="discard">{{ props.resetLabel || t('actions.discard') }}</slot>
         </v-btn>
         <v-btn v-if="props.state.isSending || props.state.isProcessing"
-                color="primary" :prepend-icon="props.processingIcon" disabled>
+                 v-bind="attrs" color="primary" :prepend-icon="props.processingIcon" disabled>
             <!-- @slot Processing button default slot. -->
             <slot name="processing">{{ props.processingLabel || t('actions.saving') }}</slot>
         </v-btn>
-        <v-btn v-else color="primary" :prepend-icon="props.validateIcon"
+        <v-btn v-else v-bind="attrs" color="primary" :prepend-icon="props.validateIcon"
                 @click="emit('validate')"
                 :disabled="props.disabled || props.validateDisabled">
             <!-- @slot Validate button default slot. -->
@@ -25,7 +25,7 @@
  * on a provided {@link State} (for processing state).
  */
 // TODO: provide more coherent names between slots, props and events.
-import {defineEmits, defineProps} from 'vue'
+import {defineEmits, defineProps, useAttrs} from 'vue'
 import { t } from '../composables'
 
 const emit = defineEmits([
@@ -34,6 +34,7 @@ const emit = defineEmits([
     /** Reset button has been clicked */
     'reset'
 ])
+const attrs = useAttrs()
 const props = defineProps({
     /** The state object used. */
     state: {type: Object, default: () => State.none()},

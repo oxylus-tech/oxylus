@@ -5,6 +5,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import ImproperlyConfigured
 from django.views.generic.base import ContextMixin, TemplateView
 
+from ox.assets import Assets
 from ..panels import Panels, registry
 from ..serializers.auth import UserSerializer, GroupSerializer
 
@@ -26,6 +27,17 @@ class AppMixin(ContextMixin):
     panels: Panels = None
     """Application's panels descriptors."""
 
+    assets: Assets = None
+    """Use theses assets instead of app config's one. """
+
+    def get_context_data(self, **kwargs):
+        kwargs["app_config"] = self.get_app_config()
+        kwargs["app_data"] = self.get_app_data()
+        kwargs["panels"] = self.panels
+        kwargs["assets"] = self.get_assets()
+        kwargs.setdefault("title", self.title)
+        return super().get_context_data(**kwargs)
+
     def get_app_config(self):
         """Return application config.
 
@@ -46,12 +58,15 @@ class AppMixin(ContextMixin):
         """Return application navigation menu."""
         return registry.nav_data
 
-    def get_context_data(self, **kwargs):
-        kwargs["app_config"] = self.get_app_config()
-        kwargs["app_data"] = self.get_app_data()
-        kwargs["panels"] = self.panels
-        kwargs.setdefault("title", self.title)
-        return super().get_context_data(**kwargs)
+    def get_assets(self) -> Assets | None:
+        """
+        Return assets to use with the view.
+
+        It retuns assigned :py:attr:`assets` or app config one if any.
+        """
+        if self.assets:
+            return self.assets
+        return self.app_config and getattr(self.app_config, "assets", None) or None
 
 
 class UserAuthMixin:

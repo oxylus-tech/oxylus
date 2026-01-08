@@ -128,6 +128,31 @@ export default class Query<MT extends ModelType> {
         return response
     }
 
+    /** Post data to the server. */
+    async post(data: Record<string, any>, {method="post", ...options}: IQueryFetch<MT>={}) : Promise<Response> {
+        options = {...this.opts, ...options}
+        let {url, id, repo, lookup, path, ...opts} = options
+        repo ??= this.repo
+
+        if(!url) {
+            const _id = id as ModelId
+            url = repo.use?.meta?.getUrl({path, id: _id})
+        }
+
+        if(!id) {
+            if(!("dataKey" in opts))
+                opts.dataKey = repo.use?.config?.axiosApi?.dataKey
+        }
+        else
+            opts.dataKey = null
+
+        const response = await repo.api()[method](url, data, opts)
+        if(opts.save == false)
+            response.entities = this.getEntities(response)
+        return response
+    }
+
+
     /** Get entities from response **/
     getEntities(response: Response) {
         const data = response.getDataFromResponse()

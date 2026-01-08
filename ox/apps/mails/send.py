@@ -88,7 +88,8 @@ class MailSend:
             self.mail.save(update_fields=["state"])
 
             logger.info(f"Start send mail with id {self.mail.id}")
-            for recipient, extra_context in self.mail.get_recipients():
+            recipients = self.mail.get_recipients()
+            for recipient, extra_context in recipients:
                 self.send_mail(smtp, recipient, {**context, **extra_context})
 
             self.mail.state = BaseMail.State.SENT

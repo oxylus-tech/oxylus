@@ -52,14 +52,17 @@ class JWTokenViewMixin:
 
     jwt: JWToken = None
     """ The JWT read from url if any. """
+    jwt_str: str = None
+    """ The provided JWT string. """
     jwtoken_class: Type[JWToken] = None
     """ JWToken class to invoke """
 
     def dispatch(self, *args, jwt: str = None, **kwargs):
-        if jwt := (jwt or self.request.GET["jwt"]):
+        if jwt := (jwt or self.request.GET.get("jwt")):
             if not self.jwtoken_class:
                 raise ValueError("Missing `jwtoken_class` attribute")
             self.jwt = self.get_jwt(jwt)
+            self.jwt_str = jwt
         return super().dispatch(*args, **kwargs)
 
     def get_jwt(self, value: str):

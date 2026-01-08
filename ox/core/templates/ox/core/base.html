@@ -41,6 +41,8 @@ Blocks:
 
         <title>
         {% block head-title %}
+            {% if title %}{{ title }} | {% endif %}
+
             {% if request.site and request.site.name %}
             {{ request.site.name }}
             {% else %}
@@ -51,8 +53,7 @@ Blocks:
 
         {% spaceless %}
         {% block assets %}
-        {% if app_config and app_config.assets %}
-        {% with app_config.assets as assets %}
+        {% if assets %}
             <script type="importmap">
                 {{ assets.import_map|json|safe }}
             </script>
@@ -63,14 +64,15 @@ Blocks:
             {% for url in assets.js_urls %}
             <script type="module" src="{{ url }}"></script>
             {% endfor %}
-        {% endwith %}
         {% endif %}
 
         {# Localisation: provide 'en' fallback for frontend specific #}
         <script src="{% static "locales" %}/en/django.js"></script>
         <script src="{% static "locales" %}/en/vue.js"></script>
+        {% if LANGUAGE_CODE != "en" %}
         <script src="{% static "locales" %}/{{ LANGUAGE_CODE }}/django.js"></script>
         <script src="{% static "locales" %}/{{ LANGUAGE_CODE }}/vue.js"></script>
+        {% endif %}
 
         {% if app_config %}
         <script src="{% static "locales" %}/en/{{ app_config.label }}.js"></script>
@@ -83,6 +85,7 @@ Blocks:
     <body class="loading {% if request.is_mobile %}mobile{% endif %}"
         data-api-url="{% url "api-index" %}" {% if app_data %}data-app-data="app-data"{% endif %}
     >
+    {% block body %}
         {% spaceless %}
         {% if app_data %}{{ app_data|json_script:"app-data" }}{% endif %}
         <div id="app">
@@ -100,7 +103,9 @@ Blocks:
                         {% endblock %}
 
                         {% block title %}
-                        {% if app_config %}
+                        {% if title %}
+                            {{ title }}
+                        {% elif app_config %}
                             {{ app_config.verbose_name }}
                         {% endif %}
                         {% endblock %}
@@ -159,5 +164,6 @@ Blocks:
             <img src="{% static "imgs/ox-logo.png" %}"/>
         </div>
         {% endspaceless %}
+    {% endblock %}
     </body>
 </html>

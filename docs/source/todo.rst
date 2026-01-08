@@ -48,6 +48,18 @@ Bugs
 - Confirmation before leaving edited content does not work
 
 
+Defined
+=======
+
+- ox / @oxylus/ox: frontend SSR
+
+    - panels are passed as async components urls + extra args. OxApp handles ox-components
+    - use a default vue app init/setup for all applications ;
+    - remove app.ts and sfc.ts in favor of index.ts:
+        - app spec and init in index. Optional App parameters (as async components should works)
+        - SFC import() in index.
+
+
 Technical documentation
 =======================
 

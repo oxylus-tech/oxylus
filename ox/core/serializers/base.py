@@ -1,10 +1,11 @@
+from dataclasses import dataclass
+
+from django.db import transaction
 from rest_framework import serializers
+from rest_framework.exceptions import PermissionDenied
 
 
-__all__ = (
-    "RelatedField",
-    "ModelSerializer",
-)
+__all__ = ("RelatedField", "ModelSerializer", "NestedSerializer")
 
 
 class RelatedField(serializers.SlugRelatedField):
@@ -17,17 +18,77 @@ class RelatedField(serializers.SlugRelatedField):
 
 class ModelSerializer(serializers.ModelSerializer):
     """
-    This ModelSerializer provides ``id`` field defaulted to model's uuid
-    and save nested items.
+    This ModelSerializer provides ``id`` field defaulted to model's uuid.
+    """
 
-    Nested model serializers
-    ------------------
+    id = serializers.UUIDField(source="uuid", read_only=True)
 
-    When you have relationship with other models, lets a foreignkey from B to A,
-    you can declare nested model serializers on A's serializers that allows
-    to save related elements. Update is also handled.
+    class Meta:
+        fields = ("id",)
 
-    .. code-block::
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if "uuid" in self.fields:
+            del self.fields["uuid"]
+
+
+@dataclass
+class NestedInfo:
+    """Informations about a field nested in :py:class:`ModelSerializer`"""
+
+    field: str
+    """ Serializer field. """
+    delete: bool = True
+    """ Delete related items not present in the user's list. """
+
+
+class NestedSerializerMetaclass(serializers.SerializerMetaclass):
+    """Ensure serializer's meta ``nested`` initialization."""
+
+    def __new__(mcls, name, bases, attrs):
+        cls = super().__new__(mcls, name, bases, attrs)
+
+        if meta := cls.__dict__.get("Meta"):
+            if nested := getattr(meta, "nested", None):
+                meta.nested = {info.field: info for info in (mcls.get_nested_info(val) for val in nested)}
+        return cls
+
+    @classmethod
+    def get_nested_info(cls, value):
+        if isinstance(value, str):
+            return NestedInfo(value)
+        if isinstance(value, tuple | list):
+            return NestedInfo(*value)
+        if isinstance(value, dict):
+            return NestedInfo(**value)
+        if isinstance(value, NestedInfo):
+            return value
+        raise TypeError(f"Unsupported type {type(value)}. Must be a string, a tuple or a dict")
+
+
+class NestedSerializer(ModelSerializer, metaclass=NestedSerializerMetaclass):
+    """
+    This serializer class allows to specify and save relations using nested
+    serializer values.
+
+    Default behavior implies that existing values will be updated, new ones created and removed one deleted. You can customize by provided argument for the :py:class:`NestedInfo` specific to a field.
+
+    The attribute ``Meta.nested`` is used to specify which fields are actually
+    related models. Its value is a list of:
+
+        - a string that is :py:class:`NestedInfo.field` (serializer field name);
+        - tuple with positional argument, dict with positional arguments;
+        - a :py:class:`NestedInfo` instance;
+
+    Limitations:
+    - It only works with models having a ``uuid`` field used as reference.
+    - It assumes a FK reverse relations.
+
+
+    Example: two models, A and B. B has ForeignKey to A, and on A's serializer
+    you want to update B objects related to A. You don't want uuid as handled by :py:class:`RelatedField`).
+
+    .. code-block:: python
 
             class BSerializer(ModelSerializer):
                 # ...
@@ -41,20 +102,31 @@ class ModelSerializer(serializers.ModelSerializer):
                     nested = ("b_items",)
                     # ...
 
+    At class creation, ``Meta.nested`` is transformed into a dict of
+    :py:class:`NestedInfo` by serializer field name.
     """
 
-    id = serializers.UUIDField(source="uuid", read_only=True)
+    def create(self, validated_data):
+        nested = self._pop_nested(validated_data)
+        instance = super().create(validated_data)
+        self._save_nested(instance, nested)
+        return instance
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        if "uuid" in self.fields:
-            del self.fields["uuid"]
+    def update(self, instance, validated_data):
+        nested = self._pop_nested(validated_data)
+        instance = super().update(instance, validated_data)
+        self._save_nested(instance, nested)
+        return instance
 
-    def pop_nested(self, validated_data):
+    def _pop_nested(self, validated_data) -> dict[str, list[dict] | dict]:
+        """
+        From validated_data, return a dict of items values for each nested
+        field.
+        """
         if nested := getattr(self.Meta, "nested", None):
             result = {}
-            for field_name in nested:
-                field = self.fields[field_name]
+            for info in nested.values():
+                field = self.fields[info.field]
                 source = field.source
                 value = validated_data.pop(source, None)
                 if value:
@@ -62,31 +134,51 @@ class ModelSerializer(serializers.ModelSerializer):
             return result
         return {}
 
-    # TODO: update existing ones
+    # TODO: update existing ones instead of delete
     # TODO: permission check here
-    def save_nested(self, obj, nested):
+    def _save_nested(self, obj, nested):
+        """
+        Save nested values for this object.
+        """
         for field, values in nested.items():
-            model_field = getattr(self.Meta.model, field.source)
-            for val in values:
-                if "id" in val:
-                    del val["id"]
-                val[model_field.field.name] = obj
+            self._save_nested_field(obj, field, values)
 
-            # just drop older ones
-            getattr(obj, field.source).all().delete()
-            field.create(values)
+    def _save_nested_field(self, obj, field, values):
+        manager = getattr(obj, field.source)
+        model = manager.model
 
-    def create(self, validated_data):
-        nested = self.pop_nested(validated_data)
-        instance = super().create(validated_data)
-        self.save_nested(instance, nested)
-        return instance
+        existing = manager.all()
+        existing = {str(o.uuid): o for o in existing}
 
-    def update(self, instance, validated_data):
-        nested = self.pop_nested(validated_data)
-        instance = super().update(instance, validated_data)
-        self.save_nested(instance, nested)
-        return instance
+        seen = set()
 
-    class Meta:
-        fields = ("id",)
+        with transaction.atomic():
+            for data in values:
+                # pop id and replace it to nested's foreignkey value
+                # targeting obj.
+                id = data.pop("uuid", None)
+                data[manager.field.name] = obj
+
+                # get serializer depending on update/create
+                instance = id and existing.get(str(id))
+                kw = {"data": data, "context": self.context}
+                if isinstance(field, serializers.ListSerializer):
+                    ser_cls = field.child.__class__
+                else:
+                    ser_cls = field.__class__
+
+                if instance:
+                    ser = ser_cls(instance, partial=True, **kw)
+                elif data.get("id"):
+                    raise PermissionDenied()
+                else:
+                    ser = ser_cls(**kw)
+
+                ser.is_valid(raise_exception=True)
+                ser.save()
+                instance and seen.add(str(id))
+
+        info = self.Meta.nested[field.source]
+        to_delete = info.delete and [obj.pk for uid, obj in existing.items() if uid not in seen]
+        if to_delete:
+            model.objects.filter(uuid__in=to_delete).delete()

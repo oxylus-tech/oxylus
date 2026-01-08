@@ -42,6 +42,13 @@ ox.core.signals
    :members:
 
 
+ox.core.serializers
+-------------------
+
+.. automodule:: ox.core.serializers
+   :members:
+
+
 ox.core.templatetags
 --------------------
 

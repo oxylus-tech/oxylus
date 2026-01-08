@@ -94,11 +94,13 @@ class Assets(Owned):
     dependencies: list[Asset] | None = None
     """ Dependencies. """
 
-    def __init__(self, name="", path=None, includes=None, dependencies=None, base_dir=None):
+    def __init__(self, name="", path=None, includes=None, dependencies=None, base_dir=None, owner=None):
         self.name = name
         self.path = path
         self.includes = includes or []
         self.dependencies = dependencies or []
+
+        owner and self.contribute(owner)
 
     @cached_property
     def package_path(self) -> Path:
