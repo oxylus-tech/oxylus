@@ -85,7 +85,7 @@ Blocks:
     <body class="loading {% if request.is_mobile %}mobile{% endif %}"
         data-api-url="{% url "api-index" %}" {% if app_data %}data-app-data="app-data"{% endif %}
     >
-        {% block body %}
+    {% block body %}
         {% spaceless %}
         {% if app_data %}{{ app_data|json_script:"app-data" }}{% endif %}
         <div id="app">
