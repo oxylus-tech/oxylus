@@ -49,11 +49,12 @@ class ListCommitMixin:
         queryset = self.get_queryset()
         resp = {"deleted": [], "updated": [], "created": []}
         if ids := request.data.get("delete"):
-            q = queryset.filter(id__in=ids)
-            resp["deleted"] = list(q.values_list("id", flat=True))
+            q = queryset.filter(uuid__in=ids)
+            resp["deleted"] = list(q.values_list("uuid", flat=True))
             q.delete()
 
-        # TODO: bulk save and update
+        # TODO: bulk create/update
+        # Note: can't bulk update/create on multiple table model
         if items := request.data.get("update"):
             resp["updated"] = self._commit_save_many(items)
 
@@ -63,9 +64,11 @@ class ListCommitMixin:
         return Response(data=resp)
 
     def _commit_save_many(self, data):
-        ser = self.get_serializer(data=data, many=True)
-        ser.is_valid(raise_exception=True)
+        pass
 
-        items = ser.save()
-        ser = self.get_serializer(items, many=True)
-        return ser.data
+        # ser = self.get_serializer(instances, data=data, many=True)
+        # ser.is_valid(raise_exception=True)
+
+        # items = ser.save()
+        # ser = self.get_serializer(items, many=True)
+        # return ser.data

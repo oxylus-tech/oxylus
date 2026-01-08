@@ -39,7 +39,7 @@ default:
     - ["en", "English"]
     - ["fr", "French"]
   TIME_ZONE: UTC
-
+  SITE_URL: http://localhost:8001/
   ROOT_URLCONF: "ox.urls"
   SITE_ID: 1
 

@@ -5,6 +5,12 @@
     {% blocktrans %}{{ code }} oups...{% endblocktrans %}
 {% endblock %}
 
+{% block body %}
+{% with no_nav=request.user.is_anonymous %}
+    {{ block.super }}
+{% endwith %}
+{% endblock %}
+
 {% block main %}
 <v-container>
     <v-alert variant="tonal" type="error"
