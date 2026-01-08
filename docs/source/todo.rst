@@ -3,6 +3,7 @@
 Current dev
 ===========
 
+- content: bug editor init may fail due to not already fetched rendered data
 - files: viewer => next & prev buttons;
 - Serialization / API: start to nest data to avoid overload of http requests?
 - Translations:
