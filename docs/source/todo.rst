@@ -3,13 +3,12 @@
 Current dev
 ===========
 
-
-- Serialization / API: start to nest data to avoid overload of http requests
+- files: viewer => next & prev buttons;
+- Serialization / API: start to nest data to avoid overload of http requests?
 - Translations:
     - SFC
     - reorganize naming scheme, as default : "fields.{name}", and models / fields as "{app}.{model}.fields.{field}"
 - Contacts:
-    - "name" field usage
     - Contact serializer: contact_lists is only on PersonSerializer => generalize or remove (simpler => depends on contact list editor)
     - contact_lists m2m change of model: impact/fixes
 

@@ -133,13 +133,35 @@ Blocks:
             {% endblock %}
         </div>
 
-        <div id="loading-placeholder">
-            <div class="flex-column height-full">
-                <div class="grow-1">&nbsp;</div>
-                <div class="text-center">
-                    {% trans "Loading..." %}
-                </div>
-                <div class="grow-1">&nbsp;</div>
+        <style>
+        @keyframes blink {
+            from { opacity: 1 }
+            to { opacity: 0.5 }
+        }
+
+        #loading-overlay {
+            position: fixed;
+            top: 0px;
+            left: 0px;
+            width: 100vw;
+            height: 100vh;
+            transition: opacity 1s;
+            background-color: white;
+            z-index: 100000;
+        }
+
+        body:not(.loading) #loading-overlay { display: none; }
+
+        #loading-overlay img {
+            width: 60%;
+            margin: 20%;
+            animation: 1s blink infinite;
+            animation-direction: alternate;
+        }
+
+        </style>
+        <div id="loading-overlay">
+            <img src="{% static "imgs/ox-logo.png" %}"/>
         </div>
         {% endspaceless %}
     {% endblock %}
