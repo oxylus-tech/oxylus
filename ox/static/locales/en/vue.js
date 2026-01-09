@@ -2,6 +2,8 @@ window.__i18n_messages??={};
 window.__i18n_messages = { ...window.__i18n_messages, ...{
     "next": "Next",
     "prev": "Previous",
+    "actions.next": "Next",
+    "actions.prev": "Previous",
 
     "actions": "Actions",
     "actions.add": "Add",

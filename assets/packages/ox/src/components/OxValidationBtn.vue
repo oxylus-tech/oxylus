@@ -1,5 +1,6 @@
 <template>
     <div class="text-right">
+        <slot name="prepend" :state="props.state" :disabled="props.disabled" :attrs="attrs"/>
         <v-btn v-bind="attrs" color="error" class="me-2" :prepend-icon="props.resetIcon"
                 @click="emit('reset')"
                 :disabled="props.disabled">
@@ -17,7 +18,8 @@
             <!-- @slot Validate button default slot. -->
             <slot name="validate">{{ props.validateLabel ||  t('actions.save') }}</slot>
         </v-btn>
-        </div>
+        <slot name="append" state="props.state" disabled="props.disabled" :attrs="attrs"/>
+    </div>
 </template>
 <script setup>
 /**

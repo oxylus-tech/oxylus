@@ -5,7 +5,7 @@ from rest_framework import serializers
 from rest_framework.exceptions import PermissionDenied
 
 
-__all__ = ("RelatedField", "ModelSerializer", "NestedSerializer")
+__all__ = ("RelatedField", "ModelSerializer", "NestedInfo", "NestedSerializer")
 
 
 class RelatedField(serializers.SlugRelatedField):
@@ -101,8 +101,11 @@ class NestedSerializer(ModelSerializer, metaclass=NestedSerializerMetaclass):
                     # create/updated.
                     nested = ("b_items",)
                     # ...
+                    #
+                    # If you dont want deletion of missing items, you can use this:
+                    # nested = (("b_items", False),)
 
-    At class creation, ``Meta.nested`` is transformed into a dict of
+    At the serializer class creation, ``Meta.nested`` is transformed into a dict of
     :py:class:`NestedInfo` by serializer field name.
     """
 

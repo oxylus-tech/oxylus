@@ -1,19 +1,17 @@
 <template>
     <!-- Simple preview dialog -->
-    <v-dialog v-model="dialog.isActive" max-width="600">
-        <v-card :title="dialog.item?.name">
-          <v-card-text>
-              <v-img :src="dialog.item?.preview"/>
-          </v-card-text>
-
-          <v-card-actions>
-            <v-spacer></v-spacer>
-            <v-btn :text="t('actions.close')" @click="dialog.close()"></v-btn>
-          </v-card-actions>
-        </v-card>
+    <v-dialog v-model="dialog.isActive" max-width="1000">
+        <ox-file-viewer v-model="dialog.item" :items="modelPanel.items">
+            <template #actions.append>
+                <v-btn prepend-icon="mdi-close" color="error"
+                    :aria-label="t('actions.close')"
+                    :text="t('actions.close')"
+                    @click="dialog.isActive=false"/>
+            </template>
+        </ox-file-viewer>
     </v-dialog>
 
-    <ox-model-panel v-bind="props" :repo="repos.files">
+    <ox-model-panel ref="modelPanel" v-bind="props" :repo="repos.files">
         <template v-for="name in forwardSlots" :key="name" #[name]="bind">
             <slot :name="name" v-bind="bind"/>
         </template>
@@ -63,17 +61,28 @@
 }
 </style>
 <script setup lang="ts">
-import { ref, reactive, useSlots, withDefaults, watch } from 'vue'
+/**
+ * @component This is the panel provided for files.
+ *
+ * It has:
+ * - A drawer on the left for folder list and edition
+ * - A file viewer integrated.
+ *
+ */
+
+import { ref, reactive, useSlots, toRaw, withDefaults, watch } from 'vue'
 
 import { query, t } from '@oxylus/ox'
 import type {IModelPanelProps} from '@oxylus/ox'
 import {OxModelPanel, OxAction} from '@oxylus/ox/components'
 
-import OxFileEdit from './OxFileEdit.vue'
-import OxFolderDrawer from './OxFolderDrawer.vue'
+import OxFileEdit from './OxFileEdit'
+import OxFileViewer from './OxFileViewer'
+import OxFolderDrawer from './OxFolderDrawer'
 import { formatBytes } from '../models'
 import {useFilesModels} from '../composables'
 
+const modelPanel = ref(null)
 const drawer = ref(true)
 const dialog = reactive({
     isActive: false,
@@ -87,6 +96,24 @@ const dialog = reactive({
     close() {
         this.isActive = false
     },
+
+    go(dir) {
+        const items = modelPanel.value.items
+        console.log(items, this.item)
+        let idx = items.indexOf(this.item) + dir
+        idx = this.normIndex(idx)
+
+        this.item = items[idx]
+    },
+
+    normIndex(index) {
+        const items = modelPanel.value.items
+        if(index > items.length)
+            return 0
+        else if(index < 1)
+            return items.length-1
+        return index
+    }
 })
 
 const slots = useSlots()
