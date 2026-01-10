@@ -1,9 +1,11 @@
 from typing import Any
 
 from django.apps import apps
+from django.conf import settings
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import ImproperlyConfigured
 from django.views.generic.base import ContextMixin, TemplateView
+from django.utils.translation import gettext as __, get_language
 
 from ox.assets import Assets
 from ..panels import Panels, registry
@@ -52,6 +54,9 @@ class AppMixin(ContextMixin):
         if current := self.request.GET.get("panel", self.default_panel):
             kwargs.setdefault("panel", current)
         kwargs["nav"] = self.get_app_nav()
+        kwargs["host"] = settings.SITE_URL
+        kwargs["language"] = get_language()
+        kwargs["languages"] = [(k, __(v)) for k, v in settings.LANGUAGES]
         return kwargs
 
     def get_app_nav(self) -> dict[str, Any]:

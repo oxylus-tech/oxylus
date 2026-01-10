@@ -1,0 +1,91 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-01-10 09:00+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: German <de@li.org>\n"
+"Language: de\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: ox/apps/files/apps.py:12 ox/apps/files/models/file.py:119
+#: ox/apps/files/panels.py:8 ox/apps/files/panels.py:12
+msgid "Files"
+msgstr "Dateien"
+
+#: ox/apps/files/models/file.py:84 ox/apps/files/models/folder.py:60
+msgid "Name"
+msgstr "Name"
+
+#: ox/apps/files/models/file.py:85 ox/apps/files/models/file.py:118
+#: ox/apps/files/processors/processor.py:24
+msgid "File"
+msgstr "Datei"
+
+#: ox/apps/files/models/file.py:86
+msgid "Preview"
+msgstr "Vorschau"
+
+#: ox/apps/files/models/file.py:87
+msgid "Mime Type"
+msgstr "Mime-Typ"
+
+#: ox/apps/files/models/file.py:88
+msgid "File Size"
+msgstr "Dateigröße"
+
+#: ox/apps/files/models/file.py:91
+msgid "Caption"
+msgstr "Beschriftung"
+
+#: ox/apps/files/models/file.py:93
+msgid "Displayed below object when rendered in page or documents."
+msgstr "Wird unter der Datei angezeigt, wenn sie auf einer Seite oder in Dokumenten gerendert wird."
+
+#: ox/apps/files/models/file.py:98
+msgid "Alternate text"
+msgstr "Alternativtext"
+
+#: ox/apps/files/models/file.py:100
+msgid "Displayed as replacement text when object is not displayed."
+msgstr "Wird anstelle der Datei angezeigt, wenn sie nicht geladen wird."
+
+#: ox/apps/files/models/file.py:105
+msgid "ARIA Description"
+msgstr "ARIA-Beschreibung"
+
+#: ox/apps/files/models/file.py:109
+msgid "Provide a description of the content for visually impaired people."
+msgstr "Geben Sie eine Beschreibung des Inhalts für sehbehinderte Personen an."
+
+#: ox/apps/files/models/file.py:111
+msgid "Metadata"
+msgstr "Metadaten"
+
+#: ox/apps/files/models/folder.py:26
+msgid "The character `/` is forbidden in name."
+msgstr "Das Zeichen `/` ist im Namen verboten."
+
+#: ox/apps/files/models/folder.py:62
+msgid "Synchronize"
+msgstr "Synchronisieren"
+
+#: ox/apps/files/models/folder.py:62
+msgid "Store the real files and folders structure and name on the file system."
+msgstr "Speichert die tatsächliche Struktur und Namen von Dateien und Ordnern im Dateisystem."
+
+#: ox/apps/files/models/folder.py:88
+msgid "Folder"
+msgstr "Ordner"
+
+#: ox/apps/files/models/folder.py:89 ox/apps/files/panels.py:20
+msgid "Folders"
+msgstr "Ordner"
+
+#: ox/apps/files/processors/image_processor.py:39
+msgid "Image"
+msgstr "Bild"

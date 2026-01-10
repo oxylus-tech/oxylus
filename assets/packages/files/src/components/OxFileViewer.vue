@@ -1,26 +1,52 @@
 <template>
-    <v-card :title="item?.name" style="max-height: 90vh">
-      <v-carousel v-model="item" hide-delimiters max-height="100%">
-          <v-carousel-item v-for="item in items"
-              :key="key" :value="item"
-              :src="item?.[props.previewValue]"
-              />
-      </v-carousel>
+    <v-carousel v-model="item" height="90vh" hide-delimiters class="ox-file-viewer">
+        <v-carousel-item v-for="item in items"
+                :key="key" :value="item">
+            <div class="h-100 flex-column py-auto position-relative">
+                <v-spacer/>
+                <div class="position-relative" style="max-height:100%;">
+                    <div class="overflow-auto h-100">
+                        <v-img
+                            :src="item?.[props.previewValue]"
+                            :style="{cursor: viewer.zoom ? 'zoom-out' : 'zoom-in'}"
+                            :max-height="viewer.zoom ? 'none': '100%'"
+                            @click="viewer.zoom = !viewer.zoom"
+                            />
+                    </div>
 
-      <v-card-actions>
-        <ox-action :href="item.file" icon="mdi-download" button
-            :title="t('actions.download')" />
-        <slot name="actions" :item="item" :items="items" :viewer="viewer"/>
-        <v-spacer/>
-        <slot name="actions.append" :item="item" :items="items" :viewer="viewer"/>
-      </v-card-actions>
-    </v-card>
+                    <v-overlay v-if="item" :scrim="false"
+                            content-class="w-100 d-flex flex-column align-center justify-space-between pointer-pass-through py-3"
+                            contained model-value no-click-animation persistent>
+                        <v-sheet :key="item.id" rounded="xl">
+                            <div class="d-flex flex-row">
+                                <v-list-item :subtitle="item.name" class="pa-1"/>
+                                <slot name="actions.close" />
+                            </div>
+                        </v-sheet>
+                    </v-overlay>
+
+                    <v-overlay v-if="item" :scrim="false"
+                            content-class="w-100 bottom-0 flex-row pointer-pass-through py-3"
+                            style="bottom: 0px; position: absolute;"
+                            contained model-value no-click-animation persistent>
+                        <v-spacer/>
+                        <ox-action :href="item.file" icon="mdi-download" button
+                            variant="elevated"
+                            :title="t('actions.download')" />
+                        <slot name="actions" :item="item" :items="items" :viewer="viewer"/>
+                        <v-spacer/>
+                    </v-overlay>
+                </div>
+                <v-spacer/>
+            </div>
+        </v-carousel-item>
+    </v-carousel>
 </template>
 <script setup lang="ts">
 /**
  * @component This component provides a v-card displaying a file preview.
  */
-import { computed, defineEmits, defineExpose, defineModel, ref, reactive } from 'vue'
+import { computed, defineEmits, defineExpose, defineModel, ref, reactive, watch } from 'vue'
 import { t } from '@oxylus/ox'
 import { OxAction } from '@oxylus/ox/components'
 
@@ -43,12 +69,14 @@ const item = defineModel()
 /**
  * Simple controller to interact with the viewer.
  */
-const viewer = {
+const viewer = reactive({
     /** Current item **/
     item,
 
     /** Provided list of items **/
     items: computed(() => props.items),
+
+    zoom: false,
 
     /**
      * Go to item by path relative to current one.
@@ -75,7 +103,9 @@ const viewer = {
             return items.length-1
         return index
     }
-}
+})
+
+watch(item, () => { viewer.zoom = false })
 
 defineExpose(viewer)
 </script>

@@ -38,6 +38,9 @@ default:
   LANGUAGES:
     - ["en", "English"]
     - ["fr", "French"]
+    - ["de", "German"]
+    - ["nl", "Dutch"]
+    - ["es", "Spanish"]
   TIME_ZONE: UTC
   SITE_URL: http://localhost:8001/
   ROOT_URLCONF: "ox.urls"

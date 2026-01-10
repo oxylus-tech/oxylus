@@ -1,0 +1,91 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-01-10 09:00+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: Dutch <nl@li.org>\n"
+"Language: nl\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: ox/apps/files/apps.py:12 ox/apps/files/models/file.py:119
+#: ox/apps/files/panels.py:8 ox/apps/files/panels.py:12
+msgid "Files"
+msgstr "Bestanden"
+
+#: ox/apps/files/models/file.py:84 ox/apps/files/models/folder.py:60
+msgid "Name"
+msgstr "Naam"
+
+#: ox/apps/files/models/file.py:85 ox/apps/files/models/file.py:118
+#: ox/apps/files/processors/processor.py:24
+msgid "File"
+msgstr "Bestand"
+
+#: ox/apps/files/models/file.py:86
+msgid "Preview"
+msgstr "Voorbeeld"
+
+#: ox/apps/files/models/file.py:87
+msgid "Mime Type"
+msgstr "Mime-type"
+
+#: ox/apps/files/models/file.py:88
+msgid "File Size"
+msgstr "Bestandsgrootte"
+
+#: ox/apps/files/models/file.py:91
+msgid "Caption"
+msgstr "Bijschrift"
+
+#: ox/apps/files/models/file.py:93
+msgid "Displayed below object when rendered in page or documents."
+msgstr "Wordt onder het bestand weergegeven wanneer het op een pagina of in documenten wordt weergegeven."
+
+#: ox/apps/files/models/file.py:98
+msgid "Alternate text"
+msgstr "Alternatieve tekst"
+
+#: ox/apps/files/models/file.py:100
+msgid "Displayed as replacement text when object is not displayed."
+msgstr "Wordt weergegeven in plaats van het bestand wanneer het niet geladen is."
+
+#: ox/apps/files/models/file.py:105
+msgid "ARIA Description"
+msgstr "ARIA-beschrijving"
+
+#: ox/apps/files/models/file.py:109
+msgid "Provide a description of the content for visually impaired people."
+msgstr "Geef een beschrijving van de inhoud voor slechtzienden."
+
+#: ox/apps/files/models/file.py:111
+msgid "Metadata"
+msgstr "Metadata"
+
+#: ox/apps/files/models/folder.py:26
+msgid "The character `/` is forbidden in name."
+msgstr "Het teken `/` is verboden in de naam."
+
+#: ox/apps/files/models/folder.py:62
+msgid "Synchronize"
+msgstr "Synchroniseren"
+
+#: ox/apps/files/models/folder.py:62
+msgid "Store the real files and folders structure and name on the file system."
+msgstr "Slaat de echte structuur en namen van bestanden en mappen op in het bestandssysteem."
+
+#: ox/apps/files/models/folder.py:88
+msgid "Folder"
+msgstr "Map"
+
+#: ox/apps/files/models/folder.py:89 ox/apps/files/panels.py:20
+msgid "Folders"
+msgstr "Mappen"
+
+#: ox/apps/files/processors/image_processor.py:39
+msgid "Image"
+msgstr "Afbeelding"

@@ -1,3 +1,7 @@
+from django.conf import settings
+from django.utils import translation
+
+
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework import permissions, viewsets
@@ -17,6 +21,17 @@ class ModelViewSet(viewsets.ModelViewSet):
     filterset_fields = {
         "uuid": ["exact", "in"],
     }
+
+
+class ConfViewSet(viewsets.ViewSet):
+
+    @action(methods=["POST"], detail=False, url_path="set-language")
+    def set_language(self, request):
+        lang = request.data.get("language")
+        translation.activate(lang)
+        response = Response(data={"language": lang})
+        response.set_cookie(settings.LANGUAGE_COOKIE_NAME, lang)
+        return response
 
 
 class ListCommitMixin:

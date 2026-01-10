@@ -1,14 +1,16 @@
 <template>
     <!-- Simple preview dialog -->
-    <v-dialog v-model="dialog.isActive" max-width="1000">
+    <v-dialog v-model="dialog.active" max-width="1000">
+        <v-spacer/>
         <ox-file-viewer v-model="dialog.item" :items="modelPanel.items">
-            <template #actions.append>
-                <v-btn prepend-icon="mdi-close" color="error"
+            <template #actions.close>
+                <v-btn icon="mdi-close" color="error" variant="text"
                     :aria-label="t('actions.close')"
-                    :text="t('actions.close')"
-                    @click="dialog.isActive=false"/>
+                    :title="t('actions.close')"
+                    @click="dialog.active=false"/>
             </template>
         </ox-file-viewer>
+        <v-spacer/>
     </v-dialog>
 
     <ox-model-panel ref="modelPanel" v-bind="props" :repo="repos.files">
@@ -85,16 +87,16 @@ import {useFilesModels} from '../composables'
 const modelPanel = ref(null)
 const drawer = ref(true)
 const dialog = reactive({
-    isActive: false,
+    active: false,
     item: null,
 
     show(item) {
         this.item = item
-        this.isActive = true
+        this.active = true
     },
 
     close() {
-        this.isActive = false
+        this.active = false
     },
 
     go(dir) {

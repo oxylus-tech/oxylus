@@ -48,3 +48,23 @@ export function getCsrf() : string|null {
         csrfToken = getCookie('csrftoken')
     return csrfToken;
 }
+
+
+/**
+ * Return country UTF-8 flag from provided country ISO code.
+ */
+export function getCountryFlag(code) {
+    if (typeof code !== 'string' || code.length !== 2)
+        return ''
+
+    if(code == "en")
+        code = "gb"
+
+    const OFFSET = 0x1F1E6
+    const chars = code.toUpperCase().split('')
+    const isValid = chars.every((c: string) => c >= 'A' && c <= 'Z')
+
+    return isValid
+        ? String.fromCodePoint(...chars.map(c => OFFSET + c.charCodeAt(0) - 65))
+        : ''
+}

@@ -20,6 +20,25 @@
             <div id="app-bar-right" class="mr-3"></div>
             <!-- @slot Right side of app bar -->
             <slot name="app-bar-right"></slot>
+            <v-menu v-if="context.data?.languages?.length">
+                <template #activator="{props}">
+                    <v-btn icon="mdi-translate" v-bind="props"
+                        :title="t('actions.select.translation')"/>
+                </template>
+
+                <v-list>
+                    <v-list-item v-for="lang in context.data.languages"
+                        :title="lang[1]" :aria-label="lang[1]"
+                        :value="lang[0]"
+                        @click="setLanguage(lang[0])">
+                        <template #prepend>
+                            <span class="mr-2">
+                                {{ getCountryFlag(lang[0]) }}
+                            </span>
+                        </template>
+                    </v-list-item>
+                </v-list>
+            </v-menu>
         </v-app-bar>
         <ox-app-nav v-if="slots['nav-start'] || slots['nav-end']" v-model:drawer="nav.drawer" :items="context.data.nav">
             <template #prepend>
@@ -95,8 +114,9 @@
 import { useSlots, withDefaults, onErrorCaptured, onMounted } from 'vue'
 import { computed, defineProps, inject, provide, reactive, watch } from 'vue'
 
-import {useAppContext, usePanels, t, filterSlots} from '@oxylus/ox'
+import {useAppContext, usePanels, t, filterSlots, getCountryFlag} from '@oxylus/ox'
 import type {Model} from '../models'
+import config from '../config'
 import OxAppNav from './OxAppNav.vue'
 
 const slots = useSlots()
@@ -131,4 +151,15 @@ watch(() => [context.state.state, context.state.data], () => {
 onErrorCaptured((err, instance, info) => {
     context.state.error(`${err}`)
 })
+
+
+async function setLanguage(lang) {
+    const resp = await fetch(`${props.apiUrl}ox/core/conf/set-language/`, {
+        method: "POST",
+        headers: config.axiosConfig.headers,
+        body: JSON.stringify({"language": lang})
+    })
+    window.location.reload()
+}
+
 </script>
