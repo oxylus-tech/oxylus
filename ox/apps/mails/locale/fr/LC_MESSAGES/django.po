@@ -1,0 +1,165 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-01-10 09:00+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+#: ox/apps/mails/apps.py:12 ox/apps/mails/models.py:106
+#: ox/apps/mails/models.py:143 ox/apps/mails/panels.py:8
+#: ox/apps/mails/panels.py:12
+msgid "Mails"
+msgstr "Courriels"
+
+#: ox/apps/mails/models.py:37
+msgid "None"
+msgstr "Aucun"
+
+#: ox/apps/mails/models.py:42
+msgid "Mail Header"
+msgstr "Entête des courriels"
+
+#: ox/apps/mails/models.py:43
+msgid "Header displayed at the top of all messages."
+msgstr "Entête affichée en haut de tous les messages."
+
+#: ox/apps/mails/models.py:48
+msgid "Signature"
+msgstr "Signature"
+
+#: ox/apps/mails/models.py:48
+msgid "The signature displayed at the end of all messages."
+msgstr "La signature affichée à le fin de tous les messages."
+
+#: ox/apps/mails/models.py:51
+msgid "Subscription Message"
+msgstr "Message d'abonnement"
+
+#: ox/apps/mails/models.py:52
+msgid ""
+"Message displayed on mails for contacts of subscription lists."
+msgstr "Message affiché dans les courriels des contacts appartenant à une liste d'abonnements."
+
+#: ox/apps/mails/models.py:58
+msgid "Host"
+msgstr "Hôte"
+
+#: ox/apps/mails/models.py:59
+msgid "Port"
+msgstr "Port"
+
+#: ox/apps/mails/models.py:60
+msgid "Username"
+msgstr "Nom d'utilisateur"
+
+#: ox/apps/mails/models.py:61
+msgid "Password"
+msgstr "Mot de passe"
+
+#: ox/apps/mails/models.py:63
+msgid "Encryption"
+msgstr "Chiffrement"
+
+#: ox/apps/mails/models.py:75
+msgid "Email Account"
+msgstr "Compte Courriel"
+
+#: ox/apps/mails/models.py:76
+msgid "Email Accounts"
+msgstr "Comptes Courriel"
+
+#: ox/apps/mails/models.py:87
+msgid "Draft"
+msgstr "Brouillon"
+
+#: ox/apps/mails/models.py:88
+msgid "Sending"
+msgstr "En cours d'envoi"
+
+#: ox/apps/mails/models.py:89
+msgid "Sent"
+msgstr "Envoyé"
+
+#: ox/apps/mails/models.py:90
+msgid "Error"
+msgstr "Erreur"
+
+#: ox/apps/mails/models.py:92
+msgid "Account"
+msgstr "Compte"
+
+#: ox/apps/mails/models.py:93
+msgid "State"
+msgstr "Status"
+
+#: ox/apps/mails/models.py:95
+msgid "Context"
+msgstr "Contexte"
+
+#: ox/apps/mails/models.py:96
+msgid "Subject"
+msgstr "Sujet"
+
+#: ox/apps/mails/models.py:97
+msgid "Message"
+msgstr "Message"
+
+#: ox/apps/mails/models.py:98
+msgid "Attached files"
+msgstr "Pièces jointes"
+
+#: ox/apps/mails/models.py:105 ox/apps/mails/models.py:142
+msgid "Mail"
+msgstr "Courriel"
+
+#: ox/apps/mails/models.py:131
+msgid "Recipients"
+msgstr "Destinataire"
+
+#: ox/apps/mails/models.py:134
+msgid "A list of recipients, separated by a comma."
+msgstr "Une liste de destinataires, séparés par une virgule"
+
+#: ox/apps/mails/panels.py:20
+msgid "Settings"
+msgstr "Paramètres"
+
+#: ox/apps/mails/panels.py:25
+msgid "Accounts"
+msgstr "Comptes"
+
+#: ox/apps/mails/renderers.py:9
+msgid "Recipient Name"
+msgstr "Nom du destinataire"
+
+#: ox/apps/mails/renderers.py:10
+msgid "Recipient Email"
+msgstr "Courriel du destinataire"
+
+#: ox/apps/mails/renderers.py:12
+msgid "Mailing-list Name"
+msgstr "Nom de la liste de mails"
+
+#: ox/apps/mails/renderers.py:12
+msgid "Name of the mailing-list from which mail was sent."
+msgstr "Nom de la liste de mails à laquelle est envoyé le courriel."
+
+#: ox/apps/mails/renderers.py:15
+msgid "Subscription Link"
+msgstr "Lien d'abonnement"
+
+#: ox/apps/mails/renderers.py:15
+msgid "Link to recipient's subscription preferences."
+msgstr "Lien vers les préférences d'abonnement du destinataire."

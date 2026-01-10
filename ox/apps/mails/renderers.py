@@ -12,7 +12,7 @@ renderer = Renderer(
             _("Mailing-list Name"), _("Name of the mailing-list from which mail was sent."), True
         ),
         "subscription.url": VariableInfo(
-            _("Mailing-list Preferences Link"), _("Link to recipient's mailing-list preferences."), True
+            _("Subscription Link"), _("Link to recipient's subscription preferences."), True
         ),
     }
 )

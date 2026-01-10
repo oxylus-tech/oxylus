@@ -173,6 +173,7 @@ dist
 # ---------------------------------------------------------------------
 ox/apps/*/static
 ox/core/static
+ox/static/locales/*/django.js
 
 # Ignore dynaconf secret files
 .secrets.*

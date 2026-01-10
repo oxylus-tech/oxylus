@@ -1,0 +1,101 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-01-10 08:58+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+#: ox/core/apps.py:128
+msgid "Oxylus"
+msgstr ""
+
+#: ox/core/models.py:37
+msgid "Reference"
+msgstr "Référence"
+
+#: ox/core/panels.py:256 ox/core/templates/ox/core/settings.html:4
+msgid "Settings"
+msgstr "Paramètres"
+
+#: ox/core/panels.py:256
+msgid "System"
+msgstr "Système"
+
+#: ox/core/templates/ox/core/account.html:8
+#: ox/core/templates/ox/core/components/nav_user.html:8
+#: ox/core/views/accounts.py:88
+msgid "My Account"
+msgstr "Mon compte"
+
+#: ox/core/templates/ox/core/components/nav_user.html:10
+msgid "Log out"
+msgstr "Déconnection"
+
+#: ox/core/templates/ox/core/dashboard.html:8
+#, python-format
+msgid ""
+"\n"
+"        Hi %(username)s, welcome to Oxylus!\n"
+"        "
+msgstr "Salut %(username)s, bienvenue sur Oxylus!"
+
+#: ox/core/templates/ox/core/dashboard.html:13
+msgid ""
+"\n"
+"        You can select any application on the left in order to start using "
+"it.\n"
+"        "
+msgstr "Vous pouvez sélection une application dans le menu pour comment à l'utiliser."
+
+#: ox/core/templates/ox/core/login.html:12
+msgid "Login into your account"
+msgstr "Se connecter à votre compte"
+
+#: ox/core/templates/ox/core/login.html:16
+msgid "Login..."
+msgstr "Connection..."
+
+#: ox/core/views/accounts.py:19
+#, python-brace-format
+msgid "Welcome back dear {name}!"
+msgstr "Bonjour cher {name}!"
+
+#: ox/core/views/accounts.py:20
+msgid "Invalid credentials! May be you've mispelled it..."
+msgstr "Identifiant invalides! Peut-être les avez-vous mal orthographiés..."
+
+#: ox/core/views/accounts.py:98
+msgid "Dashboard"
+msgstr "Tableau de bord"
+
+#: ox/core/views/core.py:14
+msgid "An error occurred"
+msgstr "Une erreur s'est produite"
+
+#: ox/core/views/core.py:15
+msgid "An error occurred while we proceeded the request."
+msgstr "Une erreur s'est produite alors que nous procédions à votre requête."
+
+#: ox/core/views/core.py:33
+msgid "Permission forbidden"
+msgstr "Permission non authorisée"
+
+#: ox/core/views/core.py:34 ox/core/views/core.py:40
+msgid "It seems that you have not the permission to access this content."
+msgstr "Il semble que vous n'avez pas la permission d'accéder à ce contenu."
+
+#: ox/core/views/core.py:39
+msgid "Internal server error"
+msgstr "Erreur interne du serveur"

@@ -1,0 +1,96 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-01-10 09:00+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+#: ox/apps/files/apps.py:12 ox/apps/files/models/file.py:119
+#: ox/apps/files/panels.py:8 ox/apps/files/panels.py:12
+msgid "Files"
+msgstr "Fichiers"
+
+#: ox/apps/files/models/file.py:84 ox/apps/files/models/folder.py:60
+msgid "Name"
+msgstr "Nom"
+
+#: ox/apps/files/models/file.py:85 ox/apps/files/models/file.py:118
+#: ox/apps/files/processors/processor.py:24
+msgid "File"
+msgstr "Fichier"
+
+#: ox/apps/files/models/file.py:86
+msgid "Preview"
+msgstr "Aperçu"
+
+#: ox/apps/files/models/file.py:87
+msgid "Mime Type"
+msgstr "Type MIME"
+
+#: ox/apps/files/models/file.py:88
+msgid "File Size"
+msgstr "Taille du fichier"
+
+#: ox/apps/files/models/file.py:91
+msgid "Caption"
+msgstr "Légende"
+
+#: ox/apps/files/models/file.py:93
+msgid "Displayed below object when rendered in page or documents."
+msgstr "Affiché en dessous du fichier lorsqu'affiché dans une page ou des documents."
+
+#: ox/apps/files/models/file.py:98
+msgid "Alternate text"
+msgstr "Texte alternatif"
+
+#: ox/apps/files/models/file.py:100
+msgid "Displayed as replacement text when object is not displayed."
+msgstr "Affiché à la place du fichier lorsqu'il n'est pas chargé."
+
+#: ox/apps/files/models/file.py:105
+msgid "ARIA Description"
+msgstr "Description ARIA"
+
+#: ox/apps/files/models/file.py:109
+msgid "Provide a description of the content for visually impaired people."
+msgstr "Fournit une description du contenu pour les personnes malvoyantes."
+
+#: ox/apps/files/models/file.py:111
+msgid "Metadata"
+msgstr "Métadonnées"
+
+#: ox/apps/files/models/folder.py:26
+msgid "The character `/` is forbidden in name."
+msgstr "Le caractère `/` est interdit dans le nom.""
+
+#: ox/apps/files/models/folder.py:62
+msgid "Synchronize"
+msgstr "Synchroniser"
+
+#: ox/apps/files/models/folder.py:62
+msgid "Store the real files and folders structure and name on the file system."
+msgstr "Stocke les fichiers et dossiers sous leur vraie structure et noms sur le système de fichier."
+
+#: ox/apps/files/models/folder.py:88
+msgid "Folder"
+msgstr "Dossier"
+
+#: ox/apps/files/models/folder.py:89 ox/apps/files/panels.py:20
+msgid "Folders"
+msgstr "Dossiers"
+
+#: ox/apps/files/processors/image_processor.py:39
+msgid "Image"
+msgstr "Image"

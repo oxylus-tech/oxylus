@@ -92,7 +92,7 @@ window.__i18n_messages = { ...window.__i18n_messages, ...{
     "fields.file_name.rules.invalid_characters": "Invalid characters in the name ('/')",
     "actions.files.upload.new": "Upload another file",
     "actions.files.select": "Select a file",
-    "actions.files.select.help": "Drop a file here or select a file",
+    "actions.files.select.help": "Drop here or select a file",
     "labels.files.select.count": "There are {count} files selected",
 
     // ---- @ox/tasks
@@ -124,5 +124,5 @@ window.__i18n_messages = { ...window.__i18n_messages, ...{
     "views.edit.smtp": "SMTP Configuration",
     "labels.recipients": "Recipients",
     "actions.mails.send": "Send email",
-    "actions.mails.send.confirm": "This email has already been sent. Do you want to resend it?",
+    "actions.mails.send.confirm": "This email has already been sent. Do you want to it again?",
 }}

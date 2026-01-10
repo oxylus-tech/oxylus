@@ -34,31 +34,31 @@ class MailAccount(Named, Owned):
     """Configure an email account used to send mails."""
 
     class Encryption(models.IntegerChoices):
-        NONE = 0x00, _("NONE")
+        NONE = 0x00, _("None")
         TLS = 0x01, "TLS"
         SSL = 0x02, "SSL"
 
     mail_header = RichTextField(
         _("Mail Header"),
-        help_text=_("Emails' header at the top of all mails"),
+        help_text=_("Header displayed at the top of all messages."),
         blank=True,
         null=True,
     )
     mail_signature = RichTextField(
-        _("Signature"), help_text=_("Email signature appent to all mails' content"), blank=True, null=True
+        _("Signature"), help_text=_("The signature displayed at the end of all messages."), blank=True, null=True
     )
     mail_subscription_footer = RichTextField(
-        _("Subscription Footer"),
-        help_text=_("Footer appent below mails send to contacts of subscription contact lists."),
+        _("Subscription Message"),
+        help_text=_("Message displayed on mails for contacts of subscription lists."),
         blank=True,
         null=True,
     )
 
     # SMTP Configuration
-    smtp_host = models.CharField(_("Host (SMTP)"), max_length=255)
-    smtp_port = models.PositiveIntegerField(_("Port (SMTP)"), default=587)
-    smtp_username = EncryptedCharField(_("Username (SMTP)"), max_length=255)
-    smtp_password = EncryptedCharField(_("Password (SMTP)"), max_length=128)
+    smtp_host = models.CharField(_("Host"), max_length=255)
+    smtp_port = models.PositiveIntegerField(_("Port"), default=587)
+    smtp_username = EncryptedCharField(_("Username"), max_length=255)
+    smtp_password = EncryptedCharField(_("Password"), max_length=128)
     smtp_encryption = models.PositiveSmallIntegerField(
         _("Encryption (SMTP)"), choices=Encryption, default=Encryption.SSL
     )
@@ -95,7 +95,7 @@ class BaseMail(Timestamped, ChildOwned):
     context = models.JSONField(_("Context"), default=dict)
     subject = models.TextField(_("Subject"), default="")
     content = RichTextField(_("Message"), default="")
-    attachments = models.ManyToManyField(File, related_name="+", verbose_name=_("Attach files"))
+    attachments = models.ManyToManyField(File, related_name="+", verbose_name=_("Attached files"))
 
     # From ChildOwned
     parent_attr = "account"

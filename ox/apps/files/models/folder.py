@@ -59,7 +59,9 @@ class Folder(Named, Timestamped, OwnedTreeNode):
 
     name = models.CharField(_("Name"), max_length=64, validators=[validate_name])
     is_sync = models.BooleanField(
-        _("Synchronize"), default=False, help_text=_("Files and folders are synchronized to filesystem. ")
+        _("Synchronize"),
+        default=False,
+        help_text=_("Use real files and folders structure and name on the file system."),
     )
     """
     This attribute allows to synchronize files and folder on the file system instead of being obfuscated.

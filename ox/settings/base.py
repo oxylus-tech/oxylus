@@ -15,6 +15,8 @@ from dynaconf import Dynaconf
 
 # ---- Dynaconf
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
+OX_DIR = Path(__file__).resolve().parent.parent
+
 OX = {"SETTINGS_DIR": BASE_DIR / "conf"}
 ENV = os.environ.get("OX_ENV", "default")
 
@@ -56,6 +58,10 @@ USE_I18N = True
 USE_L10N = True
 USE_TZ = True
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+LOCALE_PATHS = [
+    OX_DIR / "locales",
+]
 
 # Note: we use a generic name to be agnostic with frontend applications
 LANGUAGE_COOKIE_NAME = "lang"
