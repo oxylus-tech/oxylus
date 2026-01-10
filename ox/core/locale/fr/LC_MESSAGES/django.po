@@ -57,7 +57,7 @@ msgid ""
 "        You can select any application on the left in order to start using "
 "it.\n"
 "        "
-msgstr "\nVous pouvez sélection une application dans le menu pour comment à l'utiliser."
+msgstr "\nVous pouvez sélectionner une application dans le menu pour comment à l'utiliser."
 
 #: ox/core/templates/ox/core/login.html:12
 msgid "Login into your account"
