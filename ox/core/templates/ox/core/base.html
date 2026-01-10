@@ -67,12 +67,8 @@ Blocks:
         {% endif %}
 
         {# Localisation: provide 'en' fallback for frontend specific #}
-        <script src="{% static "locales" %}/en/django.js"></script>
-        <script src="{% static "locales" %}/en/vue.js"></script>
-        {% if LANGUAGE_CODE != "en" %}
         <script src="{% static "locales" %}/{{ LANGUAGE_CODE }}/django.js"></script>
         <script src="{% static "locales" %}/{{ LANGUAGE_CODE }}/vue.js"></script>
-        {% endif %}
 
         {% if app_config %}
         <script src="{% static "locales" %}/en/{{ app_config.label }}.js"></script>

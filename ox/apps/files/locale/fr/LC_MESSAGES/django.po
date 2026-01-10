@@ -73,7 +73,7 @@ msgstr "Métadonnées"
 
 #: ox/apps/files/models/folder.py:26
 msgid "The character `/` is forbidden in name."
-msgstr "Le caractère `/` est interdit dans le nom.""
+msgstr "Le caractère `/` est interdit dans le nom."
 
 #: ox/apps/files/models/folder.py:62
 msgid "Synchronize"

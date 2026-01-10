@@ -38,7 +38,7 @@ window.__i18n_messages = { ...window.__i18n_messages, ...{
     "lists.empty": "Aucune donnée à afficher",
 
     "alerts.danger_zone_system_data":
-        "Soyez prudent lorsque vous changez des données du système, parce qu'elle ne sont pas destinées à être directement éditées. Changer ces valeurs peut introduire des incohérences et des comportements inattendus."
+        "Soyez prudent lorsque vous changez des données du système, parce qu'elle ne sont pas destinées à être directement éditées. Changer ces valeurs peut introduire des incohérences et des comportements inattendus.",
 
     "filters.search": "Recherche",
     "filters.show": "Afficher les filtres",
