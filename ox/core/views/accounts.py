@@ -1,7 +1,8 @@
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import User
 from django.shortcuts import redirect
+from django.views.generic import RedirectView
 from django.utils.translation import gettext_lazy as _
 
 from rest_framework import status, viewsets
@@ -80,6 +81,15 @@ class LoginView(LoginMixin, AppView):
                 return redirect(next)
         context["messages"] = self.get_welcome_message(user)
         return self.render_to_response(request, context)
+
+
+class LogoutView(RedirectView):
+    pattern_name = "login"
+
+    def dispatch(self, request, *args, **kwargs):
+        logout(request)
+        print("logout!")
+        return super().dispatch(request, *args, **kwargs)
 
 
 class AccountView(AppView):

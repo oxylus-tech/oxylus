@@ -7,5 +7,6 @@
     <v-divider></v-divider>
     <v-list-item link prepend-icon="mdi-cog" title="{% trans "My Account" %}"
         href="{% url 'ox_core:account' %}"></v-list-item>
-    <v-list-item link prepend-icon="mdi-logout" title="{% trans "Log out" %}"></v-list-item>
+    <v-list-item link prepend-icon="mdi-logout" title="{% trans "Log out" %}"
+        href="{% url 'logout' %}"></v-list-item>
 </template>

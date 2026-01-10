@@ -91,6 +91,7 @@ urlpatterns = [
     path("api/swagger/", SpectacularSwaggerView.as_view(url_name="schema")),
     path("admin/", admin.site.urls),
     path("accounts/login/", accounts.LoginView.as_view(), name="login"),
+    path("accounts/logout/", accounts.LogoutView.as_view(), name="logout"),
 ]
 
 
