@@ -3,7 +3,7 @@
         @binding {String} props field props as used by Vuetify
         @binding {ModelEditor} editor the editor
         -->
-    <slot name="default" :props="fieldProps" :editor="props.editor">
+    <slot name="default" v-if="props.editor.value" :props="fieldProps" :editor="props.editor">
         <template v-if="props.type == 'select'">
             <v-select v-bind="fieldProps"
                 v-model="props.editor.value[props.name]"/>

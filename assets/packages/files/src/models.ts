@@ -1,4 +1,5 @@
 import {models} from '@oxylus/ox'
+import {Message} from '@oxylus/content/models'
 import {Owned} from '@oxylus/auth/models'
 
 
@@ -58,6 +59,26 @@ export class File extends Owned {
     get displaySize(): string {
         return formatBytes(this.file_size)
     }
+}
+
+
+export class FolderComment extends Message {
+    static entity = "folderComments"
+    static meta = new models.Meta({
+        app: "ox_files",
+        model: "foldercomment",
+        url: "ox/files/folder-comment/"
+    })
+}
+
+
+export class FileComment extends Message {
+    static entity = "fileComments"
+    static meta = new models.Meta({
+        app: "ox_files",
+        model: "filecomment",
+        url: "ox/files/file-comment/"
+    })
 }
 
 

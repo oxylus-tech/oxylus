@@ -161,7 +161,7 @@
 
         <!-- FIXME: views.detail.edit shall be sloted too, not only nested ones? -->
         <template #views.detail.edit v-if="hasEdit">
-            <ox-view :title="t(`models.${panel.model.entity}`)">
+            <ox-view :title="t(`models.${panel.model.meta.model}`)">
                 <template v-for="(name, slot) in editSlots" #[name]>
                     <slot :name="slot" v-bind="bind"/>
                 </template>
@@ -241,8 +241,6 @@ const bind = computed(() => ({
     saved,
     value: panel.value,
 }))
-
-watch(() => Object.values(list.filters), () => list.load())
 
 defineExpose({
     /** The ModelList being used across all views */

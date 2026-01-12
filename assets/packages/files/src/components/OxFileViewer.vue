@@ -15,7 +15,7 @@
                     </div>
 
                     <v-overlay v-if="item" :scrim="false"
-                            content-class="w-100 d-flex flex-column align-center justify-space-between pointer-pass-through py-3"
+                            content-class="w-100 flex-column align-center justify-space-between pointer-pass-through py-3"
                             contained model-value no-click-animation persistent>
                         <v-sheet :key="item.id" rounded="xl">
                             <div class="d-flex flex-row">

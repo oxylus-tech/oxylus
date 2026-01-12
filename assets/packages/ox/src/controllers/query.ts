@@ -7,8 +7,20 @@ import type {Repos, ModelId, Model, ModelType, Repository} from '../models'
 
 
 /** Interface of {@link Query} class. */
-/*export interface IQuery<MT extends ModelType> {
-}*/
+export interface IQuery<MT extends ModelType> {
+    /** Model repository used to store results. */
+    repo: Repository<MT>
+    /**
+     * Repositories used to store relations.
+     *
+     * This argument may be ignored if there is no need to fetch
+     * relations.
+     */
+    repos: Repos
+    // TODO: rename to fetchOptions
+    /** Default options to set to all {@link Query.fetch} calls */
+    opts: IQueryFetch<MT>
+}
 
 
 /** {@link Query.fetch} parameters. */
@@ -72,7 +84,7 @@ export interface IQueryAll<MT extends ModelType> extends IQueryFetch<MT> {
  * // this fetch User model objects from API, then the related groups.
  * const result = await query.fetch({url: '/users', relations: ['groups']})
  */
-export default class Query<MT extends ModelType> {
+export default class Query<MT extends ModelType> implements Query<MT> {
     /**
     * @param {Repos} [repos] all models repositories
     * @param {Repository<M>} [repo] the main repository
@@ -117,7 +129,7 @@ export default class Query<MT extends ModelType> {
             if(id)
                 throw Error("Both `ids` and `id` are provided while only one of those arguments is accepted.")
             params = {...(params || {})}
-            params[lookup] = ids.join(',')
+            params[lookup] = ids.filter(v=>v).join(',')
         }
         const response = await repo.api().get(url, {...opts, params})
         if(opts.save === false)
@@ -256,22 +268,7 @@ export default class Query<MT extends ModelType> {
         const query = new Query(repo2, this.repos, {save: this.opts.save})
         return query.all({...options, id, repo: repo2})
     }
-
 }
-export default interface Query<MT extends ModelType> {
-    /** Model repository used to store results. */
-    repo: Repository<MT>
-    /**
-     * Repositories used to store relations.
-     *
-     * This argument may be ignored if there is no need to fetch
-     * relations.
-     */
-    repos: Repos
-    /** Default options to set to all {@link Query.fetch} calls */
-    opts: IQueryFetch<MT>
-}
-
 
 /** Return a new {@link Query} based on repo's entity. */
 export function query<MT extends ModelType>(repo: string|Repository<MT>, repos?: Repos, opts: IQueryFetch<MT>|null=null): Query<MT> {

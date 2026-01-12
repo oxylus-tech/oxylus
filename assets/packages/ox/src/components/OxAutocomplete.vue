@@ -48,7 +48,6 @@ import type {Model, ModelId} from '@oxylus/ox/models'
 
 const slots = useSlots()
 const itemSlots = filterSlots(slots, 'item.')
-console.log(itemSlots, slots)
 const selectionSlots = filterSlots(slots, 'selection.')
 
 /** Model value **/
@@ -144,7 +143,6 @@ const load = debounce(async ({reset=false}={}) => {
     filters[props.lookup] = q
     let resp = await fetch({params: filters})
 
-    console.log(selected.value)
     const entities = selected.value ?
         unionBy(resp.entities, selected.value, (v) => v.id) :
         resp.entities

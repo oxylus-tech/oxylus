@@ -44,8 +44,8 @@ class TestFile:
         file.on_save()
         assert calls
 
-    def test_validate_node_wrong_owner(self, file, agent_2):
-        file.owner = agent_2
+    def test_validate_node_wrong_owner(self, file, agent_1):
+        file.owner = agent_1
         with pytest.raises(PermissionDenied):
             file.validate_node()
 

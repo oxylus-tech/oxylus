@@ -1,11 +1,13 @@
-import {useModels, t} from '@oxylus/ox'
+import {useModels, t, type Model} from '@oxylus/ox'
 import {Agent} from '@oxylus/auth/models'
 import * as models from './models'
 
+
 /** Use file's models. */
-export function useFilesModels() : Object {
+export function useFilesModels(extraModels: Model[] = []) : Object {
     return useModels([
         Agent, models.File, models.Folder,
+        ...extraModels
     ])
 }
 

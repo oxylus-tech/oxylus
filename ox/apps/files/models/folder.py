@@ -7,6 +7,7 @@ from django.db import models
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 
+from ox.apps.content.models import Message
 from ox.utils.models import Named, Timestamped
 from ox.utils.models.tree import OwnedTreeNode, OwnedTreeNodeQuerySet
 
@@ -17,6 +18,7 @@ __all__ = (
     "FolderQuerySet",
     "Folder",
     "validate_name",
+    "FolderComment",
 )
 
 
@@ -163,3 +165,13 @@ class Folder(Named, Timestamped, OwnedTreeNode):
         if path.startswith("/"):
             path = path[1:]
         return ox_files_settings.sync_dir / str(self.owner.uuid) / path
+
+
+class FolderComment(Message):
+    """Message to a file"""
+
+    thread = models.ForeignKey(Folder, models.CASCADE, related_name="comments", verbose_name=_("Folder"))
+
+    class Meta:
+        verbose_name = _("Comment")
+        verbose_name_plural = _("Comments")

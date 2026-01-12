@@ -7,6 +7,7 @@ from django.conf import settings
 from django.core.exceptions import ValidationError, PermissionDenied
 from django.utils.translation import gettext_lazy as _
 
+from ox.apps.content.models import Message
 from ox.utils.models import Described, Timestamped, ChildOwned, ChildOwnedQuerySet
 
 from ..conf import ox_files_settings
@@ -195,3 +196,13 @@ class File(Described, Timestamped, ChildOwned):
         if clear_files:
             self.clear_files()
         return super().delete(*args, **kwargs)
+
+
+class FileComment(Message):
+    """Message to a file"""
+
+    thread = models.ForeignKey(File, models.CASCADE, related_name=_("comments"), verbose_name=_("File"))
+
+    class Meta:
+        verbose_name = _("Comment")
+        verbose_name_plural = _("Comments")

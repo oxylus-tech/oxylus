@@ -81,7 +81,7 @@ const props = defineProps({
 
 const repo = props.repo || repos.mails
 const renderer = asyncLoadRenderer(
-    repo.use.meta.getUrl({path: '/renderer', abs:true})
+    repo.use.meta.getUrl({path: '/renderer', absolute:true})
 )
 const modelEditor = ref(null)
 

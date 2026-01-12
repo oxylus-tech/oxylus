@@ -39,7 +39,7 @@ export class Meta {
      *
      * If `abs` is provided, prepend api endpoint url.
      */
-    getUrl({path=null, id=null, abs=false}: {path?: string, id?: ModelId, abs?: boolean}): string {
+    getUrl({path=null, id=null, absolute=false}: {path?: string, id?: ModelId, abs?: boolean}): string {
         let url = this.url
         if(!url)
             throw Error("No url declared on this model.")
@@ -48,7 +48,7 @@ export class Meta {
             url += `/${id}/`
         if(path)
             url += path
-        if(abs)
+        if(absolute)
             url = `${window.oxylus.apiUrl}/${url}`
         return `${url}/`.replaceAll('//', '/')
     }
@@ -133,6 +133,10 @@ export class Model extends $Model {
 
     public static config: Record<string, any> = {
         axiosApi: { dataKey: 'results' }
+    }
+
+    static fields() {
+        return { "id": this.attr(null) }
     }
 
     /** Get model's Meta class */

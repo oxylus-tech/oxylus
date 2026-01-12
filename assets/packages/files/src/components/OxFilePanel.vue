@@ -55,6 +55,21 @@
                 :owner="list?.filters?.owner__uuid"
                 :folder="list?.filters.folder__uuid" />
         </template>
+
+        <template #views.detail.edit.tab.comments>{{ t('models.filecomment', 2 ) }}</template>
+        <template #views.detail.edit.window.comments="{value, saved, list}">
+            <ox-message-list v-if="value"
+                    :postURL="repos.fileComments.use.meta.getUrl({absolute: true})"
+                    :repo="repos.fileComments" :repos="repos"
+                    :author="user.id" :thread="value.id"
+                    can-send can-update reverse>
+                <template #form.start>
+                    <v-col col="1">
+                        <v-img :src="value.preview" max-width="5rem" max-height="10rem"/>
+                    </v-col>
+                </template>
+            </ox-message-list>
+        </template>
     </ox-model-panel>
 </template>
 <style scoped>
@@ -72,56 +87,32 @@
  *
  */
 
-import { ref, reactive, useSlots, toRaw, withDefaults, watch } from 'vue'
+import { ref, inject, reactive, useSlots, toRaw, withDefaults, watch } from 'vue'
 
 import { query, t } from '@oxylus/ox'
 import type {IModelPanelProps} from '@oxylus/ox'
 import {OxModelPanel, OxAction} from '@oxylus/ox/components'
+import {OxMessageList} from '@oxylus/content/components'
 
 import OxFileEdit from './OxFileEdit'
 import OxFileViewer from './OxFileViewer'
 import OxFolderDrawer from './OxFolderDrawer'
-import { formatBytes } from '../models'
+import { formatBytes, FileComment } from '../models'
 import {useFilesModels} from '../composables'
 
+const user = inject('user')
 const modelPanel = ref(null)
 const drawer = ref(true)
+
 const dialog = reactive({
     active: false,
     item: null,
-
-    show(item) {
-        this.item = item
-        this.active = true
-    },
-
-    close() {
-        this.active = false
-    },
-
-    go(dir) {
-        const items = modelPanel.value.items
-        console.log(items, this.item)
-        let idx = items.indexOf(this.item) + dir
-        idx = this.normIndex(idx)
-
-        this.item = items[idx]
-    },
-
-    normIndex(index) {
-        const items = modelPanel.value.items
-        if(index > items.length)
-            return 0
-        else if(index < 1)
-            return items.length-1
-        return index
-    }
 })
 
 const slots = useSlots()
 const forwardSlots = Object.keys(slots).filter(x => !(['list.filters', 'top', 'item.actions'].includes(x)))
 
-const repos = useFilesModels()
+const repos = useFilesModels([FileComment])
 const props = withDefaults(defineProps<IModelPanelProps>(), {
     name: 'files',
     relations: ['$folder'],

@@ -10,10 +10,10 @@
                  @binding {ModelList} list the model list controller
                  @binding {Object} filters the actual filters (as list filters, an object with key-value parameters -->
             <slot :list="list" :filters="list.filters"/>
-            <v-btn @click.stop="list.load()" class="ml-2" icon="mdi-check"
+            <!-- <v-btn @click.stop="list.load()" class="ml-2" icon="mdi-check"
                 :aria-label="$t('filters.apply')"
                 :title="t('filters.apply')"
-            />
+            /> -->
             <v-btn v-if="hasFilters" @click.stop="reset" icon="mdi-backspace"
                 :aria-label="t('filters.reset')"
                 :title="t('filters.reset')"

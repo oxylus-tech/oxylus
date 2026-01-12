@@ -35,8 +35,8 @@
         "@oxylus/auth/*": ["./packages/auth/src/*"],
         "@oxylus/location": ["./packages/location/src/index.ts"],
         "@oxylus/location/*": ["./packages/location/src/*"],
-        "@oxylus/contacts": ["./packages/contacts/src/index.ts"],
-        "@oxylus/contacts/*": ["./packages/contacts/src/*"],
+        "@oxylus/content": ["./packages/content/src/index.ts"],
+        "@oxylus/content/*": ["./packages/content/src/*"],
         "@oxylus/files": ["./packages/files/src/index.ts"],
         "@oxylus/files/*": ["./packages/files/src/*"],
         "*": ["node_modules/*"]

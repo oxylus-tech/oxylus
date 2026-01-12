@@ -20,7 +20,9 @@ window.__i18n_messages = { ...window.__i18n_messages, ...{
     "actions.save": "Save",
     "actions.saving": "Saving",
     "actions.select": "Select",
+    "actions.select.translation": "Change current language",
     "actions.close": "Close",
+    "actions.send": "Send",
 
     "actions.download": "Download",
     "actions.upload": "Upload",
@@ -114,6 +116,9 @@ window.__i18n_messages = { ...window.__i18n_messages, ...{
     "content.actions.link.set": "Add a link to selection",
     "content.actions.link.unset": "Remove link from selection",
     "content.actions.link.set_variable": "Add a link to selection with variable as url",
+
+    "content.message.actions.post": "Post a new message",
+    "content.message.labels.content": "Write content here...",
 
     "content.variables.optional.label": "Optional",
     "content.variables.optional.description": "This value is not always provided. You may use an optional block.",

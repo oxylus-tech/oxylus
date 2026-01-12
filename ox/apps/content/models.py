@@ -1,9 +1,11 @@
 from pathlib import Path
 
 from django.db import models
+from django.contrib.auth.models import User
 from django.utils.translation import gettext_lazy as _
 
-from ox.utils.models import PackageInfo
+from ox.core.models import Model
+from ox.utils.models import PackageInfo, Timestamped
 
 from . import mixins
 from .conf import ox_content_settings
@@ -27,6 +29,22 @@ class RichTextField(mixins.RichTextFieldMixin, models.TextField):
         return self.clean(super().to_python(value))
 
 
+class Message(Timestamped, Model):
+    """A generic abstract Message model.
+
+    This can be extended for different use cases. We also provide a
+    serializer :py:class:`~.serializers.MessageSerializer`.
+    """
+
+    author = models.ForeignKey(User, models.CASCADE, verbose_name=_("Author"))
+    content = RichTextField(_("Content"))
+    source = models.ForeignKey("self", models.SET_NULL, null=True, blank=True, verbose_name=_("Related Message"))
+
+    class Meta:
+        abstract = True
+
+
+# Note: feature to be implemented
 class TemplatePack(PackageInfo):
     """
     Base abstract model used to provide content templates.

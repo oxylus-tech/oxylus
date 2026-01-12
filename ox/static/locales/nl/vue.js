@@ -19,6 +19,7 @@ window.__i18n_messages??={}; window.__i18n_messages = { ...window.__i18n_message
   "actions.save": "Opslaan",
   "actions.saving": "Opslaan bezig",
   "actions.select": "Selecteren",
+  "actions.select.translation": "Taal veranderen",
   "actions.close": "Sluiten",
 
   "actions.download": "Downloaden",

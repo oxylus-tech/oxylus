@@ -7,30 +7,23 @@ panels = Panels(
     "mails",
     _("Mails"),
     items=[
+        #        Panel(
+        #            "mails",
+        #            _("Mails"),
+        #            "mdi-email-arrow-right",
+        #            "ox-mail-panel",
+        #            url="ox_mails:index",
+        #            permissions="ox_mails.view_mail",
+        #        ),
         Panel(
-            "mails",
-            _("Mails"),
-            "mdi-email-arrow-right",
-            "ox-mail-panel",
+            "mailaccounts",
+            _("Accounts"),
+            "mdi-email-lock",
+            "ox-mail-account-panel",
             url="ox_mails:index",
-            permissions="ox_mails.view_mail",
-        ),
-        Panels(
-            "settings",
-            _("Settings"),
-            order=100,
-            items=[
-                Panel(
-                    "mailaccounts",
-                    _("Accounts"),
-                    "mdi-email-lock",
-                    "ox-mail-account-panel",
-                    url="ox_mails:index",
-                    permissions="ox_mails.view_mailaccount",
-                ),
-            ],
+            permissions="ox_mails.view_mailaccount",
         ),
     ],
 )
 
-registry.append(panels)
+registry["settings"].append(panels)

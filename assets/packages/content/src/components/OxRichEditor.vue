@@ -1,14 +1,16 @@
 <template>
-    <div class="ox-rich-editor">
+    <div class="ox-rich-editor w-100 mt-3">
+        <input type="hidden" v-if="attrs.name" :name="attrs.name"
+            :value="editor?.getHTML()"/>
         <v-input v-bind="attrs" :modelValue="props.modelValue"
                 :focused="focused"
                 @update:modelValue="modelValueUpdated">
             <template #default>
-                <v-container class="ox-rich-editor">
+                <div class="ox-rich-editor d-flex flex-column w-100">
                     <v-row>
                         <v-label :text="attrs.label"/>
                     </v-row>
-                    <v-row>
+                    <v-row v-if="!props.hideToolbar">
                         <template v-for="group, index in menu" :key="index">
                             <div class="button-group d-inline-block mr-3">
                                 <template v-for="info, index in group" :key="index">
@@ -38,10 +40,10 @@
                     </v-row>
                     <v-row>
                         <editor-content class="editor" :editor="editor"
-                            :style="`height: ${props.height}`"
+                            :style="`height: ${props.height}; max-height: ${props.maxHeight}`"
                             @focusin="focused = true" @focusout="focused = false"/>
                     </v-row>
-                </v-container>
+                </div>
             </template>
         </v-input>
     </div>
@@ -57,6 +59,7 @@ import { defineEmits, defineExpose, reactive, ref, onUnmounted, useAttrs, watch 
 import { t, rules } from '@oxylus/ox'
 
 import { Editor, EditorContent } from '@tiptap/vue-3'
+// import { Placeholder } from '@tiptap/extensions'
 import StarterKit from '@tiptap/starter-kit'
 import Underline from '@tiptap/extension-underline'
 import Link from '@tiptap/extension-link'
@@ -70,15 +73,22 @@ import TableCell from '@tiptap/extension-table-cell'*/
 
 const emits = defineEmits(['update:modelValue'])
 const attrs = useAttrs()
-console.log(">>>", attrs)
 const props = defineProps({
     /** Actual model value to edit */
     modelValue: {type: String, default: ''},
     /** Editor's height in pixels. **/
     height: {type: String, default: "300px;"},
+    /** Editor's max-height in pixels. **/
+    maxHeight: {type: String, default: "unset"},
+    // /** Placeholder */
+    // placeholder: {type: String },
+
     /** Provide extra extensions to add to tiptap editor instance at init */
     editorExtensions: {type: Array, default: () => []},
     variables: {type: Array, default: () => []},
+
+    /** Hide toolbar */
+    hideToolbar: {type: Boolean, default: false}
 })
 const focused = ref(false)
 
@@ -115,6 +125,9 @@ const editor = new Editor({
                 levels: [3, 4, 5]
             }
         }),
+        /*Placeholder.configure({
+            placeholder: props.placeholder
+        }),*/
         Underline,
         Link.configure({autolink: true}),
         TextAlign.configure({ types: ['heading', 'paragraph'] }),
@@ -181,6 +194,5 @@ defineExpose({
     actions,
     /** Tiptap editor */
     editor,
-
 })
 </script>

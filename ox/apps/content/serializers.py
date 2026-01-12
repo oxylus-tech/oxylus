@@ -1,3 +1,4 @@
+from django.contrib.auth.models import User
 from django.utils.html import strip_tags
 from rest_framework import serializers
 
@@ -70,6 +71,47 @@ class RendererSerializer(serializers.Serializer):
 
 
 # ---- Models ----
+
+
+class MessageSerializer(serializers.Serializer):
+    """
+    Base serializer for a :py:class:`~.models.Message`.
+
+    Ensure authors are validated.
+    """
+
+    author = serializers.IntegerField(source="author_id", read_only=True)
+    author_name = serializers.SerializerMethodField("get_name", read_only=True)
+    content = RichTextField()
+
+    class Meta:
+        thread_field = "thread"
+        """ Specify which field to treat as thread. """
+        fields = ("id", "author", "author_name", "content", "created", "updated")
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        thread_field = getattr(self.Meta, "thread_field", MessageSerializer.Meta.thread_field)
+        if self.instance and thread_field in self.fields:
+            self.fields.get(thread_field).read_only = True
+
+    def get_name(self, obj):
+        return obj.author.get_full_name()
+
+    def validate(self, data):
+        vdata = super().validate(data)
+
+        author = self.instance and self.instance.author
+        vdata["author"] = author or self.get_current_author()
+        return vdata
+
+    def get_current_author(self) -> User | None:
+        """Return author for current user."""
+        if request := self.context.get("request"):
+            return not request.user.is_anonymous and request.user or None
+        return None
+
+
 class TemplatePackSerializer(ModelSerializer):
     template_dir = serializers.CharField()
     static_dir = serializers.CharField()

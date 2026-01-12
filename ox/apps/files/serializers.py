@@ -2,13 +2,21 @@ from django.utils.translation import pgettext as _p
 from rest_framework import serializers
 
 from caps.serializers import OwnedSerializer
-from ox.core.serializers import RelatedField
+from ox.core.serializers import RelatedField, ModelSerializer
+from ox.apps.content.serializers import MessageSerializer
 
 from . import models
 from .conf import ox_files_settings
 
 
-__all__ = ("FolderSerializer", "FileSerializer")
+__all__ = (
+    "FolderSerializer",
+    "FileSerializer",
+    "BaseFolderCommentSerializer",
+    "FolderCommentSerializer",
+    "BaseFileCommentSerializer",
+    "FileCommentSerializer",
+)
 
 
 class FolderSerializer(OwnedSerializer):
@@ -36,3 +44,30 @@ class FileSerializer(OwnedSerializer):
                 str_size = int(max_size / 1024 / 1024)
                 raise serializers.ValidationError(_p("The file size exceeds {size}", {"size": str_size}))
             return value
+
+
+# ---- Comments
+class BaseFolderCommentSerializer(MessageSerializer, ModelSerializer):
+    thread = RelatedField(queryset=models.Folder.objects.all())
+    source = RelatedField(queryset=models.FolderComment.objects.all(), required=False)
+
+    class Meta:
+        model = models.FolderComment
+        fields = MessageSerializer.Meta.fields + ("thread", "source")
+
+
+class FolderCommentSerializer(BaseFolderCommentSerializer):
+    source = BaseFolderCommentSerializer(read_only=True)
+
+
+class BaseFileCommentSerializer(MessageSerializer, ModelSerializer):
+    thread = RelatedField(queryset=models.File.objects.all())
+    source = RelatedField(queryset=models.FileComment.objects.all(), required=False)
+
+    class Meta:
+        model = models.FileComment
+        fields = "__all__"
+
+
+class FileCommentSerializer(BaseFileCommentSerializer):
+    source = BaseFileCommentSerializer(read_only=True)

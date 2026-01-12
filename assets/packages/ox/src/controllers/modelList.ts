@@ -1,9 +1,9 @@
 import type {Response} from '@pinia-orm/axios'
 import {union, map} from 'lodash'
 
-import type {ModelType, ModelId} from '../models'
+import type {ModelType, ModelId, Repos} from '../models'
 
-import type {IQueryFetch} from './query'
+import type {IQueryFetch, IQuery} from './query'
 import type {IModelController, IModelFetch} from './modelController'
 import ModelController from './modelController'
 
@@ -22,7 +22,15 @@ export interface IModelList<MT extends ModelType> extends IModelController<MT> {
     nextKey?: string
     /** Response's key used to return total items count. */
     countKey?: string
+    /** Repositories (used for query). */
+    repos: Repos
+    /** Is list editable */
+    editable: boolean
 }
+
+
+export type IModelListProps<MT extends ModelType> = IModelList<MT> & IQuery<MT>
+
 
 /**
  * Arguments of {@link ModelList.fetch}. It is passed down to {@link Query.fetch}.
@@ -72,6 +80,10 @@ export default class ModelList<MT extends ModelType> extends ModelController<MT,
 
     get length() { return this.ids.length }
 
+    constructor(options?: IModelController<MT>) {
+        super(options)
+        options && Object.assign(this, options)
+    }
 
     /** Return index for id */
     indexOf(id: number) { return this.ids.indexOf(id) }

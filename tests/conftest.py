@@ -17,9 +17,9 @@ def user(db):
 
 
 @pytest.fixture
-def user_2(db):
+def user_1(db):
     return User.objects.create_user(
-        username="test-2-user", password="test-2", first_name="test-2", last_name="user", email="test-2@user.org"
+        username="test-1-user", password="test-1", first_name="test-1", last_name="user", email="test-1@user.org"
     )
 
 
@@ -55,8 +55,8 @@ def agent(user):
 
 
 @pytest.fixture
-def agent_2(user_2):
-    return user_2.agent
+def agent_1(user_2):
+    return user_1.agent
 
 
 # ---- Persons
@@ -68,8 +68,8 @@ def person(user):
 
 
 @pytest.fixture
-def person_2(user_2):
-    return user_2.contact
+def person_1(user_2):
+    return user_1.contact
 
 
 @pytest.fixture

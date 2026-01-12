@@ -91,7 +91,7 @@ const initial = computed(() =>
     }
 )
 const renderer = asyncLoadRenderer(
-    repos.mailAccounts.use.meta.getUrl({path: '/renderer', abs:true})
+    repos.mailAccounts.use.meta.getUrl({path: '/renderer', absolute:true})
 )
 
 const ports = {

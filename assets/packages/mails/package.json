@@ -13,6 +13,8 @@
     "docs:vue": "pnpm exec vuedoc-md src/components --out ../docs/vue",
     "docs:ts": "pnpm exec typedoc --out ../docs/ts --tsconfig tsconfig.json src"
   },
+  "module": "./dist/index.js",
+  "main": "./dist/index.js",
   "exports": {
     "./index": "./src/index.ts",
     "./components": "./src/components/index.ts",

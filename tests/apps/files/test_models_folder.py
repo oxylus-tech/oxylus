@@ -13,9 +13,9 @@ class TestFolderQuerySet:
 
 
 class TestFolder:
-    def test_validate_node_wrong_owner(self, root_dir, agent_2, subdir):
+    def test_validate_node_wrong_owner(self, root_dir, agent_1, subdir):
         with pytest.raises(PermissionDenied):
-            subdir.owner = agent_2
+            subdir.owner = agent_1
             subdir.validate_node()
 
     def test_validate_node_folder_name_collision(self, root_dir, agent, subdirs, subdir):

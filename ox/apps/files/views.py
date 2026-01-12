@@ -1,7 +1,8 @@
 from caps.views import OwnedViewSet, AccessViewSet
 
-from . import serializers, filters, tasks
-from .models import Folder, File
+from ox.apps.content.views import MessageViewSet
+from . import filters, serializers, tasks
+from .models import Folder, File, FolderComment, FileComment
 
 
 __all__ = ("FolderViewSet", "FolderAccessViewSet", "FileViewSet", "FileAccessViewSet")
@@ -43,3 +44,23 @@ class FileViewSet(OwnedViewSet):
 
 class FileAccessViewSet(AccessViewSet):
     queryset = File.Access.objects.all()
+
+
+class FolderCommentViewSet(MessageViewSet):
+    queryset = FolderComment.objects.all().order_by("-created").select_related("source")
+    serializer_class = serializers.FolderCommentSerializer
+    filterset_fields = {
+        **MessageViewSet.filterset_fields,
+        "thread__uuid": ["exact"],
+        "author__id": ["exact"],
+    }
+
+
+class FileCommentViewSet(MessageViewSet):
+    queryset = FileComment.objects.all().order_by("-created").select_related("source")
+    serializer_class = serializers.FileCommentSerializer
+    filterset_fields = {
+        **MessageViewSet.filterset_fields,
+        "thread__uuid": ["exact"],
+        "author__id": ["exact"],
+    }

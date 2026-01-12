@@ -1,7 +1,9 @@
 from rest_framework import viewsets
+from rest_framework.permissions import SAFE_METHODS
 from rest_framework.response import Response
 from rest_framework.decorators import action
 
+from ox.core.views import ModelViewSet
 from . import renderers, serializers
 
 
@@ -32,3 +34,29 @@ class WithRendererViewSet(viewsets.ViewSet):
 
         ser = serializers.RendererSerializer(self.renderer)
         return Response(ser.data)
+
+
+class MessageViewSet(ModelViewSet):
+    """
+    This viewsets ensure common behaviors around models.
+    """
+
+    filterset_fields = {
+        "thread": ["exact"],
+    }
+
+    def get_queryset(self):
+        """Restrict queryset when action is an update or a delete."""
+        query = super().get_queryset()
+        if self.request.method not in SAFE_METHODS:
+            query = query.filter(author=self.get_author())
+        return query
+
+    def get_author(self):
+        """
+        Return author value for current user.
+
+        This method allows to change the type of author on the :py:class:`.models.Message`
+        abstract model.
+        """
+        return self.request.user

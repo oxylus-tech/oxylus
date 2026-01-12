@@ -126,9 +126,9 @@ def owned_child(transactional_db, agent, owned_root):
 
 
 class TestOwnedTreeNode:
-    def test_validate_node_wrong_owner(self, owned_root, owned_child, agent_2):
+    def test_validate_node_wrong_owner(self, owned_root, owned_child, agent_1):
         with pytest.raises(PermissionDenied):
-            owned_child.owner = agent_2
+            owned_child.owner = agent_1
             owned_child.validate_node()
 
     def test_validate_node_ok(self, owned_root, owned_child):

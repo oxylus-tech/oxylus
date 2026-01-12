@@ -23,7 +23,8 @@
             <v-menu v-if="context.data?.languages?.length">
                 <template #activator="{props}">
                     <v-btn icon="mdi-translate" v-bind="props"
-                        :title="t('actions.select.translation')"/>
+                        :title="t('actions.select.translation')"
+                        :aria-label="t('actions.select.translation')"/>
                 </template>
 
                 <v-list>

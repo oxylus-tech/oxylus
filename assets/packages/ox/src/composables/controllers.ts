@@ -151,6 +151,7 @@ export function useModelList<MT extends ModelType>(options : IModelList<MT>, cls
         () => list.ids,
         ifNotEqualFn((val, old) => list.repo.refs.releaseAcquire(listId, old, val))
     )
+    watch(() => Object.values(list.filters), () => list.load())
     onUnmounted(() => list.repo.refs.flush(listId))
 
     provide('list', list)

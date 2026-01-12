@@ -6,6 +6,7 @@
     -->
     <slot name="default" :list="list" :items="items">
         <v-list v-bind="attrs">
+            <slot name="prepend" :list="list" :items="items" />
             <!--
                 @slot Default slot inside `v-list`
                 @binding {ModelList} list the ModelList instance
@@ -35,6 +36,7 @@
                             icon="mdi-delete"/>
                     </template>
                 </v-list-item>
+                <slot name="append" :list="list" :items="items" />
             </slot>
         </v-list>
     </slot>
@@ -47,29 +49,28 @@
  *
  * When the list is editable, a remove button is displayed.
  */
-import { defineModel, defineExpose, onMounted, watch, useSlots, useAttrs } from 'vue'
+import { computed, defineModel, defineExpose, onMounted, watch, useSlots, useAttrs } from 'vue'
 import { useModelList, Query, t, ifNotEqual } from '@oxylus/ox'
+import type {IModelListProps} from '@oxylus/ox'
 
 /**
  * @model The list of ids to fetch.
  */
-const ids = defineModel()
+const ids = defineModel([])
 const slots = useSlots()
 
-const props = defineProps({
-    /**
-     * The model repository to use.
-     */
-    repo: Object,
-    /**
-     * Allow to remove items from the list.
-     */
-    editable: Boolean,
-})
+const props = defineProps<IModelListProps & { load: boolean }>()
 const attrs = useAttrs()
-
+console.log(props.filters)
 const {list, items} = useModelList({
-    query: new Query(props.repo)
+    query: new Query(props.repo, props.repos),
+    filters: props.filters,
+})
+watch(() => [props.repo, props.repos, props.filters], (val) => {
+    list.query.repo = val[0]
+    list.query.repos = val[1]
+    list.filters = val[2]
+    list.load()
 })
 
 
@@ -80,7 +81,7 @@ function remove(id) {
 }
 
 
-onMounted(() => ids.value.length && list.load({id: ids.value}))
+onMounted(() => (props.load || ids.value?.length) && list.load({id: ids.value}))
 watch(ids, (val) => val.length && ifNotEqual(val, list.ids, (val) => val.length && list.load({id: val})))
 watch(() => list.ids, (val) => (ids.value = [...val]))
 

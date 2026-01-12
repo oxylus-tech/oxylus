@@ -9,8 +9,6 @@ import type {IQueryFetch} from './query'
 
 
 export interface IModelController<MT extends ModelType> {
-    /** Response's key used to return data */
-    dataKey?: string
     /** {@link Query} used to fetch list items. */
     query: Query<MT>
     /** Related fields to get from pinia orm's database and eventually fetch when items are retrieved from API.  */
@@ -24,8 +22,6 @@ export interface IModelController<MT extends ModelType> {
 }
 
 export interface IModelFetch<MT extends ModelType> extends IQueryFetch<MT> {
-    /** Response's key used to return data */
-    dataKey?: string
     /** If true, force loading all items */
     all: boolean
 }
@@ -53,10 +49,6 @@ export default class ModelController<MT extends ModelType, O=IModelController<MT
 
     /** Current model. */
     get model(): MT { return (this.repo.use as MT) }
-
-    constructor(options: IModelController<MT>|null = null) {
-        options && assignNonEmpty(this, options)
-    }
 
     /** Return orm's query to object. This will includes declared {@link List.relations}.
      *
@@ -124,8 +116,6 @@ export default class ModelController<MT extends ModelType, O=IModelController<MT
     protected getQueryOptions(options: IModelFetch<MT>): IQueryFetch<MT> {
         if(!options.relations && this.relations && this.fetchRelations)
             options.relations = this.relations
-        // if(!("dataKey" in options))
-        //    options.dataKey = this.dataKey
         if(!options.url)
             options.url = this.url
         if(!("save" in options))

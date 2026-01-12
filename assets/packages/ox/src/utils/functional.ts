@@ -1,4 +1,4 @@
-import {isEqual} from 'lodash'
+import _ from 'lodash'
 import {toRaw, type Reactive} from 'vue'
 
 export type RecordKey = string|number
@@ -96,7 +96,7 @@ export function reset(target: Record<RecordKey, any>, assign: Record<RecordKey, 
 export function ifNotEqual<R extends any>(a: any|Reactive<any>, b: any[]|Reactive<any>, func: (a: any, b: any) => R): R|void {
     a = toRaw(a)
     b = toRaw(b)
-    if(!isEqual(a, b))
+    if(!_.isEqual(a, b))
         return func(a, b)
 }
 
@@ -106,4 +106,19 @@ export function ifNotEqual<R extends any>(a: any|Reactive<any>, b: any[]|Reactiv
  */
 export function ifNotEqualFn<T extends any|Reactive<any>, R extends any>(func: (a: T, b: T) => R): (a: T, b: T) => R|void {
     return (a, b) => ifNotEqual(a, b, func)
+}
+
+
+/**
+ * Return object from provided form or formdata (using its fields values).
+ */
+export function formToJson(form: HTMLFormElement|FormData): Record<string, string | string[]> {
+  const formData = form instanceof HTMLFormElement ? new FormData(form) : form
+  return _.mapValues(
+    _.groupBy([...formData.entries()], ([key]) => key),
+    (entries) =>
+      entries.length === 1
+        ? entries[0][1].toString()
+        : entries.map(([, value]) => value.toString())
+  )
 }

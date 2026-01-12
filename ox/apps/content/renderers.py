@@ -147,3 +147,14 @@ class Renderer:
 #     def get_context_data(self, **kwargs):
 #         """Return context to pass down to template."""
 #         return { **kwargs, "pack": self.pack}
+
+
+renderer: Renderer = Renderer(blocks=[])
+"""
+This renderer provide basic rendering without extra blocks.
+
+This is used for rich text editor for comments, etc.
+"""
+
+block_renderer: Renderer = Renderer()
+""" This renderer provides dynamic blocks rendering. """

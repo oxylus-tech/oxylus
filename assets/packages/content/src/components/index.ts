@@ -1,3 +1,5 @@
 export {default as OxRichEditor} from './OxRichEditor.vue'
 export {default as OxBlockEditor} from './OxBlockEditor.vue'
 export {default as OxVariablesMenu} from './OxVariablesMenu.vue'
+export {default as OxMessage} from './OxMessage.vue'
+export {default as OxMessageList} from './OxMessageList.vue'
