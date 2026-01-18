@@ -13,7 +13,8 @@
                                 <v-btn v-if="props.canUpdate && item.author == props.author"
                                     icon="mdi-pencil" variant="text" size="small" />
                                 <v-btn
-                                    icon="mdi-reply" variant="text" size="small" />
+                                    icon="mdi-reply" variant="text" size="small"
+                                    @click="state.source = item"/>
                             </template>
                         </template>
                     </ox-message>
@@ -21,28 +22,40 @@
 
             </ox-model-list>
         </div>
-        <v-card v-if="props.canSend"
+        <v-card elevation="10" v-if="props.canSend"
                 :class="[props.reverse ? 'mb-5': 'mt-3']">
             <v-card-text>
                 <h4>{{ t('ox_content.message.actions.post') }}</h4>
-                <v-form ref="form" class="d-flex flex-row align-start justify-center"
+                <ox-message v-if="state.source"
+                        :item="state.source" variant="flat" color="secondary"
+                        nested>
+                    <template #title.append>
+                        <v-btn icon="mdi-close" color="error" size="xsmall"
+                            :label="t('actions.remove')"
+                            :aria-label="t('actions.remove')"
+                            @click="state.source = null"/>
+                    </template>
+                </ox-message>
+                <v-form ref="form" class="mt-3 d-flex flex-row align-start ga-7 justify-center"
                         :disabled="state.loading"
                         @submit.prevent="submit">
                     <slot name="form.start" :state="state"/>
-                    <v-col cols="10" class="h-100">
-                        <slot name="editor.prepend" :state="state"/>
-                        <ox-rich-editor v-model="state.content"
-                            name="content" class="h-100"
-                            height="100%" max-height="100%" hide-toolbar/>
-                        <slot name="editor.append" :state="state"/>
-                    </v-col>
-                    <v-col cols="1">
-                        <v-btn
-                            type="submit" icon="mdi-send" color="primary" size="small"
-                            :title="t('actions.send')"
-                            :aria-label="t('actions.send')"
-                           />
-                    </v-col>
+                    <input type="hidden" v-if="state.source" name="source"
+                        :value="state.source.id" />
+                    <div class="flex-grow-1">
+                        <div class="d-flex flex-row">
+                            <slot name="editor.prepend" :state="state"/>
+                            <ox-rich-editor v-model="state.content"
+                                name="content" class="h-100"
+                                height="100%" max-height="100%" hide-toolbar/>
+                            <slot name="editor.append" :state="state"/>
+                        </div>
+                    </div>
+                    <v-btn
+                        type="submit" icon="mdi-send" color="primary" size="small"
+                        :title="t('actions.send')"
+                        :aria-label="t('actions.send')"
+                       />
                     <slot name="form.end" :state="state"/>
                 </v-form>
             </v-card-text>
@@ -83,6 +96,7 @@ const form = ref(null)
 const state = reactive({
     loading: false,
     content: "",
+    source: null,
 })
 
 async function submit(event) {

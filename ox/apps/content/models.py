@@ -26,7 +26,11 @@ class RichTextField(mixins.RichTextFieldMixin, models.TextField):
     """
 
     def to_python(self, value):
-        return self.clean(super().to_python(value))
+        return self._clean(super().to_python(value))
+
+    def validate(self, value, model_instance):
+        value = super().validate(value, model_instance)
+        return self._clean(value)
 
 
 class Message(Timestamped, Model):
@@ -49,7 +53,7 @@ class Message(Timestamped, Model):
     author = models.ForeignKey(User, models.CASCADE, verbose_name=_("Author"))
     content = RichTextField(_("Content"))
     source = models.ForeignKey("self", models.SET_NULL, null=True, blank=True, verbose_name=_("Related Message"))
-    type = models.PositiveSmallIntegerField(_("Type"), choices=Type.choices)
+    type = models.PositiveSmallIntegerField(_("Type"), choices=Type.choices, default=Type.MESSAGE, blank=True)
 
     class Meta:
         abstract = True

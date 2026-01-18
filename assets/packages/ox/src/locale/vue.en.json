@@ -35,6 +35,9 @@
     "panels.nav.add": "Create an item",
     "panels.nav.edit": "Edit item",
 
+    "labels.created": "Created",
+    "labels.updated": "Updated",
+
     "views.edit.informations": "Informations",
     "views.edit.public_informations": "Public Informations",
     "lists.empty": "No data to display",

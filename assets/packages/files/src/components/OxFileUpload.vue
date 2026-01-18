@@ -1,6 +1,6 @@
 <template>
     <div
-        class="ox-file-upload"
+        class="ox-file-upload text-center"
         :class="{'drag-over': isDragging}"
         @dragover.prevent="isDragging = true"
         @dragleave.prevent="isDragging = false"
@@ -8,27 +8,28 @@
     >
         <input ref="fileInput" type="file"
             :name="props.name" :accept="props.accept"
-            class="hidden-input"
+            class="d-none"
             @change="handleFileChange" />
 
-        <div class="previews mt-4">
-            <div class="preview">
-                <template v-if="preview?.isImage">
-                    <img :src="preview.preview" :alt="preview.name" />
-                </template>
-                <template v-else-if="preview">
-                    <v-icon class="file-icon" :icon="preview.icon" />
-                    <div class="filename">{{ file?.name }}</div>
-                </template>
-                <template v-else>
-                    <v-icon size="x-large">mdi-cloud-upload</v-icon>
-                    <div class="filename">{{ t('actions.files.select.help') }}</div>
-                </template>
-            </div>
+        <div class="preview w-100 align-center mb-5">
+            <v-img v-if="preview?.isImage"
+                width="100%"
+                :src="preview.preview" :alt="preview.name" />
+            <template v-else-if="preview">
+                <v-icon class="file-icon" :icon="preview.icon" />
+                <div class="filename">{{ file?.name }}</div>
+            </template>
+            <template v-else>
+                <v-icon size="x-large">mdi-cloud-upload</v-icon>
+                <div class="filename">{{ t('actions.files.select.help') }}</div>
+            </template>
         </div>
 
-        <v-btn @click="triggerFileInput" prepend-icon="mdi-upload"
-            :text="t('actions.files.select')"/>
+        <div class="d-flex flex-row justify-center">
+            <v-btn @click="triggerFileInput" prepend-icon="mdi-upload"
+                :text="t('actions.files.select')"/>
+            <slot name="actions" :file="file" :preview="preview"/>
+        </div>
     </div>
 </template>
 

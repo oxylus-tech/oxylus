@@ -2,7 +2,7 @@ from django.utils.translation import pgettext as _p
 from rest_framework import serializers
 
 from caps.serializers import OwnedSerializer
-from ox.core.serializers import RelatedField, ModelSerializer
+from ox.core.serializers import RelatedField, RelatedObjectField, ModelSerializer
 from ox.apps.content.serializers import MessageSerializer
 
 from . import models
@@ -57,7 +57,7 @@ class BaseFolderCommentSerializer(MessageSerializer, ModelSerializer):
 
 
 class FolderCommentSerializer(BaseFolderCommentSerializer):
-    source = BaseFolderCommentSerializer(read_only=True)
+    source = RelatedObjectField(models.FolderComment.objects.all(), BaseFolderCommentSerializer, required=False)
 
 
 class BaseFileCommentSerializer(MessageSerializer, ModelSerializer):
@@ -66,8 +66,8 @@ class BaseFileCommentSerializer(MessageSerializer, ModelSerializer):
 
     class Meta:
         model = models.FileComment
-        fields = "__all__"
+        fields = MessageSerializer.Meta.fields + ("thread", "source")
 
 
 class FileCommentSerializer(BaseFileCommentSerializer):
-    source = BaseFileCommentSerializer(read_only=True)
+    source = RelatedObjectField(models.FileComment.objects.all(), BaseFileCommentSerializer, required=False)

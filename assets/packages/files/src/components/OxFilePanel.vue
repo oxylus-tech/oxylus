@@ -56,7 +56,8 @@
                 :folder="list?.filters.folder__uuid" />
         </template>
 
-        <template #views.detail.edit.tab.comments>{{ t(FileComment, 2 ) }}</template>
+        <template #views.detail.edit.tab.comments="{value}"
+            >{{ t(FileComment, 2 ) }}</template>
         <template #views.detail.edit.window.comments="{value, saved, list}">
             <ox-message-list v-if="value"
                     :postURL="repos.fileComments.use.meta.getUrl({absolute: true})"
@@ -64,11 +65,9 @@
                     :author="user.id" :thread="value.id"
                     can-send can-update reverse>
                 <template #form.start>
-                    <v-col col="1">
                         <v-img
                             :src="value.preview" max-width="5rem" max-height="10rem"
                             @click="dialog.show(value)" />
-                    </v-col>
                 </template>
             </ox-message-list>
         </template>

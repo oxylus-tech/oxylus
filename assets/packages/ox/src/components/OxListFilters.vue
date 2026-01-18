@@ -1,5 +1,5 @@
 <template>
-    <form @submit.prevent="list.load()" class="ox-list-filters width-full">
+    <form @submit.prevent="list.load()" class="ox-list-filters w-100">
         <v-toolbar dense color="transparent">
             <v-app-bar-nav-icon :icon="icon" readonly/>
             <v-text-field v-if="props.search && list.filters"

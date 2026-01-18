@@ -8,9 +8,9 @@
         <template #default="{editor, editable, edited, save}">
             <input v-if="editor.value.id" type="hidden" name="id" :value="editor.value.id"/>
             <v-row class="mb-3">
-                <v-col cols="3" v-if="editor.value?.id && !openUpload">
+                <v-col cols="3" class="align-content" v-if="editor.value?.id && !openUpload">
                     <figure class="mb-3 text-center">
-                        <v-img width="200" :src="editor.value.preview" aria-hidden="true">
+                        <v-img width="100%" :src="editor.value.preview" aria-hidden="true">
                             <template v-slot:placeholder>
                                 <div class="d-flex align-center justify-center fill-height">
                                     <v-progress-circular
@@ -30,15 +30,21 @@
                             icon="mdi-upload" :title="t('actions.files.upload.new')" />
                     </div>
                 </v-col>
-                <v-col cols="3" v-else>
-                    <v-btn v-if="editor.value.id" class="float-right"
-                        icon="mdi-close" size="small" color="secondary"
-                        :title="t('actions.close')"
-                        :aria-label="t('actions.close')"
-                        @click="openUpload=false"
-                        />
+                <v-col cols="3" class="d-flex flex-column" v-else>
+                    <v-spacer/>
                     <ox-file-upload name="file"
-                        @change="onFileChange($event, editor)"/>
+                            @change="onFileChange($event, editor)">
+                        <template #actions>
+                            <v-btn v-if="editor.value.id"
+                                class="ml-1"
+                                icon="mdi-close" size="small" color="error"
+                                :title="t('actions.close')"
+                                :aria-label="t('actions.close')"
+                                @click="openUpload=false"
+                                />
+                        </template>
+                    </ox-file-upload>
+                    <v-spacer/>
                 </v-col>
                 <v-col>
                         <ox-field :editor="editor" name="name" required  :rules="[fileNameRule]"/>

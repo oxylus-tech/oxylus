@@ -109,7 +109,7 @@ const headers = computed(() => {
 
     const items = []
     for(var header of props.headers) {
-        header = typeof header == "string" ? {key: header, title: t('fields.' + header) } : {...header}
+        header = typeof header == "string" ? {key: header, title: t([props.list.model, 'fields.' + header]) } : {...header}
         header.slot = `item.${header.key}`
         items.push(header)
     }

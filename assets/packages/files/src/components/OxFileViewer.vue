@@ -3,7 +3,7 @@
             :show-arrows="viewer.items?.length > 1">
         <v-carousel-item v-for="item in viewer.items"
                 :key="key" :value="item">
-            <div class="h-100 flex-column py-auto position-relative">
+            <div class="h-100 d-flex flex-column py-auto position-relative">
                 <v-spacer/>
                 <div class="position-relative" style="max-height:100%;">
                     <div class="overflow-auto h-100">
@@ -16,7 +16,7 @@
                     </div>
 
                     <v-overlay v-if="item" :scrim="false"
-                            content-class="w-100 flex-column align-center justify-space-between pointer-pass-through py-3"
+                            content-class="w-100 d-flex flex-column align-center justify-space-between pointer-pass-through py-3"
                             contained model-value no-click-animation persistent>
                         <v-sheet :key="item.id" rounded="xl">
                             <div class="d-flex flex-row">
@@ -27,7 +27,7 @@
                     </v-overlay>
 
                     <v-overlay v-if="item" :scrim="false"
-                            content-class="w-100 bottom-0 flex-row pointer-pass-through py-3"
+                            content-class="w-100 bottom-0 d-flex flex-row pointer-pass-through py-3"
                             style="bottom: 0px; position: absolute;"
                             contained model-value no-click-animation persistent>
                         <v-spacer/>

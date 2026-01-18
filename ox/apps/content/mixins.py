@@ -37,7 +37,7 @@ class RichTextFieldMixin:
         self.css_sanitizer = CSSSanitizer(allowed_css_properties=self.allowed_styles)
         super().__init__(*args, **kwargs)
 
-    def clean(self, value):
+    def _clean(self, value):
         if value is None:
             return value
         return bleach.clean(

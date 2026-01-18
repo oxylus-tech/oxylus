@@ -1,4 +1,4 @@
-import { unref, watch } from 'vue'
+import { unref, watch, type Ref } from 'vue'
 import {useI18n as $useI18n, createI18n as $createI18n} from 'vue-i18n'
 import type { Composer } from 'vue-i18n'
 import { Repository as $Repository } from 'pinia-orm'
@@ -143,6 +143,7 @@ export interface IUseI18n {
     i18n: I18n,
     t: (key: TKeyable, ...opts) => string,
     te: (key: TKeyable, ...opts) => string,
+    locale: Ref<string>,
     setLocale: (locale: string) => void,
 }
 
@@ -163,7 +164,10 @@ export function useI18n({locales, composer}: IUseI18nOpts): IUseI18n {
     function setLocale(locale: string) {
         composer.locale.value = locale
     }
-    return {t, te, i18n, setLocale}
+
+    const locale = composer.locale
+
+    return {t, te, i18n, setLocale, locale}
 }
 
 

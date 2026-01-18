@@ -13,6 +13,7 @@ import * as vendorComponents from '@oxylus/ox/vendor'
 import config from '../config'
 import {i18n, useI18n, loadI18nScripts} from './i18n'
 import type AppLocaleLoaders from '../i18n'
+import {registerHumanizeDirectives} from '../directives/humanize'
 
 
 /**
@@ -126,6 +127,8 @@ export async function createApp(app: Record<string, any>, {props={}, vuetify={},
 
     app.use(createVuetify(vuetify))
     app.use(i18n)
+
+    registerHumanizeDirectives(app)
 
     setLoadState('i18n')
     await loadI18nScripts()

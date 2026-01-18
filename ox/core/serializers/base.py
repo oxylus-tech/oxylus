@@ -1,11 +1,12 @@
 from dataclasses import dataclass
 
 from django.db import transaction
+from django.shortcuts import get_object_or_404
 from rest_framework import serializers
 from rest_framework.exceptions import PermissionDenied
 
 
-__all__ = ("RelatedField", "ModelSerializer", "NestedInfo", "NestedSerializer")
+__all__ = ("RelatedField", "RelatedObjectField", "ModelSerializer", "NestedInfo", "NestedSerializer")
 
 
 class RelatedField(serializers.SlugRelatedField):
@@ -14,6 +15,38 @@ class RelatedField(serializers.SlugRelatedField):
     def __init__(self, **kwargs):
         kwargs.setdefault("slug_field", "uuid")
         super().__init__(**kwargs)
+
+
+class RelatedObjectField(RelatedField):
+    """
+    A DRF field that:
+    - On input (deserialization): takes a UUID and returns the related instance.
+    - On output (serialization): returns the serialized object as a dict.
+    """
+
+    def __init__(self, queryset, serializer_class, **kwargs):
+        """
+        :param queryset: Queryset for the related model (like RelatedField)
+        :param serializer_class: Serializer to use when returning the full object
+        """
+        self.serializer_class = serializer_class
+        super().__init__(queryset=queryset, **kwargs)
+
+    def to_internal_value(self, data):
+        """
+        Convert UUID to model instance.
+        """
+        if not data:
+            return None
+        # assume data is UUID
+        return get_object_or_404(self.queryset, uuid=data)
+
+    def to_representation(self, value):
+        """
+        Return the full serialized object.
+        """
+        serializer = self.serializer_class(value, context=self.context)
+        return serializer.data
 
 
 class ModelSerializer(serializers.ModelSerializer):
