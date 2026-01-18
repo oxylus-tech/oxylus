@@ -39,6 +39,7 @@ export function createI18n() {
     const candidates = (getCookieList("lang", ",") || navigator.languages || ["en"]).map(
         x => x.toLowerCase().replace(/[_-](\w+)/, "")
     )
+    // FIXME i18n.ts => use app data?
     const locale = candidates.find(x => x in config.locales)
 
     return $createI18n({

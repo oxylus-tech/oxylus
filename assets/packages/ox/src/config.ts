@@ -17,5 +17,8 @@ export default {
     locales: {
         "fr": "Français",
         "en": "English",
+        "de": "Dutch",
+        "nl": "Nederlands",
+        "es": "Spanish",
     }
 }

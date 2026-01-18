@@ -7,7 +7,7 @@
         <template #list.filters="{list,filters}">
             <v-select class="ml-3" density="compact"
                 v-model="filters.groups__id__in" multiple
-                label="Groups"
+                :label="t(models.Group, 2)"
                 :items="groups" item-title="$title" item-value="id"
                 hide-details />
 
@@ -34,7 +34,7 @@
 <script setup lang="ts">
 import { computed, defineProps, useSlots, withDefaults } from 'vue'
 
-import { useModels, query } from '@oxylus/ox'
+import { useModels, query, models, t } from '@oxylus/ox'
 import {OxModelPanel} from '@oxylus/ox/components'
 import type {IModelPanelProps} from '@oxylus/ox'
 
