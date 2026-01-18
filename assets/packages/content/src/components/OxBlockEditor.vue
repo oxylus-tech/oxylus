@@ -11,7 +11,7 @@
                     @click:select="actions[block.name](editor, $event)"/>
                 <!-- For variable block, extra insert url menu -->
                 <ox-variables-menu v-if="block.name == 'variable'"
-                    :label="t('content.actions.link.set_variable')"
+                    :label="t('ox_content.actions.link.set_variable')"
                     icon="mdi-link-variant"
                     :items="renderer.variables"
                     @click:select="actions['variable-add-link'](editor, $event)"/>

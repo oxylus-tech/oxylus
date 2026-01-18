@@ -1,4 +1,4 @@
-window.__i18n_messages??={}; window.__i18n_messages = { ...window.__i18n_messages, ...{
+{
   "next": "Volgende",
   "prev": "Vorige",
   "actions.next": "Volgende",
@@ -118,4 +118,4 @@ window.__i18n_messages??={}; window.__i18n_messages = { ...window.__i18n_message
   "labels.recipients": "Ontvangers",
   "actions.mails.send": "E-mail verzenden",
   "actions.mails.send.confirm": "Deze e-mail is al verzonden. Wilt u deze opnieuw verzenden?"
-}}
+}

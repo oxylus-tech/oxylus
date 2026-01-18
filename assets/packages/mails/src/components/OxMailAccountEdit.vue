@@ -3,7 +3,7 @@
         <template #default="{editor, editable, edited, save}">
             <ox-field :editor="editor" name="name" required />
             <ox-agent-select v-model="editor.value.owner"
-                :disabled="editor.value.id"/>
+                :disabled="!!editor.value.id"/>
 
             <v-expansion-panels :model-value="['settings', 'smtp']">
                 <v-expansion-panel :title="t('views.edit.mail.settings')" v-if="renderer" value="settings">
@@ -82,7 +82,7 @@ import {useMailModels} from '../composables'
 
 const repos = useMailModels()
 const props = defineProps({
-    owner: Object
+    owner: String
 })
 const attrs = useAttrs()
 const initial = computed(() =>

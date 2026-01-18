@@ -1,7 +1,7 @@
 <template>
     <v-app>
-        <v-snackbar v-model="context.showState" :color="context.state.color" multi-line>
-            {{ context.state.toString() }}
+        <v-snackbar v-model="app.state.show" :color="app.state.color" multi-line>
+            {{ app.state.toString() }}
         </v-snackbar>
         <v-app-bar color="primary">
             <!-- @slot Prepend on app bar -->
@@ -20,7 +20,7 @@
             <div id="app-bar-right" class="mr-3"></div>
             <!-- @slot Right side of app bar -->
             <slot name="app-bar-right"></slot>
-            <v-menu v-if="context.data?.languages?.length">
+            <v-menu v-if="app.data?.languages?.length">
                 <template #activator="{props}">
                     <v-btn icon="mdi-translate" v-bind="props"
                         :title="t('actions.select.translation')"
@@ -28,7 +28,7 @@
                 </template>
 
                 <v-list>
-                    <v-list-item v-for="lang in context.data.languages"
+                    <v-list-item v-for="lang in app.data.languages"
                         :title="lang[1]" :aria-label="lang[1]"
                         :value="lang[0]"
                         @click="setLanguage(lang[0])">
@@ -41,18 +41,18 @@
                 </v-list>
             </v-menu>
         </v-app-bar>
-        <ox-app-nav v-if="slots['nav-start'] || slots['nav-end']" v-model:drawer="nav.drawer" :items="context.data.nav">
+        <ox-app-nav v-if="slots['nav-start'] || slots['nav-end']" v-model:drawer="nav.drawer" :items="app.data.nav">
             <template #prepend>
                 <a class="nav-home" href="/">
                     <v-img v-if="logo" :src="logo" class="logo"/>
                 </a>
                 <!-- @slot Top of navigation drawer -->
-                <slot name="nav-start" :context="context"></slot>
+                <slot name="nav-start" :app="app"></slot>
             </template>
             <template #append v-if="slots['nav-end']">
                 <v-list v-model:opened="nav.opened">
                     <!-- @slot Bottom of navigation drawer -->
-                    <slot name="nav-end" :context="context"></slot>
+                    <slot name="nav-end" :app="app"></slot>
                 </v-list>
             </template>
         </ox-app-nav>
@@ -62,11 +62,11 @@
                 <v-tabs-window v-model="panels.panel">
                     <template #default="bind">
                         <!-- @slot Inside `v-tabs-window` -->
-                        <slot name="default" v-bind="bind" :context="context"></slot>
+                        <slot name="default" v-bind="bind" :app="app"></slot>
 
                         <v-tabs-window-item v-for="(name, slot) in panelsSlots" :key="slot" :value="name">
                             <!-- @slot Each slot declared with prefix `panels.` will be put in a `v-tabs-window-item`. -->
-                            <slot :name="slot" v-bind="bind" :context="context"/>
+                            <slot :name="slot" v-bind="bind" :app="app"/>
                         </v-tabs-window-item>
                     </template>
                 </v-tabs-window>
@@ -88,10 +88,10 @@
 /**
  * @component Application component, handling navigation and page layout.
  *
- * This is the main component loading application data and context, while
+ * This is the main component loading application data and app, while
  * providing the page layout.
  *
- * Provide: `context`, `user`.
+ * Provide: `state`, `user`, `appData`.
  *
  * ## Application layout
  *
@@ -115,7 +115,7 @@
 import { useSlots, withDefaults, onErrorCaptured, onMounted } from 'vue'
 import { computed, defineProps, inject, provide, reactive, watch } from 'vue'
 
-import {useAppContext, usePanels, t, filterSlots, getCountryFlag} from '@oxylus/ox'
+import {useApp, usePanels, t, filterSlots, getCountryFlag} from '@oxylus/ox'
 import type {Model} from '../models'
 import config from '../config'
 import OxAppNav from './OxAppNav.vue'
@@ -140,17 +140,13 @@ const props = withDefaults(defineProps<Props>(), {
 
 const nav = reactive({drawer: true})
 
-const context = useAppContext(props)
+const app = useApp(props)
 const panels = usePanels()
 
-onMounted(() => { panels.panel = context.data.panel })
-
-watch(() => [context.state.state, context.state.data], () => {
-    context.showState = true
-})
+onMounted(() => { panels.panel = app.data.panel })
 
 onErrorCaptured((err, instance, info) => {
-    context.state.error(`${err}`)
+    app.state.error(`${err}`)
 })
 
 

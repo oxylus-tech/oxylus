@@ -68,3 +68,16 @@ export function getCountryFlag(code) {
         ? String.fromCodePoint(...chars.map(c => OFFSET + c.charCodeAt(0) - 65))
         : ''
 }
+
+
+/**
+ * Read data from the provided source element.
+ * @param {String} dataEl - id of the DOM element.
+ * @return {Object} read data
+ */
+export function readJsonScript(dataEl: string): any {
+    const el = document.getElementById(dataEl)
+    if(!el)
+        throw `Element {elementId} not found`;
+    return el.innerText ? JSON.parse(el.innerText) : {};
+}

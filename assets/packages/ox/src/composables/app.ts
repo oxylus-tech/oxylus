@@ -4,7 +4,7 @@ import type {ComputedRef, Reactive} from 'vue'
 import {User, Model} from '../models'
 import type {ModelType, Repos} from '../models'
 import { useModels } from './models'
-import { State } from '../utils'
+import { State, readJsonScript } from '../utils'
 
 
 /**
@@ -21,7 +21,7 @@ export interface IAppData extends Record<string, any> {
 /**
  * This provide configuration to {@link AppContext}.
  */
-export interface IApp {
+export interface IAppOpts {
     /**
      * Root API url
      */
@@ -31,106 +31,44 @@ export interface IApp {
      */
     dataEl?: string
     /**
-     * Models used by application.
-     */
-    models?: ModelType[]
-    /**
      * Extra application data.
      */
     data?: IAppData
 }
 
-
-/**
- * This class provides context for Oxylus application.
- *
- * Which is:
- * - initial data: this is loaded from `<script>` HTML object.
- * - models: it will create adequate `pinia-orm/axios` repositories for them.
- *
- * The context is provided to Vue components in order to allow them
- * to access global information, such as current user or Panel.
- */
-export class AppContext {
-    /** Reactive version of AppContext */
-    static reactive(opts: IApp) : IRAppContext {
-        // TODO: move to composables
-        const obj = reactive(new this(opts)) as IRAppContext
-        obj.user = computed(() => new User(obj.data?.user || {}))
-        return obj
-    }
-
-    constructor(opts: IApp = {}) {
-        Object.assign(this, opts)
-        this.state = State.none()
-        this.showState = false
-    }
-
-    /**
-     * Load data into AppData. If no `value` is provided, read it from
-     * source element.
-     */
-    load(value: any = undefined) {
-        if(this.dataEl !== undefined) {
-            if(value === undefined)
-                value = this.readData(this.dataEl)
-            value.dataEl = this.dataEl
-            this.data = value
-        }
-
-        if(this.models !== undefined) {
-            this.repos = useModels(this.models)
-        }
-    }
-
-    /**
-     * Read data from the context of provided source element.
-     * @param {String} dataEl - id of the DOM element.
-     * @return {Object} read data
-     */
-    readData(dataEl: string): any {
-        const el = document.getElementById(dataEl)
-        if(!el)
-            throw `Element {elementId} not found`;
-        return el.innerText ? JSON.parse(el.innerText) : {};
-    }
-}
-export interface AppContext extends IApp {
-    /** Models' repositories */
-    repos?: Repos
-    /**
-     * Application level state. This can be displayed to user using
-     * {@link AppContext.showState}.
-     *
-     * This element can display errors to users.
-     */
+export interface IApp {
+    /** Application state used to render application wide informations */
     state: State
-    /**
-     * Show application state to user.
-     */
-    showState: boolean
-}
-export interface IRAppContext extends Reactive<AppContext> {
-    user: ComputedRef<User>
+    /** Data read from `<script>` JSON tag or options. */
+    data: Record<string, any>
+    /** API endpoint url (from `data`) */
+    apiUrl: string
+    /** Current user, based on `data.user` object */
+    user: ComputedRef<User>,
 }
 
 
 /**
- * Create a new {@link AppContext} and provide the following values:
- * - `context`: {@link AppContext} object;
- * - `user`: current {@link models.User};
+ * Initialize an application.
  *
- * It updates the `window.oxylus` with those values:
- * - `apiUrl`: API base url
- * - `appData`: app's data (as loaded from AppContext)
+ * It returns an {@link IApp} interface with:
+ * - `data`: data read from provided `<script>` json tag or from options;
+ * - `user`: current user model instance (not saved in repository);
+ * - `state`: application state, that can be used to transmit general state info;
+ *
+ * Provides: `app`, `user`
  */
-export function useAppContext(opts: IApp, load: boolean = true): AppContext {
-    const obj = AppContext.reactive(opts)
-    load && obj.dataEl && obj.load()
+export function useApp(opts: IAppOpts, load: boolean = true): IApp {
+    const state = new State()
+    const data = opts.dataEl ? readJsonScript(opts.dataEl) : (opts.data || {})
+    const user = new User(data?.user || {})
 
-    provide('context', obj)
-    provide('user', obj.user)
-    // provide('repos')
-    window.oxylus = {...window.oxylus, apiUrl: obj.apiUrl, appData: obj.data}
-    return obj
+    if(opts.apiUrl)
+        data.apiUrl = opts.apiUrl
+
+    const app = {state, data, user, apiUrl: data.apiUrl}
+    provide('app', app)
+    provide('user', user)
+    window.oxylus = {...window.oxylus, app} // FIXME: drop
+    return app
 }

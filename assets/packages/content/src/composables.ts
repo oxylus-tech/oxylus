@@ -1,6 +1,21 @@
 import { ref, onMounted } from 'vue'
 import type {Ref} from 'vue'
 
+import {locales, useI18n, type LocaleLoaders} from '@oxylus/ox'
+
+
+/** The ox content locales loader **/
+export const contentLocales: LocaleLoaders = {
+    ...locales,
+    ox_content: import.meta.glob('./locale/*.json', { import: 'default'})
+}
+
+
+/** Use ox content locales **/
+export function useContentI18n(locales?: LocaleLoaders = {}) {
+    return useI18n({...contentLocales, ...locales})
+}
+
 
 export type Renderer = Record<string, any>
 

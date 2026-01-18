@@ -12,7 +12,7 @@ export class MailAccount extends Owned {
         title: "name",
     })
 
-    static Encryption = models.Enum('mailaccount.encryption', {
+    static Encryption = models.Enum('ox_mails.mailaccount.enums.encryption', {
         NONE: 0,
         TLS: 1,
         SSL: 2,

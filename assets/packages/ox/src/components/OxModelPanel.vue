@@ -161,7 +161,7 @@
 
         <!-- FIXME: views.detail.edit shall be sloted too, not only nested ones? -->
         <template #views.detail.edit v-if="hasEdit">
-            <ox-view :title="t(`models.${panel.model.meta.model}`)">
+            <ox-view :title="t([panel.model])">
                 <template v-for="(name, slot) in editSlots" #[name]>
                     <slot :name="slot" v-bind="bind"/>
                 </template>

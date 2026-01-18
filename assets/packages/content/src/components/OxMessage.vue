@@ -10,7 +10,7 @@
             </time>
         </v-list-item-title>
 
-        <v-list-item-text>
+        <div>
             <v-card class="mt-3 pa-3">
                 <v-card-text>
                     <div class="ox-message-content" v-html="item.content" />
@@ -25,7 +25,7 @@
                     <slot name="actions" :item="props.item"/>
                 </div>
             </div>
-        </v-list-item-text>
+        </div>
     </v-list-item>
 </template>
 <script setup lang="ts">

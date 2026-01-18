@@ -94,21 +94,21 @@ const focused = ref(false)
 
 const menu = reactive([
     [
-        {label: "content.actions.bold", icon: "mdi-format-bold", action: "toggleBold" },
-        {label: "content.actions.italic", icon: "mdi-format-italic", action: "toggleItalic" },
-        {label: "content.actions.underline", icon: "mdi-format-underline", action: "toggleUnderline" },
-        {label: "content.actions.strike", icon: "mdi-format-strikethrough", action: "toggleStrike" },
+        {label: "ox_content.actions.bold", icon: "mdi-format-bold", action: "toggleBold" },
+        {label: "ox_content.actions.italic", icon: "mdi-format-italic", action: "toggleItalic" },
+        {label: "ox_content.actions.underline", icon: "mdi-format-underline", action: "toggleUnderline" },
+        {label: "ox_content.actions.strike", icon: "mdi-format-strikethrough", action: "toggleStrike" },
     ],[
-        {label: "content.actions.list", icon: "mdi-format-list-bulleted", action: "toggleBulletList" },
-        {label: "content.actions.list.numbered", icon: "mdi-format-list-numbered", action: "toggleOrderedList" },
+        {label: "ox_content.actions.list", icon: "mdi-format-list-bulleted", action: "toggleBulletList" },
+        {label: "ox_content.actions.list.numbered", icon: "mdi-format-list-numbered", action: "toggleOrderedList" },
     ],[
-        {label: "content.actions.heading.1", icon: "mdi-format-header-1", action: "toggleHeading", args: [{level:3}] },
-        {label: "content.actions.heading.2", icon: "mdi-format-header-2", action: "toggleHeading", args: [{level:4}] },
-        {label: "content.actions.heading.3", icon: "mdi-format-header-3", action: "toggleHeading", args: [{level:5}] },
+        {label: "ox_content.actions.heading.1", icon: "mdi-format-header-1", action: "toggleHeading", args: [{level:3}] },
+        {label: "ox_content.actions.heading.2", icon: "mdi-format-header-2", action: "toggleHeading", args: [{level:4}] },
+        {label: "ox_content.actions.heading.3", icon: "mdi-format-header-3", action: "toggleHeading", args: [{level:5}] },
     ], [
-        {label: "content.actions.align.left", icon: "mdi-format-align-left", action: "setTextAlign", args: ["left"]},
-        {label: "content.actions.align.center", icon: "mdi-format-align-center", action: "setTextAlign", args: ["center"]},
-        {label: "content.actions.align.right", icon: "mdi-format-align-right", action: "setTextAlign", args: ["right"]},
+        {label: "ox_content.actions.align.left", icon: "mdi-format-align-left", action: "setTextAlign", args: ["left"]},
+        {label: "ox_content.actions.align.center", icon: "mdi-format-align-center", action: "setTextAlign", args: ["center"]},
+        {label: "ox_content.actions.align.right", icon: "mdi-format-align-right", action: "setTextAlign", args: ["right"]},
     ]
 
 ])

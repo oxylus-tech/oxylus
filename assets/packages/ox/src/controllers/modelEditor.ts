@@ -38,6 +38,7 @@ export default class ModelEditor<T extends Model, P extends IModelEditorProps<T>
     }
 
     get repo() { return this.props.repo }
+    get model(): T { return this.props.repo?.use as T }
     get name() { return this.props.name || `${this.repo.use.entity}-edit` }
     isEdited(): boolean {
         return !isEqual(pick(this.value, this.fields), pick(this.initial, this.fields))

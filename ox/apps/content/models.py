@@ -36,9 +36,20 @@ class Message(Timestamped, Model):
     serializer :py:class:`~.serializers.MessageSerializer`.
     """
 
+    class Type(models.IntegerChoices):
+        MESSAGE = 0x00, _("Message")
+        """ User message. """
+        AGENT = 0x01, _("Agent Message")
+        """ Message from an agent eg AI """
+        SYSTEM = 0x10, _("System")
+        """ Message from the system """
+        NOTIFICATION = 0x11, _("Notification")
+        """ A notification as an update. """
+
     author = models.ForeignKey(User, models.CASCADE, verbose_name=_("Author"))
     content = RichTextField(_("Content"))
     source = models.ForeignKey("self", models.SET_NULL, null=True, blank=True, verbose_name=_("Related Message"))
+    type = models.PositiveSmallIntegerField(_("Type"), choices=Type.choices)
 
     class Meta:
         abstract = True

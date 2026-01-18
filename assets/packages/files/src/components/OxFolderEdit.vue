@@ -11,6 +11,7 @@
                 </template>
             </ox-field>
             <ox-field :editor="editor" name="path" disabled/>
+            <ox-field :editor="editor" name="description" type="textarea" />
         </template>
     </ox-model-edit>
 </template>

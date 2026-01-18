@@ -5,12 +5,12 @@ import { t } from '../composables/i18n'
  * Return string label for the provided enum.
  */
 function toString(prefix: string, prop: string) {
-    let key = `enums.${prefix}.${prop}`
+    let key = `${prefix}.${prop}`
     let val = t(key)
     if(val != key)
         return val
 
-    return t(`enums.${prefix}._.${prop}`)
+    return t(`${prefix}._.${prop}`)
 }
 
 export interface IEnum extends Record<string, any> {

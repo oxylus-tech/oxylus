@@ -1,7 +1,12 @@
-import {models as oxModels, useModels, query} from '@oxylus/ox'
-import type {IUseModelOpts} from '@oxylus/ox'
+import {models as $models, useModels, query, locales} from '@oxylus/ox'
+import type {IUseModelOpts, LocaleLoaders} from '@oxylus/ox'
 import type {Model, Repos} from '@oxylus/ox/models'
 import {Agent} from './models'
+
+export const authLocales: LocaleLoaders = {
+    ...locales,
+    ox_auth: import.meta.glob('./locale/*.json', { import: 'default'})
+}
 
 /**
  * Use authentication models (wrapper over {@link useModel}).
@@ -10,7 +15,7 @@ import {Agent} from './models'
  */
 export function useAuthModels(items: Array<typeof Model> = [], opts: IUseModelOpts = {}) : Repos {
     const repos = useModels([
-        oxModels.User, oxModels.Group, oxModels.Permission, oxModels.ContentType,
+        $models.User, $models.Group, $models.Permission, $models.ContentType,
         ...items
     ], opts)
 

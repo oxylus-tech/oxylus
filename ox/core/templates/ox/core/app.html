@@ -8,7 +8,7 @@
 {% block app %}
 {{ block.super }}
 {% if not no_panels %}
-    <template #app-nav="{context}">{% block app-nav %}{% endblock %}</template>
+    <template #app-nav="{app}">{% block app-nav %}{% endblock %}</template>
 {% endif %}
 
 {% for panel in panels.get_panels %}

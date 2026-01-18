@@ -58,16 +58,14 @@ class Command(BaseCommand):
             translation.activate(code)
             self.make_i18n(code, out)
 
-    source = "window.__i18n_messages??={{}};" "window.__i18n_messages={{...window.__i18n_messages, ...{messages} }};"
-
     def make_i18n(self, locale: str, out: Path):
         """Create i18n file for the provided locale."""
         labels = self.get_labels(locale)
-        path = out / f"{locale}/django.js"
+        path = out / f"django.{locale}.json"
 
         path.parent.mkdir(exist_ok=True)
 
-        source = self.source.format(messages=json.dumps(labels))
+        source = json.dumps(labels)
         path.write_text(source)
         logger.info(f"{len(labels)} translations written to `{path}`")
 
@@ -89,28 +87,28 @@ class Command(BaseCommand):
         if not app_config.models_module:
             return
 
-        self.get_enums_labels(app_config.models_module, output)
+        self.get_enums_labels(app_config.models_module, f"{app_config.label}.enums.", output)
 
         for model in app_config.get_models():
-            output[f"models.{model._meta.model_name}"] = (
+            output[f"{model._meta.label_lower}"] = (
                 f"{escape(model._meta.verbose_name.capitalize())} | {escape(model._meta.verbose_name_plural.capitalize())}"
             )
 
-            self.get_fields_labels(model, output)
-            self.get_enums_labels(model, output, model._meta.model_name + ".")
+            self.get_fields_labels(model, f"{model._meta.label_lower}.fields.", output)
+            self.get_enums_labels(model, f"{model._meta.label_lower}.enums.", output)
 
-    def get_fields_labels(self, model: models.Model, output: dict[str, str]):
+    def get_fields_labels(self, model: models.Model, prefix: str, output: dict[str, str]):
         """Provide model fields translations."""
         meta = model._meta
         for field in meta.fields + meta.many_to_many:
             if isinstance(field, models.ManyToOneRel):
                 continue
 
-            output[f"fields.{field.name}"] = escape(str(field.verbose_name).capitalize())
+            output[prefix + field.name] = escape(str(field.verbose_name).capitalize())
             if field.help_text:
-                output[f"fields.{field.name}.help"] = escape(str(field.help_text).capitalize())
+                output[f"{prefix}{field.name}.help"] = escape(str(field.help_text).capitalize())
 
-    def get_enums_labels(self, obj: models.Model | ModuleType, output: dict[str, str], prefix: str = ""):
+    def get_enums_labels(self, obj: models.Model | ModuleType, prefix: str, output: dict[str, str]):
         """List enums from provided module or model and set provide translations."""
         for attr, value in vars(obj).items():
             name = attr.lower()
@@ -120,5 +118,5 @@ class Command(BaseCommand):
     def get_enum_labels(self, name: str, obj, output: dict[str, str]):
         """Provide translations for the provided enum."""
         for enum in iter(obj):
-            output[f"enums.{name}.{enum.name}"] = escape(str(enum.label).capitalize())
-            output[f"enums.{name}._.{enum.value}"] = escape(str(enum.label).capitalize())
+            output[f"{name}.{enum.name}"] = escape(str(enum.label).capitalize())
+            output[f"{name}._.{enum.name}"] = escape(str(enum.label).capitalize())

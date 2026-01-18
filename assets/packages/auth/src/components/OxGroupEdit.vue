@@ -5,7 +5,7 @@
                 <ox-field :editor="editor" name="name"/>
             </v-container>
             <v-expansion-panels mandatory multiple>
-                <v-expansion-panel :title="t('models.permission', 2)" value='permissions' v-if="editable && editor.value.id && user.can('auth.view_permission')">
+                <v-expansion-panel :title="t(repos.permissions, 2)" value='permissions' v-if="editable && editor.value.id && user.can('auth.view_permission')">
                     <template #text>
                         <v-expansion-panel-text>
                             <ox-permissions-edit :group="editor.value"

@@ -8,7 +8,7 @@ from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 
 from ox.apps.content.models import Message
-from ox.utils.models import Named, Timestamped
+from ox.utils.models import Described, Timestamped
 from ox.utils.models.tree import OwnedTreeNode, OwnedTreeNodeQuerySet
 
 from ..conf import ox_files_settings
@@ -34,7 +34,7 @@ class FolderQuerySet(OwnedTreeNodeQuerySet):
         return super().find_clone(node, **lookups)
 
 
-class Folder(Named, Timestamped, OwnedTreeNode):
+class Folder(Described, Timestamped, OwnedTreeNode):
     """
     Represent a folder in which files are stored.
 

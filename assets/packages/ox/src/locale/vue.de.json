@@ -1,4 +1,4 @@
-window.__i18n_messages??={}; window.__i18n_messages = { ...window.__i18n_messages, ...{
+{
   "next": "Weiter",
   "prev": "Zurück",
   "actions.next": "Weiter",
@@ -117,4 +117,4 @@ window.__i18n_messages??={}; window.__i18n_messages = { ...window.__i18n_message
   "labels.recipients": "Empfänger",
   "actions.mails.send": "E-Mail senden",
   "actions.mails.send.confirm": "Diese E-Mail wurde bereits gesendet. Möchten Sie sie erneut senden?"
-}}
+}

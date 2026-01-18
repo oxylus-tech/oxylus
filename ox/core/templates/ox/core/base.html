@@ -67,13 +67,9 @@ Blocks:
         {% endif %}
 
         {# Localisation: provide 'en' fallback for frontend specific #}
-        <script src="{% static "locales" %}/{{ LANGUAGE_CODE }}/django.js"></script>
-        <script src="{% static "locales" %}/{{ LANGUAGE_CODE }}/vue.js"></script>
+        <script src="{% static "locales" %}/django.en.json" type="application/json" locale="en"></script>
+        <script src="{% static "locales" %}/django.{{ LANGUAGE_CODE }}.json" type="application/json" locale="{{ LANGUAGE_CODE }}"></script>
 
-        {% if app_config %}
-        <script src="{% static "locales" %}/en/{{ app_config.label }}.js"></script>
-        <script src="{% static "locales" %}/{{ LANGUAGE_CODE }}/{{ app_config.label }}.js"></script>
-        {% endif %}
         {% endblock %}
         {% endspaceless %}
     {% endblock %}
@@ -88,7 +84,7 @@ Blocks:
             {% block app-container %}
             <ox-app api-url="{% url "api-index" %}" logo="{% static "imgs/ox-logo.png" %}" {{ app_attr }}>
                 {% block app %}
-                <template #title="{context}">
+                <template #title="{app}">
                     {% block app-title %}
                         {% block app-icon %}
                         {% if view.icon %}
@@ -109,19 +105,19 @@ Blocks:
                 </template>
 
                 {% if not no_nav %}
-                <template #app-bar-left="{context}">{% block app-bar-left %}{% endblock %}</template>
-                <template #app-bar-right="{context}">{% block app-bar-right %}{% endblock %}</template>
-                <template #nav-start="{context}">
+                <template #app-bar-left="{app}">{% block app-bar-left %}{% endblock %}</template>
+                <template #app-bar-right="{app}">{% block app-bar-right %}{% endblock %}</template>
+                <template #nav-start="{app}">
                     {% block nav-start %}{% endblock %}
                 </template>
-                <template #nav-end="{context}">
+                <template #nav-end="{app}">
                     {% block nav-end %}
                     {% include './components/nav_user.html' %}
                     {% endblock %}
                 </template>
                 {% endif %}
 
-                <template #default="{context}">
+                <template #default="{app}">
                     {% block app-main %}{% endblock %}
                 </template>
                 {% endblock %}
@@ -129,8 +125,12 @@ Blocks:
             {% endblock %}
         </div>
 
+        {% comment %}
+        The styles are provided here in order to provide loading overlay as soon
+        as possible.
+        {% endcomment %}
         <style>
-        @keyframes blink {
+        @keyframes apploading {
             from { opacity: 1 }
             to { opacity: 0.5 }
         }
@@ -144,20 +144,44 @@ Blocks:
             transition: opacity 1s;
             background-color: white;
             z-index: 100000;
+
+            display: flex;
         }
 
         body:not(.loading) #loading-overlay { display: none; }
 
-        #loading-overlay img {
+        #loading-overlay .content {
             width: 60%;
-            margin: 20%;
-            animation: 1s blink infinite;
+            margin: auto 20%;
+            animation: 1s apploading infinite;
             animation-direction: alternate;
         }
 
+        #loading-overlay img {
+            width: 100%;
+            margin-bottom: 5rem;
+        }
+
+        #loading-overlay .content > * {
+            text-align: center
+        }
+
+        #loading-overlay .content *[data-state] { display: none }
+        #loading-overlay .content:not([data-state]) *[data-state="start"] { display: block }
+
         </style>
         <div id="loading-overlay">
-            <img src="{% static "imgs/ox-logo.png" %}"/>
+            <div class="flex-grow: 1"></div>
+            <div class="content">
+                <img src="{% static "imgs/ox-logo.png" %}"/>
+                <div class="align-center">
+                    <h1 data-state="start">{% translate "Load application..." %}</h1>
+                    <h1 data-state="create-app">{% translate "Initializing..." %}</h1>
+                    <h1 data-state="i18n">{% translate "Load translations..." %}</h1>
+                    <h1 data-state="plugins">{% translate "Load plugins..." %}</h1>
+                </div>
+            </div>
+            <div class="flex-grow: 1"></div>
         </div>
         {% endspaceless %}
     {% endblock %}

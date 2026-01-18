@@ -1,7 +1,7 @@
 {% load i18n %}
 
-<template v-if="context.user">
-    <v-list-subheader class="ml-2" :title="context.user.username"></v-list-subheader>
+<template v-if="app.user">
+    <v-list-subheader class="ml-2" :title="app.user.username"></v-list-subheader>
 
     {% block user-menu %}{% endblock %}
     <v-divider></v-divider>

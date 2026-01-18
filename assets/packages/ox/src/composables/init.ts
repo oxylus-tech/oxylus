@@ -11,8 +11,8 @@ import axios from 'axios'
 import '../styles/index.scss'
 import * as vendorComponents from '@oxylus/ox/vendor'
 import config from '../config'
-import {i18n, useI18n} from './i18n'
-
+import {i18n, useI18n, loadI18nScripts} from './i18n'
+import type AppLocaleLoaders from '../i18n'
 
 
 /**
@@ -40,6 +40,8 @@ export interface ICreateAppOpts {
      * Plugins to add to Vue application.
      */
     plugins?: Record<string, any>[]
+    /** Locale loaders (see {@link locales}). */
+    locales: LocaleLoaders,
 }
 
 export interface IInitOpts extends ICreateAppOpts {
@@ -56,15 +58,48 @@ export interface IInitOpts extends ICreateAppOpts {
 
 
 /**
+ * Update application loading state. Either it is a string, either a boolean
+ * indicating wheter app is loaded or none.
+ *
+ * When it is a string, lookup for children with `data-state` attribute. Those
+ * matching the provided key will be displayed (`display: flex`), other hidden
+ * (`display: none`).
+ *
+ * When it is a boolean, display loading overlay on `false` (not ready) and display
+ * elements for state `start`. Otherwise (ready), hide the overlay.
+ *
+ * Overlay display is controller using body `loading` class.
+ */
+function setLoadState(key: string|boolean) {
+    switch(key) {
+        case false:
+            document.body.classList.add('loading')
+            setLoadState('start')
+            break;
+        case true:
+            document.body.classList.remove('loading')
+            break;
+        default:
+            const el = document.getElementById('loading-overlay')
+            el.dataset.state = key
+
+            const labels = el.querySelectorAll('*[data-state]')
+            for(const label of labels)
+                label.style.display = label.dataset.state == key ? 'block' : 'none'
+    }
+}
+
+
+/**
  * Main entry point to initialize and mount an application.
  *
  * The base `App` config is provided by `ox/components` modules.
  */
 export function init({App=null, el='#app', onLoad=true, ...options}: IInitOpts={}) {
-    function initApp() {
-        const app = createApp(App, options)
+    async function initApp() {
+        const app = await createApp(App, options)
         const vm = el ? app.mount(el) : null
-        document.body.classList.remove('loading')
+        setLoadState(true)
         return {app, el, vm}
     }
 
@@ -83,14 +118,20 @@ export function init({App=null, el='#app', onLoad=true, ...options}: IInitOpts={
  * It also provide app's global property `window` in order to allow components
  * access to this object.
  */
-export function createApp(app: Record<string, any>, {props={}, vuetify={}, plugins=null}: ICreateAppOpts={}) {
+export async function createApp(app: Record<string, any>, {props={}, vuetify={}, plugins=null, locales}: ICreateAppOpts={}) {
+    setLoadState('create-app')
     app = $createApp(app, props)
     app.config.globalProperties.window = window
+    app.config.globalProperties.$oxylus = window.oxylus
 
     app.use(createVuetify(vuetify))
     app.use(i18n)
-    useI18n()
 
+    setLoadState('i18n')
+    await loadI18nScripts()
+    await useI18n({locales})
+
+    setLoadState('plugins')
     plugins && plugins.forEach(plugin => app.use(plugin))
     return app
 }

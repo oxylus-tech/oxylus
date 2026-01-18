@@ -1,5 +1,4 @@
-window.__i18n_messages??={};
-window.__i18n_messages = { ...window.__i18n_messages, ...{
+{
     "next": "Suivant",
     "prev": "Précédent",
     "actions.next": "Suivant",
@@ -73,7 +72,6 @@ window.__i18n_messages = { ...window.__i18n_messages, ...{
     "state.ok.title": "Succès!",
     "state.ok.detail": "Félicitations! Les données ont été mises à jour.",
 
-    // ---- @ox/locations
     "fields._.from_user": "Ce contact est lié à un utilisateur, vous ne pouvez pas changer cette valeur",
     "fields.iban.invalid_checksum": "Numéro de vérification IBAN invalide",
     "fields.iban.too_short": "IBAN trop court",
@@ -81,13 +79,11 @@ window.__i18n_messages = { ...window.__i18n_messages, ...{
     "fields.iban.country_without_iban": "Le pays détecté {name} peut ne pas supporter les IBAN",
     "fields.vat.rule": "Veuillez fournir un numéro de TVA valid",
 
-    // ---- @ox/contacts
     "labels.phone.call": "Appeler ce numéro",
     "fields.address": "Adresse | Adresses",
     "fields.contact_count": "Membres",
     "fields.contact_count.value": "Aucun membre | 1 membre | {count} membres",
 
-    // ---- @ox/files
     "fields.folder.add_error": "Impossible d'enregistrer le dossier. Vérifiez si un dossier ou un fichier existe déjà avec ce nom, et que vous ayez bien les permissions.",
     "fields.name.update_filename": "Voulez-vous mettre à jour le nom du fichier?",
     "fields.file_name.rules.invalid_characters": "Le caractère `/` n'est pas autorisé dans le nom.",
@@ -96,10 +92,8 @@ window.__i18n_messages = { ...window.__i18n_messages, ...{
     "actions.files.select.help": "Déposez ici ou sélectionnez un fichier",
     "labels.files.select.count": "Il y a {count} fichiers sélectionnés",
 
-    // ---- @ox/tasks
     "actions.tasks.restart": "Relancer la tâche",
 
-    // ---- @ox/content
     "content.actions.bold": "Gras",
     "content.actions.italic": "Italique",
     "content.actions.underline": "Souligné",
@@ -120,10 +114,9 @@ window.__i18n_messages = { ...window.__i18n_messages, ...{
     "content.variables.optional.description": "Cette valeur n'est pas toujours présente. Vous pouvez utiliser un bloc optionel.",
 
 
-    // ---- @ox/mails
     "views.edit.mail.settings": "Paramètres Mail",
     "views.edit.smtp": "Configuration SMTP",
     "labels.recipients": "Destinataires",
     "actions.mails.send": "Envoyer",
-    "actions.mails.send.confirm": "Ce courriel a déjà été envoyé. Voulez-vous recommencer?",
-}}
+    "actions.mails.send.confirm": "Ce courriel a déjà été envoyé. Voulez-vous recommencer?"
+}

@@ -42,10 +42,17 @@ export default class State {
      * Note: if you need to attach extra data to the current state and don't want it to be displayed, just prefix it with an underscore.
      */
     data: IStateData
+    /**
+     * Used by components to determine whether it has to show state or not.
+     *
+     * It is set to true when an instance method changes the state.
+     */
+    show: boolean
 
-    constructor(state:symbol=States.NONE, data:IStateData=null) {
+    constructor(state:symbol=States.NONE, data:IStateData=null, show:boolean=false) {
         this.state = state
         this.data = data
+        this.show = show
     }
 
     /** Create new state for `none` */
@@ -65,31 +72,31 @@ export default class State {
 
     /** Set state to `none` with optional provided data. */
     none(data: IStateData = null) : State {
-        this.state = States.NONE; this.data = data;
+        this.state = States.NONE; this.data = data; this.show = true;
         return this
     }
 
     /** Set state to `ok` with optional provided data. */
     ok(data: IStateData = null) : State {
-        this.state = States.OK; this.data = data;
+        this.state = States.OK; this.data = data; this.show = true;
         return this
     }
 
     /** Set state to `processing` with optional provided data. */
     processing(data: IStateData = null) : State {
-        this.state = States.PROCESSING; this.data = data;
+        this.state = States.PROCESSING; this.data = data; this.show = true;
         return this
     }
 
     /** Set state to `sending` with optional provided data. */
     sending(data: IStateData = null) : State {
-        this.state = States.SENDING; this.data = data;
+        this.state = States.SENDING; this.data = data; this.show = true;
         return this
     }
 
     /** Set state to `error` with optional provided data. */
     error(data: IStateData = null) : State {
-        this.state = States.ERROR; this.data = data;
+        this.state = States.ERROR; this.data = data; this.show = true;
         return this
     }
 

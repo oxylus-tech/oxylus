@@ -70,14 +70,16 @@
                             :text="t('actions.upload')" prepend-icon="mdi-upload"
                             @click="save()"/>
                     </div>
+
+                    <ox-field :editor="editor" name="description" type="textarea" />
+
                 </v-col>
             </v-row>
             <v-expansion-panels>
-                <v-expansion-panel :title="t('views.edit.informations')">
+                <v-expansion-panel :title="t('views.edit.public_informations')">
                     <template #text>
                         <ox-field :editor="editor" name="caption" />
                         <ox-field :editor="editor" name="alternate" />
-                        <ox-field :editor="editor" name="description" type="textarea" />
                         <ox-field :editor="editor" name="ariaDescription" type="textarea" />
                     </template>
                 </v-expansion-panel>

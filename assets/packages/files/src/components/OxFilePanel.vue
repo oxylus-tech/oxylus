@@ -56,7 +56,7 @@
                 :folder="list?.filters.folder__uuid" />
         </template>
 
-        <template #views.detail.edit.tab.comments>{{ t('models.filecomment', 2 ) }}</template>
+        <template #views.detail.edit.tab.comments>{{ t(FileComment, 2 ) }}</template>
         <template #views.detail.edit.window.comments="{value, saved, list}">
             <ox-message-list v-if="value"
                     :postURL="repos.fileComments.use.meta.getUrl({absolute: true})"
@@ -65,7 +65,9 @@
                     can-send can-update reverse>
                 <template #form.start>
                     <v-col col="1">
-                        <v-img :src="value.preview" max-width="5rem" max-height="10rem"/>
+                        <v-img
+                            :src="value.preview" max-width="5rem" max-height="10rem"
+                            @click="dialog.show(value)" />
                     </v-col>
                 </template>
             </ox-message-list>
@@ -87,7 +89,7 @@
  *
  */
 
-import { ref, inject, reactive, useSlots, toRaw, withDefaults, watch } from 'vue'
+import { ref, inject, reactive, useSlots, withDefaults, watch } from 'vue'
 
 import { query, t } from '@oxylus/ox'
 import type {IModelPanelProps} from '@oxylus/ox'
@@ -107,6 +109,11 @@ const drawer = ref(true)
 const dialog = reactive({
     active: false,
     item: null,
+
+    show(item, items=null) {
+        this.active = true
+        this.item = item
+    }
 })
 
 const slots = useSlots()
@@ -117,5 +124,12 @@ const props = withDefaults(defineProps<IModelPanelProps>(), {
     name: 'files',
     relations: ['$folder'],
     headers: ['name', 'file_size', 'updated'],
+})
+
+
+watch(() => dialog.item, (val) => {
+    const panel = modelPanel.value.panel
+    if(panel.isDetailView)
+        panel.show({view: panel.view, value: val})
 })
 </script>

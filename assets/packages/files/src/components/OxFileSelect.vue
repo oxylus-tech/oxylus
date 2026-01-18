@@ -89,10 +89,12 @@ import type { ModelId } from '@oxylus/ox'
 import { defineModel, defineEmits, reactive, ref, watch } from 'vue'
 import { t, useModelList, query } from '@oxylus/ox'
 import {OxListTable} from '@oxylus/ox/components'
-import {useFilesModels} from '../composables'
+import {useFilesModels, useFilesI18n} from '../composables'
 import { formatBytes } from '../models'
 
 import OxFolderNav from './OxFolderNav.vue'
+
+useFilesI18n()
 
 const emits = defineEmits(['select', 'close'])
 const props = defineProps({

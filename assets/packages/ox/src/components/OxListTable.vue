@@ -64,8 +64,7 @@
 
 import { computed, defineProps, ref, toRefs, useSlots } from 'vue'
 
-import { t, tKeys } from '@oxylus/ox'
-// import { Permissions } from '../models'
+import { t } from '@oxylus/ox'
 import { filterSlots } from '../utils'
 import OxAction from './OxAction.vue'
 import OxActionEdit from './OxActionEdit.vue'
@@ -95,7 +94,7 @@ const headers = computed(() => {
         props.headers.reduce((dst, field) => {
             dst.push(
                 (typeof(field) == 'string') ?
-                {key: field, title: t(tKeys.field(field))} :
+                {key: field, title: t([props.list.model, `fields.${field}`])} :
                 {key: field.key, title: t(field.title) }
             )
             return dst

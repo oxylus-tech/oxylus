@@ -59,10 +59,10 @@ export class Meta {
     }
 
     /** Return translated verbose name of model */
-    get verbose_name() { return t(`models.${this.model}`) }
+    get verbose_name() { return t(`${this.app}.${this.model}`) }
 
     /** Return translated verbose name of model */
-    get verbose_name_plural() { return t(`models.${this.model}`, 2) }
+    get verbose_name_plural() { return t(`${this.app}.${this.model}`, 2) }
 }
 export interface Meta extends IMeta {}
 

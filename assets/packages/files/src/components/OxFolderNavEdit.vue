@@ -56,14 +56,14 @@ const props = defineProps({
 
 const repos = useFolders()
 const user = inject('user')
-const context = inject('context')
+const app = inject('app')
 
 
 /** Save editor's values, returning editor's state. */
 async function save(editor) {
     const state = await editor.save()
     if(state.isError)
-        context.state.error(state.data)
+        app.state.error(state.data)
     return state
 }
 

@@ -1,5 +1,12 @@
 import {init, createPinia} from '@oxylus/ox'
-import App from './app'
+import {App} from '@oxylus/ox/components'
+
+import * as components from './components'
+import {filesLocales} from './composables.ts'
 
 const pinia = createPinia()
-init({App, plugins: [pinia] })
+init({
+    App: { extends: App, components },
+    plugins: [pinia],
+    locales: filesLocales
+})

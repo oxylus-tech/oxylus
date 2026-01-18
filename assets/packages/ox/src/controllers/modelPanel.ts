@@ -3,7 +3,7 @@ import type {Reactive} from 'vue'
 
 import {Model} from '../models'
 import {mapToObject} from '../utils'
-import {t, tKeys} from '../composables/i18n'
+import {t} from '../composables/i18n'
 
 import type ModelList from './modelList'
 import type Query from './query'
@@ -87,20 +87,26 @@ export default class ModelPanel<
     /** Return icon based on props and model **/
     get icon(): string { return super.icon || this.model.meta?.icon }
 
+    /** True if view is a detail view */
+    get isDetailView(): boolean { return this.view?.startsWith('detail.') }
+
+    /** True if view is a list view */
+    get isListView(): boolean { return this.view?.startsWith('list.') }
+
     /** Return panel's title based on view and current item. */
     get title(): string {
         const {props, list} = this
         const model = this.repo.use as typeof Model
         if(model) {
             // many items
-            if(this.view?.startsWith('list.'))
-                return t(tKeys.model(model), 3)
+            if(this.isListView)
+                return t(model, 3)
 
-            if(this.view?.startsWith('detail.')) {
+            if(this.isDetailView) {
                 if(this.value?.$title)
                     return this.value.$title
 
-                const name = t(tKeys.model(model))
+                const name = t(model)
                 return this.value?.id
                     ? t(`models._.title`, {model: name, id: this.value.id})
                     : t(`models._.title.new`, {model: name})

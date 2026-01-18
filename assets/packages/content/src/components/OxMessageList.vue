@@ -24,7 +24,7 @@
         <v-card v-if="props.canSend"
                 :class="[props.reverse ? 'mb-5': 'mt-3']">
             <v-card-text>
-                <h4>{{ t('content.message.actions.post') }}</h4>
+                <h4>{{ t('ox_content.message.actions.post') }}</h4>
                 <v-form ref="form" class="d-flex flex-row align-start justify-center"
                         :disabled="state.loading"
                         @submit.prevent="submit">
@@ -64,7 +64,7 @@ import OxMessage from './OxMessage'
 const attrs = useAttrs()
 const props = defineProps({
     /** Current author id */
-    author: String,
+    author: {type: [String, Number]},
     /** Current thread id. Used for message load and post. **/
     thread: String,
     /** Hidden fields to add to form **/

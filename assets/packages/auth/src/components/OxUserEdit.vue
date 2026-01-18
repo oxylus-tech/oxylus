@@ -12,7 +12,7 @@
                     :items="groups" item-title="name" item-value="id"/>
             </v-container>
             <v-expansion-panels multiple>
-                <v-expansion-panel :title="t('models.permission', 2)" value='permissions'
+                <v-expansion-panel :title="t(repos.permissions, 2)" value='permissions'
                         v-if="props.full && editor.value.id && user.can('auth.view_permission')">
                     <template #text>
                         <v-expansion-panel-text>

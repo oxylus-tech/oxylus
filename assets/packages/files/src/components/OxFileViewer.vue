@@ -1,6 +1,7 @@
 <template>
-    <v-carousel v-model="item" height="90vh" hide-delimiters class="ox-file-viewer">
-        <v-carousel-item v-for="item in items"
+    <v-carousel v-model="item" height="90vh" hide-delimiters class="ox-file-viewer"
+            :show-arrows="viewer.items?.length > 1">
+        <v-carousel-item v-for="item in viewer.items"
                 :key="key" :value="item">
             <div class="h-100 flex-column py-auto position-relative">
                 <v-spacer/>
@@ -74,7 +75,7 @@ const viewer = reactive({
     item,
 
     /** Provided list of items **/
-    items: computed(() => props.items),
+    items: computed(() => props.items?.length ? props.items : [item.value]),
 
     zoom: false,
 

@@ -1,19 +1,32 @@
 import { unref, watch } from 'vue'
 import {useI18n as $useI18n, createI18n as $createI18n} from 'vue-i18n'
 import type { Composer } from 'vue-i18n'
+import { Repository as $Repository } from 'pinia-orm'
 
 import config from '../config'
-import type { Model } from '../models'
+import { Model, type ModelType, Repository } from '../models'
 import {getCookieList} from '../utils'
+import { type AppLocaleLoaders, loadLocales} from '../i18n'
 
 
-export type I18nMessages = Record<string, string>
+export type I18nMessages = Record<string, string|I18nMessages>
 export type I18nLocaleMessages = Record<string, I18nMessages>
 
-declare global {
-    interface Window {
-        __i18n_messages: I18nMessages
-    }
+
+/**
+ * Common locales for the app to load.
+ *
+ * It is the result of `import.meta.glob` under app key (common is `ox`), as:
+ * `{ "app_key": { "file": importMethod }}`. Where:
+ * - `app_key`: the corresponding Oxylud application label;
+ * - `file`: the name of the locale file;
+ * - `importMethod`: the async method used to load file content;
+ *
+ * It is assumed that locales are stored under `src/locale` directory, where file are
+ * suffixed with `[LANG].json` (as `vue.en.json` or `en.json`).
+ */
+export const locales: AppLocaleLoaders = {
+    ox: import.meta.glob('../locale/*.json', { import: 'default' })
 }
 
 
@@ -28,7 +41,6 @@ export function createI18n() {
     )
     const locale = candidates.find(x => x in config.locales)
 
-
     return $createI18n({
         legacy: false,
         globalInjection: true,
@@ -38,19 +50,41 @@ export function createI18n() {
 }
 
 
-export function loadI18nScripts({composer=null}=null) {
-    const elements = document.querySelectorAll("script[type='application/i18n']:not([data-loaded])")
+/**
+ * Load locales from i18n <script> if not already loaded.
+ *
+ * The script must have type `applicatino/i18n`.
+ */
+export async function loadI18nScripts({composer=null}={}): Promise<void> {
+    const elements = document.querySelectorAll("script[locale]:not([data-loaded])")
+
     composer ??= i18n.global
+    const promises = [...elements].map(async el => {
+        const locale = el.getAttribute('locale')
+        if(locale != composer.locale.value && locale != composer.fallbackLocale.value) {
+            console.warn(`Locale ${locale} is not the current one, nor the fallback. skip`)
+            return
+        }
 
-    const allMessages: I18nLocaleMessages = composer.messages.value
-    allMessages[composer.locale.value] ??= {}
+        const url = el.getAttribute('src')
+        if(!url) {
+            console.warn('No `src` attribute provided on element - skip. Element: ', el)
+            return
+        }
 
-    const messages = all[composer.locale.value]
-    elements.forEach((el) => {
-        const data = JSON.loads(el.innerText)
-        Object.assign(messages, data)
-        el.dataset["loaded"] = "1"
+        const resp = await fetch(url)
+        try {
+            const data = await resp.json()
+            composer.mergeLocaleMessage(locale, data)
+        }
+        catch(err) {
+            el.dataset["loaded"] = "error"
+            throw err
+        }
+        el.dataset["loaded"] = "ok"
     })
+
+    await Promise.all(promises)
 }
 
 
@@ -60,16 +94,77 @@ export function loadI18nScripts({composer=null}=null) {
 export const i18n = createI18n()
 
 
-/** Shortcut to {@link i18n} `t()` function. */
-export const t = i18n.global.t
-/** Shortcut to {@link i18n} `te()` function. */
-export const te = i18n.global.te
+export type TKeyable = string|ModelType|Repository|[ModelType|Repository, string]
+
+/**
+ * Return resolved translation key based on provided input.
+ *
+ * The input can be:
+ * - a regular string: this is returned as is
+ * - a repository instance: it resolves model translation key
+ * - a model class: it resolve model translation key;
+ * - `[ModelClass, "postfix"]`: it resolves model translation key
+ */
+export function tKey(value: TKeyable): string {
+    if(value instanceof $Repository)
+        value = value.use
+    if(value?.prototype instanceof Model)
+        return `${value.meta.app}.${value.meta.model}`
+    if(Array.isArray(value))
+        return tKey(value[0]) + (value[1] ? `.${value[1]}` : '')
+    return value || ""
+}
+
+/**
+ * Return translation equivalent to {@link i18n} `t()` function.
+ *
+ * See {@link tKey} for the `key` argument values.
+ */
+export function t(key: string, ...args) : string {
+    return i18n.global.t(tKey(key), ...args)
+}
+
+/**
+ * Return translation equivalent to {@link i18n} `t()` function.
+ *
+ * See {@link tKey} for the `key` argument values.
+ */
+export function te(key: string, ...args) : string {
+    return i18n.global.te(tKey(key), ...args)
+}
+
+export interface IUseI18nOpts {
+    loaders?: AppLocaleLoaders,
+    composer?: Composer
+}
 
 export interface IUseI18n {
-    composer?: Composer,
-    path?: string,
-    fallback?: boolean,
+    i18n: I18n,
+    t: (key: TKeyable, ...opts) => string,
+    te: (key: TKeyable, ...opts) => string,
+    setLocale: (locale: string) => void,
 }
+
+
+/**
+ * Use I18n locales ensuring they are initialized.
+ */
+export function useI18n({locales, composer}: IUseI18nOpts): IUseI18n {
+    composer ??= i18n.global
+
+    if(locales) {
+        loadLocales(i18n, composer.locale.value, composer.fallbackLocale.value, locales)
+        watch(composer.locale, (locale: string) => {
+            loadLocales(i18n, locale, composer.fallbackLocale.value, locales)
+        })
+    }
+
+    function setLocale(locale: string) {
+        composer.locale.value = locale
+    }
+    return {t, te, i18n, setLocale}
+}
+
 
 /**
  * This composable return vue-i18n's `t()` function and watch for
@@ -79,6 +174,7 @@ export interface IUseI18n {
  * @param {Boolean} [options.fallback] if true, use fallback locale
  * @return ``t()`` function.
  */
+/*
 export function useI18n({path="./", fallback=true, composer=null}: IUseI18n={}) {
     // Note: composer.messages is a computed value that return the value of
     // an internal Ref _messages. We directly change this inner object here.
@@ -98,3 +194,4 @@ export const tKeys = {
     model: (model: typeof Model) => `models.${model.meta.model}`,
     field: (field: string) => `fields.${field}`
 }
+*/

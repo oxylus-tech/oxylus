@@ -58,7 +58,7 @@
  */
 
 import {computed, defineEmits, defineAsyncComponent, useAttrs, useSlots} from 'vue'
-import {t, rules} from '@oxylus/ox'
+import {t, tKey, rules} from '@oxylus/ox'
 
 const OxAutocomplete = defineAsyncComponent(() => import('./OxAutocomplete.vue'))
 
@@ -82,17 +82,18 @@ const props = defineProps({
 })
 
 const fieldProps = computed(() => {
-    const helpKey = `fields.${props.name}.help`
+    const label = t([props.editor.model, `fields.${props.name}`])
     const obj = {
         "name": props.name,
-        "label": t(`fields.${props.name}`),
-        "aria-label": t(`fields.${props.name}`),
+        "label": label,
+        "aria-label": label,
         "error-messages": props.editor.error(props.name),
         "rules": props.rules || [],
         "onUpdate:modelValue": (...args) => emits('update:modelValue', ...args),
         ...attrs
     }
 
+    const helpKey = tKey([props.editor.model, `fields.${props.name}.help`])
     const helpText = t(helpKey)
     if(helpText != helpKey) {
         obj["hint"] = helpText

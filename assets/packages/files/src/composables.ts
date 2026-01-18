@@ -2,6 +2,22 @@ import {useModels, t, type Model} from '@oxylus/ox'
 import {Agent} from '@oxylus/auth/models'
 import * as models from './models'
 
+import {useI18n, type LocaleLoaders} from '@oxylus/ox'
+import {contentLocales} from '@oxylus/content/composables'
+
+
+/** The ox content locales loader **/
+export const filesLocales: LocaleLoaders = {
+    ...contentLocales,
+    ox_file: import.meta.glob('./locale/*.json', { import: 'default'})
+}
+
+
+/** Use ox file locales **/
+export function useFilesI18n(locales?: LocaleLoaders = {}) {
+    return useI18n({...filesLocales, ...locales})
+}
+
 
 /** Use file's models. */
 export function useFilesModels(extraModels: Model[] = []) : Object {
