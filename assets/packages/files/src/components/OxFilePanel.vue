@@ -13,7 +13,7 @@
         <v-spacer/>
     </v-dialog>
 
-    <ox-model-panel ref="modelPanel" v-bind="props" :repo="repos.files">
+    <ox-model-panel ref="modelPanel" v-bind="props" :repo="repos.files" :repos="repos">
         <template v-for="name in forwardSlots" :key="name" #[name]="bind">
             <slot :name="name" v-bind="bind"/>
         </template>
@@ -24,7 +24,7 @@
 
         <template #prepend="{list, panel}">
             <ox-folder-drawer
-                :show="panel.view.startsWith('list.')"
+                v-if="modelPanel?.activeView?.category == 'list'"
                 v-model="list.filters.folder__uuid"
                 v-model:owner="list.filters.owner__uuid"
                 />
@@ -50,7 +50,7 @@
             <slot name="item.actions" :item="item" v-bind="bind"/>
         </template>
 
-        <template #views.detail.edit.default="{value, saved, list}">
+        <template #views.edit="{value, saved, list}">
             <ox-file-edit :initial="value" :saved="saved"
                 :owner="list?.filters?.owner__uuid"
                 :folder="list?.filters.folder__uuid" />
@@ -58,18 +58,20 @@
 
         <template #views.detail.edit.tab.comments="{value}"
             >{{ t(FileComment, 2 ) }}</template>
-        <template #views.detail.edit.window.comments="{value, saved, list}">
-            <ox-message-list v-if="value"
-                    :postURL="repos.fileComments.use.meta.getUrl({absolute: true})"
-                    :repo="repos.fileComments" :repos="repos"
-                    :author="user.id" :thread="value.id"
-                    can-send can-update reverse>
-                <template #form.start>
-                        <v-img
-                            :src="value.preview" max-width="5rem" max-height="10rem"
-                            @click="dialog.show(value)" />
-                </template>
-            </ox-message-list>
+        <template #views.edit.sections="{value, saved, list}">
+            <ox-section name="comments" :title="t(FileComment, 2)">
+                <ox-message-list v-if="value"
+                        :postURL="repos.fileComments.use.meta.getUrl({absolute: true})"
+                        :repo="repos.fileComments" :repos="repos"
+                        :author="user.id" :thread="value.id"
+                        can-send can-update reverse>
+                    <template #form.start>
+                            <v-img
+                                :src="value.preview" max-width="5rem" max-height="10rem"
+                                @click="dialog.show(value)" />
+                    </template>
+                </ox-message-list>
+            </ox-section>
         </template>
     </ox-model-panel>
 </template>
@@ -91,8 +93,8 @@
 import { ref, inject, reactive, useSlots, withDefaults, watch } from 'vue'
 
 import { query, t } from '@oxylus/ox'
-import type {IModelPanelProps} from '@oxylus/ox'
-import {OxModelPanel, OxAction} from '@oxylus/ox/components'
+import type {ModelPanelDefinition} from '@oxylus/ox'
+import {OxModelPanel, OxAction, OxSection} from '@oxylus/ox/components'
 import {OxMessageList} from '@oxylus/content/components'
 
 import OxFileEdit from './OxFileEdit'
@@ -119,7 +121,7 @@ const slots = useSlots()
 const forwardSlots = Object.keys(slots).filter(x => !(['list.filters', 'top', 'item.actions'].includes(x)))
 
 const repos = useFilesModels([FileComment])
-const props = withDefaults(defineProps<IModelPanelProps>(), {
+const props = withDefaults(defineProps<ModelPanelDefinition>(), {
     name: 'files',
     relations: ['$folder'],
     headers: ['name', 'file_size', 'updated'],
@@ -127,8 +129,8 @@ const props = withDefaults(defineProps<IModelPanelProps>(), {
 
 
 watch(() => dialog.item, (val) => {
-    const panel = modelPanel.value.panel
-    if(panel.isDetailView)
-        panel.show({view: panel.view, value: val})
+    const view = modelPanel.value?.activeView
+    if(view?.category == "detail")
+        modelPanel.value.router.go({value: val.id})
 })
 </script>

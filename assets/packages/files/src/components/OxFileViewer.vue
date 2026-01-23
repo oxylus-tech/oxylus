@@ -2,7 +2,7 @@
     <v-carousel v-model="item" height="90vh" hide-delimiters class="ox-file-viewer"
             :show-arrows="viewer.items?.length > 1">
         <v-carousel-item v-for="item in viewer.items"
-                :key="key" :value="item">
+                :key="item.id" :value="item">
             <div class="h-100 d-flex flex-column py-auto position-relative">
                 <v-spacer/>
                 <div class="position-relative" style="max-height:100%;">

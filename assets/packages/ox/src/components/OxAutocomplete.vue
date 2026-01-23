@@ -104,11 +104,19 @@ function getMissing(ids: ModelId|ModelId[]): ModelId[]|null {
 }
 
 /** Update selection based on provided list of items. */
-function updateSelected(ids: ModelId|ModelId[]) {
+async function updateSelected(ids: ModelId|ModelId[]) {
     if(Array.isArray(ids))
         selected.value = items.filter(v => ids.includes(v.id))
-    else if(ids)
-        selected.value = [items.find(v => v.id == ids)]
+    else if(ids) {
+        let obj = items.find(v => v.id == ids)
+        if(obj)
+            selected.value = obj && [obj] || []
+        else {
+            // don't recurse to avoid infinite loops
+            const resp = await query.fetch({ids})
+            resp.entities.length && (selected.value = resp.entities[0])
+        }
+    }
     else
         selected.value = []
 }

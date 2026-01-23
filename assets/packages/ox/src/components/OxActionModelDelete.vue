@@ -1,5 +1,5 @@
 <template>
-    <ox-action v-bind="attrs" :item="props.item"
+    <ox-action v-if="panel?.repos" v-bind="attrs" :item="props.item"
         icon="mdi-delete" color="error"
         :title="t('actions.delete')" :confirm="t('actions.delete.confirm')"
         :permission="[props.item.constructor , 'delete']"
@@ -15,13 +15,12 @@
  * Attributes bound to inner {@link OxAction}.
  */
 import { defineProps, inject, useAttrs } from 'vue'
-import { t } from '@oxylus/ox'
+import { t, usePanel } from '@oxylus/ox'
 import type { Model } from '@oxylus/ox/models'
 
 import OxAction from './OxAction.vue'
 
-const panel = inject('panel')
-const repos = inject('repos')
+const {router, panel} = usePanel()
 
 const attrs = useAttrs()
 const props = defineProps<{
@@ -30,7 +29,7 @@ const props = defineProps<{
 }>()
 
 async function run(user, item) {
-    const repo = repos[item.constructor.entity]
+    const repo = panel?.repos[item.constructor.entity]
     return await repo.api().delete(item.$url(), {delete: props.item.id})
 }
 </script>

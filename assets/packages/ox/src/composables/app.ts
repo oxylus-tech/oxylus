@@ -69,6 +69,6 @@ export function useApp(opts: IAppOpts, load: boolean = true): IApp {
     const app = {state, data, user, apiUrl: data.apiUrl}
     provide('app', app)
     provide('user', user)
-    window.oxylus = {...window.oxylus, app} // FIXME: drop
+    window.oxylus = {...window.oxylus, ...app} // FIXME: drop
     return app
 }

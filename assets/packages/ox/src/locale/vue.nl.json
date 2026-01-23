@@ -29,10 +29,10 @@
 
   "nav.panels": "Applicaties",
 
-  "panels.nav.table": "Tabel bekijken",
-  "panels.nav.kanban": "Kanban bekijken",
-  "panels.nav.add": "Item aanmaken",
-  "panels.nav.edit": "Item bewerken",
+  "views.table": "Tabel bekijken",
+  "views.kanban": "Kanban bekijken",
+  "views.add": "Item aanmaken",
+  "views.edit": "Item bewerken",
 
   "views.edit.informations": "Informatie",
   "lists.empty": "Geen gegevens om weer te geven",

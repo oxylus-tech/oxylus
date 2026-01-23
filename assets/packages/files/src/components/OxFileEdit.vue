@@ -54,7 +54,7 @@
                                 <template #default="{props}">
                                     <ox-agent-select v-bind="props"
                                         v-model="editor.value.owner"
-                                        :disabled="editor.value.id" />
+                                        :disabled="!!editor.value.id" />
                                 </template>
                             </ox-field>
                         </v-col>
@@ -100,7 +100,7 @@ import { t, query} from "@oxylus/ox"
 import {OxModelEdit, OxField, OxValidationBtn} from '@oxylus/ox/components'
 import {OxAgentSelect} from '@oxylus/auth/components'
 
-import {useFilesModels} from '../composables'
+import {useFilesModels, fileNameRule} from '../composables'
 import OxFolderInput from './OxFolderInput.vue'
 import OxFileUpload from './OxFileUpload.vue'
 

@@ -26,9 +26,10 @@
  */
 import { computed, defineModel, inject, ref } from 'vue'
 
+import {useRouter} from '@oxylus/ox'
 import OxAppNavItem from './OxAppNavItem.vue'
 
-const panels = inject('panels')
+const router = useRouter()
 /** @model drawer - This controls wether the panel is opened or not. */
 const drawer = defineModel('drawer')
 const opened = ref([])
@@ -50,14 +51,14 @@ function updateOpened(items) {
 
 /** Get opened menu items */
 function getOpened(items) {
-    if(panels.panel)
+    if(router.location.panel)
         for(const item of items) {
             if(item.items) {
                 const val = getOpened(item.items)
                 if(val)
                     return [val, item.name]
             }
-            else if(item.name == panels.panel)
+            else if(item.name == router.location.panel)
                 return [item.name]
         }
 }

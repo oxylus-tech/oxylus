@@ -11,11 +11,11 @@
     <template #app-nav="{app}">{% block app-nav %}{% endblock %}</template>
 {% endif %}
 
-{% for panel in panels.get_panels %}
-{% if panel.url|startswith:app_config.label %}
-<template #panels.{{ panel.name }}>
+<template #panels>
+    {% for panel in panels.get_panels %}
+    {% if panel.url|startswith:app_config.label %}
     {% include panel.template %}
+    {% endif %}
+    {% endfor %}
 </template>
-{% endif %}
-{% endfor %}
 {% endblock %}

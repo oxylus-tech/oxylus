@@ -52,7 +52,7 @@ export default {
         watch(() => props.src, reset)
 
         reset()
-        return () => h(component.value, props)
+        return () => component.value ? h(component.value, props) : h()
     },
 }
 </script>

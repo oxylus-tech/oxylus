@@ -1,35 +1,38 @@
 <template>
-    <ox-model-panel v-bind="props" :repo="repos.groups">
+    <ox-model-panel v-bind="props" :repo="repos.groups" :repos="repos">
         <template v-for="(_, name) in slots" :key="name" #[name]="bind">
             <slot :name="name" v-bind="bind"></slot>
         </template>
 
-        <template #views.detail.edit.default="{value, saved}">
+        <template #views.edit="{value, saved}">
             <ox-group-edit :initial="value" :saved="saved"/>
         </template>
 
-        <!--
-        <template #views.detail.edit.tab.users="{value}">
-            <v-tab v-if="value?.id" text="Members" value="users"/>
-        </template>
-        <template #views.detail.edit.window.users="{value}">
-            <ox-group-users :group="value"/>
+        <!-- <template #view.edit.sections>
+            <ox-section name="members" :title="t('label.members')">
+                <ox-group-users :group="value"/>
+            </ox-section>
         </template> -->
+
+        <template #views.create="{saved}">
+            <ox-group-edit :saved="saved"/>
+        </template>
     </ox-model-panel>
 </template>
 <script setup lang="ts">
 import { defineProps, useSlots, withDefaults } from 'vue'
 
-import type {IModelPanelProps} from '@oxylus/ox'
+import type {ModelPanelDefinition} from '@oxylus/ox'
 
-import { OxModelPanel } from '@oxylus/ox/components'
+import { OxModelPanel, OxSection } from '@oxylus/ox/components'
 import { useAuthModels } from '../composables'
 import OxGroupEdit from './OxGroupEdit.vue'
+import OxGroupUsers from './OxGroupUsers.vue'
 
 const slots = useSlots()
 
 const repos = useAuthModels()
-const props = withDefaults(defineProps<IModelPanelProps>(), {
+const props = withDefaults(defineProps<ModelPanelDefinition>(), {
     headers: ['name'],
 })
 </script>

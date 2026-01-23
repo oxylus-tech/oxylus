@@ -2,10 +2,12 @@
     <v-hover>
         <template #default="{ isHovering, props: $props }">
             <v-list-item :value="props.item.id" v-bind="attrs"
-                        :class="[props.nested ? 'pa-2' : 'pa-0']">
+                        :class="listItemClass">
                 <div v-if="!slots.title"
                         class="d-flex flex-row ga-1 text-caption">
-                    <span class="flex-grow-1 text-bold">{{ item.author_name }}</span>
+                    <span class="flex-grow-1 text-bold">
+                        {{ item.author == props.userAuthor ? t('labels.you') : item.author_name }}
+                    </span>
                     <v-tooltip>
                         <template #activator="{props: $props}">
                             <time v-bind="$props" :datetime="item.updated">
@@ -36,9 +38,11 @@
                         :rounded="!props.nested">
                     <ox-message v-if="!props.nested && props.item.source?.id"
                         :item="props.item.source"
+                        :current-author="props.currentAuthor"
                         variant="flat" color="secondary" nested />
-                    <v-card-text>
-                        <div class="ox-message-content" v-html="item.content" />
+                    <v-card-text class="pa-2">
+                        <div class="ox-message-content overflow-y-hidden" v-html="item.content"
+                            :style="{'max-height': props.nested ? '6rem' : null}"/>
 
                         <v-overlay v-if="isHovering && (slots.actions || slots.info)"
                                 :scrim="false"
@@ -61,7 +65,7 @@
     </v-hover>
 </template>
 <script setup lang="ts">
-import { useSlots, useAttrs } from 'vue'
+import { computed, useSlots, useAttrs } from 'vue'
 import { t } from '@oxylus/ox'
 
 const slots = useSlots()
@@ -70,6 +74,14 @@ const props = defineProps({
     item: Object,
     variant: {type: String},
     color: {type: String, default: 'primary'},
+    userAuthor: {type: [String,Number]},
     nested: Boolean,
 })
+
+const listItemClass = computed(() => ({
+    'position-relative': true,
+    'pa-2': props.nested,
+    'pa-0': !props.nested,
+    //'ml-10': !props.nested && props.userAuthor == props.item?.author,
+}))
 </script>

@@ -1,4 +1,4 @@
-import {inject, provide, reactive as $reactive} from 'vue'
+import {isRef} from 'vue'
 
 
 export interface IFilterSlotOpts {
@@ -34,16 +34,18 @@ export function filterSlots(slots: {[k: string]: Function}, prefix?: string, {ex
 }
 
 
-/**
- * Get injected value, `provide()` one if none is found.
- *
- * @return the injected value or the new provided one.
- */
-export function injectOrProvide<T>(key: string, factory: () => T): any {
-    let value = inject(key)
-    if(value === undefined) {
-        value = factory()
-        provide(key, value)
+export function exposeRefs<T extends Record<string, any>>(source: T) {
+    const target: Record<string, any> = {}
+
+    for(const key in source) {
+        const value = source[key]
+        if(isRef(value))
+            Object.defineProperty(target, key, {
+                get: () => value.value,
+                set: (v) => (value.value = v),
+            })
+        else
+            target[key] = value
     }
-    return value
+    return target
 }

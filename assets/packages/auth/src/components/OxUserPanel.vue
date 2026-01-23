@@ -1,5 +1,5 @@
 <template>
-    <ox-model-panel v-bind="props" :repo="repos.users">
+    <ox-model-panel v-bind="props" :repo="repos.users" :repos="repos">
         <template v-for="name in forwardSlots" :key="name" #[name]="bind">
             <slot :name="name" v-bind="bind"/>
         </template>
@@ -20,14 +20,12 @@
              </v-chip>
         </template>
 
-        <template #views.list.kanban="{panel,items,list}">
-            <ox-list-kanban field="groups_id" :headers="kanbanHeaders"
-                item-title="username"
-                @click="(item) => panel.show({view: 'detail.edit', value: item})"/>
+        <template #views.edit="{value, saved}">
+            <ox-user-edit :initial="value" :saved="saved" :full="true"/>
         </template>
 
-        <template #views.detail.edit.default="{value, saved}">
-            <ox-user-edit :initial="value" :saved="saved" :full="true"/>
+        <template #views.create="{value, saved}">
+            <ox-user-edit :saved="saved" :full="true"/>
         </template>
     </ox-model-panel>
 </template>
@@ -36,7 +34,7 @@ import { computed, defineProps, useSlots, withDefaults } from 'vue'
 
 import { useModels, query, models, t } from '@oxylus/ox'
 import {OxModelPanel} from '@oxylus/ox/components'
-import type {IModelPanelProps} from '@oxylus/ox'
+import type {ModelPanelDefinition} from '@oxylus/ox'
 
 import {useAuthModels} from '../composables'
 import OxUserEdit from './OxUserEdit.vue'
@@ -48,14 +46,16 @@ const repos = useAuthModels()
 query(repos.groups).all()
 
 const groups = computed(() => repos.groups.all())
+/*
 const kanbanHeaders = computed(() => {
     return [
         {title: 'Without group', value: null},
         ...groups.value.map((group) => ({title: group.name, value: group.id}))
     ]
 })
+*/
 
-const props = withDefaults(defineProps<IModelPanelProps>(), {
+const props = withDefaults(defineProps<ModelPanelDefinition>(), {
     name: 'users',
     relations: ['$groups'],
     headers: ['username', 'email', 'first_name', 'last_name', 'groups'],

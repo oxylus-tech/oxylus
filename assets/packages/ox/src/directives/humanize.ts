@@ -1,5 +1,5 @@
 import type { App, Directive, DirectiveBinding } from 'vue'
-import { useHumanize, UseHumanize } from '../composables/humanize'
+import { useHumanize, type UseHumanize } from '../composables/humanize'
 
 type HTMLElementWithTimer = HTMLElement & {
     __humanizeTimer?: number

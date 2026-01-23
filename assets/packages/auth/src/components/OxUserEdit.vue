@@ -35,7 +35,7 @@
     </ox-model-edit>
 </template>
 <script setup lang="ts">
-import {inject, useAttrs} from 'vue'
+import {computed, inject, useAttrs} from 'vue'
 
 import {rules, t} from '@oxylus/ox'
 import {OxModelEdit, OxField} from '@oxylus/ox/components'
@@ -51,5 +51,5 @@ const props = defineProps<{
     full: boolean
 }>()
 const attrs = useAttrs()
-const groups = repos.groups.all()
+const groups = computed(() => repos.groups.all())
 </script>

@@ -15,18 +15,17 @@
  * @component An action button to view or edit the related
  * item, depending on the user's permissions. It uses `detail.edit` by default.
  *
- * Required injections: `panel`, `repos` and `user`.
+ * Required injections: `panel`, and `user`.
  *
  * Attributes bound to inner {@link OxAction}.
  */
 import { defineProps, inject, useAttrs, withDefaults } from 'vue'
-import { t } from '@oxylus/ox'
+import { t, usePanel } from '@oxylus/ox'
 import type { Model } from '@oxylus/ox/models'
 
 import OxAction from './OxAction.vue'
 
-const panel = inject('panel')
-const repos = inject('repos')
+const {router, panel} = usePanel()
 const user = inject('user')
 
 const attrs = useAttrs()
@@ -43,9 +42,9 @@ const props = withDefaults(defineProps<{
      * View to display
      */
     view: string
-}>(), { view: "detail.edit" })
+}>(), { view: "edit" })
 
 function show(user, item) {
-    panel.show({view: props.view, value: item})
+    router.go({view: props.view, value: item.id})
 }
 </script>

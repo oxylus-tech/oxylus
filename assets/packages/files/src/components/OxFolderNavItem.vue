@@ -3,7 +3,7 @@
         <v-list-item ref="listItem"
             :title="item.name" :value="item" nav
             :prepend-icon="isOpen ? 'mdi-folder-open' : 'mdi-folder'"
-            active-color="success"
+            color="success"
             @click.capture.stop="toggle"/>
 
         <div class="children" v-if="isOpen" style="

@@ -41,7 +41,7 @@
             </ox-field>
 
             <v-expansion-panels multiple class="mt-3">
-                <v-expansion-panel :title="t('fields.attachments', 2) + ` (${editor.value.attachments?.length || 0})`">
+                <v-expansion-panel :title="t([repos.mails.use, 'fields.attachments'], 2) + ` (${editor.value.attachments?.length || 0})`">
                     <template #text>
                         <ox-file-list :owner="props.owner" v-model="editor.value.attachments"/>
                     </template>

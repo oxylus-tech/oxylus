@@ -3,6 +3,15 @@ export * from './functional'
 export * from './vue'
 
 
+
+let _idx = 0;
+
+
+export function acquireUniqueIndex() {
+    return _idx++
+}
+
+
 /**
  * Generic type for typing classes.
  */

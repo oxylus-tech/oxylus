@@ -28,10 +28,10 @@
 
   "nav.panels": "Aplicaciones",
 
-  "panels.nav.table": "Ver tabla",
-  "panels.nav.kanban": "Ver kanban",
-  "panels.nav.add": "Crear elemento",
-  "panels.nav.edit": "Editar elemento",
+  "views.table": "Ver tabla",
+  "views.kanban": "Ver kanban",
+  "views.add": "Crear elemento",
+  "views.edit": "Editar elemento",
 
   "views.edit.informations": "Información",
   "lists.empty": "No hay datos para mostrar",

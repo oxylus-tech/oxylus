@@ -102,6 +102,7 @@ const headers = computed(() => {
     )
 })
 
+
 function updateOptions(event) {
     const params = {
         ...props.list.filters,

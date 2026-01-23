@@ -6,12 +6,15 @@
                     load>
                 <template #default="{items}">
                     <ox-message v-for="item in items"
-                        :key="item.id" :item="item" :value="item.id" >
+                        :key="item.id" :item="item" :value="item.id"
+                        :user-author="props.author">
 
                         <template #actions="{item}">
                             <template v-if="props.canSend">
+                                <!--
                                 <v-btn v-if="props.canUpdate && item.author == props.author"
                                     icon="mdi-pencil" variant="text" size="small" />
+                                    -->
                                 <v-btn
                                     icon="mdi-reply" variant="text" size="small"
                                     @click="state.source = item"/>
@@ -31,6 +34,8 @@
                         nested>
                     <template #title.append>
                         <v-btn icon="mdi-close" color="error" size="xsmall"
+                            class="ma-3 position-absolute right-0 top-0"
+                            style="z-index:10"
                             :label="t('actions.remove')"
                             :aria-label="t('actions.remove')"
                             @click="state.source = null"/>

@@ -29,7 +29,7 @@ Block:
         {% endblock %}
     </template>
 
-    <template #nav.detail="{panels,panel,list,item}">{% block nav-detail %}{% endblock %}</template>
+    <template #nav.detail="{router,panel,list,item}">{% block nav-detail %}{% endblock %}</template>
     {% endblock %}
 </{{ panel.component }}>
 {% endblock %}

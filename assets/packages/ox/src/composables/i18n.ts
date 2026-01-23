@@ -4,7 +4,7 @@ import type { Composer } from 'vue-i18n'
 import { Repository as $Repository } from 'pinia-orm'
 
 import config from '../config'
-import { Model, type ModelType, Repository } from '../models'
+import { Model, type ModelType, type Repository } from '../models'
 import {getCookieList} from '../utils'
 import { type AppLocaleLoaders, loadLocales} from '../i18n'
 
@@ -107,9 +107,10 @@ export type TKeyable = string|ModelType|Repository|[ModelType|Repository, string
  * - `[ModelClass, "postfix"]`: it resolves model translation key
  */
 export function tKey(value: TKeyable): string {
+    // FIXME: some external apps models are not recognised as Model (ex: tasks)
     if(value instanceof $Repository)
         value = value.use
-    if(value?.prototype instanceof Model)
+    if(value?.prototype instanceof Model || value.meta)
         return `${value.meta.app}.${value.meta.model}`
     if(Array.isArray(value))
         return tKey(value[0]) + (value[1] ? `.${value[1]}` : '')

@@ -29,10 +29,10 @@
 
     "nav.panels": "Applications",
 
-    "panels.nav.table": "Vue en tableau",
-    "panels.nav.kanban": "Vue en kanban",
-    "panels.nav.add": "Créer un élément",
-    "panels.nav.edit": "Éditer un élément",
+    "views.table": "Vue en tableau",
+    "views.kanban": "Vue en kanban",
+    "views.add": "Créer un élément",
+    "views.edit": "Éditer un élément",
 
     "views.edit.informations": "Informations",
     "lists.empty": "Aucune donnée à afficher",

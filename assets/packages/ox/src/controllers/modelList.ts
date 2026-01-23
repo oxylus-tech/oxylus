@@ -137,11 +137,11 @@ export default class ModelList<MT extends ModelType> extends ModelController<MT,
      * @param step - increment or decrement item index by this value.
      * @return the target item id or null if not found.
      */
-    getSiblingIndex(item: InstanceType<MT>|null, step: number): number {
-        if(item === null)
+    getSiblingIndex(id: ModelId|null, step: number): number {
+        if(id === null)
             return -1
 
-        const index = this.ids.indexOf(item.id)
+        const index = this.ids.indexOf(id)
         const sibling = index >= 0 ? index+step : -1
         return sibling >= 0 && sibling < this.ids.length ? sibling : -1
     }

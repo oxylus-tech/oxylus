@@ -3,44 +3,38 @@
         <v-snackbar v-model="app.state.show" :color="app.state.color" multi-line>
             {{ app.state.toString() }}
         </v-snackbar>
-        <v-app-bar color="primary">
+        <ox-app-bar color="primary">
             <!-- @slot Prepend on app bar -->
-            <template v-slot:prepend>
+            <template #prepend>
                 <v-app-bar-nav-icon v-if="slots['nav-start'] || slots['nav-end']" icon="mdi-apps"
                     :title="t('nav.panels')" :aria-label="t('nav.panels')"
                     @click.stop="nav.drawer = !nav.drawer"/>
             </template>
-            <v-app-bar-title id="app-bar-sheet-title"/>
-            <v-app-bar-title id="app-bar-title">
-                <!-- @slot App bar bar title -->
-                <slot name="title"/>
-            </v-app-bar-title>
-            <!-- @slot Left side of app bar -->
-            <slot name="app-bar-left"></slot>
-            <div id="app-bar-right" class="mr-3"></div>
-            <!-- @slot Right side of app bar -->
-            <slot name="app-bar-right"></slot>
-            <v-menu v-if="app.data?.languages?.length">
-                <template #activator="{props}">
-                    <v-btn icon="mdi-translate" v-bind="props"
-                        :title="t('actions.select.translation')"
-                        :aria-label="t('actions.select.translation')"/>
-                </template>
 
-                <v-list>
-                    <v-list-item v-for="lang in app.data.languages"
-                        :title="lang[1]" :aria-label="lang[1]"
-                        :value="lang[0]"
-                        @click="setLanguage(lang[0])">
-                        <template #prepend>
-                            <span class="mr-2">
-                                {{ getCountryFlag(lang[0]) }}
-                            </span>
-                        </template>
-                    </v-list-item>
-                </v-list>
-            </v-menu>
-        </v-app-bar>
+            <template #append>
+                <v-menu v-if="app.data?.languages?.length">
+                    <template #activator="{props}">
+                        <v-btn icon="mdi-translate" class="ml-2"
+                            v-bind="props"
+                            :title="t('actions.select.translation')"
+                            :aria-label="t('actions.select.translation')"/>
+                    </template>
+
+                    <v-list>
+                        <v-list-item v-for="lang in app.data.languages"
+                            :title="lang[1]" :aria-label="lang[1]"
+                            :value="lang[0]"
+                            @click="setLanguage(lang[0])">
+                            <template #prepend>
+                                <span class="mr-2">
+                                    {{ getCountryFlag(lang[0]) }}
+                                </span>
+                            </template>
+                        </v-list-item>
+                    </v-list>
+                </v-menu>
+            </template>
+        </ox-app-bar>
         <ox-app-nav v-if="slots['nav-start'] || slots['nav-end']" v-model:drawer="nav.drawer" :items="app.data.nav">
             <template #prepend>
                 <a class="nav-home" href="/">
@@ -57,19 +51,15 @@
             </template>
         </ox-app-nav>
         <v-main>
-            <!-- @slot Inside `v-main` -->
-            <slot name="main">
-                <v-tabs-window v-model="panels.panel">
-                    <template #default="bind">
-                        <!-- @slot Inside `v-tabs-window` -->
-                        <slot name="default" v-bind="bind" :app="app"></slot>
-
-                        <v-tabs-window-item v-for="(name, slot) in panelsSlots" :key="slot" :value="name">
-                            <!-- @slot Each slot declared with prefix `panels.` will be put in a `v-tabs-window-item`. -->
-                            <slot :name="slot" v-bind="bind" :app="app"/>
-                        </v-tabs-window-item>
+            <!-- @slot Inside `v-main`. -->
+            <slot name="default">
+                <v-window v-model="router.location.panel" crossfade>
+                    <template v-for="(node, index) in panelNodes" :key="node.key ?? index">
+                        <v-window-item :value="node.props?.name || node.key || index">
+                            <component :is="node"/>
+                        </v-window-item>
                     </template>
-                </v-tabs-window>
+                </v-window>
             </slot>
         </v-main>
     </v-app>
@@ -115,10 +105,11 @@
 import { useSlots, withDefaults, onErrorCaptured, onMounted } from 'vue'
 import { computed, defineProps, inject, provide, reactive, watch } from 'vue'
 
-import {useApp, usePanels, t, filterSlots, getCountryFlag} from '@oxylus/ox'
+import {useApp, t, filterSlots, getCountryFlag, createRouter} from '@oxylus/ox'
 import type {Model} from '../models'
 import config from '../config'
 import OxAppNav from './OxAppNav.vue'
+import OxAppBar from './OxAppBar.vue'
 
 const slots = useSlots()
 const panelsSlots = filterSlots(slots, "panels.")
@@ -141,16 +132,21 @@ const props = withDefaults(defineProps<Props>(), {
 const nav = reactive({drawer: true})
 
 const app = useApp(props)
-const panels = usePanels()
-
-onMounted(() => { panels.panel = app.data.panel })
+const router = createRouter()
 
 onErrorCaptured((err, instance, info) => {
     app.state.error(`${err}`)
 })
 
 
-async function setLanguage(lang) {
+const panelNodes = computed(() => {
+    const slotFn = slots.panels
+    return slotFn ? slotFn() : []
+})
+
+
+/** Change current language **/
+async function setLanguage(lang: string) {
     const resp = await fetch(`${props.apiUrl}ox/core/conf/set-language/`, {
         method: "POST",
         headers: config.axiosConfig.headers,
@@ -159,4 +155,6 @@ async function setLanguage(lang) {
     window.location.reload()
 }
 
+
+onMounted(() => { router.location.panel ??= app.data.panel })
 </script>

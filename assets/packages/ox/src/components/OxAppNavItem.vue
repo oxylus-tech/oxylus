@@ -21,7 +21,7 @@
             </template>
         </template>
         <v-list-item v-else
-            :active="panels.panel == props.name"
+            :active="router.location.panel == props.name"
             :value="props.name"
             :prepend-icon="props.icon" :title="props.title"
             @click.stop="show"/>
@@ -42,9 +42,10 @@
  * `panels` module.
  *
  *
- * Required injections: `user`, `panels`.
+ * Required injections: `user`, `router`.
  */
 import { computed, defineProps, inject, ref } from 'vue'
+import { useRouter } from '@oxylus/ox'
 import type {IPanelInfo} from '../controllers'
 
 export interface INavItemProps extends IPanelInfo {
@@ -66,8 +67,8 @@ const props = defineProps<INavItemProps>()
 
 const isOpen = ref(null)
 const user = inject('user')
-const panels = inject('panels')
-const visible = computed(() => !props.auto || panel.name == props.name)
+const router = useRouter()
+const visible = computed(() => !props.auto || router.location.panel == props.name)
 
 function shouldShow(item) {
     if(item.permission && !user.can(item.permission))
@@ -80,7 +81,7 @@ function shouldShow(item) {
 
 /** Show this panel */
 function show() {
-    const vals = { panel: props.name, href: props.url }
-    panels.show(vals)
+    const vals = { panel: props.name, href: props.url, view: null }
+    router.go(vals)
 }
 </script>

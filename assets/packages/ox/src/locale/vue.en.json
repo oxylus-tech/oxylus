@@ -30,13 +30,15 @@
 
     "nav.panels": "Applications",
 
-    "panels.nav.table": "View table",
-    "panels.nav.kanban": "View kanban",
-    "panels.nav.add": "Create an item",
-    "panels.nav.edit": "Edit item",
+    "views.table": "Table view",
+    "views.cards": "Card view",
+    "views.kanban": "Kanban view",
+    "views.add": "Create an item",
+    "views.edit": "Edit item",
 
     "labels.created": "Created",
     "labels.updated": "Updated",
+    "labels.you": "You",
 
     "views.edit.informations": "Informations",
     "views.edit.public_informations": "Public Informations",
@@ -125,5 +127,9 @@
     "views.edit.smtp": "SMTP Configuration",
     "labels.recipients": "Recipients",
     "actions.mails.send": "Send email",
-    "actions.mails.send.confirm": "This email has already been sent. Do you want to it again?"
+    "actions.mails.send.confirm": "This email has already been sent. Do you want to it again?",
+
+    "ox_tasks.fields.args_kwargs": "Running arguments",
+    "ox_tasks.fields.return_value": "Result",
+    "django_tasks_database.dbtaskresult.fields.date": "Updated"
 }

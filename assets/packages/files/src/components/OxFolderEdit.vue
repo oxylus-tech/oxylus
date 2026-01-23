@@ -22,7 +22,7 @@ import {OxModelEdit, OxField} from '@oxylus/ox/components'
 import {OxAgentSelect} from '@oxylus/auth/components'
 
 import OxFolderInput from './OxFolderInput.vue'
-import {useFilesModels} from '../composables'
+import {useFilesModels, fileNameRule} from '../composables'
 
 const repos = useFilesModels()
 const props = defineProps({

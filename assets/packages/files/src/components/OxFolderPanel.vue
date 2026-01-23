@@ -1,5 +1,5 @@
 <template>
-    <ox-model-panel v-bind="props" :repo="repos.folders">
+    <ox-model-panel ref="modelPanel" v-bind="props" :repo="repos.folders" :repos="repos">
         <template v-for="name in forwardSlots" :key="name" #[name]="bind">
             <slot :name="name" v-bind="bind"/>
         </template>
@@ -13,15 +13,15 @@
         </template>
         -->
 
-        <template #prepend="{list, panel}">
+        <template #prepend="{list, activeView}">
             <ox-folder-drawer
-                v-if="panel.view.startsWith('list.')"
+                v-if="activeView?.category == 'list'"
                 v-model="list.filters.parent__uuid"
                 v-model:owner="list.filters.owner__uuid"
                 />
         </template>
 
-        <template #views.detail.edit.default="{value, saved}">
+        <template #views.edit="{value, saved}">
             <ox-folder-edit :initial="value" :saved="saved"/>
         </template>
     </ox-model-panel>

@@ -35,7 +35,7 @@
  */
 import { computed, defineExpose, defineEmits, watch, ref, onMounted } from 'vue'
 import type { State } from '@oxylus/ox'
-import { t, useModelEditor } from '@oxylus/ox'
+import { t, useModelEditor, useGuard } from '@oxylus/ox'
 
 import OxStateAlert from './OxStateAlert.vue'
 import OxValidationBtn from './OxValidationBtn.vue'
@@ -82,6 +82,14 @@ async function save(): State {
     emits('saved', modelEditor.value.editor)
     return resp
 }
+
+
+useGuard(() => {
+    if(modelEditor.value?.edited)
+        if(!confirm("Continue without saving?"))
+            return false
+    return true
+})
 
 
 // TODO

@@ -1,29 +1,19 @@
 <template>
-    <template v-if="tabs && Object.keys(tabs).length">
-        <v-tabs v-model="tab">
-            <slot name="tab" v-if="slots.default">
-                <v-tab :text="props?.title" value="default"/>
-            </slot>
-            <template v-for="(value, name) in tabs">
-                <v-tab :value="value">
-                    <slot :name="name"/>
-                </v-tab>
-            </template>
-        </v-tabs>
-        <v-tabs-window v-model="tab">
-            <v-tabs-window-item value="default" v-if="slots.default">
-                <slot name="default"/>
-            </v-tabs-window-item>
-            <template v-for="(value, name) in windows">
-                <v-tabs-window-item :value="value">
-                    <slot :name="name"/>
-                </v-tabs-window-item>
-            </template>
-        </v-tabs-window>
-    </template>
-    <template v-else>
-        <slot name="default"/>
-    </template>
+    <v-window-item :value="view.name">
+        <template v-if="view.sections?.size > 1">
+            <v-tabs v-model="router.location.section">
+                <template v-for="section in view.sections.values()" :key="section.name">
+                    <v-tab :value="section.name" :text="section.title" />
+                </template>
+            </v-tabs>
+            <v-tabs-window v-model="router.location.section">
+                <slot name="default" v-bind="infos" :view="view" />
+            </v-tabs-window>
+        </template>
+        <template v-else>
+            <slot name="default" v-bind="infos" :view="view" />
+        </template>
+    </v-window-item>
 </template>
 <script setup lang="ts">
 /**
@@ -35,18 +25,13 @@
  * The default slots are `default` (for the content) and `tab.default` (for the tab).
  * Other slots can be named following the convention: `window.[name]` and `tab.[name]`.
  */
-import { ref, defineProps, onMounted, useSlots } from 'vue'
-import { filterSlots } from '@oxylus/ox'
+import { ref, useSlots } from 'vue'
+import { useView, type ViewDefinition } from '../composables/router'
 
-const props = defineProps({
-    /** Default tab title. */
-    title: String,
-})
+const slots = useSlots()
+const props = defineProps<ViewDefinition>()
+const {router, view, ...infos} = useView(props)
 
 /** Current tab/window value */
 const tab = ref(null)
-
-const slots = useSlots()
-const tabs = filterSlots(slots, "tab.", {exclude: ["tab.default"]})
-const windows = filterSlots(slots, "window.")
 </script>

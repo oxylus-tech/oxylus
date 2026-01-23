@@ -42,7 +42,7 @@ export function useRepo<MT extends ModelType>(model: MT): RefRepository<MT> {
  */
 export function useModels(models: Models, {useInject=true, useDefaults=true}: IUseModelOpts = {}): RefRepos
 {
-    var repos : RefRepos = useInject && (inject('repos') || {}) as RefRepos
+    var repos : RefRepos = useInject && (inject('repos', null) || {}) as RefRepos
     const injected = (useInject && !!Object.keys(repos).length)
 
     if(!Array.isArray(models))

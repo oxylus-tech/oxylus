@@ -27,7 +27,7 @@ export class ContentType extends Model {
 
     static fields() {
         return {
-            id: this.attr(null),
+            ...super.fields(),
             app: this.string(''),
             model: this.string(''),
             app_verbose: this.string(''),
@@ -81,7 +81,7 @@ export class Permission extends Model {
 
     static fields() {
         return {
-            id: this.attr(null),
+            ...super.fields(),
             name: this.string(''),
             label: this.string(''),
             codename: this.string(''),
@@ -135,7 +135,7 @@ export class Group extends Model {
 
     static fields() {
         return {
-            id: this.attr(null),
+            ...super.fields(),
             name: this.string(''),
             permissions: this.attr([]),
             $permissions: this.hasManyBy(Permission, "permissions"),
@@ -172,7 +172,7 @@ export class User extends Model {
 
     static fields() {
         return {
-            id: this.attr(null),
+            ...super.fields(),
             username: this.string(''),
             last_name: this.string(''),
             first_name: this.string(''),

@@ -9,14 +9,14 @@
             </tr>
         </thead>
         <tbody>
-            <template v-for="(cts, label) in contentTypes">
+            <template v-for="(cts, label) in contentTypes" :key="label">
                 <tr>
                    <th>{{ label }}</th>
-                   <th v-for="action in crudActions">
+                   <th v-for="action in crudActions" :key="action">
                        <v-checkbox-btn @click="selectAll(action, cts, $event)" />
                    </th>
                 </tr>
-                <template v-for="ct in cts">
+                <template v-for="ct in cts" :key="ct.id">
                     <tr>
                         <td class="text-top">{{ ct.model_verbose }}</td>
                         <template v-for="perm in ctPermissions[ct.id].crud">

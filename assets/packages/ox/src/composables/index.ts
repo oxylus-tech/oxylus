@@ -6,6 +6,8 @@ export * from './init'
 export * from './i18n'
 export * from './models'
 export * from './controllers'
+export * from './router'
+export * from './modelPanel'
 export {default as rules} from './rules'
 
 

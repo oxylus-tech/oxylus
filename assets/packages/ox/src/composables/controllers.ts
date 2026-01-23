@@ -9,115 +9,17 @@ import {State, ifNotEqualFn} from '../utils'
 import type {Repos, Model, ModelType, Repository} from '../models'
 
 import {
-    Panels, Panel, ModelPanel,
     Query, ModelList,
     Editor, ModelEditor
 } from '../controllers'
 
 import type {
-    IPanels, IPanel, IPanelProps,
-    IModelPanel, IModelPanelProps,
     IModelList,
     IEditor, IEditorProps, IModelEditorProps,
     IQueryFetch
 } from '../controllers'
 
-
-//---- Panels
-/**
- * Create a new reactive {@link Panels} and provide it as `panels`.
- *
- * It also creates watchers in order to:
- * - update document title based on current panel's view
- * - keep track of current view's url: when a panels' getUrlParams changes, it will `History.pushState` storing those params;
- *
- * @return the reactive Panels.
- */
-export function usePanels(options: IPanels) {
-    const panels = reactive(new Panels(options))
-    provide('panels', panels)
-
-    onMounted(() => {
-        panels.readDocumentLocation()
-        panels.panel && panels.show({
-            panel: panels.panel, silent: true,
-            ...panels.params
-        })
-    })
-
-    window.addEventListener("popstate", (event) => {
-        if(event.state)
-            panels.show({...event.state, silent: true})
-    })
-
-    // we update title after history state
-    const initialTitle = document.title
-    watch(() => panels.current?.title, (val) => {
-        if(val)
-            document.title = `${val} | ${initialTitle}`
-        else
-            document.title = initialTitle
-    })
-
-    return panels
-}
-
-/** Create a new {@link Panel}.
-*
-* - (un)register the panel to object's `panels` on (un)mount.
-* - provide `panel`;
-* - watch on {@link Panel.view} calling {@link Panel.onViewChange}
-*/
-export function usePanel<V, P extends IPanelProps>(options: IPanel<P>, cls: typeof Panel<V,P>) {
-    const panel = reactive(new cls(options))
-
-    provide('panel', panel)
-    onMounted(() => panel.panels.register(panel.name, panel))
-    onUnmounted(() => panel.panels.unregister(panel.name))
-
-    // watch(() => panel.view, (val, old) => val != old && panel.onViewChange(val))
-    return {panel}
-}
-
-
-export interface IUseModelPanel<MT extends ModelType, P extends IModelPanelProps<MT>> extends IModelPanel<MT,P> {
-    /** Provide this query for the {@link ModelList}. **/
-    query?: Query<MT>
-    /** Provide this repositories to create a {@link Query} used by {@link ModelList}. */
-    repos?: Repos
-}
-
-/**
- * Create a new {@link ModelPanel}.
- * Return `{panels, panel, list, items, next, prev}` (next and prev are items related to the current selected one by `panel.value`).
- */
-// TODO: allow to pass list down
-export function useModelPanel<MT extends ModelType, P extends IModelPanelProps<MT>>(
-    {query, repos, ...options}: IUseModelPanel<MT,P>
-)
-{
-    repos ??= inject('repos')
-    query ??= new Query(options.props.repo, repos)
-    options.panels ??= inject('panels')
-
-    const {list, items} = useModelList({
-        query,
-        relations: options.props.relations,
-        fetchRelations: options.props.fetchRelations
-    })
-    const {panel} = usePanel({list, ...options}, ModelPanel<MT, P>)
-
-    const next = computed(() => {
-        const index = list.getSiblingIndex(unref(panel.value), 1)
-        return items.value[index] ?? null
-    })
-    const prev = computed(() => {
-        const index = list.getSiblingIndex(unref(panel.value), -1)
-        return items.value[index] ?? null
-    })
-
-    return {panels: panel.panels, panel, list, items, next, prev}
-}
+import {useGuard} from './router'
 
 
 //---- Controllers
@@ -212,10 +114,6 @@ export function useEditor<
         editor.initial = value
         editor.reset(value as T)
     })
-
-    const panel = inject('panel') as Panel
-    if(panel)
-        watch(() => editor.edited, (val: boolean) => panel.setEdition(editor.name, val))
 
     return {editor, edited}
 }
