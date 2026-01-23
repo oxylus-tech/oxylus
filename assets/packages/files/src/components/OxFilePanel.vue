@@ -56,14 +56,17 @@
                 :folder="list?.filters.folder__uuid" />
         </template>
 
-        <template #views.detail.edit.tab.comments="{value}"
-            >{{ t(FileComment, 2 ) }}</template>
-        <template #views.edit.sections="{value, saved, list}">
+        <template #views.create="{value, saved, list}">
+            <ox-file-edit :initial="value" :saved="saved"
+                :owner="list?.filters?.owner__uuid"
+                :folder="list?.filters.folder__uuid" />
+        </template>
+
+        <template #views.edit.sections="{value}">
             <ox-section name="comments" :title="t(FileComment, 2)">
                 <ox-message-list v-if="value"
-                        :postURL="repos.fileComments.use.meta.getUrl({absolute: true})"
                         :repo="repos.fileComments" :repos="repos"
-                        :author="user.id" :thread="value.id"
+                        :thread="value.id"
                         can-send can-update reverse>
                     <template #form.start>
                             <v-img

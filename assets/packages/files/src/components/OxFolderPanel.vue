@@ -24,6 +24,15 @@
         <template #views.edit="{value, saved}">
             <ox-folder-edit :initial="value" :saved="saved"/>
         </template>
+
+        <template #views.edit.sections="{value}">
+            <ox-section name="comments" :title="t(FolderComment, 2)">
+                <ox-message-list v-if="value"
+                        :repo="repos.folderComments" :repos="repos"
+                        :thread="value.id"
+                        can-send can-update reverse/>
+            </ox-section>
+        </template>
     </ox-model-panel>
 </template>
 <script setup lang="ts">
@@ -31,17 +40,19 @@ import { useSlots, withDefaults } from 'vue'
 
 import { query, t } from '@oxylus/ox'
 import type {IModelPanelProps} from '@oxylus/ox'
-import {OxModelPanel} from '@oxylus/ox/components'
+import {OxModelPanel, OxSection} from '@oxylus/ox/components'
+import {OxMessageList} from '@oxylus/content/components'
 
 import OxFolderEdit from './OxFolderEdit.vue'
 import OxFolderInput from './OxFolderInput.vue'
 import OxFolderDrawer from './OxFolderDrawer.vue'
 import {useFilesModels} from '../composables'
+import {FolderComment} from '../models'
 
 const slots = useSlots()
 const forwardSlots = Object.keys(slots).filter(x => !(['list.filters', 'top'].includes(x)))
 
-const repos = useFilesModels()
+const repos = useFilesModels([FolderComment])
 const props = withDefaults(defineProps<IModelPanelProps>(), {
     name: 'folders',
     relations: [],

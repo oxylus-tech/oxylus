@@ -41,13 +41,11 @@ class MessageViewSet(ModelViewSet):
     This viewsets ensure common behaviors around models.
     """
 
-    filterset_fields = {
-        "thread": ["exact"],
-    }
+    filterset_fields = {"thread__uuid": ["exact"], "author__id": ["exact"]}
 
     def get_queryset(self):
         """Restrict queryset when action is an update or a delete."""
-        query = super().get_queryset()
+        query = super().get_queryset().select_related("source")
         if self.request.method not in SAFE_METHODS:
             query = query.filter(author=self.get_author())
         return query

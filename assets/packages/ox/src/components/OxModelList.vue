@@ -62,7 +62,7 @@ const slots = useSlots()
 
 const props = defineProps<IModelListProps & { load: boolean }>()
 const attrs = useAttrs()
-console.log(props.filters)
+
 const {list, items} = useModelList({
     query: new Query(props.repo, props.repos),
     filters: props.filters,

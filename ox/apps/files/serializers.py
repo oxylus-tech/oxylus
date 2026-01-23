@@ -47,13 +47,14 @@ class FileSerializer(OwnedSerializer):
 
 
 # ---- Comments
+# TODO: owned access
 class BaseFolderCommentSerializer(MessageSerializer, ModelSerializer):
     thread = RelatedField(queryset=models.Folder.objects.all())
     source = RelatedField(queryset=models.FolderComment.objects.all(), required=False)
 
     class Meta:
         model = models.FolderComment
-        fields = MessageSerializer.Meta.fields + ("thread", "source")
+        fields = MessageSerializer.Meta.fields
 
 
 class FolderCommentSerializer(BaseFolderCommentSerializer):
@@ -66,7 +67,7 @@ class BaseFileCommentSerializer(MessageSerializer, ModelSerializer):
 
     class Meta:
         model = models.FileComment
-        fields = MessageSerializer.Meta.fields + ("thread", "source")
+        fields = MessageSerializer.Meta.fields
 
 
 class FileCommentSerializer(BaseFileCommentSerializer):

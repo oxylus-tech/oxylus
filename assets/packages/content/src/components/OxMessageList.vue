@@ -7,7 +7,7 @@
                 <template #default="{items}">
                     <ox-message v-for="item in items"
                         :key="item.id" :item="item" :value="item.id"
-                        :user-author="props.author">
+                        :user-author="author">
 
                         <template #actions="{item}">
                             <template v-if="props.canSend">
@@ -73,7 +73,8 @@
  *
  * Takes {@link OxModelList} properties as input.
  */
-import { reactive, ref, useAttrs } from 'vue'
+// TODO: permissions checks for sending and update
+import { computed, inject, reactive, ref, useAttrs } from 'vue'
 import { t, formToJson } from '@oxylus/ox'
 import { OxModelList } from '@oxylus/ox/components'
 import OxRichEditor from './OxRichEditor'
@@ -81,14 +82,12 @@ import OxMessage from './OxMessage'
 
 const attrs = useAttrs()
 const props = defineProps({
-    /** Current author id */
+    /** Current author id (defaults to user's id) */
     author: {type: [String, Number]},
     /** Current thread id. Used for message load and post. **/
     thread: String,
     /** Hidden fields to add to form **/
     hiddenFields: Object,
-    /** URL used to POST data */
-    postURL: String,
     /** User can send messages **/
     canSend: Boolean,
     /** User can edit his messages **/
@@ -103,6 +102,8 @@ const state = reactive({
     content: "",
     source: null,
 })
+
+const author = computed(() => props.author || inject('user', {}).id)
 
 async function submit(event) {
     state.loading = true

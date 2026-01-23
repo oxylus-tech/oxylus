@@ -201,7 +201,7 @@ class File(Described, Timestamped, ChildOwned):
 class FileComment(Message):
     """Message to a file"""
 
-    thread = models.ForeignKey(File, models.CASCADE, related_name=_("comments"), verbose_name=_("File"))
+    thread = models.ForeignKey(File, models.CASCADE, related_name="comments", verbose_name=_("File"))
 
     class Meta:
         verbose_name = _("Comment")

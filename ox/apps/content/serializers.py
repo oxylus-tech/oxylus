@@ -87,7 +87,7 @@ class MessageSerializer(serializers.Serializer):
     class Meta:
         thread_field = "thread"
         """ Specify which field to treat as thread. """
-        fields = ("id", "author", "author_name", "content", "created", "updated")
+        fields = ("id", "author", "author_name", "content", "created", "updated", "thread", "source")
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

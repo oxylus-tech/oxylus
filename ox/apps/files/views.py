@@ -47,20 +47,10 @@ class FileAccessViewSet(AccessViewSet):
 
 
 class FolderCommentViewSet(MessageViewSet):
-    queryset = FolderComment.objects.all().order_by("-created").select_related("source")
+    queryset = FolderComment.objects.all().order_by("-created")
     serializer_class = serializers.FolderCommentSerializer
-    filterset_fields = {
-        **MessageViewSet.filterset_fields,
-        "thread__uuid": ["exact"],
-        "author__id": ["exact"],
-    }
 
 
 class FileCommentViewSet(MessageViewSet):
-    queryset = FileComment.objects.all().order_by("-created").select_related("source")
+    queryset = FileComment.objects.all().order_by("-created")
     serializer_class = serializers.FileCommentSerializer
-    filterset_fields = {
-        **MessageViewSet.filterset_fields,
-        "thread__uuid": ["exact"],
-        "author__id": ["exact"],
-    }
