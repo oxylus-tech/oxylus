@@ -30,21 +30,17 @@ const user = inject('user')
 
 const attrs = useAttrs()
 const props = withDefaults(defineProps<{
-    /**
-     * The related model instance to edit/view.
-     */
+    /** The related model instance to edit/view. */
     item: Model
-    /**
-     * Show edit button if user has permissions.
-     */
+    /** Show edit button if user has permissions. */
     edit: boolean
-    /**
-     * View to display
-     */
+    /** View to display */
     view: string
-}>(), { view: "edit" })
+    /** Section **/
+    section: string
+}>(), { view: "edit", section: "default" })
 
 function show(user, item) {
-    router.go({view: props.view, value: item.id})
+    router.go({view: props.view, section: props.section, value: item.id})
 }
 </script>

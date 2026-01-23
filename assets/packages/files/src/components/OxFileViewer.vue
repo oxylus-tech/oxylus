@@ -27,7 +27,7 @@
                     </v-overlay>
 
                     <v-overlay v-if="item" :scrim="false"
-                            content-class="w-100 bottom-0 d-flex flex-row pointer-pass-through py-3"
+                            content-class="w-100 bottom-0 d-flex flex-row pointer-pass-through ga-2 py-3"
                             style="bottom: 0px; position: absolute;"
                             contained model-value no-click-animation persistent>
                         <v-spacer/>

@@ -1,19 +1,24 @@
 <template>
-    <!-- Simple preview dialog -->
-    <v-dialog v-model="dialog.active" max-width="1000">
-        <v-spacer/>
-        <ox-file-viewer v-model="dialog.item" :items="modelPanel.items">
-            <template #actions.close>
-                <v-btn icon="mdi-close" color="error" variant="text"
-                    :aria-label="t('actions.close')"
-                    :title="t('actions.close')"
-                    @click="dialog.active=false"/>
-            </template>
-        </ox-file-viewer>
-        <v-spacer/>
-    </v-dialog>
-
     <ox-model-panel ref="modelPanel" v-bind="props" :repo="repos.files" :repos="repos">
+        <!-- Simple preview dialog -->
+        <v-dialog v-model="dialog.active" max-width="1000">
+            <v-spacer/>
+            <ox-file-viewer v-model="dialog.item" :items="modelPanel.items">
+                <template #actions.close>
+                    <v-btn icon="mdi-close" color="error" variant="text"
+                        :aria-label="t('actions.close')"
+                        :title="t('actions.close')"
+                        @click="dialog.active=false"/>
+                </template>
+
+                <template #actions>
+                    <ox-action-edit button :item="dialog.item" edit variant="flat"
+                        @completed="dialog.active=false"/>
+                </template>
+            </ox-file-viewer>
+            <v-spacer/>
+        </v-dialog>
+
         <template v-for="name in forwardSlots" :key="name" #[name]="bind">
             <slot :name="name" v-bind="bind"/>
         </template>
@@ -97,7 +102,7 @@ import { ref, inject, reactive, useSlots, withDefaults, watch } from 'vue'
 
 import { query, t } from '@oxylus/ox'
 import type {ModelPanelDefinition} from '@oxylus/ox'
-import {OxModelPanel, OxAction, OxSection} from '@oxylus/ox/components'
+import {OxModelPanel, OxAction, OxActionEdit, OxSection} from '@oxylus/ox/components'
 import {OxMessageList} from '@oxylus/content/components'
 
 import OxFileEdit from './OxFileEdit'

@@ -8,6 +8,7 @@ export {default as OxView} from './OxView.vue'
 export {default as OxSection} from './OxSection.vue'
 
 export {default as OxAction} from './OxAction.vue'
+export {default as OxActionEdit} from './OxActionEdit.vue'
 export {default as OxActionModelDelete} from './OxActionModelDelete.vue'
 export {default as OxActionPost} from './OxActionPost.vue'
 
