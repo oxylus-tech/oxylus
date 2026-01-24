@@ -50,7 +50,7 @@
  * When the list is editable, a remove button is displayed.
  */
 import { computed, defineModel, defineExpose, onMounted, watch, useSlots, useAttrs } from 'vue'
-import { debounce } from 'lodash'
+import { debounce, isEqual } from 'lodash'
 import { useModelList, Query, t, ifNotEqual } from '@oxylus/ox'
 import type {IModelListProps} from '@oxylus/ox'
 
@@ -84,7 +84,12 @@ function remove(id) {
 onMounted(() => (props.load || ids.value?.length) && list.load({id: ids.value}))
 watch(ids, (val) => val.length && ifNotEqual(val, list.ids, (val) => val.length && list.load({id: val})))
 watch(() => list.ids, (val) => (ids.value = [...val]))
-watch(() => [props.repo, props.repos, props.filters], load)
+
+
+const last = {}
+
+watch(() => [props.repo, props.repos, props.filters],
+      (val, old) => !isEqual(val, old) && load() )
 
 defineExpose({
     /** The used {@link ModelList} controller. */

@@ -6,21 +6,34 @@ register = template.Library()
 
 
 @register.simple_tag
-def panel_url(urlname: str, panel: str, view: str | None = None, id: str | int | None = None) -> str:
+def panel_url(
+    urlname: str,
+    panel: str,
+    view: str | None = None,
+    section_or_id: str | int | None = None,
+    id: str | int | None = None,
+) -> str:
     """Return url to this panel.
 
     :param urlname: url name
     :param panel: panel name
     :param view: target view
+    :param section_or_id: section name (when id is provided) or id
     :param id: target object id
     """
     url = urls.reverse(urlname)
-    query = f"panel={panel}"
+    section, id = id and section_or_id, id or section_or_id
+
+    query = f"p={panel}"
     if id:
-        view = view or "detail.edit"
+        view = view or "edit"
         query += f"&v={view}&id={id}"
     elif view:
         query += f"&v={view}"
+
+    if section:
+        query += f"&s={section}"
+
     return f"{url}?{query}"
 
 

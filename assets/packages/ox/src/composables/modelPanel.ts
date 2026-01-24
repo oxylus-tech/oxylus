@@ -85,9 +85,11 @@ export function useModelPanel(def: ModelPanelDefinition) {
         get() {
             if(infos.active.value && router.location.value) {
                 const id = unref(router.location.value)
-                const obj = def.relations?.length
-                                ? def.repo.with(def.relations).find(id)
-                                : def.repo.find(id)
+                let q = def.repo
+                if(def.relations?.length)
+                    def.relations.forEach(v => (q = q.with(v)))
+
+                const obj = q.find(id)
                 if(!obj && !loading.value) {
                     loading.value = true
                     query.fetch({id}).then(() => loading.value = false)
