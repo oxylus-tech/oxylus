@@ -4,7 +4,6 @@ from django.conf import settings
 from django_tasks import task
 
 from . import models
-from .models.file import get_obfuscated_path
 from .conf import ox_files_settings
 
 
@@ -30,7 +29,7 @@ def create_preview(uuid, force: bool = True):
     # looping should not happen often, but we never know...
     path = None
     while not path or path.exists():
-        path = ox_files_settings.preview_dir / get_obfuscated_path("jpg")
+        path = ox_files_settings.preview_dir / f"{obj.uuid}.jpg"
     path.parent.mkdir(parents=True, exist_ok=True)
     created = processor.create_preview(Path(obj.file.path), path, ox_files_settings.THUMBNAIL_SIZE, force=True)
     if created:

@@ -30,6 +30,17 @@ class FolderSerializer(OwnedSerializer):
 
 class FileSerializer(OwnedSerializer):
     folder = RelatedField(required=False, allow_null=True, queryset=models.Folder.objects.all())
+    file = serializers.CharField(source="file_url", read_only=True)
+    preview = serializers.CharField(source="preview_url", read_only=True)
+
+    file_data = serializers.FileField(
+        source="file",
+        write_only=True,
+        max_length=ox_files_settings.FILE_SIZE_LIMIT,
+        allow_empty_file=False,
+        required=False,
+    )
+    """ File data upload """
 
     class Meta:
         model = models.File

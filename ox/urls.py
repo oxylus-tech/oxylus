@@ -27,7 +27,7 @@ from ox.core.views import core, accounts
 from ox.utils.apps import DiscoverModules
 
 
-AppUrls = namedtuple("AppUrls", ["urls", "api"])
+AppUrls = namedtuple("AppUrls", ["urls", "api", "urlpatterns"])
 
 
 class Router:
@@ -46,11 +46,15 @@ class Router:
         module_names = "urls"
 
         def handle_urls(self, app, module, app_urls, **kw):
+            # FIXME: filter by Oxylus AppConfig only
             urls = [
                 getattr(module, "urls", None),
                 getattr(module, "api_urls", None),
+                getattr(module, "urlpatterns", None),
             ]
-            if any(urls):
+            # don't filter over urlpatterns, as some applications as DRF may
+            # include it.
+            if urls[0] or urls[1]:
                 app_urls[app] = AppUrls(*urls)
 
     discover: ClassVar[Discover] = Discover()
@@ -79,11 +83,20 @@ class Router:
             patterns.append(path(f"api/{root_url}/", include((urls.api, app.label), namespace=f"{app.label}-api")))
         return patterns
 
+    def get_urlpatterns(self) -> list:
+        """Return a list of urls patterns."""
+        patterns = []
+        for urls in self.apps_urls.values():
+            if u := urls.urlpatterns:
+                patterns.extend(u)
+        return patterns
+
 
 router = Router()
 
 
 urlpatterns = [
+    *router.get_urlpatterns(),
     path("", accounts.DashboardView.as_view(), name="index"),
     path("api/", (lambda *a, **kw: {}), name="api-index"),
     *router.get_urls(),

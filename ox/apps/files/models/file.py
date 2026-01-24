@@ -1,11 +1,12 @@
 from __future__ import annotations
 
-from uuid import uuid4
+from functools import cached_property
 
 from django.db import models
 from django.conf import settings
 from django.core.exceptions import ValidationError, PermissionDenied
 from django.utils.translation import gettext_lazy as _
+from django.urls import reverse
 
 from ox.apps.content.models import Message
 from ox.utils.models import Described, Timestamped, ChildOwned, ChildOwnedQuerySet
@@ -15,7 +16,7 @@ from .. import processors
 from .folder import Folder, validate_name
 
 
-__all__ = ("FileQuerySet", "File", "file_upload_to", "get_obfuscated_path")
+__all__ = ("FileQuerySet", "File", "file_upload_to")
 
 
 class FileQuerySet(ChildOwnedQuerySet):
@@ -43,23 +44,11 @@ class FileQuerySet(ChildOwnedQuerySet):
 
 def file_upload_to(instance, filename) -> str:
     """Return target upload file depending on whether the folder is synchronized or not."""
-    if instance.folder and instance.folder.is_sync:
-        path = instance.folder.get_sync_path(f"{instance.folder.path}/{filename}")
-        return str(path.relative_to(settings.MEDIA_ROOT))
-
-    path = get_obfuscated_path(filename.split(".")[-1])
-    return f"{ox_files_settings.UPLOAD_DIR}/{path}"
-
-
-def get_obfuscated_path(ext) -> str:
-    """
-    Return an obfuscated file path with provided extension.
-
-    There is no base dir prefix such as :py:attr:`..conf.Settings.UPLOAD_DIR`, only sub-dir and path.
-    """
-    name = str(uuid4())
-    path = f"{name[0:2]}/{name[2:4]}"
-    return f"{path}/{name}.{ext}"
+    if instance.folder:
+        path = f"{instance.folder.path}/{filename}"
+    else:
+        path = f"/{filename}"
+    return ox_files_settings.resolve_upload(path, instance.owner.uuid, relative=True)
 
 
 class File(Described, Timestamped, ChildOwned):
@@ -80,7 +69,9 @@ class File(Described, Timestamped, ChildOwned):
     """
 
     # When folder is null, it is at root
-    folder = models.ForeignKey(Folder, models.CASCADE, null=True, blank=True, related_name="files")
+    folder = models.ForeignKey(
+        Folder, models.CASCADE, blank=True, null=True, related_name="files", verbose_name=_("Folder")
+    )
 
     name = models.CharField(_("Name"), max_length=128, validators=[validate_name])
     file = models.FileField(_("File"), upload_to=file_upload_to, null=True)
@@ -118,6 +109,21 @@ class File(Described, Timestamped, ChildOwned):
     class Meta:
         verbose_name = _("File")
         verbose_name_plural = _("Files")
+        # FIXME: add unique constraint
+
+    @cached_property
+    def file_url(self):
+        """Return file url."""
+        uuid = self.access and self.access.uuid or self.uuid
+        return reverse("serve-file", kwargs={"uuid": uuid})
+
+    @cached_property
+    def preview_url(self):
+        """Return file preview url."""
+        if not self.preview:
+            return None
+        uuid = self.access and self.access.uuid or self.uuid
+        return reverse("serve-file-preview", kwargs={"uuid": uuid})
 
     def on_save(self, fields=None):
         """Ensure mime type and file validation."""

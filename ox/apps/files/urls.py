@@ -24,3 +24,12 @@ urls = [
         name="index",
     ),
 ]
+
+urlpatterns = [
+    path(
+        "protected/file/<uuid:uuid>/",
+        views.ServeFileView.as_view(),
+        name="serve-file",
+    ),
+    path("protected/file/<uuid:uuid>/preview/", views.ServeFileView.as_view(preview=True), name="serve-file-preview"),
+]

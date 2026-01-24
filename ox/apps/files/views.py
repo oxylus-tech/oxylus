@@ -1,11 +1,50 @@
-from caps.views import OwnedViewSet, AccessViewSet
+from uuid import UUID
 
+from django.views.generic import View
+from django.views.generic.detail import SingleObjectMixin
+from django.http import HttpResponse, FileResponse
+
+from caps.views import OwnedViewSet, AccessViewSet
+from caps.views.mixins import SingleOwnedMixin, OwnedPermissionMixin
+
+from ox.core.conf import ox_settings
 from ox.apps.content.views import MessageViewSet
 from . import filters, serializers, tasks
 from .models import Folder, File, FolderComment, FileComment
 
 
 __all__ = ("FolderViewSet", "FolderAccessViewSet", "FileViewSet", "FileAccessViewSet")
+
+
+class ServeFileView(SingleOwnedMixin, OwnedPermissionMixin, SingleObjectMixin, View):
+    """Serve protected file to user."""
+
+    model = File
+
+    preview: bool = False
+    """ Serve preview instead of file. """
+
+    def get(self, request, uuid: str | UUID, *args, **kwargs):
+        self.object = self.get_object()
+
+        if self.preview:
+            field = self.object.preview
+        else:
+            field = self.object.file
+
+        match ox_settings.HTTP_SERVER_BACKEND:
+            case "nginx":
+                response = HttpResponse()
+                response["X-Accel-Redirect"] = ox_settings.protected_media_url(field.name)
+            case "apache":
+                response = HttpResponse()
+                response["X-Sendfile"] = field.path
+
+            case _:
+                response = FileResponse(open(field.path, "rb"))
+
+        response["Content-Disposition"] = f'inline; filename="{self.object.name}"'
+        return response
 
 
 class FolderViewSet(OwnedViewSet):
@@ -36,7 +75,7 @@ class FileViewSet(OwnedViewSet):
         tasks.create_preview.enqueue(uuid=str(ser.instance.uuid))
 
     def perform_update(self, ser):
-        if ser.validated_data.get("file"):
+        if ser.validated_data.get("file_data"):
             ser.instance.clear_files()
         super().perform_update(ser)
         tasks.create_preview.enqueue(uuid=str(ser.instance.uuid))

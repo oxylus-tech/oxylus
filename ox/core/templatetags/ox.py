@@ -5,7 +5,6 @@ from django import template, urls
 register = template.Library()
 
 
-# FIXME: remove?
 @register.simple_tag
 def panel_url(urlname: str, panel: str, view: str | None = None, id: str | int | None = None) -> str:
     """Return url to this panel.
@@ -19,9 +18,9 @@ def panel_url(urlname: str, panel: str, view: str | None = None, id: str | int |
     query = f"panel={panel}"
     if id:
         view = view or "detail.edit"
-        query += f"&view={view}&id={id}"
+        query += f"&v={view}&id={id}"
     elif view:
-        query += f"&view={view}"
+        query += f"&v={view}"
     return f"{url}?{query}"
 
 

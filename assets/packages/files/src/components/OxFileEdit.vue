@@ -32,7 +32,7 @@
                 </v-col>
                 <v-col cols="3" class="d-flex flex-column" v-else>
                     <v-spacer/>
-                    <ox-file-upload name="file"
+                    <ox-file-upload name="file_data"
                             @change="onFileChange($event, editor)">
                         <template #actions>
                             <v-btn v-if="editor.value.id"

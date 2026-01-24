@@ -80,6 +80,7 @@ async function save(): State {
         await me.editor.save(new FormData(me.form.$el)) :
         await me.editor.save()
     emits('saved', modelEditor.value.editor)
+    reset()
     return resp
 }
 

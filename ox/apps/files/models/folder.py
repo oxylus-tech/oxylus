@@ -11,8 +11,6 @@ from ox.apps.content.models import Message
 from ox.utils.models import Described, Timestamped
 from ox.utils.models.tree import OwnedTreeNode, OwnedTreeNodeQuerySet
 
-from ..conf import ox_files_settings
-
 
 __all__ = (
     "FolderQuerySet",
@@ -38,42 +36,16 @@ class Folder(Described, Timestamped, OwnedTreeNode):
     """
     Represent a folder in which files are stored.
 
-    There are two kind of folders:
+    .. important::
 
-        - virtual folder (default): the folder structure is only stored in the database, while file names and storage are obfuscated.
+        Updating :py:attr:`parent`, :py:attr:`name` and :py:attr:`path` should not be done manually. Instead use
+        :py:meth:`rename` and :py:meth:`move_to` methods to ensure that these values are correctly set.
 
-          The files are saved under :py:attr:`..conf.Settings.UPLOAD_DIR` directory.
+        When thoses values raise a ValidationError, user should assume that new values of the model are invalid.
 
-        - synchronized folder: the directory structure and file name are synchronized on the file system (to be used by external tools, not for direct user's decision).
-
-          The folders and files are saved and synchronized under :py:attr:`..conf.Settings.SYNC_DIR`.
-
-    Once a folder is a assigned a type, all its children and files will be impacted. To avoid filesystem synchronisation issues this value can not be changed afterward.
-
-    Important Notes
-    ---------------
-
-    Updating :py:attr:`parent`, :py:attr:`name` and :py:attr:`path` should not be done manually. Instead use
-    :py:meth:`rename` and :py:meth:`move_to` methods to ensure that these values are correctly set.
-
-    When thoses values raise a ValidationError, user should assume that new values of the model are invalid.
     """
 
     name = models.CharField(_("Name"), max_length=64, validators=[validate_name])
-    is_sync = models.BooleanField(
-        _("Synchronize"),
-        default=False,
-        help_text=_("Use real files and folders structure and name on the file system."),
-    )
-    """
-    This attribute allows to synchronize files and folder on the file system instead of being obfuscated.
-
-    Once set, this attribute should never be changed in order to avoid
-    desynchronization.
-
-    The folders will be put under directory following this convention:
-    ``{ox_files_settings}/{owner__uuid}/{path}``.
-    """
 
     objects = FolderQuerySet.as_manager()
 
@@ -152,19 +124,13 @@ class Folder(Described, Timestamped, OwnedTreeNode):
         if not self.is_sync:
             raise ValueError("This folder can not be synchronized with filesystem.")
 
-        initial_path = initial_path and self.get_sync_path(initial_path)
-        path = self.get_sync_path(self.path)
+        initial_path = initial_path and self.resolve(initial_path)
+        path = self.resolve(self.path)
         if initial_path and initial_path.exists():
             shutil.move(initial_path, path)
         else:
             path.mkdir(parents=True, exist_ok=True)
         return path
-
-    def get_sync_path(self, path) -> Path:
-        """Return synchronization directory for the provided folder path."""
-        if path.startswith("/"):
-            path = path[1:]
-        return ox_files_settings.sync_dir / str(self.owner.uuid) / path
 
 
 class FolderComment(Message):

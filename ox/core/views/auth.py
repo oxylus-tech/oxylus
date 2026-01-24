@@ -1,3 +1,4 @@
+from django.db.models.functions import Lower
 from django.contrib.auth.models import User, Group, Permission
 from django.contrib.contenttypes.models import ContentType
 
@@ -32,8 +33,12 @@ class PermissionViewSet(viewsets.ModelViewSet):
 
 
 class GroupViewSet(viewsets.ModelViewSet):
-    queryset = Group.objects.all().prefetch_related(
-        *_prefetch_lookups(),
+    queryset = (
+        Group.objects.all()
+        .prefetch_related(
+            *_prefetch_lookups(),
+        )
+        .order_by(Lower("name"))
     )
     serializer_class = auth.GroupSerializer
     permission_classes = [DjangoModelPermissions]
@@ -44,9 +49,13 @@ class GroupViewSet(viewsets.ModelViewSet):
 
 
 class UserViewSet(viewsets.ModelViewSet):
-    queryset = User.objects.all().prefetch_related(
-        *_prefetch_lookups("user_"),
-        *_prefetch_lookups("groups__"),
+    queryset = (
+        User.objects.all()
+        .prefetch_related(
+            *_prefetch_lookups("user_"),
+            *_prefetch_lookups("groups__"),
+        )
+        .order_by("last_name", "first_name")
     )
     serializer_class = auth.UserSerializer
     permission_classes = [DjangoModelPermissions]

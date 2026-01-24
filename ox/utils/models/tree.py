@@ -47,6 +47,10 @@ class TreeNodeQuerySet(SaveHookQuerySet):
             "level", self.model.path_part_attr
         )
 
+    def children(self, node) -> TreeNodeQuerySet:
+        """Return direct children for the provided node."""
+        return self.filter(level=node.level + 1).descendants(node)
+
     def ancestors(self, node, inclusive: bool = False) -> TreeNodeQuerySet:
         """Return all ancestors of a node, order by default by level.
 
@@ -167,6 +171,10 @@ class TreeNode(SaveHook):
         if not inclusive and self.pk:
             query = query.exclude(pk=self.pk)
         return query
+
+    def get_children(self) -> TreeNodeQuerySet:
+        """Return direct children for this node."""
+        return type(self).objects.children(self)
 
     def get_descendants(self, inclusive: bool = False) -> TreeNodeQuerySet:
         """Return a queryset to all descendants (shortcut to :py:meth:`TreeNodeQuerySet.descendants`).

@@ -52,7 +52,7 @@ if plugins := getattr(settings, "PLUGINS_APPS", None):
 # ---- Forced values
 ROOT_URLCONF = "ox.urls"
 ASGI_APPLICATION = "ox.asgi.application"
-WSGI_APPLICATION = "ox.wsgi.application"
+WSGI_APPLICATION = os.environ.get("OX_WSGI_APPLICATION") or "ox.wsgi.application"
 
 USE_I18N = True
 USE_L10N = True
