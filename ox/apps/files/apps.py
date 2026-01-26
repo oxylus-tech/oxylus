@@ -16,6 +16,7 @@ class AppConfig(apps.AppConfig):
     npm_package = "@oxylus/files"
 
     def ready(self):
+        from . import signals  # noqa
         from .processors import registry
 
         registry.populate()

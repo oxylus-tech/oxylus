@@ -74,9 +74,49 @@ class TreeNodeQuerySet(SaveHookQuerySet):
 class TreeNode(SaveHook):
     """Represent a tree node, using mechanism similar to MPTT.
 
-    The tree uses path in order to lookup for children. The path is
-    constructed based on field provided by :py:attr:`path_part_attr`.
-    By default it is set to ``name`` (not provided by this model).
+    Each node has:
+
+    - :py:attr:`tree_id`: an actual tree id. If None provided, it will generate
+      a new one (there can be multiple trees).
+    - :py:attr:`level`: node depth in the tree
+    - :py:attr:`parent`: parent node.
+    - :py:attr:`path`: full path to the node using its name and his parents'.
+
+    The path is generated and **must not be directly set**. Use instead the
+    adequate methods, as :py:meth:`move_to`.
+
+    To construct it, it looks up for the field declared by :py:attr:`path_part_attr`.
+    The default field is ``name``, but is not provided by this model.
+
+    Operations
+    ----------
+
+    .. code-block:: python
+
+        # ...
+        from ox.utils.models import TreeNode
+
+        class MyNode(TreeNode):
+            name = models.CharField(max_length=64)
+
+        # Create a node
+        root_node = MyNode.objects.create(name="")
+        child_1 = MyModel.objects.create(name="child-1", parent=root_node)
+        child_2 = MyModel.objects.create(name="child-2", parent=root_node)
+
+        # Move a node
+        child_2.move_to(child_1)
+        root_node.insert(child_2)
+
+        # Get relatives as queryset
+        child_1.get_siblings()      # sibling nodes
+        child_1.get_children()      # direct descendants
+        child_1.get_descendants()   # all descendants
+        child_1.get_descendants(inclusive=True)   # all descendants including self
+        child_2.get_ancestors()     # all ancestors
+        child_2.get_ancestors(inclusive=True)     # all ancestors including self
+
+
     """
 
     tree_id = models.PositiveIntegerField(_("Tree id"), blank=True)
@@ -108,15 +148,16 @@ class TreeNode(SaveHook):
             tree_id = type(self).objects.aggregate(Max("tree_id"))["tree_id__max"] or 0
             self.tree_id = tree_id + 1
             self.level = 0
+        else:
+            # this can happen too: set level to 0
+            self.level = 0
 
         super().on_save(fields)
         self.validate_node()
 
         path = self.get_path()
         if path != self.path:
-            old_len = len(self.path)
-            self.get_descendants().update(path=Concat(Value(self.path + "/"), Substr("path", old_len + 2)))
-            self.path = path
+            self.sync_node(self.path, path)
 
     def validate_node(self, queryset=None):
         """Validate the node.
@@ -124,6 +165,11 @@ class TreeNode(SaveHook):
         :yield ValidationError: if a path exists for parent and should be unique.
         """
         cls = type(self)
+
+        # check for circular dependency graph
+        if self.parent and self.get_descendants().filter(parent=self.parent).exists():
+            raise ValidationError(f"The parent {cls._meta.verbose_name} is nested under this one.")
+
         if cls.path_unique:
             path = self.get_path()  # ensure to have actual path
             query = cls.objects.find_clone(self)
@@ -132,10 +178,23 @@ class TreeNode(SaveHook):
                     {self.path_part_attr: f"Another {cls._meta.verbose_name} exists for this path `{path}`."}
                 )
 
+    def sync_node(self, initial_path, target_path):
+        """
+        Ensure to synchronize data from database (or other by subclass) after
+        node have been validated.
+
+        This method is only run if the original path and new path differs.
+        """
+        old_len = len(initial_path or "")
+        self.get_descendants().update(path=Concat(Value(target_path + "/"), Substr("path", old_len + 2)))
+        self.path = target_path
+
     def get_path(self) -> str:
         """Return path for self and the provided parent."""
         attr = getattr(self, self.path_part_attr)
         prefix = self.parent and self.parent.path or ""
+        if prefix.endswith(self.path_sep):
+            prefix = prefix[: -len(self.path_sep)]
         return f"{prefix}{self.path_sep}{attr}"
 
     def move_to(self, parent: TreeNode | None, save: bool = True):
@@ -162,7 +221,11 @@ class TreeNode(SaveHook):
         """
         child.move_to(self, save)
 
-    def siblings(self, inclusive: bool = False) -> TreeNodeQuerySet:
+    def get_tree(self):
+        """Return queryset of nodes of the same tree."""
+        return type(self).objects.filter(tree_id=self.tree_id)
+
+    def get_siblings(self, inclusive: bool = False) -> TreeNodeQuerySet:
         """Return queryset to node siblings.
 
         :param inclusive: whether to include self.

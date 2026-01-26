@@ -6,6 +6,9 @@ from ox.core.conf import ox_settings
 from ox.utils import conf
 
 
+__all__ = ("Settings", "ox_files_settings", "resolve")
+
+
 class Settings(conf.Settings):
     UPLOAD_DIR = "ox_files/uploads"
     """ Subdirectory in protected media where to upload files. """
@@ -15,13 +18,15 @@ class Settings(conf.Settings):
     FILE_SIZE_LIMIT = 15 * 1024 * 1024
     """ Set maximum file size. """
 
-    CLEAR_FILES_ON_DELETE: False = True
-    """ When a File is deleted from database, remove it from storage. """
-
     MAGIC_BUFFER: int = 2048
     """ Buffer size used by Python-Magic to read mime types. """
     THUMBNAIL_SIZE: tuple[int, int] = (600, 800)
     """ Size for thumbnails """
+
+    WEBDAV_HOST: str = settings.ALLOWED_HOSTS[0]
+    """ Host for the WebDAV server. Defaults to the first ``ALLOWED_HOSTS``. """
+    WEBDAV_PORT: int = 8042
+    """ Port of the WebDAV server. """
 
     PROCESSORS: list[str] = [
         "ox.apps.files.processors.ImageProcessor",
@@ -42,7 +47,7 @@ class Settings(conf.Settings):
         # We enforce media to be protected
         return ox_settings.protected_media_dir / self.PREVIEW_DIR
 
-    def resolve_upload(self, path: str, owner: UUID | None = None, relative: bool = False):
+    def resolve(self, path: str, owner: UUID | None = None, relative: bool = False):
         """Resolve path under file upload directory.
 
         :param path: path to resolve.
@@ -65,3 +70,7 @@ ox_files_settings: Settings = Settings("OX_FILES")
 """
 Settings used by ``ox_files`` application, using key ``OX_FILES``.
 """
+
+
+resolve = ox_files_settings.resolve
+""" Shortcut to ``ox_files_settings`` 's :py:meth:`Settings.resolve`. """

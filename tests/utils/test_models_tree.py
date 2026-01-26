@@ -102,11 +102,11 @@ class TestTreeNode:
         assert child.tree_id == second_root.tree_id
         assert child.parent == second_root
 
-    def test_siblings(self, root_node, child, child_2):
-        assert list(child.siblings()) == [child_2]
+    def get_test_siblings(self, root_node, child, child_2):
+        assert list(child.get_siblings()) == [child_2]
 
-    def test_siblings_including_self(self, root_node, child, child_2):
-        assert list(child.siblings(True)) == [child, child_2]
+    def get_test_siblings_including_self(self, root_node, child, child_2):
+        assert list(child.get_siblings(True)) == [child, child_2]
 
     def test_get_descendants(self, root_node, child, child_2, subchild):
         assert list(root_node.get_descendants()) == [child, child_2, subchild]

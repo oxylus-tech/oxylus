@@ -1,5 +1,6 @@
 from uuid import UUID
 
+from django.core.exceptions import PermissionDenied
 from django.views.generic import View
 from django.views.generic.detail import SingleObjectMixin
 from django.http import HttpResponse, FileResponse
@@ -17,7 +18,7 @@ __all__ = ("FolderViewSet", "FolderAccessViewSet", "FileViewSet", "FileAccessVie
 
 
 class ServeFileView(SingleOwnedMixin, OwnedPermissionMixin, SingleObjectMixin, View):
-    """Serve protected file to user."""
+    """Serve protected file to user, checking access permission."""
 
     model = File
 
@@ -26,6 +27,8 @@ class ServeFileView(SingleOwnedMixin, OwnedPermissionMixin, SingleObjectMixin, V
 
     def get(self, request, uuid: str | UUID, *args, **kwargs):
         self.object = self.get_object()
+        if not request.user.has_perm("ox_files.view_file", self.object):
+            raise PermissionDenied("You don't have access to this file.")
 
         if self.preview:
             field = self.object.preview
@@ -59,6 +62,7 @@ class FolderAccessViewSet(AccessViewSet):
 
 
 class FileViewSet(OwnedViewSet):
+    # FIXME: permission to add file to a folder
     queryset = File.objects.all().order_by("-updated")
     serializer_class = serializers.FileSerializer
     filterset_fields = {

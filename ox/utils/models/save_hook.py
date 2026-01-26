@@ -10,6 +10,8 @@ class SaveHookQuerySet(models.QuerySet):
     and sub-models.
     """
 
+    # create/acreate are actually calling obj's save() method
+
     def bulk_create(self, objs, *a, **kw):
         if issubclass(self.model, SaveHook) and self.model.on_save is not SaveHook.on_save:
             objs = self._save_hook_iter(objs)
@@ -43,8 +45,8 @@ class SaveHookQuerySet(models.QuerySet):
 
 class SaveHook(models.Model):
     """
-    Provide `on_save` hook called when model is saved.
-    This is called on related queryset methods too.
+    Provide `on_save` hook called at model saving (before commit to the
+    database). The hook is called on related queryset methods too.
 
     When using this class, if you need to have custom queryset,
     you'll have to subclass it from :py:class:`SaveHookQuerySet`.

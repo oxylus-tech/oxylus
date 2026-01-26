@@ -10,6 +10,7 @@ from django.utils.translation import gettext_lazy as _
 from ox.apps.content.models import Message
 from ox.utils.models import Described, Timestamped
 from ox.utils.models.tree import OwnedTreeNode, OwnedTreeNodeQuerySet
+from .. import conf
 
 
 __all__ = (
@@ -65,6 +66,10 @@ class Folder(Described, Timestamped, OwnedTreeNode):
         verbose_name_plural = _("Folders")
         constraints = [models.UniqueConstraint("parent", "name", "owner", name="unique_folder_name")]
 
+    def abs_path(self) -> Path:
+        """File system path of the folder."""
+        return conf.resolve(self.path, self.owner.uuid)
+
     def rename(self, name: str, save: bool = True):
         """Rename folder."""
         if name != self.name:
@@ -102,35 +107,31 @@ class Folder(Described, Timestamped, OwnedTreeNode):
         # import here to avoid circular dependencies
         from .file import File
 
-        init_path = self.path
-
-        if self.parent:
-            self.is_sync = self.parent.is_sync
-
         super().validate_node()
 
         if File.objects.filter(folder=self.parent, name=self.name):
             raise ValidationError({"name": f"A file `{self.name}` already exists in {self.parent.name}."})
 
-        self.is_sync and self.sync(init_path)
+    def sync_node(self, source_path: str | None = None, target_path: str | None = None):
+        """Synchronize folder with filesystem (move or create it)."""
+        source_p = source_path and conf.resolve(source_path, self.owner.uuid)
+        target_p = conf.resolve(target_path, self.owner.uuid)
 
-    def sync(self, initial_path: str | None = None) -> Path:
-        """Synchronize folder with filesystem
+        if target_p.exists():
+            raise ValueError(f"A file or directory already exists at `{target_p}`.")
 
-        :param initial_path: original path before it has been moved (as :py:attr:`path` value).
-        :return the path on file system
-        :yield ValueError: when folder is not synchronized (:py:attr:`is_sync`).
-        """
-        if not self.is_sync:
-            raise ValueError("This folder can not be synchronized with filesystem.")
-
-        initial_path = initial_path and self.resolve(initial_path)
-        path = self.resolve(self.path)
-        if initial_path and initial_path.exists():
-            shutil.move(initial_path, path)
+        if source_p and source_p.exists():
+            shutil.move(source_p, target_p)
         else:
-            path.mkdir(parents=True, exist_ok=True)
-        return path
+            target_p.mkdir(parents=True, exist_ok=True)
+
+        super().sync_node(source_path, target_path)
+
+    def delete(self):
+        path = conf.resolve(self.path, self.owner.uuid)
+        if path.exists():
+            path.rmdir()
+        super().delete()
 
 
 class FolderComment(Message):

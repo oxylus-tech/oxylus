@@ -1,12 +1,12 @@
 from wsgidav.wsgidav_app import WsgiDAVApp
+from ..conf import ox_files_settings
 from . import middleware, provider
 
 
 # WSGIDAV config
 dav_config = {
-    # TODO: DJANGO SETTINGS
-    "host": "0.0.0.0",
-    "port": 8080,
+    "host": ox_files_settings.WEBDAV_HOST,
+    "port": ox_files_settings.WEBDAV_PORT,
     "provider_mapping": {
         "/": provider.DjangoDAVProvider(),
     },
@@ -16,10 +16,15 @@ dav_config = {
         "accept_digest": False,
         "default_to_digest": False,
     },
-    "simple_dc": {"user_mapping": {}},  # fallback, not used
+    "verbose": 1,
 }
 
 # Wrap with Django auth middleware
-dav_app = WsgiDAVApp(dav_config)
-# dav_app = middleware.CapsMiddleware(dav_app)
-# dav_app = middleware.DjangoAuthMiddleware(dav_app)
+_dav_app = WsgiDAVApp(dav_config)
+
+
+def dav_app(environ, start_response):
+    dest = environ.get("HTTP_DESTINATION")
+    if dest:
+        environ["HTTP_DESTINATION"] = dest.replace("webdav://", "http://")
+    return _dav_app(environ, start_response)

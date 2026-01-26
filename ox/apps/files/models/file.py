@@ -1,8 +1,11 @@
 from __future__ import annotations
 
 from functools import cached_property
+from pathlib import Path
+import os
+import shutil
 
-from django.db import models
+from django.db import models, transaction
 from django.conf import settings
 from django.core.exceptions import ValidationError, PermissionDenied
 from django.utils.translation import gettext_lazy as _
@@ -48,7 +51,7 @@ def file_upload_to(instance, filename) -> str:
         path = f"{instance.folder.path}/{filename}"
     else:
         path = f"/{filename}"
-    return ox_files_settings.resolve_upload(path, instance.owner.uuid, relative=True)
+    return ox_files_settings.resolve(path, instance.owner.uuid, relative=True)
 
 
 class File(Described, Timestamped, ChildOwned):
@@ -65,13 +68,11 @@ class File(Described, Timestamped, ChildOwned):
     Each file is also attached to an :py:attr:`owner` that specifies who has
     access to the object (using ``django-caps`` permission system).
 
-    At deletion, related files and previews can be deleted based on ``.conf.ox_files_settings`` (``CLEAR_FILES_ON_DELETE=True`` option).
+    At deletion, related files and previews are deleted based on ``.conf.ox_files_settings`` (``CLEAR_FILES_ON_DELETE=True`` option).
     """
 
     # When folder is null, it is at root
-    folder = models.ForeignKey(
-        Folder, models.CASCADE, blank=True, null=True, related_name="files", verbose_name=_("Folder")
-    )
+    folder = models.ForeignKey(Folder, models.CASCADE, related_name="files", verbose_name=_("Folder"))
 
     name = models.CharField(_("Name"), max_length=128, validators=[validate_name])
     file = models.FileField(_("File"), upload_to=file_upload_to, null=True)
@@ -125,6 +126,13 @@ class File(Described, Timestamped, ChildOwned):
         uuid = self.access and self.access.uuid or self.uuid
         return reverse("serve-file-preview", kwargs={"uuid": uuid})
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self._initial_path = self.file and self.file.path
+
+    def abs_path(self):
+        return self.folder.abs_path() / self.name
+
     def on_save(self, fields=None):
         """Ensure mime type and file validation."""
         super().on_save(fields)
@@ -136,6 +144,7 @@ class File(Described, Timestamped, ChildOwned):
 
         :yield ValidationError: if file name is already present in folder (file or folder).
         """
+        # TODO: handle file move
         kw = {"name": self.name, "owner": self.owner}
 
         query = File.objects.filter(folder_id=self.folder_id, **kw)
@@ -145,11 +154,70 @@ class File(Described, Timestamped, ChildOwned):
         if query.exists():
             raise ValidationError({"name": "Another file exists for this path."})
 
-        if self.folder and self.folder.owner_id != self.owner_id:
+        if not self.owner_id:
+            self.owner_id = self.folder.owner_id
+        elif self.folder.owner_id != self.owner_id:
             raise PermissionDenied("File's owner must be the same as its folder.")
 
         if Folder.objects.filter(parent_id=self.folder_id, **kw):
             raise ValidationError({"name": "A folder exists for this path."})
+
+    @transaction.atomic
+    def move_or_copy(self, path: str, copy: bool = False):
+        """Move file by path.
+
+        :param path: path related to upload directory
+        """
+        file_dest = ox_files_settings.resolve(path, self.owner.uuid)
+        if file_dest.exists():
+            raise ValueError(f"A file or directory already exists at {file_dest}")
+
+        dir = os.path.dirname(path)
+        # folder = self.folder.tree().filter(path=dir)
+        folder = Folder.objects.filter(tree_id=self.owner_id, path=dir).first()
+        file_src = Path(self.file.path)
+
+        if copy:
+            obj = File(
+                **{
+                    f: getattr(self, f)
+                    for f in (
+                        "owner",
+                        "name",
+                        "file",
+                        "preview",
+                        "mime_type",
+                        "file_size",
+                        "caption",
+                        "description",
+                        "ariaDescription",
+                        "metadata",
+                    )
+                }
+            )
+        else:
+            obj = self
+
+        obj.folder = folder
+        obj.name = path[len(dir) :]
+        obj.file.name = str(file_dest.relative_to(settings.MEDIA_ROOT))
+
+        if copy:
+            preview_src = Path(obj.preview.path)
+            preview_dest = ox_files_settings.preview_dir / f"{obj.uuid}"
+            obj.preview.name = str(preview_dest.relative_to(settings.MEDIA_ROOT))
+
+        # order matters, we save before moving. This is revert in case of
+        # error (transaction atomic).
+        obj.save()
+
+        if copy:
+            shutil.copyfile(str(preview_src), str(preview_dest))
+            shutil.copyfile(str(file_src), str(file_dest))
+            # preview_src.copy(preview_dest)
+            # file_src.copy(file_dest)
+        else:
+            file_src.rename(file_dest)
 
     def read_mime_type(self, save: bool = True) -> str:
         """Read mime-type from file and update corresponding field.
@@ -175,10 +243,13 @@ class File(Described, Timestamped, ChildOwned):
             self.read_mime_type(save)
         return registry.get(self.mime_type)
 
-    def clear_files(self):
-        """Delete files from storage.
+    def delete(self, *args, clear_files: bool | None = None, **kwargs):
+        """
+        Ensure file deletion.
 
-        This method is used to clear storage when the model instance is deleted. It updates fields without saving model instance.
+        :param *args: forward to super's ``delete()``
+        :param clear_files: if True or False, overrides default settings.
+        :param **kwargs: forward to super's ``delete()``
         """
         if self.preview:
             self.preview.delete(False)
@@ -187,20 +258,6 @@ class File(Described, Timestamped, ChildOwned):
 
         self.preview = None
         self.file = None
-
-    def delete(self, *args, clear_files: bool | None = None, **kwargs):
-        """
-        Ensure file deletion if ``OX_FILES['CLEAR_FILES_ON_DELETE']`` or
-        ``clear_files`` is True.
-
-        :param *args: forward to super's ``delete()``
-        :param clear_files: if True or False, overrides default settings.
-        :param **kwargs: forward to super's ``delete()``
-        """
-        if clear_files is None:
-            clear_files = ox_files_settings.CLEAR_FILES_ON_DELETE
-        if clear_files:
-            self.clear_files()
         return super().delete(*args, **kwargs)
 
 
