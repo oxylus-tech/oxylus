@@ -8,7 +8,7 @@
             <slot name="list.filters" :list="list" :filters="filters"/>
         </template>
 
-        <template #views.edit="{value, saved, list}">
+        <template #views.edit.default="{value, saved, list}">
             <ox-mail-account-edit :initial="value" :saved="saved"
                 :owner="list?.filters?.owner__uuid"/>
         </template>

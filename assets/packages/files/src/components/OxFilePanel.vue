@@ -55,19 +55,19 @@
             <slot name="item.actions" :item="item" v-bind="bind"/>
         </template>
 
-        <template #views.edit="{value, saved, list}">
+        <template #views.edit.default="{value, saved, list}">
             <ox-file-edit :initial="value" :saved="saved"
                 :owner="list?.filters?.owner__uuid"
                 :folder="list?.filters.folder__uuid" />
         </template>
 
-        <template #views.create="{value, saved, list}">
+        <template #views.create.default="{value, saved, list}">
             <ox-file-edit :initial="value" :saved="saved"
                 :owner="list?.filters?.owner__uuid"
                 :folder="list?.filters.folder__uuid" />
         </template>
 
-        <template #views.edit.sections="{value}">
+        <template #views.edit="{value}">
             <ox-section name="comments" :title="t(FileComment, 2)">
                 <ox-message-list v-if="value"
                         :repo="repos.fileComments" :repos="repos"

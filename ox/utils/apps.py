@@ -3,6 +3,7 @@ from graphlib import TopologicalSorter
 from typing import Iterable
 
 from django.apps import apps, AppConfig
+from ox.core.apps import AppConfig as OxAppConfig
 
 
 __all__ = (
@@ -63,21 +64,56 @@ def order_apps_dependencies(app_configs: None | Iterable[AppConfig | str] = None
 class DiscoverModules:
     """Utility function used to discover sub-modules in applications.
 
+    Basically you provide lookup module names and handler methods.
+    When calling :py:meth:`run` or :py:meth:`run_handler`, the applications
+    will be scanned to find the corresponding module(s). For each, a
+    corresponding handler will be called.
+
     For each declared sub-module, there must be an equivalent method
     handler with the following signature: ``handle_{module_name}(self,
     app, module, **kw)`` (where dots in ``module_name`` are replace by ``_``)
+
+    Example:
+
+    .. code-block::
+
+            discover = DiscoverModules(
+                ["urls", "nested.module"],
+                handle_urls = lambda app, mod, **kw: print(app, mod, kw),
+                handle_nested_module = lambda app, mod, **kw: print(app, mod, kw)
+            )
+
+            # Running handlers
+            discover.run(foo="bar") # for all searched modules
+            discover.run_handler("urls", foo="bar") # for a single module
+
+            # Or by subclassing
+            class Discover(DiscoverModule):
+                module_names = "urls"
+                oxylus_apps = True
+
+                # Named parameters are provided by user when calling run or
+                # run_handler.
+                def handle_urls(self, app, module, **kwargs):
+                    print(app, module, **kwargs)
+
     """
 
     module_names: str | Iterable[str] = ""
     """A single or a list of module names to look-up for."""
+    oxylus_apps: bool = False
+    """Only run over Oxylus applications (subclasses of :py:class:`ox.core.apps.AppConfig`). """
 
-    def __init__(self, module_names: str | Iterable[str] | None = None, **handlers):
+    def __init__(self, module_names: str | Iterable[str] | None = None, oxylus_apps: bool = False, **handlers):
         """
         :param module_names: list of module names to look up
+        :param oxylus_apps: only run over Oxylus applications
         :param handlers: list of handler functions.
         """
         if module_names is not None:
             self.module_names = module_names
+
+        self.oxylus_apps = oxylus_apps
 
         if handlers:
             for key, handler in handlers.items():
@@ -85,31 +121,36 @@ class DiscoverModules:
                     raise ValueError(f"Invalid handler method name: {key} (should start with `handle_`)")
                 setattr(self, key, handler)
 
-    def run(self, app_configs: Iterable[AppConfig] = None, **kw):
+    def run(self, app_configs: Iterable[AppConfig] | None = None, **kw):
         """Run handler over all modules."""
+        app_configs = self.get_app_configs(app_configs)
         if app_configs is None:
             app_configs = apps.get_app_configs()
 
         for module_name in self.get_module_names():
             self.run_handler(module_name, app_configs, **kw)
 
-    def get_module_names(self) -> Iterable[str]:
-        """Return modules names as an iterable"""
-        if isinstance(self.module_names, str):
-            return [
-                self.module_names,
-            ]
-        return self.module_names
-
     def run_handler(self, module_name: str, app_configs: Iterable[AppConfig] = None, **kw):
         """Run handler over app config looking for the provided module."""
         handler = self.get_handler(module_name)
-        if app_configs is None:
-            app_configs = apps.get_app_configs()
-
+        app_configs = self.get_app_configs(app_configs)
         for app in app_configs:
             if mod := self.get_app_module(app, module_name):
                 handler(app, mod, **kw)
+
+    def get_app_configs(self, app_configs: Iterable[AppConfig] | None = None):
+        """Return applications configs, filtered based on attributes."""
+        if app_configs is None:
+            app_configs = apps.get_app_configs()
+        if self.oxylus_apps:
+            app_configs = [a for a in app_configs if isinstance(a, OxAppConfig)]
+        return app_configs
+
+    def get_module_names(self) -> Iterable[str]:
+        """Return modules names as an iterable"""
+        if isinstance(self.module_names, str):
+            return [self.module_names]
+        return self.module_names
 
     def get_handler(self, module_name):
         """Return handler function for the provided"""

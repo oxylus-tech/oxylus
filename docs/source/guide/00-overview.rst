@@ -27,7 +27,7 @@ Before digging in technical aspects, lets see what is required to create an appl
 
         - Inherit the ``AppConfig`` from Oxylus' :py:class:`~ox.core.apps.AppConfig`.
         - Provide more info (:py:class:`~ox.core.apps.AppConfig` and  :py:class:`~ox.assets.base.Assets`)
-        - If specific :doc:`assets <assets>` are required append them. There is no need to declare an ``Asset`` for the project being built, and default :py:attr:`~ox.core.apps.AppConfig.assets` already provides what you would use.
+        - If specific :ref:`assets <guide-app-assets>` are required append them. There is no need to declare an ``Asset`` for the project being built, and default :py:attr:`~ox.core.apps.AppConfig.assets` already provides what you would use.
 
 - a frontend application: a Vite/Vue project the source of the package is usually put in Django app's ``assets`` sub-directory;
 

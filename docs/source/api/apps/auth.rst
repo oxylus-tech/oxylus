@@ -8,10 +8,12 @@ ox.apps.auth.apps
 -----------------
 
 .. automodule:: ox.apps.auth.apps
+   :show-inheritance:
    :members:
 
 ox.apps.auth.panels
 -------------------
 
 .. automodule:: ox.apps.auth.panels
+   :show-inheritance:
    :members:

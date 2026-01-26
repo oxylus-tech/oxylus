@@ -4,7 +4,7 @@
             <slot :name="name" v-bind="bind"></slot>
         </template>
 
-        <template #views.edit="{value, saved}">
+        <template #views.edit.default="{value, saved}">
             <ox-group-edit :initial="value" :saved="saved"/>
         </template>
 
@@ -14,7 +14,7 @@
             </ox-section>
         </template> -->
 
-        <template #views.create="{saved}">
+        <template #views.create.default="{saved}">
             <ox-group-edit :saved="saved"/>
         </template>
     </ox-model-panel>

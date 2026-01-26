@@ -20,11 +20,11 @@
              </v-chip>
         </template>
 
-        <template #views.edit="{value, saved}">
+        <template #views.edit.default="{value, saved}">
             <ox-user-edit :initial="value" :saved="saved" :full="true"/>
         </template>
 
-        <template #views.create="{value, saved}">
+        <template #views.create.default="{value, saved}">
             <ox-user-edit :saved="saved" :full="true"/>
         </template>
     </ox-model-panel>

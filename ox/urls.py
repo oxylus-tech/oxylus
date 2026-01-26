@@ -3,12 +3,18 @@ This module provides urls for Oxylus applications.
 
 It scans over applications' directory for module ``urls`` from which it gets:
 
-    - ``urls``: the list of urls to regular views. They will be namespaced under the app label. The final url will look like: ``{root_url}/{path}``.
-    - ``api_urls``: the list of urls to API views. They will be namespaced as ``{app.label}-api``. The final url will look like: ``api/{root_url}/{path}``.
+    - ``urls``: the list of applications urls to regular views. They will be namespaced under the app label. The final url will look like: ``{root_url}/{path}``.
+    - ``api_urls``: the list of applications urls to API views. They will be namespaced as ``{app.label}-api``. The final url will look like: ``api/{root_url}/{path}``.
+    - ``urlpatterns``: url paths to prepend to project's `urlpatterns`. Those are not namespaced.
 
 Where ``root_url`` is specified on the AppConfig instance (if none, uses app label). Note that only subclasses of :py:class:`ox.core.apps.AppConfig` are taken in account).
 
 Thoses urls will be automatically added to url patterns.
+
+
+.. note::
+
+    URL are discovered only for Oxylus based application, aka using :py:class:`ox.core.apps.AppConfig`.
 
 """
 
@@ -44,6 +50,7 @@ class Router:
 
     class Discover(DiscoverModules):
         module_names = "urls"
+        oxylus_apps = True
 
         def handle_urls(self, app, module, app_urls, **kw):
             # FIXME: filter by Oxylus AppConfig only

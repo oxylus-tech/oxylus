@@ -52,8 +52,62 @@ The Oxylus layer makes this integration, and provides for the assets a set of co
     Regarding dependencies declared by AppConfig's :py:attr:`~ox.core.apps.AppConfig.assets`, it looks up in the
     ``node_module`` folder.
 
+
+Application Layout
+------------------
+
+The client application provide the following layout using ``OxApp`` component. The screenshot is of a model panel (``OxOrganisationTypePanel``, the view is ``table``).
+
+.. image:: ../static/layout-000.png
+
+
+- **A**: top bar, providing quick access and navigation;
+- **B**: applications menu (which can be hidden by button [1]);
+- **C**: all panels displaying only the current one. A panel can provide multiple views [7];
+- **1**: button to show/hide applications menu;
+- **2**: panel or view's title and icon;
+- **3**: view's actions;
+- **4**: panel's views navigation buttons;
+- **5**: applications navigation (reflect the structure provided by ``panels.py``);
+- **6**: user menu;
+- **7**: panel's content or views;
+
+A view can have multiple sections, in such case they will be displayed under tabs:
+
+.. image:: ../static/layout-tabs.png
+
+Panel and view title and navigations will be rendered in the top bar. A view can also provide extra actions and buttons there, such as showing
+list filters. Note: filters are available for all list views, while the list itself is handled by the model panel component.
+
+Panels can have a provided state which will be rendered when required (such as processing API request, or error display).
+
+
+This provides us the following components:
+
+- ``OxApp``: the main application components under everything is done (and providing users, navigation, application data, etc.)
+- ``OxPanel``: the base panel component, handling views routing, an nested views layout;
+- ``OxModelPanel``: panel for displaying a model, fetching data, and providing a default set of views (table list, card list, edit and create);
+- ``OxView``: a single view;
+- ``OxSection``: sections in a view;
+- ``OxModelEdit``: interface for editing a model instance, handling saving and state management;
+
+
 Setup
 -----
+
+For a basic application providing model views, you'll have to write at least:
+
+- a project setup configured;
+- models mapping to data returned by your application viewsets;
+- composables: at least to use the model you've declared;
+- components for each model:
+
+    - panel: this is the main interface for accessing and editing a model;
+    - editor: this is used for editing and viewing an object (or a new one);
+
+- locales: specific localisation messages;
+
+
 
 Configuration
 .............
@@ -119,7 +173,7 @@ this is the module being loaded for initializing the application.
 
 Few explanations about what's going on here:
 
-- ``OxApp``: this is the default Vue application configuration;
+- ``OxApp``: this is the default Vue application component;
 - ``init``: initialize Vue, Vuetify and mount the app to default entrypoint.
   It also runs various setups as for translations.
 - ``createPinia``: initialize Pinia-ORM with Oxylus specific customizations (such
@@ -197,32 +251,6 @@ You also need to add composable to allow usage of the models' repositories. In `
 User Interface
 --------------
 
-Application Layout
-...................
-
-The client application provide the following layout using ``OxApp`` component. The screenshot is of a model panel (``OxOrganisationTypePanel``, the view is ``list.table``).
-
-.. image:: ../static/layout-000.png
-
-
-- **A**: top bar, providing quick access and navigation;
-- **B**: applications menu (which can be hidden by button [1]);
-- **C**: all panels displaying only the current one. A panel can provide multiple views [7];
-- **1**: button to show/hide applications menu;
-- **2**: panel or view's title and icon;
-- **3**: view's actions;
-- **4**: panel's views navigation buttons;
-- **5**: applications navigation (reflect the structure provided by ``panels.py``);
-- **6**: user menu;
-- **7**: panel's content or views;
-
-
-Panel and view title and navigations will be rendered in the top bar. A view can also provide extra actions and buttons there, such as showing
-list filters. Note: filters are available for all list views, while the list itself is handled by the model panel component.
-
-Panels can have a provided state which will be rendered when required (such as processing API request, or error display).
-
-
 Panels
 ......
 
@@ -249,7 +277,7 @@ Here is a simple example of a panel:
 
 Lets apply it to our own example. We will prefix our components with ``Ma``.
 
-``components/MaBook.vue``:
+``components/MaBookPanel.vue``:
 
 .. code-block:: xml
 
@@ -280,14 +308,30 @@ Lets apply it to our own example. We will prefix our components with ``Ma``.
             </template>
 
             <!--
-                You should provide an edit view which will be used for view/edit an item.
+                You should provide an editor which will be used for view/edit an item.
+                This is actually put inside the edit views' default OxSection.
 
                 `saved`: this method is called when the user saves the item;
                 `value`: initial item's values.
             -->
 
-            <template #views.detail.edit.default="{value, saved}">
+            <template #views.edit.default="{value, saved, ...bind}">
                 <ma-book-edit :initial="value" :saved="saved" />
+                <slot name="views.edit.default" v-bind="bind" :value="value" :saved="saved"/>
+            </template>
+
+            <!-- If you want to add extra sections, you can add them here: -->
+            <template #views.edit="{value, saved, ...bind}">
+                <ox-section :name="test" :title="t('app.test.title')">
+                    <!-- do something here -->
+                </ox-section>
+                <slot name="views.edit" v-bind="bind" :value="value" :saved="saved"
+            </template>
+
+            <!-- The create view -->
+            <template #views.create.default="{value, saved, ...bind}">
+                <ma-book-edit :initial="value" :saved="saved" />
+                <slot name="views.create.default" v-bind="bind" :value="value" :saved="saved"/>
             </template>
         </ox-model-panel>
     </template>
@@ -332,8 +376,8 @@ What does happens here?
 - Slots with name prefixed ``item.`` will be used to render fields by list views.
 - Other slots will be nested under the ``OxModelPanel`` components, allowing for extensibility.
   You may want to filter some properly, for example ``list.filters``.
-- The ``detail.edit`` view is provided for viewing/creating/updating a single item. In this view,
-  you will provide the component used for edition (see next section).
+- The ``edit`` view is provided for viewing/creating/updating a single item. In this view,
+  you will provide the component used for edition (see next section). Note that when user only has view right, the nested form will be disabled.
 
 
 .. note::
@@ -425,31 +469,56 @@ There are different places where you might want to put action, so lets split it 
 - An external application want to provide the action to another app's model panel: in such case you'll extends and override the django template for model panel;
 
 
-Extend Django model panel template
-----------------------------------
+Extend another application's model panel
+----------------------------------------
 
 The model panel declared in ``panels.py`` (:py:class:`ox.core.panels.Panel`) specifies
 a :py:attr:`~ox.core.panels.Panel.template`, defaulting to ``ox/core/components/model_panel.html``.
-This is the template to extend to add your custom action.
+This is the template to extend to add your custom action, views or components.
 
 Lets just take a quick look at templates inclusion chart:
 
 - ``ox/core/app.html``: includes ``model_panel.html`` for each panel declared in app's ``panels.py``;
-- ``ox/core/components/model_panel.html``: uses provided ``panel`` (as :py:class:`ox.core.panels.Panel`) to render the actual panel. Includes the panel's ``action_template`` as:
+- ``ox/core/components/model_panel.html``: uses provided ``panel`` (as :py:class:`ox.core.panels.Panel`) to render the actual panel.
 
-    .. code-block:: jinja2
 
-        <template #item.actions="bind">
-            {% block actions %}
-            <ox-action-model-delete v-bind="bind"></ox-action-model-delete>
-            {% endblock %}
-        </template>
+
+Add an action
+.............
+
+The ``model_panel.html`` template have a custom block for actions. Look at the original
+code if this file:
+
+.. code-block:: jinja2
+
+    <template #item.actions="bind">
+        {% block actions %}
+        <ox-action-model-delete v-bind="bind"></ox-action-model-delete>
+        {% endblock %}
+    </template>
 
 By now you should know what to do for extending: override the template. Eventually,
 you can use ``panel.name`` for conditional rendering (when extending default ``model_panel.html``).
 
 Don't forget to provide ``bind`` to the action! This ensure the action will be correctly rendered and is used for the right item.
 
+Add a custom view
+.................
+
+To add a custom view or component, you should integrate it using SFC. This is done in
+the ``panels`` block, as:
+
+.. code-block::
+
+    {% block panels %}
+    {{ block.super }}
+
+    <ox-view name="my-component-view" title="{% translate "My Component" %}">
+        <ox-component src="{% static "myapp/MyComponent.js" />
+    </ox-view>
+    {% endblock %}
+
+See :ref:`how-to-sfc` for more information on Single File Components.
 
 Monorepo setup
 --------------

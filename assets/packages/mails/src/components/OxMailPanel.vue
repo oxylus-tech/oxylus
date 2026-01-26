@@ -14,13 +14,13 @@
             <slot name="item.actions" v-bind="bind"/>
         </template>
 
-        <template #views.edit="bind">
-            <slot name="views.edit" v-bind="bind">
+        <template #views.edit.default="bind">
+            <slot name="views.edit.default" v-bind="bind">
                 <ox-mail-edit :owner="bind.owner?.id" :initial="bind.value" :saved="bind.saved"/>
             </slot>
         </template>
 
-        <template #views.create="bind">
+        <template #views.create.default="bind">
             <slot name="views.create" v-bind="bind">
                 <ox-mail-edit :owner="bind.owner?.id" :initial="bind.value" :saved="bind.saved"/>
             </slot>

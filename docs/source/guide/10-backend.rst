@@ -44,6 +44,8 @@ After the application has been created, in ``apps.py``, some changes will be nee
         # dependencies = ("django.contrib.auth", "ox.apps.auth")
 
 
+.. _guide-app-assets:
+
 Application Assets
 ..................
 

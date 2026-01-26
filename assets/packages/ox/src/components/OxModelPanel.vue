@@ -114,10 +114,10 @@
                 :title="t('views.edit')">
             <template #default="bind">
                 <ox-section name="default" :title="model.meta.verbose_name">
-                    <slot name="views.edit" v-bind="bind" :value="item" :saved="saved" />
+                    <slot name="views.edit.default" v-bind="bind" :value="item" :saved="saved" />
                 </ox-section>
                 <!-- @slot Extra sections to add to edit view -->
-                <slot name="views.edit.sections" v-bind="bind" :value="item" :saved="saved" />
+                <slot name="views.edit" v-bind="bind" :value="item" :saved="saved" />
             </template>
         </ox-view>
 
@@ -125,7 +125,7 @@
                 name="create" category="create" icon="mdi-plus-box"
                 :title="t('views.create')">
             <template #default="bind">
-                <slot name="views.create" v-bind="bind"  :saved="saved" />
+                <slot name="views.create.default" v-bind="bind"  :saved="saved" />
             </template>
         </ox-view>
 

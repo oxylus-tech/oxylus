@@ -37,8 +37,10 @@ Example in ``my_app.conf``:
     # print(app_settings.ALLOWED_TAGS)
 
 
-SFC / single file components and async loading
-----------------------------------------------
+.. _how-to-sfc:
+
+Single File Components and async loading
+----------------------------------------
 
 In your ``vite.config.js``, add an entry point for SFC:
 

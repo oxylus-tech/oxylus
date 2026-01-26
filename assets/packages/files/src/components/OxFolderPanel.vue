@@ -21,11 +21,11 @@
                 />
         </template>
 
-        <template #views.edit="{value, saved}">
+        <template #views.edit.default="{value, saved}">
             <ox-folder-edit :initial="value" :saved="saved"/>
         </template>
 
-        <template #views.edit.sections="{value}">
+        <template #views.edit="{value}">
             <ox-section name="comments" :title="t(FolderComment, 2)">
                 <ox-message-list v-if="value"
                         :repo="repos.folderComments" :repos="repos"
