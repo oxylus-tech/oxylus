@@ -40,9 +40,9 @@ class Command(BaseCommand):
 
     def handle(self, locale=None, out=None, root=None, apps=None, **kwargs):
         if out is None:
-            out = settings.BASE_DIR / "ox/static/locales"
+            out = settings.BASE_DIR / "static" / "locales"
 
-        out.mkdir(exist_ok=True)
+        out.mkdir(exist_ok=True, parents=True)
 
         if not locale:
             locale = (v[0] for v in settings.LANGUAGES)
@@ -120,3 +120,5 @@ class Command(BaseCommand):
         for enum in iter(obj):
             output[f"{name}.{enum.name}"] = escape(str(enum.label).capitalize())
             output[f"{name}._.{enum.name}"] = escape(str(enum.label).capitalize())
+            output[f"{name}.{enum.value}"] = escape(str(enum.label).capitalize())
+            output[f"{name}._.{enum.value}"] = escape(str(enum.label).capitalize())

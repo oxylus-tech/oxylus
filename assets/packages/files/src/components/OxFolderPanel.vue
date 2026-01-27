@@ -39,7 +39,7 @@
 import { useSlots, withDefaults } from 'vue'
 
 import { query, t } from '@oxylus/ox'
-import type {IModelPanelProps} from '@oxylus/ox'
+import type {ModelPanelDefinition} from '@oxylus/ox'
 import {OxModelPanel, OxSection} from '@oxylus/ox/components'
 import {OxMessageList} from '@oxylus/content/components'
 
@@ -53,7 +53,7 @@ const slots = useSlots()
 const forwardSlots = Object.keys(slots).filter(x => !(['list.filters', 'top'].includes(x)))
 
 const repos = useFilesModels([FolderComment])
-const props = withDefaults(defineProps<IModelPanelProps>(), {
+const props = withDefaults(defineProps<ModelPanelDefinition>(), {
     name: 'folders',
     relations: [],
     headers: ['name', 'path', 'updated'],

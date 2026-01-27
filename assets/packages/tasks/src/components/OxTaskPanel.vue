@@ -25,11 +25,11 @@
 
         <template #item.return_value="{item}">
             <p class="mb-3">
-                <b>{{ t('fields.args_kwargs') }}</b><br>
+                <b>{{ t('ox_tasks.fields.args_kwargs') }}</b><br>
                 <code>{{ item.args_kwargs }}</code>
             </p>
             <p v-if="item.return_value">
-                <b>{{ t('fields.return_value') }}</b><br>
+                <b>{{ t('ox_tasks.fields.return_value') }}</b><br>
                 <code>{{ item.return_value }}</code>
             </p>
         </template>
@@ -44,7 +44,7 @@ import { ref, useSlots, withDefaults } from 'vue'
 
 import { t, filterSlots } from '@oxylus/ox'
 import {OxModelPanel, OxActionPost} from '@oxylus/ox/components'
-import type {IModelPanelProps} from '@oxylus/ox'
+import type {ModelPanelDefinition} from '@oxylus/ox'
 
 import {useTasksModels} from '../composables'
 
@@ -53,7 +53,7 @@ const forwardSlots = filterSlots(slots, null, {exclude: ['item.actions']})
 const repos = useTasksModels()
 const modelPanel = ref(null)
 
-const props = withDefaults(defineProps<IModelPanelProps>(), {
+const props = withDefaults(defineProps<ModelPanelDefinition>(), {
     /** Name of the panel */
     name: 'tasks',
     /** Headers */

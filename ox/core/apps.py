@@ -13,13 +13,12 @@ from functools import cached_property
 from typing import Type
 
 from django import apps
-from django.utils.translation import gettext_lazy as _
 
 from ..utils.functional import Owned
-from ..assets import Asset, Assets, ox_assets
+from .assets import Asset, Assets, ox_assets
 
 
-__all__ = ("AppMeta", "AppConfig", "CoreAppConfig", "ox_assets")
+__all__ = ("AppMeta", "AppConfig", "ox_assets")
 
 
 class AppMeta(Owned):
@@ -93,7 +92,7 @@ class AppConfig(apps.AppConfig):
         - building and managing assets, through ``./manage.py assets``;
         - rendering scripts and stylesheets includes into templates
 
-    Note: there is no need to provide an extra :py:class:`~ox.assets.Asset`
+    Note: there is no need to provide an extra :py:class:`~ox.core.assets.Asset`
     specifying the application to be compiled, since it is what the Assets class does.
     """
     npm_package: str | None = None
@@ -120,17 +119,3 @@ class AppConfig(apps.AppConfig):
         self.assets = self.assets.contribute(self)
         self.root_url = self.root_url or self.label
         self.npm_package = self.npm_package or self.label
-
-
-class CoreAppConfig(AppConfig):
-    name = "ox.core"
-    label = "ox_core"
-    verbose_name = _("Oxylus")
-    default = True
-    icon = "mdi-weather-sunny"
-
-    root_url = "ox/core"
-    npm_package = "@oxylus/core"
-
-    def ready(self):
-        from . import signals  # noqa: F401  # isort: skip

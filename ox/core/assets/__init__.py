@@ -17,7 +17,7 @@ By technical convention, Oxylus only handles building Vue based Vite.js projects
 However it allows to run other frameworks.
 """
 
-from django.conf import settings
+from pathlib import Path
 
 from .base import Asset, Assets
 
@@ -25,9 +25,13 @@ from .base import Asset, Assets
 __all__ = ("Asset", "Assets", "ox_assets")
 
 
+# TODO change with core app
+BASE_DIR = Path(__file__).parent.parent.parent.parent
+
+
 ox_assets = Assets(
     "@oxylus/ox",
-    settings.BASE_DIR / "assets" / "packages" / "ox",
+    BASE_DIR / "assets" / "packages" / "ox",
     includes=[
         Asset("", "index.js", css="style.css"),
         Asset("components", "components.js"),

@@ -1,10 +1,10 @@
-ox.assets
+ox.core.assets
 =========
 
-.. automodule:: ox.assets
+.. automodule:: ox.core.assets
    :show-inheritance:
    :members:
 
-.. automodule:: ox.assets.finders
+.. automodule:: ox.core.assets.finders
    :show-inheritance:
    :members:

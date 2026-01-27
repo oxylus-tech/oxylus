@@ -23,13 +23,9 @@ from functools import cached_property
 from typing import ClassVar
 
 from django import apps
-from django.conf import settings
-from django.conf.urls.static import static
-from django.contrib import admin
 from django.urls import path, include
-from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
 
-from ox.core.views import core, accounts
+from ox.core.views import accounts
 from ox.utils.apps import DiscoverModules
 
 
@@ -107,18 +103,6 @@ urlpatterns = [
     path("", accounts.DashboardView.as_view(), name="index"),
     path("api/", (lambda *a, **kw: {}), name="api-index"),
     *router.get_urls(),
-    path("api/schema/", SpectacularAPIView.as_view(), name="schema"),
-    path("api/swagger/", SpectacularSwaggerView.as_view(url_name="schema")),
-    path("admin/", admin.site.urls),
     path("accounts/login/", accounts.LoginView.as_view(), name="login"),
     path("accounts/logout/", accounts.LogoutView.as_view(), name="logout"),
 ]
-
-
-if settings.DEBUG:
-    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT) + static(
-        settings.MEDIA_URL, document_root=settings.MEDIA_ROOT
-    )
-
-handler403 = core.PermissionForbiddenView.as_view()
-handler405 = core.InternalErrorView.as_view()

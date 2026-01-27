@@ -46,11 +46,12 @@
  */
 import { computed, defineProps, inject, ref } from 'vue'
 import { useRouter } from '@oxylus/ox'
-import type {IPanelInfo} from '../controllers'
 
-export interface INavItemProps extends IPanelInfo {
-    /** Panel name */
+export interface INavItemProps {
+    /** Panel name **/
     name: string
+    /** Title **/
+    title?: string
     /** Panels page **/
     url?: string
     /** Required permission */

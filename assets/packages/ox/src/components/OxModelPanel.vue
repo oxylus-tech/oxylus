@@ -89,7 +89,7 @@
         <ox-view name="table" icon="mdi-table"
                 category="list"
                 :title="t('views.table')">
-            <ox-list-table :list="list" :items="items" :headers="headers" :edit="!!slots['views.edit']">
+            <ox-list-table :list="list" :items="items" :headers="headers" :edit="hasEdit">
                 <template v-for="(_, name) in itemSlots" v-slot:[name]="bind" :key="name">
                     <slot :name="name" v-bind="bind" />
                 </template>
@@ -101,14 +101,14 @@
                 :title="t('views.cards')">
             <ox-list-card :list="list" :items="items"
                     :headers="props.headers"
-                    :edit="!!slots['views.edit']">
+                    :edit="hasEdit">
                 <template v-for="(_, name) in itemSlots" v-slot:[name]="bind" :key="name">
                     <slot :name="name" v-bind="bind" />
                 </template>
             </ox-list-card>
         </ox-view>
 
-        <ox-view v-if="slots['views.edit']" name="edit" category="detail"
+        <ox-view v-if="hasEdit" name="edit" category="detail"
                 :disabled="!item"
                 :icon="user.can([model, 'change']) ? 'mdi-pencil' : 'mdi-eye'"
                 :title="t('views.edit')">
@@ -121,7 +121,7 @@
             </template>
         </ox-view>
 
-        <ox-view v-if="slots['views.create'] && user.can([model, 'add'])"
+        <ox-view v-if="slots['views.create.default'] && user.can([model, 'add'])"
                 name="create" category="create" icon="mdi-plus-box"
                 :title="t('views.create')">
             <template #default="bind">
@@ -160,7 +160,7 @@ import type {ModelPanelDefinition} from '../composables/modelPanel'
 
 const slots = useSlots()
 const itemSlots = filterSlots(slots, 'item.')
-const hasEdit = computed(() => !!slots.edit)
+const hasEdit = computed(() => !!(slots['views.edit'] || slots['views.edit.default']))
 
 const filters = ref(null)
 const props = withDefaults(defineProps<ModelPanelDefinition>(), {

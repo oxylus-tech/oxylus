@@ -3,8 +3,8 @@ import os
 from django.core.files.storage import FileSystemStorage
 
 from ox.utils.commands import AppsCommand
-from ox.assets.base import Assets
-from ox.assets.finders import AssetsFinder
+from ox.core.assets.base import Assets
+from ox.core.assets.finders import AssetsFinder
 
 
 class Command(AppsCommand):

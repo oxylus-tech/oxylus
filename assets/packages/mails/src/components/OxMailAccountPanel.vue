@@ -23,7 +23,7 @@
 import { useSlots, withDefaults } from 'vue'
 
 import { t } from '@oxylus/ox'
-import type {IModelPanelProps} from '@oxylus/ox'
+import type {ModelPanelDefinition} from '@oxylus/ox'
 import {OxOwnedPanel} from '@oxylus/auth/components'
 
 import OxMailAccountEdit from './OxMailAccountEdit.vue'
@@ -33,7 +33,7 @@ const slots = useSlots()
 const forwardSlots = Object.keys(slots).filter(x => !(['list.filters'].includes(x)))
 
 const repos = useMailModels()
-const props = withDefaults(defineProps<IModelPanelProps>(), {
+const props = withDefaults(defineProps<ModelPanelDefinition>(), {
     name: 'mailaccounts',
     headers: ['name'],
 })

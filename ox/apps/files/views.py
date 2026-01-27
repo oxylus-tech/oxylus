@@ -1,9 +1,10 @@
+from pathlib import Path
 from uuid import UUID
 
 from django.core.exceptions import PermissionDenied
 from django.views.generic import View
 from django.views.generic.detail import SingleObjectMixin
-from django.http import HttpResponse, FileResponse
+from django.http import HttpResponse, Http404, FileResponse
 
 from caps.views import OwnedViewSet, AccessViewSet
 from caps.views.mixins import SingleOwnedMixin, OwnedPermissionMixin
@@ -34,6 +35,9 @@ class ServeFileView(SingleOwnedMixin, OwnedPermissionMixin, SingleObjectMixin, V
             field = self.object.preview
         else:
             field = self.object.file
+
+        if not Path(field.path).exists():
+            raise Http404(f"The file {self.object.name} does not exists on the filesystem.")
 
         match ox_settings.HTTP_SERVER_BACKEND:
             case "nginx":

@@ -1,0 +1,89 @@
+from django.conf import settings
+from django.utils import translation
+
+
+from rest_framework.decorators import action
+from rest_framework.response import Response
+from rest_framework import permissions, viewsets
+
+
+__all__ = ("ModelViewSet", "ListCommitMixin")
+
+
+class ModelViewSet(viewsets.ModelViewSet):
+    """Base model viewset use by Oxylus application.
+
+    Lookup objects by uuid.
+    """
+
+    permission_classes = [permissions.DjangoModelPermissions]
+    lookup_field = "uuid"
+    filterset_fields = {
+        "uuid": ["exact", "in"],
+    }
+
+
+class ConfViewSet(viewsets.ViewSet):
+
+    @action(methods=["POST"], detail=False, url_path="set-language")
+    def set_language(self, request):
+        lang = request.data.get("language")
+        translation.activate(lang)
+        response = Response(data={"language": lang})
+        response.set_cookie(settings.LANGUAGE_COOKIE_NAME, lang)
+        return response
+
+
+class ListCommitMixin:
+    """Viewset mixin providing ``commit`` action, which allows to update many
+    items at once (create, update, delete)."""
+
+    @action(name="commit", detail=False, methods=["POST"])
+    def commit(self, request):
+        """
+        Request:
+
+        .. code-block:: python
+
+            {
+                "delete": [pk],
+                "update": [{pk, **object}],
+                "create": [object_data]
+            }
+
+        Response:
+
+        .. code-block:: python
+
+            {
+                "deleted": [pk],
+                "updated": [object],
+                "created": [object],
+            }
+        """
+        queryset = self.get_queryset()
+        resp = {"deleted": [], "updated": [], "created": []}
+        if ids := request.data.get("delete"):
+            q = queryset.filter(uuid__in=ids)
+            resp["deleted"] = list(q.values_list("uuid", flat=True))
+            q.delete()
+
+        # TODO: bulk create/update
+        # Note: can't bulk update/create on multiple table model
+        if items := request.data.get("update"):
+            resp["updated"] = self._commit_save_many(items)
+
+        if items := request.data.get("create"):
+            resp["created"] = self._commit_save_many(items)
+
+        return Response(data=resp)
+
+    def _commit_save_many(self, data):
+        pass
+
+        # ser = self.get_serializer(instances, data=data, many=True)
+        # ser.is_valid(raise_exception=True)
+
+        # items = ser.save()
+        # ser = self.get_serializer(items, many=True)
+        # return ser.data

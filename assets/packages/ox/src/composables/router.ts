@@ -34,6 +34,7 @@ export interface PanelDefinition {
     title?: string
     state: State
     icon?: string
+    // TODO: replace with url => conherency with INavItemProps & backend for panels
     href?: string
     index?: string
 

@@ -61,6 +61,7 @@ export default defineConfig({
             plugins: [commonjs()],
         },
     },
+    assetsInclude: ['**/*.png'],
     css: {
         devSourcemap: true,
     },

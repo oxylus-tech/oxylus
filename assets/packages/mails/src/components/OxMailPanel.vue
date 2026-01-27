@@ -38,7 +38,7 @@
 import { useSlots, withDefaults, useAttrs } from 'vue'
 
 import { t, filterSlots } from '@oxylus/ox'
-import type {IModelPanelProps} from '@oxylus/ox'
+import type {ModelPanelDefinition} from '@oxylus/ox'
 import {OxActionPost} from '@oxylus/ox/components'
 import {OxOwnedPanel} from '@oxylus/auth/components'
 
@@ -50,7 +50,7 @@ const slots = useSlots()
 const forwardSlots = filterSlots(slots, null, {exclude: ['item.actions', 'views.detail.edit.default']})
 
 const repos = useMailModels()
-const props = withDefaults(defineProps<IModelPanelProps>(), {
+const props = withDefaults(defineProps<ModelPanelDefinition>(), {
     name: 'mails',
     headers: ['subject', 'state', 'updated'],
 })

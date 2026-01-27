@@ -1,4 +1,4 @@
-import {models as $models, useModels, query, locales} from '@oxylus/ox'
+import {locales, models as $models, useModels, query} from '@oxylus/ox'
 import type {IUseModelOpts, LocaleLoaders} from '@oxylus/ox'
 import type {Model, Repos} from '@oxylus/ox/models'
 import {Agent} from './models'
