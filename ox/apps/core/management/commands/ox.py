@@ -33,6 +33,7 @@ class Command(Command):
         subparser = subparsers.add_parser("setup", help="Setup or update project")
         subparser.set_defaults(func=self.project_setup)
         subparser.add_argument("-a", "--admin", action="store_true", help="Create super user")
+        subparser.add_argument("--assets", action="store_true", help="Collect assets")
         subparser.add_argument("--no-update-secrets", action="store_true", help="Don't update secrets")
         subparser.add_argument("--default-admin", action="store_true", help="Create default super user (admin:admin).")
         subparser.add_argument(
@@ -62,7 +63,9 @@ class Command(Command):
         subparser.set_defaults(func=self.import_fixtures)
         subparser.add_argument("apps", metavar="APPS", nargs="*", type=self.get_app, help="Selected applications.")
 
-    def project_setup(self, apps=None, admin=False, default_admin=False, once=False, no_update_secrets=False, **kwargs):
+    def project_setup(
+        self, apps=None, admin=False, default_admin=False, once=False, no_update_secrets=False, assets=False, **kwargs
+    ):
         """Initialize the whole project."""
         self.log("[b]🌱️ Start Oxylus setup...[/b]")
 
@@ -103,8 +106,9 @@ class Command(Command):
         self.log("\n[b underline]🌍 Collect assets translations[/b underline]")
         call_command("vue-i18n")
 
-        self.log("\n[b underline]🦋 Collect statics[/b underline]")
-        call_command("collectstatic", "--noinput")
+        if assets:
+            self.log("\n[b underline]🦋 Collect statics[/b underline]")
+            call_command("collectstatic", "--noinput")
 
         self.log("[b]🌳 Setup done![/b]")
 
