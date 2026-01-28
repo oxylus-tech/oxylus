@@ -44,7 +44,6 @@ dynaconf = {extras = ["yaml"], version = "^3.2.11"}
 python-magic = "^0.4.27"
 pymupdf = "^1.26.0"
 rich = "^14.1.0"
-oxylus-erp = {path = "../oxylus-erp"}
 beautifulsoup4 = "^4.14.3"
 pydantic = "^2.12.5"
 pyjwt = "^2.10.1"
@@ -65,7 +64,6 @@ pytest = "*"
 pytest-django = "*"
 pytest-asyncio = "^1.0.0"
 pytest-mock = "^3.14.1"
-
 
 [tool.poetry.group.docs.dependencies]
 Sphinx = "*"

@@ -1,26 +1,19 @@
 from django.conf import settings
+from django.db.models.functions import Lower
+from django.contrib.auth.models import User, Group, Permission
+from django.contrib.contenttypes.models import ContentType
 from django.utils import translation
 
-
+from rest_framework import status, viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from rest_framework import permissions, viewsets
+from rest_framework.permissions import DjangoModelPermissions
+
+from .. import serializers
+from .core import LoginMixin
 
 
-__all__ = ("ModelViewSet", "ListCommitMixin")
-
-
-class ModelViewSet(viewsets.ModelViewSet):
-    """Base model viewset use by Oxylus application.
-
-    Lookup objects by uuid.
-    """
-
-    permission_classes = [permissions.DjangoModelPermissions]
-    lookup_field = "uuid"
-    filterset_fields = {
-        "uuid": ["exact", "in"],
-    }
+__all__ = ("ConfViewSet", "AccountViewSet", "ContentTypeViewSet", "PermissionViewSet", "GroupViewSet", "UserViewSet")
 
 
 class ConfViewSet(viewsets.ViewSet):
@@ -34,56 +27,82 @@ class ConfViewSet(viewsets.ViewSet):
         return response
 
 
-class ListCommitMixin:
-    """Viewset mixin providing ``commit`` action, which allows to update many
-    items at once (create, update, delete)."""
+class AccountViewSet(LoginMixin, viewsets.GenericViewSet):
+    serializer_class = serializers.UserSerializer
+    credentials_serializer_class = serializers.PasswordLoginSerializer
 
-    @action(name="commit", detail=False, methods=["POST"])
-    def commit(self, request):
-        """
-        Request:
+    @action(detail=False, methods=["POST"])
+    def login(self, request):
+        serializer = self.get_credentials_serializer(data=request.data)
+        user = self.proceed_login(request, serializer)
+        if not user:
+            return Response({"password": [self.login_failed_message]}, status=status.HTTP_403_FORBIDDEN)
 
-        .. code-block:: python
+        serializer = self.get_serializer(user)
+        return Response({"messages": [self.get_welcome_message(user)], "user": serializer.data})
 
-            {
-                "delete": [pk],
-                "update": [{pk, **object}],
-                "create": [object_data]
-            }
 
-        Response:
+def _prefetch_lookups(prefix=""):
+    """Provide prefetch lookup of related permissions."""
+    return [prefix + "permissions", prefix + "permissions__content_type"]
 
-        .. code-block:: python
 
-            {
-                "deleted": [pk],
-                "updated": [object],
-                "created": [object],
-            }
-        """
-        queryset = self.get_queryset()
-        resp = {"deleted": [], "updated": [], "created": []}
-        if ids := request.data.get("delete"):
-            q = queryset.filter(uuid__in=ids)
-            resp["deleted"] = list(q.values_list("uuid", flat=True))
-            q.delete()
+class ContentTypeViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = ContentType.objects.all()
+    serializer_class = serializers.ContentTypeSerializer
+    permission_classes = [DjangoModelPermissions]
+    pagination_class = None
 
-        # TODO: bulk create/update
-        # Note: can't bulk update/create on multiple table model
-        if items := request.data.get("update"):
-            resp["updated"] = self._commit_save_many(items)
 
-        if items := request.data.get("create"):
-            resp["created"] = self._commit_save_many(items)
+class PermissionViewSet(viewsets.ModelViewSet):
+    queryset = Permission.objects.all().select_related("content_type")
+    serializer_class = serializers.PermissionSerializer
+    permission_classes = [DjangoModelPermissions]
+    pagination_class = None
 
-        return Response(data=resp)
 
-    def _commit_save_many(self, data):
-        pass
+class GroupViewSet(viewsets.ModelViewSet):
+    queryset = (
+        Group.objects.all()
+        .prefetch_related(
+            *_prefetch_lookups(),
+        )
+        .order_by(Lower("name"))
+    )
+    serializer_class = serializers.GroupSerializer
+    permission_classes = [DjangoModelPermissions]
+    filterset_fields = {"id": ["in"], "user__id": ["exact"]}
+    search_fields = [
+        "name",
+    ]
 
-        # ser = self.get_serializer(instances, data=data, many=True)
-        # ser.is_valid(raise_exception=True)
 
-        # items = ser.save()
-        # ser = self.get_serializer(items, many=True)
-        # return ser.data
+class UserViewSet(viewsets.ModelViewSet):
+    queryset = (
+        User.objects.all()
+        .prefetch_related(
+            *_prefetch_lookups("user_"),
+            *_prefetch_lookups("groups__"),
+        )
+        .order_by("last_name", "first_name")
+    )
+    serializer_class = serializers.UserSerializer
+    permission_classes = [DjangoModelPermissions]
+    filterset_fields = {"id": ["in"], "groups__id": ["exact", "in"]}
+    search_fields = ["username", "email", "last_name", "first_name"]
+    ordering_fields = ["id", "username", "email", "last_name", "first_name"]
+
+    @action(detail=True, methods=["POST"])
+    def password(self, request, pk):
+        # TODO
+        if request.user.pk != pk and not request.user.has_perm("auth.change_user"):
+            return Response({}, status=status.HTTP_403_FORBIDDEN)
+
+        user = self.get_object()
+        serializer = serializers.PasswordSerializer(data=request.data)
+        if serializer.is_valid():
+            user.set_password(serializer.validated_data["password"])
+            user.save()
+            return Response({})
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

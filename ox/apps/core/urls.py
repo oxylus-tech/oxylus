@@ -12,19 +12,25 @@ Provides API endpoints:
 from django.urls import path
 from rest_framework.routers import DefaultRouter
 
-from .views import api, accounts, auth, core
+from . import views
 
 router = DefaultRouter()
-router.register("account", accounts.AccountViewSet, basename="account")
-router.register(r"content_type", auth.ContentTypeViewSet, basename="content_type")
-router.register(r"permission", auth.PermissionViewSet, basename="permission")
-router.register(r"group", auth.GroupViewSet, basename="group")
-router.register(r"user", auth.UserViewSet, basename="user")
-router.register(r"conf", api.ConfViewSet, basename="conf")
+router.register("account", views.AccountViewSet, basename="account")
+router.register(r"content_type", views.ContentTypeViewSet, basename="content_type")
+router.register(r"permission", views.PermissionViewSet, basename="permission")
+router.register(r"group", views.GroupViewSet, basename="group")
+router.register(r"user", views.UserViewSet, basename="user")
+router.register(r"conf", views.ConfViewSet, basename="conf")
 
 api_urls = router.urls
 
 urls = [
-    path("settings/", core.SettingsView.as_view(), name="settings"),
-    path("settings/account/", accounts.AccountView.as_view(), name="account"),
+    path("settings/", views.SettingsView.as_view(), name="settings"),
+    path("settings/account/", views.AccountView.as_view(), name="account"),
+]
+
+urlpatterns = [
+    path("", views.DashboardView.as_view(), name="index"),
+    path("accounts/login/", views.LoginView.as_view(), name="login"),
+    path("accounts/logout/", views.LogoutView.as_view(), name="logout"),
 ]

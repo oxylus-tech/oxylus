@@ -7,9 +7,12 @@ from django.core.exceptions import ImproperlyConfigured
 from django.views.generic.base import ContextMixin, TemplateView
 from django.utils.translation import gettext as __, get_language
 
+from rest_framework import permissions, viewsets
+
+# FIXME: circular dependencies among apps
+from ox.apps.core.serializers import UserSerializer, GroupSerializer
 from ox.core.assets import Assets
-from ..panels import Panels, registry
-from ..serializers.auth import UserSerializer, GroupSerializer
+from .panels import Panels, registry
 
 __all__ = ("AppMixin", "UserAuthMixin", "AppView", "UserAppView")
 
@@ -119,3 +122,16 @@ class UserAppView(LoginRequiredMixin, AppView):
     """Application view requiring user to be authentified."""
 
     pass
+
+
+class ModelViewSet(viewsets.ModelViewSet):
+    """Base model viewset use by Oxylus application.
+
+    Lookup objects by uuid.
+    """
+
+    permission_classes = [permissions.DjangoModelPermissions]
+    lookup_field = "uuid"
+    filterset_fields = {
+        "uuid": ["exact", "in"],
+    }

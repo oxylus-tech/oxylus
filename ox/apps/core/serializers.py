@@ -4,7 +4,7 @@ from django.contrib.contenttypes.models import ContentType
 from rest_framework import serializers
 
 
-__all__ = ("PermissionSerializer", "GroupSerializer", "UserSerializer", "PasswordSerializer")
+__all__ = ("PermissionSerializer", "GroupSerializer", "UserSerializer", "PasswordSerializer", "PasswordLoginSerializer")
 
 
 class ContentTypeSerializer(serializers.ModelSerializer):
@@ -72,4 +72,9 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class PasswordSerializer(serializers.Serializer):
+    password = serializers.CharField()
+
+
+class PasswordLoginSerializer(serializers.Serializer):
+    username = serializers.CharField()
     password = serializers.CharField()

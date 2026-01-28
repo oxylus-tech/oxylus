@@ -25,7 +25,6 @@ from typing import ClassVar
 from django import apps
 from django.urls import path, include
 
-from ox.core.views import accounts
 from ox.utils.apps import DiscoverModules
 
 
@@ -100,9 +99,6 @@ router = Router()
 
 urlpatterns = [
     *router.get_urlpatterns(),
-    path("", accounts.DashboardView.as_view(), name="index"),
     path("api/", (lambda *a, **kw: {}), name="api-index"),
     *router.get_urls(),
-    path("accounts/login/", accounts.LoginView.as_view(), name="login"),
-    path("accounts/logout/", accounts.LogoutView.as_view(), name="logout"),
 ]
