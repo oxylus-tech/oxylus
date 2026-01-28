@@ -51,9 +51,8 @@ django-caps = "^0.0.2"
 wsgidav = {extras = ["auth-digest"], version = "^4.3.3"}
 
 
-[tool.poetry.group.prod.dependencies]
-psycopg = "^3.2.10"
-gunicorn = "^23.0.0"
+[tool.poetry.group.dev]
+optional = true
 
 [tool.poetry.group.dev.dependencies]
 ipython = "*"
@@ -64,6 +63,10 @@ pytest = "*"
 pytest-django = "*"
 pytest-asyncio = "^1.0.0"
 pytest-mock = "^3.14.1"
+
+
+[tool.poetry.group.docs]
+optional = true
 
 [tool.poetry.group.docs.dependencies]
 Sphinx = "*"
