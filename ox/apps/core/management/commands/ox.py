@@ -22,7 +22,7 @@ class Command(Command):
 
     help = "Oxylus management tool."
 
-    secrets_path = settings.OX["SETTINGS_DIR"] / ".secrets.yaml"
+    secrets_path = settings.OX["SETTINGS_DIR"] / "secrets.yaml"
 
     def add_arguments(self, parser):
         super().add_arguments(parser)
