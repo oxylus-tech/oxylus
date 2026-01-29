@@ -52,7 +52,7 @@
 import { computed, defineModel, defineExpose, onMounted, watch, useSlots, useAttrs } from 'vue'
 import { debounce, isEqual } from 'lodash'
 import { useModelList, Query, t, ifNotEqual } from '@oxylus/ox'
-import type {IModelListProps} from '@oxylus/ox'
+import type {ModelPanelDefinition} from '@oxylus/ox'
 
 /**
  * @model The list of ids to fetch.
@@ -60,7 +60,7 @@ import type {IModelListProps} from '@oxylus/ox'
 const ids = defineModel([])
 const slots = useSlots()
 
-const props = defineProps<IModelListProps & { load: boolean }>()
+const props = defineProps<ModelPanelDefinition & { load: boolean }>()
 const attrs = useAttrs()
 
 const {list, items} = useModelList({
