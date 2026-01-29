@@ -10,6 +10,10 @@ The goal is to provide a solid, open-source foundation that supports both essent
 
 The current project is in its early development steps. Don't expect it to be fully featured and free of bugs. We are at the step of setting up quality assurance on the proof of concept.
 
+**Available in**: 🇬🇧 English 🇫🇷 French 🇩🇪 German  🇪🇸 Spanish 🇳🇱 Dutch
+
+**Check out our website**: `oxylus.app <https://oxylus.app/>`_
+
 
 Why Oxylus?
 -----------
@@ -17,15 +21,11 @@ Why Oxylus?
 We want to provide a tool that can be used as a base to develop full featured and modern applications. More than an ERP, it provides the foundations of an ecosystem that can be shared and used at lower cost than
 traditional enteprise solutions (so called open-source ones included).
 
--️ Designed for extensibility: A core platform with reusable modules and clearly structured architecture for seamless integration of new apps.
-
-- Open-Source by design: All code is licensed under an open license, enabling transparency, auditability, and community-driven improvement.
-
-- Inclusive by intention: Accessibility is a priority, with ARIA standards already in use and full WCAG compliance planned.
-
-- Shared development: Custom features developed for one client are made available to the entire user base, fostering a sustainable ecosystem and reducing duplicated effort.
-
-- Built with proven tools: Leveraging the power and maturity of Django (backend) and Vue.js (frontend) to deliver robust, modern applications.
+-️ **Designed for extensibility**: A core platform with reusable modules and clearly structured architecture for seamless integration of new apps.
+- **Open-Source by design**: All code is licensed under an open license, enabling transparency, auditability, and community-driven improvement.
+- **Inclusive by intention**: Accessibility is a priority, with ARIA standards already in use and full WCAG compliance planned.
+- **Shared development**: Custom features developed for one client are made available to the entire user base, fostering a sustainable ecosystem and reducing duplicated effort.
+- **Built with proven tools**: Leveraging the power and maturity of Django (backend) and Vue.js (frontend) to deliver robust, modern applications.
 
 
 Features
