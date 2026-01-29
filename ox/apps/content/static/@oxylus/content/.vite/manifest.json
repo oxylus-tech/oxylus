@@ -1,0 +1,111 @@
+{
+  "_OxBlockEditor.vue_vue_type_script_setup_true_lang.js": {
+    "file": "OxBlockEditor.vue_vue_type_script_setup_true_lang.js",
+    "name": "OxBlockEditor.vue_vue_type_script_setup_true_lang",
+    "imports": [
+      "_tiptap.js",
+      "_OxRichEditor.vue_vue_type_script_setup_true_lang.js",
+      "_vuetify.js"
+    ]
+  },
+  "_OxMessage.vue_vue_type_script_setup_true_lang.js": {
+    "file": "OxMessage.vue_vue_type_script_setup_true_lang.js",
+    "name": "OxMessage.vue_vue_type_script_setup_true_lang",
+    "imports": [
+      "_vuetify.js"
+    ]
+  },
+  "_OxRichEditor.vue_vue_type_script_setup_true_lang.js": {
+    "file": "OxRichEditor.vue_vue_type_script_setup_true_lang.js",
+    "name": "OxRichEditor.vue_vue_type_script_setup_true_lang",
+    "imports": [
+      "_tiptap.js",
+      "_vuetify.js"
+    ]
+  },
+  "_tiptap.js": {
+    "file": "tiptap.js",
+    "name": "tiptap",
+    "imports": [
+      "_vuetify.js"
+    ]
+  },
+  "_vuetify.js": {
+    "file": "vuetify.js",
+    "name": "vuetify",
+    "css": [
+      "vuetify.css"
+    ]
+  },
+  "src/components/OxBlockEditor.vue": {
+    "file": "OxBlockEditor.js",
+    "name": "OxBlockEditor",
+    "src": "src/components/OxBlockEditor.vue",
+    "isDynamicEntry": true,
+    "imports": [
+      "_OxBlockEditor.vue_vue_type_script_setup_true_lang.js",
+      "_tiptap.js",
+      "_vuetify.js",
+      "_OxRichEditor.vue_vue_type_script_setup_true_lang.js"
+    ]
+  },
+  "src/components/OxMessage.vue": {
+    "file": "OxMessage.js",
+    "name": "OxMessage",
+    "src": "src/components/OxMessage.vue",
+    "isDynamicEntry": true,
+    "imports": [
+      "_OxMessage.vue_vue_type_script_setup_true_lang.js",
+      "_vuetify.js"
+    ]
+  },
+  "src/components/OxMessageList.vue": {
+    "file": "OxMessageList.js",
+    "name": "OxMessageList",
+    "src": "src/components/OxMessageList.vue",
+    "isDynamicEntry": true,
+    "imports": [
+      "_OxRichEditor.vue_vue_type_script_setup_true_lang.js",
+      "_OxMessage.vue_vue_type_script_setup_true_lang.js",
+      "_vuetify.js",
+      "_tiptap.js"
+    ]
+  },
+  "src/components/OxRichEditor.vue": {
+    "file": "OxRichEditor.js",
+    "name": "OxRichEditor",
+    "src": "src/components/OxRichEditor.vue",
+    "isDynamicEntry": true,
+    "imports": [
+      "_OxRichEditor.vue_vue_type_script_setup_true_lang.js",
+      "_tiptap.js",
+      "_vuetify.js"
+    ]
+  },
+  "src/index.ts": {
+    "file": "index.js",
+    "name": "index",
+    "src": "src/index.ts",
+    "isEntry": true,
+    "imports": [
+      "_OxRichEditor.vue_vue_type_script_setup_true_lang.js",
+      "_OxBlockEditor.vue_vue_type_script_setup_true_lang.js",
+      "_OxMessage.vue_vue_type_script_setup_true_lang.js",
+      "src/components/OxMessageList.vue",
+      "_tiptap.js",
+      "_vuetify.js"
+    ]
+  },
+  "src/sfc.ts": {
+    "file": "sfc.js",
+    "name": "sfc",
+    "src": "src/sfc.ts",
+    "isEntry": true,
+    "dynamicImports": [
+      "src/components/OxRichEditor.vue",
+      "src/components/OxBlockEditor.vue",
+      "src/components/OxMessage.vue",
+      "src/components/OxMessageList.vue"
+    ]
+  }
+}

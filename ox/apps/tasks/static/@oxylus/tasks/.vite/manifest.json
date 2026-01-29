@@ -1,0 +1,18 @@
+{
+  "_vuetify.js": {
+    "file": "vuetify.js",
+    "name": "vuetify",
+    "css": [
+      "vuetify.css"
+    ]
+  },
+  "src/index.ts": {
+    "file": "index.js",
+    "name": "index",
+    "src": "src/index.ts",
+    "isEntry": true,
+    "imports": [
+      "_vuetify.js"
+    ]
+  }
+}

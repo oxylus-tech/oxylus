@@ -1,0 +1,1 @@
+{"version":3,"mappings":";++BAAA,OAAO,mBAA+B,OAAAA,KAAA","names":["n"],"ignoreList":[],"sources":["../src/sfc.ts"],"sourcesContent":["import('./components/OxFileSelect.vue')\n"],"file":"sfc.js"}

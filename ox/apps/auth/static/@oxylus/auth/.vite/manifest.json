@@ -1,0 +1,69 @@
+{
+  "_OxUserEdit.vue_vue_type_script_setup_true_lang.js": {
+    "file": "OxUserEdit.vue_vue_type_script_setup_true_lang.js",
+    "name": "OxUserEdit.vue_vue_type_script_setup_true_lang",
+    "imports": [
+      "_vuetify.js"
+    ],
+    "css": [
+      "OxUserEdit.css"
+    ]
+  },
+  "_OxUserPanel.vue_vue_type_script_setup_true_lang.js": {
+    "file": "OxUserPanel.vue_vue_type_script_setup_true_lang.js",
+    "name": "OxUserPanel.vue_vue_type_script_setup_true_lang",
+    "imports": [
+      "_OxUserEdit.vue_vue_type_script_setup_true_lang.js",
+      "_vuetify.js"
+    ]
+  },
+  "_vuetify.js": {
+    "file": "vuetify.js",
+    "name": "vuetify",
+    "css": [
+      "vuetify.css"
+    ]
+  },
+  "src/components/OxUserEdit.vue": {
+    "file": "OxUserEdit.js",
+    "name": "OxUserEdit",
+    "src": "src/components/OxUserEdit.vue",
+    "isDynamicEntry": true,
+    "imports": [
+      "_OxUserEdit.vue_vue_type_script_setup_true_lang.js",
+      "_vuetify.js"
+    ]
+  },
+  "src/components/OxUserPanel.vue": {
+    "file": "OxUserPanel.js",
+    "name": "OxUserPanel",
+    "src": "src/components/OxUserPanel.vue",
+    "isDynamicEntry": true,
+    "imports": [
+      "_OxUserPanel.vue_vue_type_script_setup_true_lang.js",
+      "_OxUserEdit.vue_vue_type_script_setup_true_lang.js",
+      "_vuetify.js"
+    ]
+  },
+  "src/index.ts": {
+    "file": "index.js",
+    "name": "index",
+    "src": "src/index.ts",
+    "isEntry": true,
+    "imports": [
+      "_OxUserEdit.vue_vue_type_script_setup_true_lang.js",
+      "_OxUserPanel.vue_vue_type_script_setup_true_lang.js",
+      "_vuetify.js"
+    ]
+  },
+  "src/sfc.ts": {
+    "file": "sfc.js",
+    "name": "sfc",
+    "src": "src/sfc.ts",
+    "isEntry": true,
+    "dynamicImports": [
+      "src/components/OxUserPanel.vue",
+      "src/components/OxUserEdit.vue"
+    ]
+  }
+}

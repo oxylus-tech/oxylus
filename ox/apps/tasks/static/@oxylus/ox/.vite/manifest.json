@@ -1,0 +1,92 @@
+{
+  "_router.js": {
+    "file": "router.js",
+    "name": "router",
+    "dynamicImports": [
+      "src/locale/vue.de.json",
+      "src/locale/vue.en.json",
+      "src/locale/vue.es.json",
+      "src/locale/vue.fr.json",
+      "src/locale/vue.nl.json"
+    ]
+  },
+  "_vuetify.js": {
+    "file": "vuetify.js",
+    "name": "vuetify"
+  },
+  "src/components/OxAutocomplete.vue": {
+    "file": "OxAutocomplete.js",
+    "name": "OxAutocomplete",
+    "src": "src/components/OxAutocomplete.vue",
+    "isDynamicEntry": true,
+    "imports": [
+      "src/components/index.ts"
+    ]
+  },
+  "src/components/index.ts": {
+    "file": "components.js",
+    "name": "components",
+    "src": "src/components/index.ts",
+    "isEntry": true,
+    "imports": [
+      "_router.js",
+      "_vuetify.js"
+    ],
+    "dynamicImports": [
+      "src/components/OxAutocomplete.vue"
+    ]
+  },
+  "src/index.ts": {
+    "file": "index.js",
+    "name": "index",
+    "src": "src/index.ts",
+    "isEntry": true,
+    "imports": [
+      "_router.js",
+      "_vuetify.js"
+    ]
+  },
+  "src/locale/vue.de.json": {
+    "file": "vue.de.js",
+    "name": "vue.de",
+    "src": "src/locale/vue.de.json",
+    "isDynamicEntry": true
+  },
+  "src/locale/vue.en.json": {
+    "file": "vue.en.js",
+    "name": "vue.en",
+    "src": "src/locale/vue.en.json",
+    "isDynamicEntry": true
+  },
+  "src/locale/vue.es.json": {
+    "file": "vue.es.js",
+    "name": "vue.es",
+    "src": "src/locale/vue.es.json",
+    "isDynamicEntry": true
+  },
+  "src/locale/vue.fr.json": {
+    "file": "vue.fr.js",
+    "name": "vue.fr",
+    "src": "src/locale/vue.fr.json",
+    "isDynamicEntry": true
+  },
+  "src/locale/vue.nl.json": {
+    "file": "vue.nl.js",
+    "name": "vue.nl",
+    "src": "src/locale/vue.nl.json",
+    "isDynamicEntry": true
+  },
+  "src/vendor.ts": {
+    "file": "vendor.js",
+    "name": "vendor",
+    "src": "src/vendor.ts",
+    "isEntry": true,
+    "imports": [
+      "_vuetify.js"
+    ]
+  },
+  "style.css": {
+    "file": "style.css",
+    "src": "style.css"
+  }
+}

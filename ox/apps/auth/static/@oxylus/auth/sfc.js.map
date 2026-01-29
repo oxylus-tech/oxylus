@@ -1,0 +1,1 @@
+{"version":3,"mappings":";++BAAA,OAAO,kBAA8B,wCACrC,OAAO,iBAA6B","names":[],"ignoreList":[],"sources":["../src/sfc.ts"],"sourcesContent":["import('./components/OxUserPanel.vue')\nimport('./components/OxUserEdit.vue')\n"],"file":"sfc.js"}

@@ -1,0 +1,50 @@
+{
+  "_OxFileSelect.js": {
+    "file": "OxFileSelect.js",
+    "name": "OxFileSelect",
+    "isDynamicEntry": true,
+    "imports": [
+      "_vuetify.js"
+    ],
+    "css": [
+      "OxFileSelect.css"
+    ]
+  },
+  "_tiptap.js": {
+    "file": "tiptap.js",
+    "name": "tiptap",
+    "imports": [
+      "_vuetify.js"
+    ]
+  },
+  "_vuetify.js": {
+    "file": "vuetify.js",
+    "name": "vuetify",
+    "css": [
+      "vuetify.css"
+    ]
+  },
+  "src/index.ts": {
+    "file": "index.js",
+    "name": "index",
+    "src": "src/index.ts",
+    "isEntry": true,
+    "imports": [
+      "_OxFileSelect.js",
+      "_vuetify.js",
+      "_tiptap.js"
+    ],
+    "css": [
+      "index.css"
+    ]
+  },
+  "src/sfc.ts": {
+    "file": "sfc.js",
+    "name": "sfc",
+    "src": "src/sfc.ts",
+    "isEntry": true,
+    "dynamicImports": [
+      "_OxFileSelect.js"
+    ]
+  }
+}
