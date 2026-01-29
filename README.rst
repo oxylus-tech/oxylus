@@ -36,19 +36,35 @@ traditional enteprise solutions (so called open-source ones included).
 Features
 --------
 
-- Core framework backend and frontend;
-- Datasets
-- Frontend component library
+Oxylus
+......
 
-Applications (and datasets when applicable):
+Oxylus is the core framework for backend and frontend, and provides common
+applications as:
 
 - ``auth``: user, groups and permissions managements;
+- ``content`` [TBD]: generic content edition and template framework to be used to render specific content (e.g. mails, invoices, etc.)
+- ``files``: file and folder management, including permission system with sharing access, files preview, name obfuscation;
+- ``mails`` [TBD]: manage mailing-list and subscription, using contacts and organisations;
+- ``tasks``: asynchronous tasks management on external process (using ``django-tasks``);
+
+Oxylus Server
+.............
+
+The runtime of the Oxylus platform, with Docker and configuration.
+
+Oxylus ERP
+..........
+
+Applications related to organisations and enterprise management. This includes
+for the moment:
+
 - ``locations``: country and related informations such as VAT/IBAN validation and examples; phone prefix; continent;
 - ``contacts``: contacts and organisations management, entity types, related information (address, email, phone, bank account);
-- ``files``: file and folder management, including permission system with sharing access, files preview, name obfuscation;
-- ``tasks``: asynchronous tasks management on external process (using ``django-tasks``);
-- ``content`` [TBD]: generic content edition and template framework to be used to render specific content (e.g. mails, invoices, etc.)
-- ``mails`` [TBD]: manage mailing-list and subscription, using contacts and organisations;
+- ``contacts_mails``: mailing lists and subscription managements.
+
+Technical stack
+...............
 
 Technically:
 
