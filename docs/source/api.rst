@@ -4,7 +4,7 @@ Python API
 .. toctree::
    :maxdepth: 2
 
-   api/assets
+   api/core
    api/utils
    api/urls
 
@@ -16,5 +16,4 @@ Applications
    :maxdepth: 2
    :glob:
 
-   api/core
    api/apps/*

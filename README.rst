@@ -44,7 +44,7 @@ applications as:
 
 - ``auth``: user, groups and permissions managements;
 - ``content`` [TBD]: generic content edition and template framework to be used to render specific content (e.g. mails, invoices, etc.)
-- ``files``: file and folder management, including permission system with sharing access, files preview, name obfuscation;
+- ``files``: file and folder management, including permission system with sharing access, files preview, and WebDAV integration;
 - ``mails`` [TBD]: manage mailing-list and subscription, using contacts and organisations;
 - ``tasks``: asynchronous tasks management on external process (using ``django-tasks``);
 

@@ -103,9 +103,8 @@ class Command(Command):
         print("")
         self.import_fixtures(apps=apps)
 
-        if assets:
-            self.log("\n[b underline]🌍 Collect assets translations[/b underline]")
-            call_command("vue-i18n")
+        self.log("\n[b underline]🌍 Collect assets translations[/b underline]")
+        call_command("vue-i18n")
 
         self.log("\n[b underline]🦋 Collect statics[/b underline]")
         call_command("collectstatic", "--noinput")

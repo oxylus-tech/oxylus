@@ -3,13 +3,18 @@ requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
 
 
-[tool.poetry]
+[project]
 name = "oxylus"
 description = "Oxylus back-office framework."
-version = "0.0.1"
-authors = ["Thomas Baquet <thomas oxylus app>"]
 readme = "README.rst"
 license = "GPL-3.0-or-later"
+
+dynamic = ["version"]
+
+
+[tool.poetry]
+version = "0.0.1"
+authors = ["Thomas Baquet <thomas oxylus app>"]
 packages = [
     { include = "ox" },
 ]

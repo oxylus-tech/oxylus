@@ -1,12 +1,26 @@
 ox.core
 =======
 
-Core application libraries.
+This module regroup all the bases for building and setup Oxylus applications.
 
 ox.core.apps
 ------------
 
 .. automodule:: ox.core.apps
+   :show-inheritance:
+   :members:
+
+ox.core.assets
+--------------
+
+.. automodule:: ox.core.assets
+   :show-inheritance:
+   :members:
+
+ox.core.conf
+------------
+
+.. automodule:: ox.core.conf
    :show-inheritance:
    :members:
 
@@ -21,6 +35,14 @@ ox.core.models
 --------------
 
 .. automodule:: ox.core.models
+   :show-inheritance:
+   :members:
+
+
+ox.core.pagination
+------------------
+
+.. automodule:: ox.core.pagination
    :show-inheritance:
    :members:
 
@@ -40,13 +62,6 @@ ox.core.renderers
    :show-inheritance:
    :members:
 
-ox.core.signals
----------------
-
-.. automodule:: ox.core.signals
-   :show-inheritance:
-   :members:
-
 
 ox.core.serializers
 -------------------
@@ -56,44 +71,10 @@ ox.core.serializers
    :members:
 
 
-ox.core.templatetags
---------------------
-
-ox.core.templatetags.ox
-.......................
-
-.. automodule:: ox.core.templatetags.ox
-   :show-inheritance:
-   :members:
-
 
 ox.core.views
 -------------
 
-ox.core.views.accounts
-......................
-
-.. automodule:: ox.core.views.accounts
-   :show-inheritance:
-   :members:
-
-ox.core.views.api
-..................
-
-.. automodule:: ox.core.views.api
-   :show-inheritance:
-   :members:
-
-ox.core.views.auth
-..................
-
-.. automodule:: ox.core.views.auth
-   :show-inheritance:
-   :members:
-
-ox.core.views.core
-..................
-
-.. automodule:: ox.core.views.core
+.. automodule:: ox.core.views
    :show-inheritance:
    :members:

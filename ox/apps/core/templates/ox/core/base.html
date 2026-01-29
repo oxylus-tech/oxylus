@@ -68,8 +68,9 @@ Blocks:
 
         {# Localisation: provide 'en' fallback for frontend specific #}
         <script src="{% static "locales" %}/django.en.json" type="application/json" locale="en"></script>
+        {% if LANGUAGE_CODE != "en" %}
         <script src="{% static "locales" %}/django.{{ LANGUAGE_CODE }}.json" type="application/json" locale="{{ LANGUAGE_CODE }}"></script>
-
+        {% endif %}
         {% endblock %}
         {% endspaceless %}
     {% endblock %}

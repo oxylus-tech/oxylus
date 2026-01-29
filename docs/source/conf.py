@@ -4,7 +4,7 @@ import sys
 import django
 
 sys.path.insert(0, str(Path("..", "..").resolve()))
-os.environ["DJANGO_SETTINGS_MODULE"] = "ox.settings.dev"
+os.environ["DJANGO_SETTINGS_MODULE"] = "instance.settings"
 django.setup()
 
 # Configuration file for the Sphinx documentation builder.
