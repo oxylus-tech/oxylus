@@ -1,6 +1,12 @@
+import os
+import django
+
 from wsgidav.wsgidav_app import WsgiDAVApp
 from ..conf import ox_files_settings
 from . import middleware, provider
+
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "ox_server.settings")
+django.setup()
 
 
 # WSGIDAV config

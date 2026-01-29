@@ -117,7 +117,7 @@ exclude = [
     "__pycache__",
     "venv",
     "*/migrations",
-    "*/static",
+    "static",
     "ox/settings",
     "scripts/",
 ]
