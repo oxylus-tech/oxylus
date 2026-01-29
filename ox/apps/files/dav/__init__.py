@@ -30,7 +30,8 @@ dav_config = {
 _dav_app = WsgiDAVApp(dav_config)
 
 
-def dav_app(environ, start_response):
+def application(environ, start_response):
+    """WSGI application serving WebDav"""
     dest = environ.get("HTTP_DESTINATION")
     if dest:
         environ["HTTP_DESTINATION"] = dest.replace("webdav://", "http://")
