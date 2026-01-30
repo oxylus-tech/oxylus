@@ -48,10 +48,10 @@ class FileQuerySet(ChildOwnedQuerySet):
 def file_upload_to(instance, filename) -> str:
     """Return target upload file depending on whether the folder is synchronized or not."""
     if instance.folder:
-        path = f"{instance.folder.path}/{filename}"
+        path = Path(instance.folder.path) / filename
     else:
-        path = f"/{filename}"
-    return ox_files_settings.resolve(path, instance.owner.uuid, relative=True)
+        path = filename
+    return ox_files_settings.resolve(str(path), instance.owner.uuid, relative=True)
 
 
 class File(Described, Timestamped, ChildOwned):

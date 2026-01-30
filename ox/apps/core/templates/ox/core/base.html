@@ -83,7 +83,7 @@ Blocks:
         {% if app_data %}{{ app_data|json_script:"app-data" }}{% endif %}
         <div id="app">
             {% block app-container %}
-            <ox-app api-url="{% url "api-index" %}" logo="{% static "imgs/ox-logo.png" %}" {{ app_attr }}>
+            <ox-app api-url="{% url "api-index" %}" logo="{% static "@oxylus/ox/ox-logo.png" %}" {{ app_attr }}>
                 {% block app %}
                 <template #title="{app}">
                     {% block app-title %}
@@ -174,7 +174,7 @@ Blocks:
         <div id="loading-overlay">
             <div class="flex-grow: 1"></div>
             <div class="content">
-                <img src="{% static "imgs/ox-logo.png" %}"/>
+                <img src="{% static "@oxylus/ox/ox-logo.png" %}"/>
                 <div class="align-center">
                     <h1 data-state="start">{% translate "Load application..." %}</h1>
                     <h1 data-state="create-app">{% translate "Initializing..." %}</h1>

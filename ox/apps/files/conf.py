@@ -54,7 +54,9 @@ class Settings(conf.Settings):
         :param owner: if provided resolve under this owner's path.
         :param relative: if True, return path relative to MEDIA_ROOT.
         """
-        if path.startswith("/"):
+        if path.startswith("//"):
+            path = path[2:]
+        elif path.startswith("/"):
             path = path[1:]
 
         if owner:

@@ -54,6 +54,8 @@ pydantic = "^2.12.5"
 pyjwt = "^2.10.1"
 django-caps = "^0.0.2"
 wsgidav = {extras = ["auth-digest"], version = "^4.3.3"}
+pillow = "^12.1.0"
+jwt = "^1.4.0"
 
 
 [tool.poetry.group.dev]

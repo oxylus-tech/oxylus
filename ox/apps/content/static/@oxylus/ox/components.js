@@ -1,7 +1,7 @@
-import { defineComponent as P, ref as D, inject as G, computed as M, resolveComponent as We, createElementBlock as $, createCommentVNode as V, openBlock as d, Fragment as O, createBlock as y, withCtx as u, renderList as L, mergeProps as w, createVNode as g, createTextVNode as B, toDisplayString as A, withModifiers as N, unref as e, mergeModels as me, useModel as fe, renderSlot as f, useAttrs as Q, createElementVNode as q, useSlots as H, reactive as ie, onErrorCaptured as Ge, onMounted as se, createSlots as W, resolveDynamicComponent as Je, normalizeProps as T, guardReactiveProps as E, watch as X, onUnmounted as Qe, Teleport as He, withDirectives as Ye, vShow as Xe, shallowRef as Ze, h as Oe, defineAsyncComponent as et, normalizeClass as tt, withKeys as he } from "vue";
+import { defineComponent as P, ref as D, inject as G, computed as M, resolveComponent as We, createElementBlock as $, createCommentVNode as V, openBlock as d, Fragment as O, createBlock as y, withCtx as u, renderList as L, mergeProps as w, createVNode as g, createTextVNode as B, toDisplayString as A, withModifiers as q, unref as e, mergeModels as me, useModel as fe, renderSlot as f, useAttrs as Q, createElementVNode as N, useSlots as H, reactive as ie, onErrorCaptured as Ge, onMounted as se, createSlots as W, resolveDynamicComponent as Je, normalizeProps as T, guardReactiveProps as E, watch as X, onUnmounted as Qe, Teleport as He, withDirectives as Ye, vShow as Xe, shallowRef as Ze, h as Oe, defineAsyncComponent as et, normalizeClass as tt, withKeys as he } from "vue";
 import { useRouter as ge, filterSlots as re, useApp as lt, createRouter as at, getCountryFlag as st, t as k, useAction as ot, usePanel as Se, States as nt, useSection as it, useModelPanel as rt, exposeRefs as ut, useQuery as dt, ifNotEqualFn as pt, defineAsyncComponent as ct, tKey as mt, rules as ft, useModelList as vt, Query as yt, ifNotEqual as gt, useModelEditor as bt, useGuard as kt } from "@oxylus/ox";
 import { E as Ce, n as Ae, a3 as $t, l as ue, w as Vt, O as wt, t as ye, S as Ot, q as ht } from "./router.js";
-import { V as xt, b as Z, d as _t, e as St, f as te, g as Ct, h as At, i as ae, j as Mt, k as Me, l as U, n as Lt, o as Bt, p as Le, q as Be, r as be, s as Pt, t as Pe, u as Te, v as Tt, w as ce, x as Et, y as Ee, z as ke, A as Ut, B as Ft, C as It, D as Ue, E as oe, F as Fe, G as jt, H as zt, I as Dt, J as qt, K as xe, L as Nt, M as Rt, N as Kt, O as Wt, P as Gt, Q as Jt, R as Ie, S as Qt, T as je, U as Ht, W as Yt } from "./vuetify.js";
+import { V as xt, b as Z, d as _t, e as St, f as te, g as Ct, h as At, i as ae, j as Mt, k as Me, l as U, n as Lt, o as Bt, p as Le, q as Be, r as be, s as Pt, t as Pe, u as Te, v as Tt, w as ce, x as Et, y as Ee, z as ke, A as Ut, B as Ft, C as It, D as Ue, E as oe, F as Fe, G as jt, H as zt, I as Dt, J as Nt, K as xe, L as qt, M as Rt, N as Kt, O as Wt, P as Gt, Q as Jt, R as Ie, S as Qt, T as je, U as Ht, W as Yt } from "./vuetify.js";
 import "axios";
 import { components as Xt } from "@oxylus/ox/vendor";
 const Zt = /* @__PURE__ */ P({
@@ -63,7 +63,7 @@ const Zt = /* @__PURE__ */ P({
           value: c.name,
           "prepend-icon": c.icon,
           title: c.title,
-          onClick: N(r, ["stop"])
+          onClick: q(r, ["stop"])
         }, null, 8, ["active", "value", "prepend-icon", "title"]))
       ], 64)) : V("", !0);
     };
@@ -164,8 +164,8 @@ const Zt = /* @__PURE__ */ P({
           ]),
           _: 3
         }),
-        l[1] || (l[1] = q("div", { id: "app-bar-after-title" }, null, -1)),
-        l[2] || (l[2] = q("div", { id: "app-bar-actions" }, " ", -1)),
+        l[1] || (l[1] = N("div", { id: "app-bar-after-title" }, null, -1)),
+        l[2] || (l[2] = N("div", { id: "app-bar-actions" }, " ", -1)),
         f(p.$slots, "actions"),
         r.value && r.value.size > 1 ? (d(), y(Mt, {
           key: 0,
@@ -262,7 +262,7 @@ const sl = /* @__PURE__ */ P({
               icon: "mdi-apps",
               title: e(k)("nav.panels"),
               "aria-label": e(k)("nav.panels"),
-              onClick: a[1] || (a[1] = N((i) => o.drawer = !o.drawer, ["stop"]))
+              onClick: a[1] || (a[1] = q((i) => o.drawer = !o.drawer, ["stop"]))
             }, null, 8, ["title", "aria-label"])) : V("", !0)
           ]),
           append: u(() => {
@@ -288,7 +288,7 @@ const sl = /* @__PURE__ */ P({
                         onClick: (h) => p(b[0])
                       }, {
                         prepend: u(() => [
-                          q("span", ll, A(e(st)(b[0])), 1)
+                          N("span", ll, A(e(st)(b[0])), 1)
                         ]),
                         _: 2
                       }, 1032, ["title", "aria-label", "value", "onClick"]))), 256))
@@ -309,7 +309,7 @@ const sl = /* @__PURE__ */ P({
           items: e(s).data.nav
         }, W({
           prepend: u(() => [
-            q("a", al, [
+            N("a", al, [
               m.logo ? (d(), y(be, {
                 key: 0,
                 src: m.logo,
@@ -394,13 +394,13 @@ const sl = /* @__PURE__ */ P({
         icon: n.icon,
         title: n.title,
         "aria-label": n.title,
-        onClick: N(e(t), ["stop"])
+        onClick: q(e(t), ["stop"])
       }), null, 16, ["disabled", "color", "icon", "title", "aria-label", "onClick"])) : (d(), y(Z, w({ key: 1 }, e(o), {
         title: n.title,
         "base-color": n.color,
         "prepend-icon": n.icon,
         disabled: e(p),
-        onClick: N(e(t), ["stop"])
+        onClick: q(e(t), ["stop"])
       }), null, 16, ["title", "base-color", "prepend-icon", "disabled", "onClick"]))
     ], 64)) : V("", !0);
   }
@@ -429,7 +429,7 @@ const sl = /* @__PURE__ */ P({
       /** Reset filters function. */
       reset: t
     }), (p, l) => (d(), $("form", {
-      onSubmit: l[1] || (l[1] = N((a) => e(n).load(), ["prevent"])),
+      onSubmit: l[1] || (l[1] = q((a) => e(n).load(), ["prevent"])),
       class: "ox-list-filters w-100"
     }, [
       g(Tt, {
@@ -456,7 +456,7 @@ const sl = /* @__PURE__ */ P({
           }),
           s.value ? (d(), y(U, {
             key: 1,
-            onClick: N(t, ["stop"]),
+            onClick: q(t, ["stop"]),
             icon: "mdi-backspace",
             "aria-label": e(k)("filters.reset"),
             title: e(k)("filters.reset")
@@ -619,7 +619,7 @@ const sl = /* @__PURE__ */ P({
             subtitle: ((a = s.value[1]) == null ? void 0 : a.key) && l[s.value[1].key]
           }, W({
             default: u(() => [
-              q("div", ol, [
+              N("div", ol, [
                 e(c)["item.image"] || o.image ? (d(), $("div", nl, [
                   g(Ut, {
                     rounded: "0",
@@ -635,10 +635,10 @@ const sl = /* @__PURE__ */ P({
                     _: 2
                   }, 1024)
                 ])) : V("", !0),
-                q("div", null, [
+                N("div", null, [
                   !e(c)["item.default"] && (s.value.length > 2 || e(n).length) ? (d(), y(Ft, { key: 0 }, {
                     default: u(() => [
-                      q("div", null, [
+                      N("div", null, [
                         (d(!0), $(O, null, L(s.value, (v) => (d(), $(O, null, [
                           r.value.has(v.key) ? V("", !0) : (d(), $("div", il, [
                             g(It, {
@@ -702,7 +702,7 @@ const sl = /* @__PURE__ */ P({
   for (const [o, s] of c)
     n[o] = s;
   return n;
-}, qe = /* @__PURE__ */ ul(rl, [["__scopeId", "data-v-ae8aa738"]]), ve = {
+}, Ne = /* @__PURE__ */ ul(rl, [["__scopeId", "data-v-ae8aa738"]]), ve = {
   __name: "OxStateAlert",
   props: {
     /** The state. */
@@ -757,7 +757,7 @@ const sl = /* @__PURE__ */ P({
       }, {
         default: u(() => [
           f(t.$slots, "processing", { state: m.state }, () => [
-            q("p", null, A(e(k)("state.processing.detail")), 1)
+            N("p", null, A(e(k)("state.processing.detail")), 1)
           ])
         ]),
         _: 3
@@ -788,7 +788,7 @@ const sl = /* @__PURE__ */ P({
       }, {
         default: u(() => [
           f(t.$slots, "ok", { state: m.state }, () => [
-            q("p", null, A(e(k)("state.ok.detail")), 1)
+            N("p", null, A(e(k)("state.ok.detail")), 1)
           ]),
           r.value ? (d(), $(O, { key: 0 }, [
             g(Me),
@@ -803,7 +803,7 @@ const sl = /* @__PURE__ */ P({
       })
     ], 64));
   }
-}, Ne = /* @__PURE__ */ P({
+}, qe = /* @__PURE__ */ P({
   __name: "OxPanel",
   props: {
     name: {},
@@ -917,7 +917,7 @@ const sl = /* @__PURE__ */ P({
   },
   setup(m) {
     const c = m, { view: n, section: o, ...s } = it({ name: c.name, title: c.title });
-    return (r, t) => e(n).sections.size > 1 ? (d(), y(qt, {
+    return (r, t) => e(n).sections.size > 1 ? (d(), y(Nt, {
       key: 0,
       value: e(o).name
     }, {
@@ -977,7 +977,7 @@ const sl = /* @__PURE__ */ P({
     const F = ut({ ...l, item: h });
     return se(() => v.load()), c(F), (C, z) => {
       var pe, we;
-      return d(), y(Ne, {
+      return d(), y(qe, {
         name: t.name,
         index: t.index,
         title: e(I).title,
@@ -1060,7 +1060,7 @@ const sl = /* @__PURE__ */ P({
                   disabled: !e(x),
                   title: e(k)("prev"),
                   "aria-label": e(k)("prev"),
-                  onClick: z[2] || (z[2] = N((Y) => e(a).go({ value: e(x).id }), ["stop"]))
+                  onClick: z[2] || (z[2] = q((Y) => e(a).go({ value: e(x).id }), ["stop"]))
                 }, {
                   default: u(() => [
                     g(ae, { icon: "mdi-chevron-left" })
@@ -1071,7 +1071,7 @@ const sl = /* @__PURE__ */ P({
                   disabled: !e(ee),
                   title: e(k)("next"),
                   "aria-label": e(k)("next"),
-                  onClick: z[3] || (z[3] = N((Y) => e(a).go({ value: e(ee).id }), ["stop"]))
+                  onClick: z[3] || (z[3] = q((Y) => e(a).go({ value: e(ee).id }), ["stop"]))
                 }, {
                   default: u(() => [
                     g(ae, { icon: "mdi-chevron-right" })
@@ -1141,7 +1141,7 @@ const sl = /* @__PURE__ */ P({
             title: e(k)("views.cards")
           }, {
             default: u(() => [
-              g(qe, {
+              g(Ne, {
                 list: e(v),
                 items: e(b),
                 headers: t.headers,
@@ -1358,7 +1358,7 @@ const sl = /* @__PURE__ */ P({
         name: t.name,
         value: s.value
       }, null, 8, ml)) : V("", !0),
-      g(e(Nt), w(e(p), {
+      g(e(qt), w(e(p), {
         items: b,
         loading: e(a).isProcessing,
         modelValue: s.value,
@@ -1489,19 +1489,20 @@ const sl = /* @__PURE__ */ P({
 }), gl = /* @__PURE__ */ P({
   __name: "OxModelList",
   props: /* @__PURE__ */ me({
-    filters: {},
-    prevKey: {},
-    nextKey: {},
-    countKey: {},
-    repos: {},
-    editable: { type: Boolean },
-    query: {},
-    relations: {},
-    url: {},
-    fetchRelations: { type: Boolean },
-    save: { type: Boolean },
     repo: {},
-    opts: {},
+    repos: {},
+    headers: {},
+    relations: {},
+    fetchRelations: { type: Boolean },
+    search: {},
+    warning: {},
+    name: {},
+    title: {},
+    state: {},
+    icon: {},
+    href: {},
+    index: {},
+    editions: {},
     load: { type: Boolean }
   }, {
     modelValue: [],
@@ -1559,7 +1560,7 @@ const sl = /* @__PURE__ */ P({
                   class: "ml-2",
                   size: "small",
                   color: "error",
-                  onClick: N((b) => l(v.id), ["stop", "prevent"]),
+                  onClick: q((b) => l(v.id), ["stop", "prevent"]),
                   "aria-label": e(k)("actions.remove"),
                   title: e(k)("actions.remove"),
                   icon: "mdi-delete"
@@ -1602,8 +1603,8 @@ const sl = /* @__PURE__ */ P({
     const o = c, s = Q();
     return (r, t) => (d(), y(Z, T(E(e(s))), {
       append: u(() => [
-        q("div", {
-          onClick: t[1] || (t[1] = N(() => {
+        N("div", {
+          onClick: t[1] || (t[1] = q(() => {
           }, ["stop"]))
         }, [
           f(r.$slots, "actions", {
@@ -1614,7 +1615,7 @@ const sl = /* @__PURE__ */ P({
             type: "button",
             class: "ml-1",
             size: "small",
-            onClick: t[0] || (t[0] = N((p) => o("remove", r.$events), ["stop", "prevent"])),
+            onClick: t[0] || (t[0] = q((p) => o("remove", r.$events), ["stop", "prevent"])),
             color: "error",
             "aria-label": e(k)("actions.remove"),
             title: e(k)("actions.remove"),
@@ -2041,12 +2042,12 @@ const sl = /* @__PURE__ */ P({
     }), (a, i) => (d(), $(O, null, [
       g(ve, { state: t }, {
         none: u(({ state: v }) => [...i[7] || (i[7] = [
-          q("p", null, "Please enter your credentials in order too proceed...", -1)
+          N("p", null, "Please enter your credentials in order too proceed...", -1)
         ])]),
         "ok-detail": u(({ state: v }) => [
           o.next ? (d(), $("p", wl, [
             i[8] || (i[8] = B("You soon will be redirected to ", -1)),
-            q("i", null, A(o.next), 1)
+            N("i", null, A(o.next), 1)
           ])) : V("", !0)
         ]),
         _: 1
@@ -2057,7 +2058,7 @@ const sl = /* @__PURE__ */ P({
           label: "Enter login",
           modelValue: s.username,
           "onUpdate:modelValue": i[0] || (i[0] = (v) => s.username = v),
-          onKeyup: i[1] || (i[1] = he(N((v) => n.value.focus(), ["stop"]), ["enter"]))
+          onKeyup: i[1] || (i[1] = he(q((v) => n.value.focus(), ["stop"]), ["enter"]))
         }, null, 8, ["modelValue"]),
         g(ce, {
           variant: "underlined",
@@ -2068,9 +2069,9 @@ const sl = /* @__PURE__ */ P({
           type: r.value ? "text" : "password",
           "append-icon": r.value ? "mdi-eye" : "mdi-eye-off",
           "onClick:append": i[3] || (i[3] = (v) => r.value = !r.value),
-          onKeyup: i[4] || (i[4] = he(N((v) => l(), ["stop"]), ["enter"]))
+          onKeyup: i[4] || (i[4] = he(q((v) => l(), ["stop"]), ["enter"]))
         }, null, 8, ["modelValue", "type", "append-icon"]),
-        q("div", Ol, [
+        N("div", Ol, [
           f(a.$slots, "bottom", {
             password: s.password,
             username: s.username,
@@ -2245,7 +2246,7 @@ const sl = /* @__PURE__ */ P({
   OxComponent: vl,
   OxField: yl,
   OxFormList: kl,
-  OxListCard: qe,
+  OxListCard: Ne,
   OxListFilters: ze,
   OxListKanban: $l,
   OxListTable: De,
@@ -2254,7 +2255,7 @@ const sl = /* @__PURE__ */ P({
   OxModelEditor: Ke,
   OxModelList: gl,
   OxModelPanel: dl,
-  OxPanel: Ne,
+  OxPanel: qe,
   OxSection: Re,
   OxStateAlert: ve,
   OxValidationBtn: Ve,
@@ -2275,7 +2276,7 @@ export {
   vl as OxComponent,
   yl as OxField,
   kl as OxFormList,
-  qe as OxListCard,
+  Ne as OxListCard,
   ze as OxListFilters,
   $l as OxListKanban,
   De as OxListTable,
@@ -2284,7 +2285,7 @@ export {
   Ke as OxModelEditor,
   gl as OxModelList,
   dl as OxModelPanel,
-  Ne as OxPanel,
+  qe as OxPanel,
   Re as OxSection,
   ve as OxStateAlert,
   Ve as OxValidationBtn,

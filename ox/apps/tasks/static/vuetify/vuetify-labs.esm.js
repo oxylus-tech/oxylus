@@ -1,10 +1,10 @@
 /*!
-* Vuetify v3.11.6
+* Vuetify v3.10.5
 * Forged by John Leider
 * Released under the MIT License.
 */
 
-import { warn, shallowRef, reactive, watchEffect, toRef, capitalize, isRef, isReactive, isProxy, toRaw, unref, Fragment, camelize, isVNode, Comment, getCurrentInstance as getCurrentInstance$1, ref, computed, provide, inject as inject$1, defineComponent as defineComponent$1, h, toValue, watch, onBeforeUnmount, readonly, onMounted, useId, onDeactivated, onActivated, onScopeDispose, effectScope, getCurrentScope, createElementVNode, normalizeStyle, normalizeClass, createVNode, TransitionGroup, Transition, mergeProps, toRefs, onBeforeMount, nextTick, withDirectives, vShow, onUpdated, Text, resolveDynamicComponent, toDisplayString, markRaw, Teleport, cloneVNode, createTextVNode, normalizeProps, guardReactiveProps, onUnmounted, onBeforeUpdate, withModifiers, vModelText, resolveComponent, render } from 'vue';
+import { shallowRef, reactive, watchEffect, toRef, capitalize, unref, Fragment, camelize, isVNode, Comment, warn, getCurrentInstance as getCurrentInstance$1, ref, computed, provide, inject as inject$1, defineComponent as defineComponent$1, h, toValue, watch, onBeforeUnmount, readonly, onMounted, useId, onDeactivated, onActivated, onScopeDispose, effectScope, toRaw, getCurrentScope, createElementVNode, normalizeStyle, normalizeClass, createVNode, TransitionGroup, Transition, mergeProps, toRefs, isRef, onBeforeMount, nextTick, withDirectives, vShow, onUpdated, Text, resolveDynamicComponent, toDisplayString, markRaw, Teleport, cloneVNode, createTextVNode, normalizeProps, guardReactiveProps, onUnmounted, onBeforeUpdate, withModifiers, vModelText, resolveComponent, render } from 'vue';
 
 // Types
 // eslint-disable-line vue/prefer-import-from-vue
@@ -77,19 +77,6 @@ const makeComponentProps = propsFactory({
   }
 }, 'component');
 
-/* eslint-disable no-console */
-
-function consoleWarn(message) {
-  warn(`Vuetify: ${message}`);
-}
-function consoleError(message) {
-  warn(`Vuetify error: ${message}`);
-}
-function deprecate(original, replacement) {
-  replacement = Array.isArray(replacement) ? replacement.slice(0, -1).map(s => `'${s}'`).join(', ') + ` or '${replacement.at(-1)}'` : `'${replacement}'`;
-  warn(`[Vuetify UPGRADE] '${original}' is deprecated, use ${replacement} instead.`);
-}
-
 const IN_BROWSER = typeof window !== 'undefined';
 const SUPPORTS_INTERSECTION = IN_BROWSER && 'IntersectionObserver' in window;
 const SUPPORTS_TOUCH = IN_BROWSER && ('ontouchstart' in window || window.navigator.maxTouchPoints > 0);
@@ -116,6 +103,23 @@ function getNestedValue(obj, path, fallback) {
   }
   if (obj == null) return fallback;
   return obj[path[last]] === undefined ? fallback : obj[path[last]];
+}
+function deepEqual(a, b) {
+  if (a === b) return true;
+  if (a instanceof Date && b instanceof Date && a.getTime() !== b.getTime()) {
+    // If the values are Date, compare them as timestamps
+    return false;
+  }
+  if (a !== Object(a) || b !== Object(b)) {
+    // If the values aren't objects, they were already checked for equality
+    return false;
+  }
+  const props = Object.keys(a);
+  if (props.length !== Object.keys(b).length) {
+    // Different number of props, don't bother to check
+    return false;
+  }
+  return props.every(p => deepEqual(a[p], b[p]));
 }
 function getObjectValueByPath(obj, path, fallback) {
   // credit: http://stackoverflow.com/questions/6491463/accessing-nested-javascript-objects-with-string-key#comment55278413_6491621
@@ -252,7 +256,7 @@ function isComposingIgnoreKey(e) {
 function filterInputAttrs(attrs) {
   const [events, props] = pickWithRest(attrs, [onRE]);
   const inputEvents = omit(events, bubblingEvents);
-  const [rootAttrs, inputAttrs] = pickWithRest(props, ['class', 'style', 'id', 'inert', /^data-/]);
+  const [rootAttrs, inputAttrs] = pickWithRest(props, ['class', 'style', 'id', /^data-/]);
   Object.assign(rootAttrs, events);
   Object.assign(inputAttrs, inputEvents);
   return [rootAttrs, inputAttrs];
@@ -367,7 +371,7 @@ function findChildrenWithProvide(key, vnode) {
   } else if (Array.isArray(vnode.children)) {
     return vnode.children.map(child => findChildrenWithProvide(key, child)).flat(1);
   } else if (vnode.component) {
-    if (Object.getOwnPropertyDescriptor(vnode.component.provides, key)) {
+    if (Object.getOwnPropertySymbols(vnode.component.provides).includes(key)) {
       return [vnode.component];
     } else if (vnode.component.subTree) {
       return findChildrenWithProvide(key, vnode.component.subTree).flat(1);
@@ -464,17 +468,8 @@ function callEvent(handler) {
 }
 function focusableChildren(el) {
   let filterByTabIndex = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
-  const targets = ['button', '[href]', 'input:not([type="hidden"])', 'select', 'textarea', 'details:not(:has(> summary))', 'details > summary', '[tabindex]', '[contenteditable]:not([contenteditable="false"])', 'audio[controls]', 'video[controls]'].map(s => `${s}${filterByTabIndex ? ':not([tabindex="-1"])' : ''}:not([disabled], [inert])`).join(', ');
-  let elements;
-  try {
-    elements = [...el.querySelectorAll(targets)];
-  } catch (err) {
-    consoleError(String(err));
-    return [];
-  }
-  return elements.filter(x => !x.closest('[inert]')) // does not have inert parent
-  .filter(x => !!x.offsetParent || x.getClientRects().length > 0) // is rendered
-  .filter(x => !x.parentElement?.closest('details:not([open])') || x.tagName === 'SUMMARY' && x.parentElement?.tagName === 'DETAILS');
+  const targets = ['button', '[href]', 'input:not([type="hidden"])', 'select', 'textarea', '[tabindex]'].map(s => `${s}${filterByTabIndex ? ':not([tabindex="-1"])' : ''}:not([disabled])`).join(', ');
+  return [...el.querySelectorAll(targets)];
 }
 function getNextElement(elements, location, condition) {
   let _el;
@@ -605,24 +600,6 @@ function onlyDefinedProps(props) {
     return booleanAttributes.includes(key) ? !!v : v !== undefined;
   }));
 }
-function deepToRaw(value) {
-  const objectIterator = input => {
-    if (Array.isArray(input)) {
-      return input.map(item => objectIterator(item));
-    }
-    if (isRef(input) || isReactive(input) || isProxy(input)) {
-      return objectIterator(toRaw(input));
-    }
-    if (isPlainObject(input)) {
-      return Object.keys(input).reduce((acc, key) => {
-        acc[key] = objectIterator(input[key]);
-        return acc;
-      }, {});
-    }
-    return input;
-  };
-  return objectIterator(value);
-}
 
 // Utilities
 const block = ['top', 'bottom'];
@@ -680,14 +657,13 @@ function getAxis(anchor) {
 class Box {
   constructor(args) {
     const pageScale = document.body.currentCSSZoom ?? 1;
-    const isElement = args instanceof Element;
-    const factor = isElement ? 1 + (1 - pageScale) / pageScale : 1;
+    const factor = args instanceof DOMRect ? 1 + (1 - pageScale) / pageScale : 1;
     const {
       x,
       y,
       width,
       height
-    } = isElement ? args.getBoundingClientRect() : args;
+    } = args;
     this.x = x * factor;
     this.y = y * factor;
     this.width = width * factor;
@@ -729,7 +705,7 @@ function getTargetBox(target) {
       height: 0 * factor
     });
   } else {
-    return new Box(target);
+    return new Box(target.getBoundingClientRect());
   }
 }
 function getElementBox(el) {
@@ -751,7 +727,13 @@ function getElementBox(el) {
       });
     }
   } else {
-    return new Box(el);
+    const rect = el.getBoundingClientRect();
+    return new Box({
+      x: rect.x,
+      y: rect.y,
+      width: el.clientWidth,
+      height: el.clientHeight
+    });
   }
 }
 
@@ -759,7 +741,7 @@ function getElementBox(el) {
 
 /** @see https://stackoverflow.com/a/57876601/2074736 */
 function nullifyTransforms(el) {
-  const rect = new Box(el);
+  const rect = new Box(el.getBoundingClientRect());
   const style = getComputedStyle(el);
   const tx = style.transform;
   if (tx) {
@@ -950,6 +932,19 @@ function APCAcontrast(text, background) {
     outputContrast = SAPC > -loClip ? 0.0 : SAPC > -loConThresh ? SAPC - SAPC * loConFactor * loConOffset : SAPC + loConOffset;
   }
   return outputContrast * 100;
+}
+
+/* eslint-disable no-console */
+
+function consoleWarn(message) {
+  warn(`Vuetify: ${message}`);
+}
+function consoleError(message) {
+  warn(`Vuetify error: ${message}`);
+}
+function deprecate(original, replacement) {
+  replacement = Array.isArray(replacement) ? replacement.slice(0, -1).map(s => `'${s}'`).join(', ') + ` or '${replacement.at(-1)}'` : `'${replacement}'`;
+  warn(`[Vuetify UPGRADE] '${original}' is deprecated, use ${replacement} instead.`);
 }
 
 // Types
@@ -1543,49 +1538,6 @@ function createSimpleFunctional(klass) {
   });
 }
 
-function updateRecursionCache(a, b, cache, result) {
-  if (!cache || isPrimitive(a) || isPrimitive(b)) return;
-  const visitedObject = cache.get(a);
-  if (visitedObject) {
-    visitedObject.set(b, result);
-  } else {
-    const newCacheItem = new WeakMap();
-    newCacheItem.set(b, result);
-    cache.set(a, newCacheItem);
-  }
-}
-function findCachedComparison(a, b, cache) {
-  if (!cache || isPrimitive(a) || isPrimitive(b)) return null;
-  const r1 = cache.get(a)?.get(b);
-  if (typeof r1 === 'boolean') return r1;
-  const r2 = cache.get(b)?.get(a);
-  if (typeof r2 === 'boolean') return r2;
-  return null;
-}
-function deepEqual(a, b) {
-  let recursionCache = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : new WeakMap();
-  if (a === b) return true;
-  if (a instanceof Date && b instanceof Date && a.getTime() !== b.getTime()) {
-    // If the values are Date, compare them as timestamps
-    return false;
-  }
-  if (a !== Object(a) || b !== Object(b)) {
-    // If the values aren't objects, they were already checked for equality
-    return false;
-  }
-  const props = Object.keys(a);
-  if (props.length !== Object.keys(b).length) {
-    // Different number of props, don't bother to check
-    return false;
-  }
-  const cachedComparisonResult = findCachedComparison(a, b, recursionCache);
-  if (cachedComparisonResult) {
-    return cachedComparisonResult;
-  }
-  updateRecursionCache(a, b, recursionCache, true);
-  return props.every(p => deepEqual(a[p], b[p], recursionCache));
-}
-
 /**
  * Returns:
  *  - 'null' if the node is not attached to the DOM
@@ -1720,28 +1672,25 @@ function getIndentLines(_ref) {
     parentIndentLines,
     variant
   } = _ref;
-  const isLastLeaf = isLast && (!isLastGroup || separateRoots || depth > 1);
   if (!parentIndentLines || !depth) {
     return {
       leaf: undefined,
       node: undefined,
-      children: parentIndentLines,
-      footer: parentIndentLines && (!isLastLeaf || variant === 'simple') ? [...parentIndentLines, separateRoots ? 'none' : 'line'] : ['none']
+      children: parentIndentLines
     };
   }
   if (variant === 'simple') {
     return {
       leaf: [...parentIndentLines, 'line'],
       node: [...parentIndentLines, 'line'],
-      children: [...parentIndentLines, 'line'],
-      footer: [...parentIndentLines, 'line', 'line']
+      children: [...parentIndentLines, 'line']
     };
   }
+  const isLastLeaf = isLast && (!isLastGroup || separateRoots || depth > 1);
   return {
     leaf: [...parentIndentLines, isLastLeaf ? 'last-leaf' : 'leaf', ...(leafLinks ? ['leaf-link'] : [])],
     node: [...parentIndentLines, isLastLeaf ? 'last-leaf' : 'leaf'],
-    children: [...parentIndentLines, isLastLeaf ? 'none' : 'line'],
-    footer: [...parentIndentLines, isLastLeaf ? 'none' : 'line']
+    children: [...parentIndentLines, isLastLeaf ? 'none' : 'line']
   };
 }
 
@@ -1766,49 +1715,6 @@ function useRender(render) {
 
 function formatTime(seconds) {
   return [Math.floor(seconds % 60), Math.floor(seconds / 60 % 60), Math.floor(seconds / 60 / 60 % 60)].filter((x, i) => i < 2 || x > 0).reverse().map(String).map((x, i) => i > 0 ? x.padStart(2, '0') : x).join(':');
-}
-
-function throttle(fn, delay) {
-  let options = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {
-    leading: true,
-    trailing: true
-  };
-  let timeoutId = 0;
-  let lastExec = 0;
-  let throttling = false;
-  let start = 0;
-  function clear() {
-    clearTimeout(timeoutId);
-    throttling = false;
-    start = 0;
-  }
-  const wrap = function () {
-    for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
-      args[_key] = arguments[_key];
-    }
-    clearTimeout(timeoutId);
-    const now = Date.now();
-    if (!start) start = now;
-    const elapsed = now - Math.max(start, lastExec);
-    function invoke() {
-      lastExec = Date.now();
-      timeoutId = setTimeout(clear, delay);
-      fn(...args);
-    }
-    if (!throttling) {
-      throttling = true;
-      if (options.leading) {
-        invoke();
-      }
-    } else if (elapsed >= delay) {
-      invoke();
-    } else if (options.trailing) {
-      timeoutId = setTimeout(invoke, delay - elapsed);
-    }
-  };
-  wrap.clear = clear;
-  wrap.immediate = fn;
-  return wrap;
 }
 
 // Utilities
@@ -2247,9 +2153,6 @@ var en = {
       previousMonth: 'Previous month',
       nextMonth: 'Next month',
       selectYear: 'Select year',
-      previousYear: 'Previous year',
-      nextYear: 'Next year',
-      selectMonth: 'Select month',
       selectDate: '{0}',
       // Full date format
       currentDate: 'Today, {0}'
@@ -2285,10 +2188,7 @@ var en = {
   timePicker: {
     am: 'AM',
     pm: 'PM',
-    title: 'Select Time',
-    hour: 'Hour',
-    minute: 'Minute',
-    second: 'Second'
+    title: 'Select Time'
   },
   pagination: {
     ariaLabel: {
@@ -2344,8 +2244,7 @@ var en = {
     backspace: 'Backspace',
     option: 'Option',
     plus: 'plus',
-    shortcut: 'Keyboard shortcut: {0}',
-    or: 'or'
+    shortcut: 'Keyboard shortcut: {0}'
   },
   video: {
     play: 'Play',
@@ -2837,17 +2736,9 @@ function createTheme(options) {
           createCssClass(fgLines, `.${scoped}border-${key}`, [`--${parsedOptions.prefix}border-color: var(--${parsedOptions.prefix}theme-${key})`], parsedOptions.scope);
         }
       }
-      if (parsedOptions.layers) {
-        lines.push('@layer background {\n', ...bgLines.map(v => `  ${v}`), '}\n', '@layer foreground {\n', ...fgLines.map(v => `  ${v}`), '}\n');
-      } else {
-        lines.push(...bgLines, ...fgLines);
-      }
+      lines.push(...bgLines, ...fgLines);
     }
-    let final = lines.map((str, i) => i === 0 ? str : `    ${str}`).join('');
-    if (parsedOptions.layers) {
-      final = '@layer vuetify.theme {\n' + lines.map(v => `  ${v}`).join('') + '\n}';
-    }
-    return final;
+    return lines.map((str, i) => i === 0 ? str : `    ${str}`).join('');
   });
   const themeClasses = toRef(() => parsedOptions.isDisabled ? undefined : `${parsedOptions.prefix}theme--${name.value}`);
   const themeNames = toRef(() => Object.keys(computedThemes.value));
@@ -4091,10 +3982,6 @@ const allowedDensities$1 = [null, 'prominent', 'default', 'comfortable', 'compac
 const makeVToolbarProps = propsFactory({
   absolute: Boolean,
   collapse: Boolean,
-  collapsePosition: {
-    type: String,
-    default: 'start'
-  },
   color: String,
   density: {
     type: String,
@@ -4166,7 +4053,7 @@ const VToolbar = genericComponent()({
       const extension = slots.extension?.();
       isExtended.value = props.extended === null ? !!extension : props.extended;
       return createVNode(props.tag, {
-        "class": normalizeClass(['v-toolbar', `v-toolbar--collapse-${props.collapsePosition}`, {
+        "class": normalizeClass(['v-toolbar', {
           'v-toolbar--absolute': props.absolute,
           'v-toolbar--collapse': props.collapse,
           'v-toolbar--flat': props.flat,
@@ -4255,8 +4142,7 @@ const makeScrollProps = propsFactory({
 function useScroll(props) {
   let args = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
   const {
-    canScroll,
-    layoutSize
+    canScroll
   } = args;
   let previousScroll = 0;
   let previousScrollHeight = 0;
@@ -4266,9 +4152,6 @@ function useScroll(props) {
   const currentThreshold = shallowRef(0);
   const isScrollActive = shallowRef(false);
   const isScrollingUp = shallowRef(false);
-  const isAtBottom = shallowRef(false);
-  const reachedBottomWhileScrollingDown = shallowRef(false);
-  const hasEnoughScrollableSpace = shallowRef(true);
   const scrollThreshold = computed(() => {
     return Number(props.scrollThreshold);
   });
@@ -4280,82 +4163,19 @@ function useScroll(props) {
   const scrollRatio = computed(() => {
     return clamp((scrollThreshold.value - currentScroll.value) / scrollThreshold.value || 0);
   });
-  function getScrollMetrics(targetEl) {
-    const clientHeight = 'window' in targetEl ? window.innerHeight : targetEl.clientHeight;
-    const scrollHeight = 'window' in targetEl ? document.documentElement.scrollHeight : targetEl.scrollHeight;
-    return {
-      clientHeight,
-      scrollHeight
-    };
-  }
-  function checkScrollableSpace() {
-    const targetEl = target.value;
-    if (!targetEl) return;
-    const {
-      clientHeight,
-      scrollHeight
-    } = getScrollMetrics(targetEl);
-    const maxScrollableDistance = scrollHeight - clientHeight;
-
-    // When the scroll-hide element (like AppBar) hides, it causes the page to grow
-    // We need extra scrollable space beyond the threshold to prevent bouncing
-    // Add the element's height to the required minimum distance
-    const elementHeight = layoutSize?.value || 0;
-    const minRequiredDistance = scrollThreshold.value + elementHeight;
-
-    // Only enable scroll-hide if there's enough scrollable space
-    hasEnoughScrollableSpace.value = maxScrollableDistance > minRequiredDistance;
-  }
-  function onResize() {
-    checkScrollableSpace();
-  }
-  function onScroll() {
+  const onScroll = () => {
     const targetEl = target.value;
     if (!targetEl || canScroll && !canScroll.value) return;
     previousScroll = currentScroll.value;
     currentScroll.value = 'window' in targetEl ? targetEl.pageYOffset : targetEl.scrollTop;
     const currentScrollHeight = targetEl instanceof Window ? document.documentElement.scrollHeight : targetEl.scrollHeight;
     if (previousScrollHeight !== currentScrollHeight) {
-      // If page is growing (content loading), recalculate scrollable space
-      // If page is shrinking (likely due to navbar animation), don't recalculate
-      if (currentScrollHeight > previousScrollHeight) {
-        checkScrollableSpace();
-      }
       previousScrollHeight = currentScrollHeight;
+      return;
     }
     isScrollingUp.value = currentScroll.value < previousScroll;
     currentThreshold.value = Math.abs(currentScroll.value - scrollThreshold.value);
-
-    // Detect if at bottom of page
-    const {
-      clientHeight,
-      scrollHeight
-    } = getScrollMetrics(targetEl);
-    const atBottom = currentScroll.value + clientHeight >= scrollHeight - 5;
-
-    // Track when bottom is reached during downward scroll
-    // Only set flag if ALL conditions are met:
-    // 1. Scrolled past threshold (navbar is hiding)
-    // 2. Page has enough scrollable space for scroll-hide
-    // This prevents activation on short pages or edge cases
-    if (!isScrollingUp.value && atBottom && currentScroll.value >= scrollThreshold.value && hasEnoughScrollableSpace.value) {
-      reachedBottomWhileScrollingDown.value = true;
-    }
-
-    // Reset the flag when:
-    // 1. Scrolling up away from bottom (with small tolerance for touchpad/momentum scrolling)
-    // 2. Scroll position jumped significantly (e.g., navigation, scroll restoration)
-    // 3. Scroll is at the very top (page navigation resets to top)
-    const scrollJumped = Math.abs(currentScroll.value - previousScroll) > 100;
-    const atTop = currentScroll.value <= 5;
-    const scrolledUpSignificantly = isScrollingUp.value && previousScroll - currentScroll.value > 1;
-    if (scrolledUpSignificantly && !atBottom || scrollJumped && currentScroll.value < scrollThreshold.value || atTop) {
-      reachedBottomWhileScrollingDown.value = false;
-    }
-
-    // Update state
-    isAtBottom.value = atBottom;
-  }
+  };
   watch(isScrollingUp, () => {
     savedScroll.value = savedScroll.value || currentScroll.value;
   });
@@ -4375,23 +4195,12 @@ function useScroll(props) {
       target.value.addEventListener('scroll', onScroll, {
         passive: true
       });
-
-      // Check scrollable space when target is set
-      Promise.resolve().then(() => {
-        checkScrollableSpace();
-      });
     }, {
       immediate: true
-    });
-
-    // Listen to window resize to recalculate scrollable space
-    window.addEventListener('resize', onResize, {
-      passive: true
     });
   });
   onBeforeUnmount(() => {
     target.value?.removeEventListener('scroll', onScroll);
-    window.removeEventListener('resize', onResize);
   });
 
   // Do we need this? If yes - seems that
@@ -4409,10 +4218,7 @@ function useScroll(props) {
     // probably can be removed
     // later (2 chars chlng)
     isScrollingUp,
-    savedScroll,
-    isAtBottom,
-    reachedBottomWhileScrollingDown,
-    hasEnoughScrollableSpace
+    savedScroll
   };
 }
 
@@ -4486,22 +4292,13 @@ const VAppBar = genericComponent()({
       // behavior.shrink ||
       !isActive.value;
     });
-    const appBarHeight = computed(() => {
-      const height = vToolbarRef.value?.contentHeight ?? 0;
-      const extensionHeight = vToolbarRef.value?.extensionHeight ?? 0;
-      return height + extensionHeight;
-    });
     const {
       currentScroll,
       scrollThreshold,
       isScrollingUp,
-      scrollRatio,
-      isAtBottom,
-      reachedBottomWhileScrollingDown,
-      hasEnoughScrollableSpace
+      scrollRatio
     } = useScroll(props, {
-      canScroll,
-      layoutSize: appBarHeight
+      canScroll
     });
     const canHide = toRef(() => scrollBehavior.value.hide || scrollBehavior.value.fullyHide);
     const isCollapsed = computed(() => props.collapse || scrollBehavior.value.collapse && (scrollBehavior.value.inverted ? scrollRatio.value > 0 : scrollRatio.value === 0));
@@ -4516,31 +4313,15 @@ const VAppBar = genericComponent()({
     });
     useToggleScope(() => !!props.scrollBehavior, () => {
       watchEffect(() => {
-        if (!canHide.value) {
+        if (canHide.value) {
+          if (scrollBehavior.value.inverted) {
+            isActive.value = currentScroll.value > scrollThreshold.value;
+          } else {
+            isActive.value = isScrollingUp.value || currentScroll.value < scrollThreshold.value;
+          }
+        } else {
           isActive.value = true;
-          return;
         }
-        if (scrollBehavior.value.inverted) {
-          isActive.value = currentScroll.value > scrollThreshold.value;
-          return;
-        }
-
-        // If there's not enough scrollable space, don't apply scroll-hide behavior at all
-        // This prevents flickering/bouncing animations on short pages
-        if (!hasEnoughScrollableSpace.value) {
-          isActive.value = true;
-          return;
-        }
-
-        // Prevent navbar from showing when we reached bottom while scrolling down
-        // This handles the case where scroll momentum causes to hit bottom during hide transition
-        if (reachedBottomWhileScrollingDown.value) {
-          isActive.value = false;
-          return;
-        }
-
-        // Normal behavior: show when scrolling up (and not at bottom) or above threshold
-        isActive.value = isScrollingUp.value && !isAtBottom.value || currentScroll.value < scrollThreshold.value;
       });
     });
     const {
@@ -4608,7 +4389,7 @@ function useDensity(props) {
 
 // Types
 
-const allowedVariants$5 = ['elevated', 'flat', 'tonal', 'outlined', 'text', 'plain'];
+const allowedVariants$4 = ['elevated', 'flat', 'tonal', 'outlined', 'text', 'plain'];
 function genOverlays(isClickable, name) {
   return createElementVNode(Fragment, null, [isClickable && createElementVNode("span", {
     "key": "overlay",
@@ -4623,7 +4404,7 @@ const makeVariantProps = propsFactory({
   variant: {
     type: String,
     default: 'elevated',
-    validator: v => allowedVariants$5.includes(v)
+    validator: v => allowedVariants$4.includes(v)
   }
 }, 'variant');
 function useVariant(props) {
@@ -4762,7 +4543,7 @@ function useGroupItem(props, injectKey) {
   function unregister() {
     group?.unregister(id);
   }
-  register();
+  onMounted(() => register());
   onBeforeUnmount(() => unregister());
   const isSelected = computed(() => {
     return group.isSelected(id);
@@ -4995,7 +4776,83 @@ const VBtnToggle = genericComponent()({
   }
 });
 
-// Utilities
+// Composables
+
+// Types
+
+const aliases = {
+  collapse: 'mdi-chevron-up',
+  complete: 'mdi-check',
+  cancel: 'mdi-close-circle',
+  close: 'mdi-close',
+  delete: 'mdi-close-circle',
+  // delete (e.g. v-chip close)
+  clear: 'mdi-close-circle',
+  success: 'mdi-check-circle',
+  info: 'mdi-information',
+  warning: 'mdi-alert-circle',
+  error: 'mdi-close-circle',
+  prev: 'mdi-chevron-left',
+  next: 'mdi-chevron-right',
+  checkboxOn: 'mdi-checkbox-marked',
+  checkboxOff: 'mdi-checkbox-blank-outline',
+  checkboxIndeterminate: 'mdi-minus-box',
+  delimiter: 'mdi-circle',
+  // for carousel
+  sortAsc: 'mdi-arrow-up',
+  sortDesc: 'mdi-arrow-down',
+  expand: 'mdi-chevron-down',
+  menu: 'mdi-menu',
+  subgroup: 'mdi-menu-down',
+  dropdown: 'mdi-menu-down',
+  radioOn: 'mdi-radiobox-marked',
+  radioOff: 'mdi-radiobox-blank',
+  edit: 'mdi-pencil',
+  ratingEmpty: 'mdi-star-outline',
+  ratingFull: 'mdi-star',
+  ratingHalf: 'mdi-star-half-full',
+  loading: 'mdi-cached',
+  first: 'mdi-page-first',
+  last: 'mdi-page-last',
+  unfold: 'mdi-unfold-more-horizontal',
+  file: 'mdi-paperclip',
+  plus: 'mdi-plus',
+  minus: 'mdi-minus',
+  calendar: 'mdi-calendar',
+  treeviewCollapse: 'mdi-menu-down',
+  treeviewExpand: 'mdi-menu-right',
+  tableGroupCollapse: 'mdi-chevron-down',
+  tableGroupExpand: 'mdi-chevron-right',
+  eyeDropper: 'mdi-eyedropper',
+  upload: 'mdi-cloud-upload',
+  color: 'mdi-palette',
+  command: 'mdi-apple-keyboard-command',
+  ctrl: 'mdi-apple-keyboard-control',
+  space: 'mdi-keyboard-space',
+  shift: 'mdi-apple-keyboard-shift',
+  alt: 'mdi-apple-keyboard-option',
+  enter: 'mdi-keyboard-return',
+  arrowup: 'mdi-arrow-up',
+  arrowdown: 'mdi-arrow-down',
+  arrowleft: 'mdi-arrow-left',
+  arrowright: 'mdi-arrow-right',
+  backspace: 'mdi-backspace',
+  play: 'mdi-play',
+  pause: 'mdi-pause',
+  fullscreen: 'mdi-fullscreen',
+  fullscreenExit: 'mdi-fullscreen-exit',
+  volumeHigh: 'mdi-volume-high',
+  volumeMedium: 'mdi-volume-medium',
+  volumeLow: 'mdi-volume-low',
+  volumeOff: 'mdi-volume-variant-off'
+};
+const mdi = {
+  // Not using mergeProps here, functional components merge props by default (?)
+  component: props => h(VClassIcon, {
+    ...props,
+    class: 'mdi'
+  })
+};
 
 // Types
 
@@ -5078,6 +4935,37 @@ const VClassIcon = defineComponent({
     };
   }
 });
+function genDefaults$1() {
+  return {
+    svg: {
+      component: VSvgIcon
+    },
+    class: {
+      component: VClassIcon
+    }
+  };
+}
+
+// Composables
+function createIcons(options) {
+  const sets = genDefaults$1();
+  const defaultSet = options?.defaultSet ?? 'mdi';
+  if (defaultSet === 'mdi' && !sets.mdi) {
+    sets.mdi = mdi;
+  }
+  return mergeDeep({
+    defaultSet,
+    sets,
+    aliases: {
+      ...aliases,
+      /* eslint-disable max-len */
+      vuetify: ['M8.2241 14.2009L12 21L22 3H14.4459L8.2241 14.2009Z', ['M7.26303 12.4733L7.00113 12L2 3H12.5261C12.5261 3 12.5261 3 12.5261 3L7.26303 12.4733Z', 0.6]],
+      'vuetify-outline': 'svg:M7.26 12.47 12.53 3H2L7.26 12.47ZM14.45 3 8.22 14.2 12 21 22 3H14.45ZM18.6 5 12 16.88 10.51 14.2 15.62 5ZM7.26 8.35 5.4 5H9.13L7.26 8.35Z',
+      'vuetify-play': ['m6.376 13.184-4.11-7.192C1.505 4.66 2.467 3 4.003 3h8.532l-.953 1.576-.006.01-.396.677c-.429.732-.214 1.507.194 2.015.404.503 1.092.878 1.869.806a3.72 3.72 0 0 1 1.005.022c.276.053.434.143.523.237.138.146.38.635-.25 2.09-.893 1.63-1.553 1.722-1.847 1.677-.213-.033-.468-.158-.756-.406a4.95 4.95 0 0 1-.8-.927c-.39-.564-1.04-.84-1.66-.846-.625-.006-1.316.27-1.693.921l-.478.826-.911 1.506Z', ['M9.093 11.552c.046-.079.144-.15.32-.148a.53.53 0 0 1 .43.207c.285.414.636.847 1.046 1.2.405.35.914.662 1.516.754 1.334.205 2.502-.698 3.48-2.495l.014-.028.013-.03c.687-1.574.774-2.852-.005-3.675-.37-.391-.861-.586-1.333-.676a5.243 5.243 0 0 0-1.447-.044c-.173.016-.393-.073-.54-.257-.145-.18-.127-.316-.082-.392l.393-.672L14.287 3h5.71c1.536 0 2.499 1.659 1.737 2.992l-7.997 13.996c-.768 1.344-2.706 1.344-3.473 0l-3.037-5.314 1.377-2.278.004-.006.004-.007.481-.831Z', 0.6]]
+      /* eslint-enable max-len */
+    }
+  }, options);
+}
 const useIcon = props => {
   const icons = inject$1(IconSymbol);
   if (!icons) throw new Error('Missing Vuetify Icons provide!');
@@ -5252,7 +5140,6 @@ const makeVProgressCircularProps = propsFactory({
   bgColor: String,
   color: String,
   indeterminate: [Boolean, String],
-  rounded: Boolean,
   modelValue: {
     type: [Number, String],
     default: 0
@@ -5313,14 +5200,7 @@ const VProgressCircular = genericComponent()({
     });
     const diameter = toRef(() => MAGIC_RADIUS_CONSTANT / (1 - width.value / size.value) * 2);
     const strokeWidth = toRef(() => width.value / size.value * diameter.value);
-    const strokeDashOffset = toRef(() => {
-      const baseLength = (100 - normalizedValue.value) / 100 * CIRCUMFERENCE;
-      return props.rounded && normalizedValue.value > 0 && normalizedValue.value < 100 ? convertToUnit(Math.min(CIRCUMFERENCE - 0.01, baseLength + strokeWidth.value)) : convertToUnit(baseLength);
-    });
-    const startAngle = computed(() => {
-      const baseAngle = Number(props.rotate);
-      return props.rounded ? baseAngle + strokeWidth.value / 2 / CIRCUMFERENCE * 360 : baseAngle;
-    });
+    const strokeDashOffset = toRef(() => convertToUnit((100 - normalizedValue.value) / 100 * CIRCUMFERENCE));
     watchEffect(() => {
       intersectionRef.value = root.value;
       resizeRef.value = root.value;
@@ -5340,7 +5220,7 @@ const VProgressCircular = genericComponent()({
     }, {
       default: () => [createElementVNode("svg", {
         "style": {
-          transform: `rotate(calc(-90deg + ${startAngle.value}deg))`
+          transform: `rotate(calc(-90deg + ${Number(props.rotate)}deg))`
         },
         "xmlns": "http://www.w3.org/2000/svg",
         "viewBox": `0 0 ${diameter.value} ${diameter.value}`
@@ -5362,8 +5242,7 @@ const VProgressCircular = genericComponent()({
         "r": MAGIC_RADIUS_CONSTANT,
         "stroke-width": strokeWidth.value,
         "stroke-dasharray": CIRCUMFERENCE,
-        "stroke-dashoffset": strokeDashOffset.value,
-        "stroke-linecap": props.rounded ? 'round' : undefined
+        "stroke-dashoffset": strokeDashOffset.value
       }, null)]), slots.default && createElementVNode("div", {
         "class": "v-progress-circular__content"
       }, [slots.default({
@@ -6114,7 +5993,7 @@ function updateRipple(el, binding, wasEnabled) {
     el.addEventListener('mousedown', rippleShow);
     el.addEventListener('mouseup', rippleHide);
     el.addEventListener('mouseleave', rippleHide);
-    el.addEventListener('keydown', el._ripple.keyDownHandler);
+    el.addEventListener('keydown', e => keyboardRippleShow(e, allowedKeys));
     el.addEventListener('keyup', keyboardRippleHide);
     el.addEventListener('blur', focusRippleHide);
 
@@ -6127,21 +6006,19 @@ function updateRipple(el, binding, wasEnabled) {
   }
 }
 function removeListeners(el) {
-  el.removeEventListener('touchstart', rippleStop);
-  el.removeEventListener('mousedown', rippleStop);
+  el.removeEventListener('mousedown', rippleShow);
   el.removeEventListener('touchstart', rippleShow);
   el.removeEventListener('touchend', rippleHide);
   el.removeEventListener('touchmove', rippleCancelShow);
   el.removeEventListener('touchcancel', rippleHide);
-  el.removeEventListener('mousedown', rippleShow);
   el.removeEventListener('mouseup', rippleHide);
   el.removeEventListener('mouseleave', rippleHide);
   if (el._ripple?.keyDownHandler) {
     el.removeEventListener('keydown', el._ripple.keyDownHandler);
   }
   el.removeEventListener('keyup', keyboardRippleHide);
-  el.removeEventListener('blur', focusRippleHide);
   el.removeEventListener('dragstart', rippleHide);
+  el.removeEventListener('blur', focusRippleHide);
 }
 function mounted$4(el, binding) {
   updateRipple(el, binding, false);
@@ -7658,7 +7535,7 @@ const VInput = genericComponent()({
       }, [hasPrepend && createElementVNode("div", {
         "key": "prepend",
         "class": "v-input__prepend"
-      }, [slots.prepend ? slots.prepend(slotProps.value) : props.prependIcon && createVNode(InputIcon, {
+      }, [slots.prepend?.(slotProps.value), props.prependIcon && createVNode(InputIcon, {
         "key": "prepend-icon",
         "name": "prepend",
         "color": iconColor.value
@@ -7667,11 +7544,11 @@ const VInput = genericComponent()({
       }, [slots.default?.(slotProps.value)]), hasAppend && createElementVNode("div", {
         "key": "append",
         "class": "v-input__append"
-      }, [slots.append ? slots.append(slotProps.value) : props.appendIcon && createVNode(InputIcon, {
+      }, [props.appendIcon && createVNode(InputIcon, {
         "key": "append-icon",
         "name": "append",
         "color": iconColor.value
-      }, null)]), hasDetails.value && createElementVNode("div", {
+      }, null), slots.append?.(slotProps.value)]), hasDetails.value && createElementVNode("div", {
         "id": messagesId.value,
         "class": "v-input__details",
         "role": "alert",
@@ -8029,7 +7906,7 @@ function useDisplay() {
 // Types
 
 const GoToSymbol = Symbol.for('vuetify:goto');
-function genDefaults$1() {
+function genDefaults() {
   return {
     container: undefined,
     duration: 300,
@@ -8058,12 +7935,12 @@ function getOffset$2(target, horizontal, rtl) {
 function createGoTo(options, locale) {
   return {
     rtl: locale.isRtl,
-    options: mergeDeep(genDefaults$1(), options)
+    options: mergeDeep(genDefaults(), options)
   };
 }
 async function scrollTo(_target, _options, horizontal, goTo) {
   const property = horizontal ? 'scrollLeft' : 'scrollTop';
-  const options = mergeDeep(goTo?.options ?? genDefaults$1(), _options);
+  const options = mergeDeep(goTo?.options ?? genDefaults(), _options);
   const rtl = goTo?.rtl.value;
   const target = (typeof _target === 'number' ? _target : getTarget$1(_target)) ?? 0;
   const container = options.container === 'parent' && target instanceof HTMLElement ? target.parentElement : getContainer(options.container);
@@ -8216,10 +8093,6 @@ function getOffsetPosition(isHorizontal, element) {
 const VSlideGroupSymbol = Symbol.for('vuetify:v-slide-group');
 const makeVSlideGroupProps = propsFactory({
   centerActive: Boolean,
-  scrollToActive: {
-    type: Boolean,
-    default: true
-  },
   contentClass: null,
   direction: {
     type: String,
@@ -8239,7 +8112,7 @@ const makeVSlideGroupProps = propsFactory({
   },
   showArrows: {
     type: [Boolean, String],
-    validator: v => typeof v === 'boolean' || ['always', 'desktop', 'mobile', 'never'].includes(v)
+    validator: v => typeof v === 'boolean' || ['always', 'desktop', 'mobile'].includes(v)
   },
   ...makeComponentProps(),
   ...makeDisplayProps({
@@ -8308,7 +8181,7 @@ const VSlideGroup = genericComponent()({
             contentSize.value = contentRect.value[sizeProperty];
             isOverflowing.value = containerSize.value + 1 < contentSize.value;
           }
-          if (props.scrollToActive && firstSelectedIndex.value >= 0 && contentRef.el) {
+          if (firstSelectedIndex.value >= 0 && contentRef.el) {
             // TODO: Is this too naive? Should we store element references in group composable?
             const selectedElement = contentRef.el.children[lastSelectedIndex.value];
             scrollToChildren(selectedElement, props.centerActive);
@@ -8473,9 +8346,6 @@ const VSlideGroup = genericComponent()({
     const hasOverflowOrScroll = computed(() => isOverflowing.value || Math.abs(scrollOffset.value) > 0);
     const hasAffixes = computed(() => {
       switch (props.showArrows) {
-        case 'never':
-          return false;
-
         // Always show arrows on desktop & mobile
         case 'always':
           return true;
@@ -8580,9 +8450,7 @@ const makeVChipGroupProps = propsFactory({
     type: Function,
     default: deepEqual
   },
-  ...makeVSlideGroupProps({
-    scrollToActive: false
-  }),
+  ...makeVSlideGroupProps(),
   ...makeComponentProps(),
   ...makeGroupProps({
     selectedClass: 'v-chip--selected'
@@ -8912,23 +8780,13 @@ const VChip = genericComponent()({
   }
 });
 
-// Types
-
-const allowedVariants$4 = ['dotted', 'dashed', 'solid', 'double'];
 const makeVDividerProps = propsFactory({
   color: String,
-  contentOffset: [Number, String, Array],
-  gradient: Boolean,
   inset: Boolean,
   length: [Number, String],
   opacity: [Number, String],
   thickness: [Number, String],
   vertical: Boolean,
-  variant: {
-    type: String,
-    default: 'solid',
-    validator: v => allowedVariants$4.includes(v)
-  },
   ...makeComponentProps(),
   ...makeThemeProps()
 }, 'VDivider');
@@ -8957,27 +8815,15 @@ const VDivider = genericComponent()({
       }
       return styles;
     });
-    const contentStyles = toRef(() => {
-      const margin = Array.isArray(props.contentOffset) ? props.contentOffset[0] : props.contentOffset;
-      const shift = Array.isArray(props.contentOffset) ? props.contentOffset[1] : 0;
-      return {
-        marginBlock: props.vertical && margin ? convertToUnit(margin) : undefined,
-        marginInline: !props.vertical && margin ? convertToUnit(margin) : undefined,
-        transform: shift ? `translate${props.vertical ? 'X' : 'Y'}(${convertToUnit(shift)})` : undefined
-      };
-    });
     useRender(() => {
       const divider = createElementVNode("hr", {
         "class": normalizeClass([{
           'v-divider': true,
-          'v-divider--gradient': props.gradient && !slots.default,
           'v-divider--inset': props.inset,
           'v-divider--vertical': props.vertical
         }, themeClasses.value, textColorClasses.value, props.class]),
         "style": normalizeStyle([dividerStyles.value, textColorStyles.value, {
           '--v-border-opacity': props.opacity
-        }, {
-          'border-style': props.variant
         }, props.style]),
         "aria-orientation": !attrs.role || attrs.role === 'separator' ? props.vertical ? 'vertical' : 'horizontal' : undefined,
         "role": `${attrs.role || 'separator'}`
@@ -8985,13 +8831,11 @@ const VDivider = genericComponent()({
       if (!slots.default) return divider;
       return createElementVNode("div", {
         "class": normalizeClass(['v-divider__wrapper', {
-          'v-divider__wrapper--gradient': props.gradient,
-          'v-divider__wrapper--inset': props.inset,
-          'v-divider__wrapper--vertical': props.vertical
+          'v-divider__wrapper--vertical': props.vertical,
+          'v-divider__wrapper--inset': props.inset
         }])
       }, [divider, createElementVNode("div", {
-        "class": "v-divider__content",
-        "style": normalizeStyle(contentStyles.value)
+        "class": "v-divider__content"
       }, [slots.default()]), divider]);
     });
     return {};
@@ -9395,7 +9239,7 @@ const classicSelectStrategy = mandatory => {
       }
       return selected;
     },
-    in: (v, children, parents) => {
+    in: (v, children, parents, disabled) => {
       let map = new Map();
       for (const id of v || []) {
         map = strategy.select({
@@ -9404,7 +9248,7 @@ const classicSelectStrategy = mandatory => {
           selected: map,
           children,
           parents,
-          disabled: new Set()
+          disabled
         });
       }
       return map;
@@ -9449,10 +9293,8 @@ const VNestedSymbol = Symbol.for('vuetify:nested');
 const emptyNested = {
   id: shallowRef(),
   root: {
-    itemsRegistration: ref('render'),
     register: () => null,
     unregister: () => null,
-    updateDisabled: () => null,
     children: ref(new Map()),
     parents: ref(new Map()),
     disabled: ref(new Set()),
@@ -9478,13 +9320,9 @@ const makeNestedProps = propsFactory({
   opened: null,
   activated: null,
   selected: null,
-  mandatory: Boolean,
-  itemsRegistration: {
-    type: String,
-    default: 'render'
-  }
+  mandatory: Boolean
 }, 'nested');
-const useNested = (props, items, returnObject) => {
+const useNested = props => {
   let isUnmounted = false;
   const children = shallowRef(new Map());
   const parents = shallowRef(new Map());
@@ -9552,47 +9390,6 @@ const useNested = (props, items, returnObject) => {
   }
   const vm = getCurrentInstance('nested');
   const nodeIds = new Set();
-  const itemsUpdatePropagation = throttle(() => {
-    nextTick(() => {
-      children.value = new Map(children.value);
-      parents.value = new Map(parents.value);
-    });
-  }, 100);
-  watch(() => [items.value, toValue(returnObject)], () => {
-    if (props.itemsRegistration === 'props') {
-      updateInternalMaps();
-    }
-  }, {
-    immediate: true
-  });
-  function updateInternalMaps() {
-    const _parents = new Map();
-    const _children = new Map();
-    const _disabled = new Set();
-    const getValue = toValue(returnObject) ? item => toRaw(item.raw) : item => item.value;
-    const stack = [...items.value];
-    let i = 0;
-    while (i < stack.length) {
-      const item = stack[i++];
-      const itemValue = getValue(item);
-      if (item.children) {
-        const childValues = [];
-        for (const child of item.children) {
-          const childValue = getValue(child);
-          _parents.set(childValue, itemValue);
-          childValues.push(childValue);
-          stack.push(child);
-        }
-        _children.set(itemValue, childValues);
-      }
-      if (item.props.disabled) {
-        _disabled.add(itemValue);
-      }
-    }
-    children.value = _children;
-    parents.value = _parents;
-    disabled.value = _disabled;
-  }
   const nested = {
     id: shallowRef(),
     root: {
@@ -9608,7 +9405,6 @@ const useNested = (props, items, returnObject) => {
         }
         return arr;
       }),
-      itemsRegistration: toRef(() => props.itemsRegistration),
       register: (id, parentId, isDisabled, isGroup) => {
         if (nodeIds.has(id)) {
           const path = getPath(id).map(String).join(' -> ');
@@ -9624,7 +9420,6 @@ const useNested = (props, items, returnObject) => {
         if (parentId != null) {
           children.value.set(parentId, [...(children.value.get(parentId) || []), id]);
         }
-        itemsUpdatePropagation();
       },
       unregister: id => {
         if (isUnmounted) return;
@@ -9637,20 +9432,6 @@ const useNested = (props, items, returnObject) => {
           children.value.set(parent, list.filter(child => child !== id));
         }
         parents.value.delete(id);
-        itemsUpdatePropagation();
-      },
-      updateDisabled: (id, isDisabled) => {
-        if (isDisabled) {
-          disabled.value.add(id);
-        } else {
-          disabled.value.delete(id);
-        }
-        // classic selection requires refresh to re-evaluate on/off/indeterminate but
-        // currently it is only run for selection interactions, so it will set new disabled
-        // to "off" and the visual state becomes out of sync
-        // -- selected.value = new Map(selected.value)
-        // it is not clear if the framework should un-select when disabled changed to true
-        // more discussion is needed
       },
       open: (id, value, event) => {
         vm.emit('click:open', {
@@ -9767,24 +9548,14 @@ const useNestedItem = (id, isDisabled, isGroup) => {
     isGroupActivator: parent.isGroupActivator
   };
   onBeforeMount(() => {
-    if (parent.isGroupActivator || parent.root.itemsRegistration.value === 'props') return;
-    nextTick(() => {
+    if (!parent.isGroupActivator) {
       parent.root.register(computedId.value, parent.id.value, toValue(isDisabled), isGroup);
-    });
+    }
   });
   onBeforeUnmount(() => {
-    if (parent.isGroupActivator || parent.root.itemsRegistration.value === 'props') return;
-    parent.root.unregister(computedId.value);
-  });
-  watch(computedId, (val, oldVal) => {
-    if (parent.isGroupActivator || parent.root.itemsRegistration.value === 'props') return;
-    parent.root.unregister(oldVal);
-    nextTick(() => {
-      parent.root.register(val, parent.id.value, toValue(isDisabled), isGroup);
-    });
-  });
-  watch(() => toValue(isDisabled), val => {
-    parent.root.updateDisabled(computedId.value, val);
+    if (!parent.isGroupActivator) {
+      parent.root.unregister(computedId.value);
+    }
   });
   isGroup && provide(VNestedSymbol, item);
   return item;
@@ -9848,8 +9619,6 @@ const VListGroup = genericComponent()({
     const {
       isBooted
     } = useSsrBoot();
-    const parent = inject$1(VNestedSymbol);
-    const renderWhenClosed = toRef(() => parent?.root?.itemsRegistration.value === 'render');
     function onClick(e) {
       if (['INPUT', 'TEXTAREA'].includes(e.target?.tagName)) return;
       open(!isOpen.value, e);
@@ -9895,15 +9664,11 @@ const VListGroup = genericComponent()({
         },
         "disabled": !isBooted.value
       }, {
-        default: () => [renderWhenClosed.value ? withDirectives(createElementVNode("div", {
+        default: () => [withDirectives(createElementVNode("div", {
           "class": "v-list-group__items",
           "role": "group",
           "aria-labelledby": id.value
-        }, [slots.default?.()]), [[vShow, isOpen.value]]) : isOpen.value && createElementVNode("div", {
-          "class": "v-list-group__items",
-          "role": "group",
-          "aria-labelledby": id.value
-        }, [slots.default?.()])]
+        }, [slots.default?.()]), [[vShow, isOpen.value]])]
       })]
     }));
     return {
@@ -9964,7 +9729,6 @@ const makeVListItemProps = propsFactory({
     default: true
   },
   slim: Boolean,
-  prependGap: [Number, String],
   subtitle: {
     type: [String, Number, Boolean],
     default: undefined
@@ -10043,9 +9807,7 @@ const VListItem = genericComponent()({
       handleActiveLink();
     });
     onBeforeMount(() => {
-      if (link.isActive?.value) {
-        nextTick(() => handleActiveLink());
-      }
+      if (link.isActive?.value) handleActiveLink();
     });
     function handleActiveLink() {
       if (parent.value != null) {
@@ -10128,12 +9890,11 @@ const VListItem = genericComponent()({
           'v-list-item--disabled': props.disabled,
           'v-list-item--link': isClickable.value,
           'v-list-item--nav': props.nav,
+          'v-list-item--prepend': !hasPrepend && list?.hasPrepend.value,
           'v-list-item--slim': props.slim,
           [`${props.activeClass}`]: props.activeClass && isActive.value
         }, themeClasses.value, borderClasses.value, colorClasses.value, densityClasses.value, elevationClasses.value, lineClasses.value, roundedClasses.value, variantClasses.value, props.class],
-        "style": [{
-          '--v-list-prepend-gap': convertToUnit(props.prependGap)
-        }, colorStyles.value, dimensionStyles.value, props.style],
+        "style": [colorStyles.value, dimensionStyles.value, props.style],
         "tabindex": isClickable.value ? list ? -2 : 0 : undefined,
         "aria-selected": ariaSelected.value,
         "role": role.value,
@@ -10564,8 +10325,6 @@ const makeVListProps = propsFactory({
     default: 'one'
   },
   slim: Boolean,
-  prependGap: [Number, String],
-  indent: [Number, String],
   nav: Boolean,
   'onClick:open': EventProp(),
   'onClick:select': EventProp(),
@@ -10633,7 +10392,7 @@ const VList = genericComponent()({
       parents,
       select,
       getPath
-    } = useNested(props, items, () => props.returnObject);
+    } = useNested(props);
     const lineClasses = toRef(() => props.lines ? `v-list--${props.lines}-line` : undefined);
     const activeColor = toRef(() => props.activeColor);
     const baseColor = toRef(() => props.baseColor);
@@ -10701,7 +10460,6 @@ const VList = genericComponent()({
       }
     }
     useRender(() => {
-      const indent = props.indent ?? (props.prependGap ? Number(props.prependGap) + 24 : undefined);
       return createVNode(props.tag, {
         "ref": contentRef,
         "class": normalizeClass(['v-list', {
@@ -10709,11 +10467,7 @@ const VList = genericComponent()({
           'v-list--nav': props.nav,
           'v-list--slim': props.slim
         }, themeClasses.value, backgroundColorClasses.value, borderClasses.value, densityClasses.value, elevationClasses.value, lineClasses.value, roundedClasses.value, props.class]),
-        "style": normalizeStyle([{
-          '--v-list-indent': convertToUnit(indent),
-          '--v-list-group-prepend': indent ? '0px' : undefined,
-          '--v-list-prepend-gap': convertToUnit(props.prependGap)
-        }, backgroundColorStyles.value, dimensionStyles.value, props.style]),
+        "style": normalizeStyle([backgroundColorStyles.value, dimensionStyles.value, props.style]),
         "tabindex": props.disabled ? -1 : 0,
         "role": isSelectable.value ? 'listbox' : 'list',
         "aria-activedescendant": undefined,
@@ -10866,11 +10620,7 @@ const makeLocationStrategyProps = propsFactory({
     default: 'auto'
   },
   offset: [Number, String, Array],
-  stickToTarget: Boolean,
-  viewportMargin: {
-    type: [Number, String],
-    default: 12
-  }
+  stickToTarget: Boolean
 }, 'VOverlay-location-strategies');
 function useLocationStrategies(props, data) {
   const contentStyles = ref({});
@@ -11057,7 +10807,7 @@ function connectedLocationStrategy(data, props, contentStyles) {
 
     const contentBox = getIntrinsicSize(data.contentEl.value, data.isRtl.value);
     const scrollParents = getScrollParents(data.contentEl.value);
-    const viewportMargin = Number(props.viewportMargin);
+    const viewportMargin = 12;
     if (!scrollParents.length) {
       scrollParents.push(document.documentElement);
       if (!(data.contentEl.value.style.top && data.contentEl.value.style.left)) {
@@ -11077,17 +10827,10 @@ function connectedLocationStrategy(data, props, contentStyles) {
       }
       return scrollBox;
     }, undefined);
-    if (props.stickToTarget) {
-      viewport.x += Math.min(viewportMargin, targetBox.x);
-      viewport.y += Math.min(viewportMargin, targetBox.y);
-      viewport.width = Math.max(viewport.width - viewportMargin * 2, targetBox.x + targetBox.width - viewportMargin);
-      viewport.height = Math.max(viewport.height - viewportMargin * 2, targetBox.y + targetBox.height - viewportMargin);
-    } else {
-      viewport.x += viewportMargin;
-      viewport.y += viewportMargin;
-      viewport.width -= viewportMargin * 2;
-      viewport.height -= viewportMargin * 2;
-    }
+    viewport.x += viewportMargin;
+    viewport.y += viewportMargin;
+    viewport.width -= viewportMargin * 2;
+    viewport.height -= viewportMargin * 2;
     let placement = {
       anchor: preferredAnchor.value,
       origin: preferredOrigin.value
@@ -11198,19 +10941,19 @@ function connectedLocationStrategy(data, props, contentStyles) {
 
       // shift
       if (overflows.x.before) {
-        x += overflows.x.before;
+        if (!props.stickToTarget) x += overflows.x.before;
         contentBox.x += overflows.x.before;
       }
       if (overflows.x.after) {
-        x -= overflows.x.after;
+        if (!props.stickToTarget) x -= overflows.x.after;
         contentBox.x -= overflows.x.after;
       }
       if (overflows.y.before) {
-        y += overflows.y.before;
+        if (!props.stickToTarget) y += overflows.y.before;
         contentBox.y += overflows.y.before;
       }
       if (overflows.y.after) {
-        y -= overflows.y.after;
+        if (!props.stickToTarget) y -= overflows.y.after;
         contentBox.y -= overflows.y.after;
       }
 
@@ -11219,9 +10962,9 @@ function connectedLocationStrategy(data, props, contentStyles) {
         const overflows = getOverflow(contentBox, viewport);
         available.x = viewport.width - overflows.x.before - overflows.x.after;
         available.y = viewport.height - overflows.y.before - overflows.y.after;
-        x += overflows.x.before;
+        if (!props.stickToTarget) x += overflows.x.before;
         contentBox.x += overflows.x.before;
-        y += overflows.y.before;
+        if (!props.stickToTarget) y += overflows.y.before;
         contentBox.y += overflows.y.before;
       }
       break;
@@ -11450,12 +11193,11 @@ const makeDelayProps = propsFactory({
 }, 'delay');
 function useDelay(props, cb) {
   let clearDelay = () => {};
-  function runDelay(isOpening, options) {
+  function runDelay(isOpening) {
     clearDelay?.();
-    const delay = isOpening ? props.openDelay : props.closeDelay;
-    const normalizedDelay = Math.max(options?.minDelay ?? 0, Number(delay ?? 0));
+    const delay = Number(isOpening ? props.openDelay : props.closeDelay);
     return new Promise(resolve => {
-      clearDelay = defer(normalizedDelay, () => {
+      clearDelay = defer(delay, () => {
         cb?.(isOpening);
         resolve(isOpening);
       });
@@ -11464,8 +11206,8 @@ function useDelay(props, cb) {
   function runOpenDelay() {
     return runDelay(true);
   }
-  function runCloseDelay(options) {
-    return runDelay(false, options);
+  function runCloseDelay() {
+    return runDelay(false);
   }
   return {
     clearDelay,
@@ -11532,6 +11274,7 @@ function useActivator(props, _ref) {
       isActive.value = !isActive.value;
     },
     onMouseenter: e => {
+      if (e.sourceCapabilities?.firesTouchEvents) return;
       isHovered = true;
       activatorEl.value = e.currentTarget || e.target;
       runOpenDelay();
@@ -11550,9 +11293,7 @@ function useActivator(props, _ref) {
     onBlur: e => {
       isFocused = false;
       e.stopPropagation();
-      runCloseDelay({
-        minDelay: 1
-      });
+      runCloseDelay();
     }
   };
   const activatorEvents = computed(() => {
@@ -11583,16 +11324,13 @@ function useActivator(props, _ref) {
       };
     }
     if (openOnFocus.value) {
-      events.onFocusin = e => {
-        if (!e.target.matches(':focus-visible')) return;
+      events.onFocusin = () => {
         isFocused = true;
         runOpenDelay();
       };
       events.onFocusout = () => {
         isFocused = false;
-        runCloseDelay({
-          minDelay: 1
-        });
+        runCloseDelay();
       };
     }
     if (props.closeOnContentClick) {
@@ -11745,153 +11483,6 @@ function getTarget(selector, vm) {
     target = selector;
   }
   return target;
-}
-
-// Utilities
-
-// Types
-
-// Types
-
-// Composables
-const makeFocusTrapProps = propsFactory({
-  retainFocus: Boolean,
-  captureFocus: Boolean,
-  /** @deprecated */
-  disableInitialFocus: Boolean
-}, 'focusTrap');
-const registry = new Map();
-let subscribers = 0;
-function onKeydown(e) {
-  const activeElement = document.activeElement;
-  if (e.key !== 'Tab' || !activeElement) return;
-  const parentTraps = Array.from(registry.values()).filter(_ref => {
-    let {
-      isActive,
-      contentEl
-    } = _ref;
-    return isActive.value && contentEl.value?.contains(activeElement);
-  }).map(x => x.contentEl.value);
-  let closestTrap;
-  let currentParent = activeElement.parentElement;
-  while (currentParent) {
-    if (parentTraps.includes(currentParent)) {
-      closestTrap = currentParent;
-      break;
-    }
-    currentParent = currentParent.parentElement;
-  }
-  if (!closestTrap) return;
-  const focusable = focusableChildren(closestTrap)
-  // excluding VListItems with tabindex="-2"
-  .filter(x => x.tabIndex >= 0);
-  if (!focusable.length) return;
-  const active = document.activeElement;
-  if (focusable.length === 1 && focusable[0].classList.contains('v-list') && focusable[0].contains(active)) {
-    e.preventDefault();
-    return;
-  }
-  const firstElement = focusable[0];
-  const lastElement = focusable[focusable.length - 1];
-  if (e.shiftKey && (active === firstElement || firstElement.classList.contains('v-list') && firstElement.contains(active))) {
-    e.preventDefault();
-    lastElement.focus();
-  }
-  if (!e.shiftKey && (active === lastElement || lastElement.classList.contains('v-list') && lastElement.contains(active))) {
-    e.preventDefault();
-    firstElement.focus();
-  }
-}
-function useFocusTrap(props, _ref2) {
-  let {
-    isActive,
-    localTop,
-    activatorEl,
-    contentEl
-  } = _ref2;
-  const trapId = Symbol('trap');
-  let focusTrapSuppressed = false;
-  let focusTrapSuppressionTimeout = -1;
-  async function onPointerdown() {
-    focusTrapSuppressed = true;
-    focusTrapSuppressionTimeout = window.setTimeout(() => {
-      focusTrapSuppressed = false;
-    }, 100);
-  }
-  async function captureOnFocus(e) {
-    const before = e.relatedTarget;
-    const after = e.target;
-    document.removeEventListener('pointerdown', onPointerdown);
-    document.removeEventListener('keydown', captureOnKeydown);
-    await nextTick();
-    if (isActive.value && !focusTrapSuppressed && before !== after && contentEl.value &&
-    // We're the menu without open submenus or overlays
-    toValue(localTop) &&
-    // It isn't the document or the container body
-    ![document, contentEl.value].includes(after) &&
-    // It isn't inside the container body
-    !contentEl.value.contains(after)) {
-      const focusable = focusableChildren(contentEl.value);
-      focusable[0]?.focus();
-    }
-  }
-  function captureOnKeydown(e) {
-    if (e.key !== 'Tab') return;
-    document.removeEventListener('keydown', captureOnKeydown);
-    if (isActive.value && contentEl.value && e.target && !contentEl.value.contains(e.target)) {
-      const allFocusableElements = focusableChildren(document.documentElement);
-      if (e.shiftKey && e.target === allFocusableElements.at(0) || !e.shiftKey && e.target === allFocusableElements.at(-1)) {
-        const focusable = focusableChildren(contentEl.value);
-        if (focusable.length > 0) {
-          e.preventDefault();
-          focusable[0].focus();
-        }
-      }
-    }
-  }
-  const shouldCapture = toRef(() => isActive.value && props.captureFocus && !props.disableInitialFocus);
-  if (IN_BROWSER) {
-    watch(() => props.retainFocus, val => {
-      if (val) {
-        registry.set(trapId, {
-          isActive,
-          contentEl
-        });
-      } else {
-        registry.delete(trapId);
-      }
-    }, {
-      immediate: true
-    });
-    watch(shouldCapture, val => {
-      if (val) {
-        document.addEventListener('pointerdown', onPointerdown);
-        document.addEventListener('focusin', captureOnFocus, {
-          once: true
-        });
-        document.addEventListener('keydown', captureOnKeydown);
-      } else {
-        document.removeEventListener('pointerdown', onPointerdown);
-        document.removeEventListener('focusin', captureOnFocus);
-        document.removeEventListener('keydown', captureOnKeydown);
-      }
-    }, {
-      immediate: true
-    });
-    if (subscribers++ < 1) {
-      document.addEventListener('keydown', onKeydown);
-    }
-  }
-  onScopeDispose(() => {
-    registry.delete(trapId);
-    clearTimeout(focusTrapSuppressionTimeout);
-    document.removeEventListener('pointerdown', onPointerdown);
-    document.removeEventListener('focusin', captureOnFocus);
-    document.removeEventListener('keydown', captureOnKeydown);
-    if (--subscribers < 1) {
-      document.removeEventListener('keydown', onKeydown);
-    }
-  });
 }
 
 // Composables
@@ -12153,7 +11744,6 @@ const makeVOverlayProps = propsFactory({
   ...makeLazyProps(),
   ...makeLocationStrategyProps(),
   ...makeScrollStrategyProps(),
-  ...makeFocusTrapProps(),
   ...makeThemeProps(),
   ...makeTransitionProps()
 }, 'VOverlay');
@@ -12165,7 +11755,7 @@ const VOverlay = genericComponent()({
   inheritAttrs: false,
   props: {
     _disableGlobalStack: Boolean,
-    ...omit(makeVOverlayProps(), ['disableInitialFocus'])
+    ...makeVOverlayProps()
   },
   emits: {
     'click:outside': e => true,
@@ -12265,16 +11855,10 @@ const VOverlay = genericComponent()({
       if (!props.persistent) isActive.value = false;else animateClick();
     }
     function closeConditional(e) {
-      return isActive.value && localTop.value && (
+      return isActive.value && globalTop.value && (
       // If using scrim, only close if clicking on it rather than anything opened on top
       !props.scrim || e.target === scrimEl.value || e instanceof MouseEvent && e.shadowTarget === scrimEl.value);
     }
-    useFocusTrap(props, {
-      isActive,
-      localTop,
-      contentEl,
-      activatorEl
-    });
     IN_BROWSER && watch(isActive, val => {
       if (val) {
         window.addEventListener('keydown', onKeydown);
@@ -12400,7 +11984,6 @@ const VOverlay = genericComponent()({
       target,
       animateClick,
       contentEl,
-      rootEl: root,
       globalTop,
       localTop,
       updateLocation
@@ -12415,8 +11998,8 @@ const makeVMenuProps = propsFactory({
   // disableKeys: Boolean,
   id: String,
   submenu: Boolean,
+  disableInitialFocus: Boolean,
   ...omit(makeVOverlayProps({
-    captureFocus: true,
     closeDelay: 250,
     closeOnContentClick: true,
     locationStrategy: 'connected',
@@ -12467,10 +12050,40 @@ const VMenu = genericComponent()({
         }, 40);
       }
     });
-    onBeforeUnmount(() => parent?.unregister());
+    onBeforeUnmount(() => {
+      parent?.unregister();
+      document.removeEventListener('focusin', onFocusIn);
+    });
     onDeactivated(() => isActive.value = false);
+    async function onFocusIn(e) {
+      const before = e.relatedTarget;
+      const after = e.target;
+      await nextTick();
+      if (isActive.value && before !== after && overlay.value?.contentEl &&
+      // We're the topmost menu
+      overlay.value?.globalTop &&
+      // It isn't the document or the menu body
+      ![document, overlay.value.contentEl].includes(after) &&
+      // It isn't inside the menu body
+      !overlay.value.contentEl.contains(after)) {
+        const focusable = focusableChildren(overlay.value.contentEl);
+        focusable[0]?.focus();
+      }
+    }
     watch(isActive, val => {
-      val ? parent?.register() : parent?.unregister();
+      if (val) {
+        parent?.register();
+        if (IN_BROWSER && !props.disableInitialFocus) {
+          document.addEventListener('focusin', onFocusIn, {
+            once: true
+          });
+        }
+      } else {
+        parent?.unregister();
+        if (IN_BROWSER) {
+          document.removeEventListener('focusin', onFocusIn);
+        }
+      }
     }, {
       immediate: true
     });
@@ -12483,7 +12096,7 @@ const VMenu = genericComponent()({
         if (e.key === 'Enter' && (e.target instanceof HTMLTextAreaElement || e.target instanceof HTMLInputElement && !!e.target.closest('form'))) return;
         if (e.key === 'Enter') e.preventDefault();
         const nextElement = getNextElement(focusableChildren(overlay.value?.contentEl, false), e.shiftKey ? 'prev' : 'next', el => el.tabIndex >= 0);
-        if (!nextElement && !props.retainFocus) {
+        if (!nextElement) {
           isActive.value = false;
           overlay.value?.activatorEl?.focus();
         }
@@ -12522,7 +12135,6 @@ const VMenu = genericComponent()({
       'aria-haspopup': 'menu',
       'aria-expanded': String(isActive.value),
       'aria-controls': id.value,
-      'aria-owns': id.value,
       onKeydown: onActivatorKeydown
     }, props.activatorProps));
     useRender(() => {
@@ -12646,6 +12258,7 @@ const makeVFieldProps = propsFactory({
   },
   color: String,
   baseColor: String,
+  details: Boolean,
   dirty: Boolean,
   disabled: {
     type: Boolean,
@@ -12678,8 +12291,6 @@ const VField = genericComponent()({
   inheritAttrs: false,
   props: {
     id: String,
-    details: Boolean,
-    labelId: String,
     ...makeFocusProps(),
     ...makeVFieldProps()
   },
@@ -12780,7 +12391,6 @@ const VField = genericComponent()({
       isActive,
       isFocused,
       controlRef,
-      iconColor,
       blur,
       focus
     }));
@@ -12832,11 +12442,11 @@ const VField = genericComponent()({
       }), hasPrepend && createElementVNode("div", {
         "key": "prepend",
         "class": "v-field__prepend-inner"
-      }, [slots['prepend-inner'] ? slots['prepend-inner'](slotProps.value) : props.prependInnerIcon && createVNode(InputIcon, {
+      }, [props.prependInnerIcon && createVNode(InputIcon, {
         "key": "prepend-icon",
         "name": "prependInner",
         "color": iconColor.value
-      }, null)]), createElementVNode("div", {
+      }, null), slots['prepend-inner']?.(slotProps.value)]), createElementVNode("div", {
         "class": "v-field__field",
         "data-no-activator": ""
       }, [['filled', 'solo', 'solo-inverted', 'solo-filled'].includes(props.variant) && hasFloatingLabel.value && createVNode(VFieldLabel, {
@@ -12852,9 +12462,7 @@ const VField = genericComponent()({
       }), hasLabel.value && createVNode(VFieldLabel, {
         "key": "label",
         "ref": labelRef,
-        "id": props.labelId,
-        "for": id.value,
-        "aria-hidden": hasFloatingLabel.value && isActive.value
+        "for": id.value
       }, {
         default: () => [label()]
       }), slots.default?.({
@@ -12904,7 +12512,7 @@ const VField = genericComponent()({
       }), hasAppend && createElementVNode("div", {
         "key": "append",
         "class": "v-field__append-inner"
-      }, [slots['append-inner'] ? slots['append-inner'](slotProps.value) : props.appendInnerIcon && createVNode(InputIcon, {
+      }, [slots['append-inner']?.(slotProps.value), props.appendInnerIcon && createVNode(InputIcon, {
         "key": "append-icon",
         "name": "appendInner",
         "color": iconColor.value
@@ -12955,7 +12563,6 @@ function useAutocomplete(props) {
   const reloadTrigger = shallowRef(0);
   const isSuppressing = toRef(() => props.autocomplete === 'suppress');
   const fieldName = toRef(() => {
-    if (!props.name) return undefined;
     return isSuppressing.value ? `${props.name}-${uniqueId}-${reloadTrigger.value}` : props.name;
   });
   const fieldAutocomplete = toRef(() => {
@@ -12972,9 +12579,7 @@ function useAutocomplete(props) {
 function useAutofocus(props) {
   function onIntersect(isIntersecting, entries) {
     if (!props.autofocus || !isIntersecting) return;
-    const el = entries[0].target;
-    const target = el.matches('input,textarea') ? el : el.querySelector('input,textarea');
-    target?.focus();
+    entries[0].target?.focus?.();
   }
   return {
     onIntersect
@@ -13069,30 +12674,21 @@ const VTextField = genericComponent()({
       e.stopPropagation();
       onFocus();
       nextTick(() => {
+        model.value = null;
         reset();
         callEvent(props['onClick:clear'], e);
       });
     }
     function onInput(e) {
       const el = e.target;
-      if (!(props.modelModifiers?.trim && ['text', 'search', 'password', 'tel', 'url'].includes(props.type))) {
-        model.value = el.value;
-        return;
+      model.value = el.value;
+      if (props.modelModifiers?.trim && ['text', 'search', 'password', 'tel', 'url'].includes(props.type)) {
+        const caretPosition = [el.selectionStart, el.selectionEnd];
+        nextTick(() => {
+          el.selectionStart = caretPosition[0];
+          el.selectionEnd = caretPosition[1];
+        });
       }
-      const value = el.value;
-      const start = el.selectionStart;
-      const end = el.selectionEnd;
-      model.value = value;
-      nextTick(() => {
-        let offset = 0;
-        if (value.trimStart().length === el.value.length) {
-          // #22307 - Whitespace has been removed from the
-          // start, offset the caret position to compensate
-          offset = value.length - el.value.length;
-        }
-        if (start != null) el.selectionStart = start - offset;
-        if (end != null) el.selectionEnd = end - offset;
-      });
     }
     useRender(() => {
       const hasCounter = !!(slots.counter || props.counter !== false && props.counter != null);
@@ -13133,10 +12729,11 @@ const VTextField = genericComponent()({
             "onMousedown": onControlMousedown,
             "onClick": onControlClick,
             "onClick:clear": e => onClear(e, reset),
+            "onClick:prependInner": props['onClick:prependInner'],
+            "onClick:appendInner": props['onClick:appendInner'],
             "role": props.role
           }, omit(fieldProps, ['onClick:clear']), {
             "id": id.value,
-            "labelId": `${id.value}-label`,
             "active": isActive.value || isDirty.value,
             "dirty": isDirty.value || props.dirty,
             "disabled": isDisabled.value,
@@ -13150,11 +12747,10 @@ const VTextField = genericComponent()({
                 props: {
                   class: fieldClass,
                   ...slotProps
-                },
-                controlRef
+                }
               } = _ref3;
-              const inputNode = createElementVNode("input", mergeProps({
-                "ref": val => inputRef.value = controlRef.value = val,
+              const inputNode = withDirectives(createElementVNode("input", mergeProps({
+                "ref": inputRef,
                 "value": model.value,
                 "onInput": onInput,
                 "autofocus": props.autofocus,
@@ -13167,23 +12763,22 @@ const VTextField = genericComponent()({
                 "role": props.role,
                 "type": props.type,
                 "onFocus": focus,
-                "onBlur": blur,
-                "aria-labelledby": `${id.value}-label`
-              }, slotProps, inputAttrs), null);
+                "onBlur": blur
+              }, slotProps, inputAttrs), null), [[Intersect, {
+                handler: onIntersect
+              }, null, {
+                once: true
+              }]]);
               return createElementVNode(Fragment, null, [props.prefix && createElementVNode("span", {
                 "class": "v-text-field__prefix"
               }, [createElementVNode("span", {
                 "class": "v-text-field__prefix__text"
-              }, [props.prefix])]), withDirectives(slots.default ? createElementVNode("div", {
+              }, [props.prefix])]), slots.default ? createElementVNode("div", {
                 "class": normalizeClass(fieldClass),
                 "data-no-activator": ""
-              }, [slots.default({
-                id
-              }), inputNode]) : cloneVNode(inputNode, {
+              }, [slots.default(), inputNode]) : cloneVNode(inputNode, {
                 class: fieldClass
-              }), [[Intersect, onIntersect, null, {
-                once: true
-              }]]), props.suffix && createElementVNode("span", {
+              }), props.suffix && createElementVNode("span", {
                 "class": "v-text-field__suffix"
               }, [createElementVNode("span", {
                 "class": "v-text-field__suffix__text"
@@ -13311,7 +12906,7 @@ function useVirtual(props, items) {
     const start = performance.now();
     offsets[0] = 0;
     const length = items.value.length;
-    for (let i = 1; i <= length; i++) {
+    for (let i = 1; i <= length - 1; i++) {
       offsets[i] = (offsets[i - 1] || 0) + getSize(i - 1);
     }
     updateTime.value = Math.max(updateTime.value, performance.now() - start);
@@ -13346,7 +12941,7 @@ function useVirtual(props, items) {
     }
   }
   function calculateOffset(index) {
-    index = clamp(index, 0, items.value.length);
+    index = clamp(index, 0, items.value.length - 1);
     const whole = Math.floor(index);
     const fraction = index % 1;
     const next = whole + 1;
@@ -13361,12 +12956,14 @@ function useVirtual(props, items) {
   let scrollVelocity = 0;
   let lastScrollTime = 0;
   watch(viewportHeight, (val, oldVal) => {
-    calculateVisibleItems();
-    if (val < oldVal) {
-      requestAnimationFrame(() => {
-        scrollVelocity = 0;
-        calculateVisibleItems();
-      });
+    if (oldVal) {
+      calculateVisibleItems();
+      if (val < oldVal) {
+        requestAnimationFrame(() => {
+          scrollVelocity = 0;
+          calculateVisibleItems();
+        });
+      }
     }
   });
   let scrollTimeout = -1;
@@ -13674,8 +13271,6 @@ function useScrolling(listRef, textFieldRef) {
 
 // Types
 
-// Types
-
 // Composables
 const makeMenuActivatorProps = propsFactory({
   closeText: {
@@ -13688,14 +13283,19 @@ const makeMenuActivatorProps = propsFactory({
   }
 }, 'autocomplete');
 function useMenuActivator(props, isOpen) {
+  const {
+    t
+  } = useLocale();
   const uid = useId();
   const menuId = computed(() => `menu-${uid}`);
   const ariaExpanded = toRef(() => toValue(isOpen));
   const ariaControls = toRef(() => menuId.value);
+  const ariaLabel = toRef(() => t(toValue(isOpen) ? props.closeText : props.openText));
   return {
     menuId,
     ariaExpanded,
-    ariaControls
+    ariaControls,
+    ariaLabel
   };
 }
 
@@ -13736,7 +13336,7 @@ const makeVSelectProps = propsFactory({
   ...omit(makeVTextFieldProps({
     modelValue: null,
     role: 'combobox'
-  }), ['validationValue', 'dirty']),
+  }), ['validationValue', 'dirty', 'appendInnerIcon']),
   ...makeTransitionProps({
     transition: {
       component: VDialogTransition
@@ -13774,15 +13374,10 @@ const VSelect = genericComponent()({
       return typeof props.counterValue === 'function' ? props.counterValue(model.value) : typeof props.counterValue === 'number' ? props.counterValue : model.value.length;
     });
     const form = useForm(props);
-    const autocomplete = useAutocomplete(props);
     const selectedValues = computed(() => model.value.map(selection => selection.value));
     const isFocused = shallowRef(false);
-    const closableChips = toRef(() => props.closableChips && !form.isReadonly.value && !form.isDisabled.value);
-    const {
-      InputIcon
-    } = useInputIcon(props);
     let keyboardLookupPrefix = '';
-    let keyboardLookupIndex = 0;
+    let keyboardLookupIndex = -1;
     let keyboardLookupLastTime;
     const displayItems = computed(() => {
       if (props.hideSelected) {
@@ -13803,7 +13398,8 @@ const VSelect = genericComponent()({
     const {
       menuId,
       ariaExpanded,
-      ariaControls
+      ariaControls,
+      ariaLabel
     } = useMenuActivator(props, menu);
     const computedMenuProps = computed(() => {
       return {
@@ -13841,12 +13437,6 @@ const VSelect = genericComponent()({
       if (['Escape', 'Tab'].includes(e.key)) {
         menu.value = false;
       }
-      if (props.clearable && e.key === 'Backspace') {
-        e.preventDefault();
-        model.value = [];
-        onClear();
-        return;
-      }
       if (e.key === 'Home') {
         listRef.value?.focus('first');
       } else if (e.key === 'End') {
@@ -13860,7 +13450,7 @@ const VSelect = genericComponent()({
       const now = performance.now();
       if (now - keyboardLookupLastTime > KEYBOARD_LOOKUP_THRESHOLD) {
         keyboardLookupPrefix = '';
-        keyboardLookupIndex = 0;
+        keyboardLookupIndex = -1;
       }
       keyboardLookupPrefix += e.key.toLowerCase();
       keyboardLookupLastTime = now;
@@ -13871,13 +13461,12 @@ const VSelect = genericComponent()({
         if (keyboardLookupPrefix.at(-1) === keyboardLookupPrefix.at(-2)) {
           // No matches but we have a repeated letter, try the next item with that prefix
           keyboardLookupPrefix = keyboardLookupPrefix.slice(0, -1);
-          keyboardLookupIndex++;
           result = findItemBase();
           if (result) return result;
         }
 
         // Still nothing, wrap around to the top
-        keyboardLookupIndex = 0;
+        keyboardLookupIndex = -1;
         result = findItemBase();
         if (result) return result;
 
@@ -13886,7 +13475,7 @@ const VSelect = genericComponent()({
         return findItemBase();
       }
       function findItemBase() {
-        for (let i = keyboardLookupIndex; i < items.length; i++) {
+        for (let i = keyboardLookupIndex + 1; i < items.length; i++) {
           const _item = items[i];
           if (_item.title.toLowerCase().startsWith(keyboardLookupPrefix)) {
             return [_item, i];
@@ -13977,8 +13566,7 @@ const VSelect = genericComponent()({
       return createVNode(VTextField, mergeProps({
         "ref": vTextFieldRef
       }, textFieldProps, {
-        "modelValue": model.value.map(v => v.props.title).join(', '),
-        "name": undefined,
+        "modelValue": model.value.map(v => v.props.value).join(', '),
         "onUpdate:modelValue": onModelUpdate,
         "focused": isFocused.value,
         "onUpdate:focused": $event => isFocused.value = $event,
@@ -14000,176 +13588,160 @@ const VSelect = genericComponent()({
         "onBlur": onBlur,
         "onKeydown": onKeydown,
         "aria-expanded": ariaExpanded.value,
-        "aria-controls": ariaControls.value
+        "aria-controls": ariaControls.value,
+        "aria-label": ariaLabel.value,
+        "title": ariaLabel.value
       }), {
         ...slots,
-        default: _ref2 => {
-          let {
-            id
-          } = _ref2;
-          return createElementVNode(Fragment, null, [createElementVNode("select", {
-            "hidden": true,
-            "multiple": props.multiple,
-            "name": autocomplete.fieldName.value
-          }, [items.value.map(item => createElementVNode("option", {
-            "key": item.value,
-            "value": item.value,
-            "selected": selectedValues.value.includes(item.value)
-          }, null))]), createVNode(VMenu, mergeProps({
-            "id": menuId.value,
-            "ref": vMenuRef,
-            "modelValue": menu.value,
-            "onUpdate:modelValue": $event => menu.value = $event,
-            "activator": "parent",
-            "contentClass": "v-select__content",
-            "disabled": menuDisabled.value,
-            "eager": props.eager,
-            "maxHeight": 310,
-            "openOnClick": false,
-            "closeOnContentClick": false,
-            "transition": props.transition,
-            "onAfterEnter": onAfterEnter,
-            "onAfterLeave": onAfterLeave
-          }, computedMenuProps.value), {
-            default: () => [hasList && createVNode(VList, mergeProps({
-              "ref": listRef,
-              "selected": selectedValues.value,
-              "selectStrategy": props.multiple ? 'independent' : 'single-independent',
-              "onMousedown": e => e.preventDefault(),
-              "onKeydown": onListKeydown,
-              "onFocusin": onFocusin,
-              "tabindex": "-1",
-              "selectable": true,
-              "aria-live": "polite",
-              "aria-labelledby": `${id.value}-label`,
-              "aria-multiselectable": props.multiple,
-              "color": props.itemColor ?? props.color
-            }, listEvents, props.listProps), {
-              default: () => [slots['prepend-item']?.(), !displayItems.value.length && !props.hideNoData && (slots['no-data']?.() ?? createVNode(VListItem, {
-                "key": "no-data",
-                "title": t(props.noDataText)
-              }, null)), createVNode(VVirtualScroll, {
-                "ref": vVirtualScrollRef,
-                "renderless": true,
-                "items": displayItems.value,
-                "itemKey": "value"
-              }, {
-                default: _ref3 => {
-                  let {
-                    item,
-                    index,
-                    itemRef
-                  } = _ref3;
-                  const camelizedProps = camelizeProps(item.props);
-                  const itemProps = mergeProps(item.props, {
-                    ref: itemRef,
-                    key: item.value,
-                    onClick: () => select(item, null),
-                    'aria-posinset': index + 1,
-                    'aria-setsize': displayItems.value.length
-                  });
-                  if (item.type === 'divider') {
-                    return slots.divider?.({
-                      props: item.raw,
-                      index
-                    }) ?? createVNode(VDivider, mergeProps(item.props, {
-                      "key": `divider-${index}`
-                    }), null);
-                  }
-                  if (item.type === 'subheader') {
-                    return slots.subheader?.({
-                      props: item.raw,
-                      index
-                    }) ?? createVNode(VListSubheader, mergeProps(item.props, {
-                      "key": `subheader-${index}`
-                    }), null);
-                  }
-                  return slots.item?.({
-                    item,
-                    index,
-                    props: itemProps
-                  }) ?? createVNode(VListItem, mergeProps(itemProps, {
-                    "role": "option"
-                  }), {
-                    prepend: _ref4 => {
-                      let {
-                        isSelected
-                      } = _ref4;
-                      return createElementVNode(Fragment, null, [props.multiple && !props.hideSelected ? createVNode(VCheckboxBtn, {
-                        "key": item.value,
-                        "modelValue": isSelected,
-                        "ripple": false,
-                        "tabindex": "-1",
-                        "aria-hidden": true,
-                        "onClick": event => event.preventDefault()
-                      }, null) : undefined, camelizedProps.prependAvatar && createVNode(VAvatar, {
-                        "image": camelizedProps.prependAvatar
-                      }, null), camelizedProps.prependIcon && createVNode(VIcon, {
-                        "icon": camelizedProps.prependIcon
-                      }, null)]);
-                    }
-                  });
-                }
-              }), slots['append-item']?.()]
-            })]
-          }), model.value.map((item, index) => {
-            function onChipClose(e) {
-              e.stopPropagation();
-              e.preventDefault();
-              select(item, false);
-            }
-            const slotProps = mergeProps(VChip.filterProps(item.props), {
-              'onClick:close': onChipClose,
-              onKeydown(e) {
-                if (e.key !== 'Enter' && e.key !== ' ') return;
-                e.preventDefault();
-                e.stopPropagation();
-                onChipClose(e);
-              },
-              onMousedown(e) {
-                e.preventDefault();
-                e.stopPropagation();
-              },
-              modelValue: true,
-              'onUpdate:modelValue': undefined
-            });
-            const hasSlot = hasChips ? !!slots.chip : !!slots.selection;
-            const slotContent = hasSlot ? ensureValidVNode(hasChips ? slots.chip({
-              item,
-              index,
-              props: slotProps
-            }) : slots.selection({
-              item,
-              index
-            })) : undefined;
-            if (hasSlot && !slotContent) return undefined;
-            return createElementVNode("div", {
-              "key": item.value,
-              "class": "v-select__selection"
-            }, [hasChips ? !slots.chip ? createVNode(VChip, mergeProps({
-              "key": "chip",
-              "closable": closableChips.value,
-              "size": "small",
-              "text": item.title,
-              "disabled": item.props.disabled
-            }, slotProps), null) : createVNode(VDefaultsProvider, {
-              "key": "chip-defaults",
-              "defaults": {
-                VChip: {
-                  closable: closableChips.value,
-                  size: 'small',
-                  text: item.title
-                }
-              }
+        default: () => createElementVNode(Fragment, null, [createVNode(VMenu, mergeProps({
+          "id": menuId.value,
+          "ref": vMenuRef,
+          "modelValue": menu.value,
+          "onUpdate:modelValue": $event => menu.value = $event,
+          "activator": "parent",
+          "contentClass": "v-select__content",
+          "disabled": menuDisabled.value,
+          "eager": props.eager,
+          "maxHeight": 310,
+          "openOnClick": false,
+          "closeOnContentClick": false,
+          "transition": props.transition,
+          "onAfterEnter": onAfterEnter,
+          "onAfterLeave": onAfterLeave
+        }, computedMenuProps.value), {
+          default: () => [hasList && createVNode(VList, mergeProps({
+            "ref": listRef,
+            "selected": selectedValues.value,
+            "selectStrategy": props.multiple ? 'independent' : 'single-independent',
+            "onMousedown": e => e.preventDefault(),
+            "onKeydown": onListKeydown,
+            "onFocusin": onFocusin,
+            "tabindex": "-1",
+            "selectable": true,
+            "aria-live": "polite",
+            "aria-label": `${props.label}-list`,
+            "color": props.itemColor ?? props.color
+          }, listEvents, props.listProps), {
+            default: () => [slots['prepend-item']?.(), !displayItems.value.length && !props.hideNoData && (slots['no-data']?.() ?? createVNode(VListItem, {
+              "key": "no-data",
+              "title": t(props.noDataText)
+            }, null)), createVNode(VVirtualScroll, {
+              "ref": vVirtualScrollRef,
+              "renderless": true,
+              "items": displayItems.value,
+              "itemKey": "value"
             }, {
-              default: () => [slotContent]
-            }) : slotContent ?? createElementVNode("span", {
-              "class": "v-select__selection-text"
-            }, [item.title, props.multiple && index < model.value.length - 1 && createElementVNode("span", {
-              "class": "v-select__selection-comma"
-            }, [createTextVNode(",")])])]);
-          })]);
-        },
+              default: _ref2 => {
+                let {
+                  item,
+                  index,
+                  itemRef
+                } = _ref2;
+                const camelizedProps = camelizeProps(item.props);
+                const itemProps = mergeProps(item.props, {
+                  ref: itemRef,
+                  key: item.value,
+                  onClick: () => select(item, null)
+                });
+                if (item.type === 'divider') {
+                  return slots.divider?.({
+                    props: item.raw,
+                    index
+                  }) ?? createVNode(VDivider, mergeProps(item.props, {
+                    "key": `divider-${index}`
+                  }), null);
+                }
+                if (item.type === 'subheader') {
+                  return slots.subheader?.({
+                    props: item.raw,
+                    index
+                  }) ?? createVNode(VListSubheader, mergeProps(item.props, {
+                    "key": `subheader-${index}`
+                  }), null);
+                }
+                return slots.item?.({
+                  item,
+                  index,
+                  props: itemProps
+                }) ?? createVNode(VListItem, mergeProps(itemProps, {
+                  "role": "option"
+                }), {
+                  prepend: _ref3 => {
+                    let {
+                      isSelected
+                    } = _ref3;
+                    return createElementVNode(Fragment, null, [props.multiple && !props.hideSelected ? createVNode(VCheckboxBtn, {
+                      "key": item.value,
+                      "modelValue": isSelected,
+                      "ripple": false,
+                      "tabindex": "-1"
+                    }, null) : undefined, camelizedProps.prependAvatar && createVNode(VAvatar, {
+                      "image": camelizedProps.prependAvatar
+                    }, null), camelizedProps.prependIcon && createVNode(VIcon, {
+                      "icon": camelizedProps.prependIcon
+                    }, null)]);
+                  }
+                });
+              }
+            }), slots['append-item']?.()]
+          })]
+        }), model.value.map((item, index) => {
+          function onChipClose(e) {
+            e.stopPropagation();
+            e.preventDefault();
+            select(item, false);
+          }
+          const slotProps = {
+            'onClick:close': onChipClose,
+            onKeydown(e) {
+              if (e.key !== 'Enter' && e.key !== ' ') return;
+              e.preventDefault();
+              e.stopPropagation();
+              onChipClose(e);
+            },
+            onMousedown(e) {
+              e.preventDefault();
+              e.stopPropagation();
+            },
+            modelValue: true,
+            'onUpdate:modelValue': undefined
+          };
+          const hasSlot = hasChips ? !!slots.chip : !!slots.selection;
+          const slotContent = hasSlot ? ensureValidVNode(hasChips ? slots.chip({
+            item,
+            index,
+            props: slotProps
+          }) : slots.selection({
+            item,
+            index
+          })) : undefined;
+          if (hasSlot && !slotContent) return undefined;
+          return createElementVNode("div", {
+            "key": item.value,
+            "class": "v-select__selection"
+          }, [hasChips ? !slots.chip ? createVNode(VChip, mergeProps({
+            "key": "chip",
+            "closable": props.closableChips,
+            "size": "small",
+            "text": item.title,
+            "disabled": item.props.disabled
+          }, slotProps), null) : createVNode(VDefaultsProvider, {
+            "key": "chip-defaults",
+            "defaults": {
+              VChip: {
+                closable: props.closableChips,
+                size: 'small',
+                text: item.title
+              }
+            }
+          }, {
+            default: () => [slotContent]
+          }) : slotContent ?? createElementVNode("span", {
+            "class": "v-select__selection-text"
+          }, [item.title, props.multiple && index < model.value.length - 1 && createElementVNode("span", {
+            "class": "v-select__selection-comma"
+          }, [createTextVNode(",")])])]);
+        })]),
         'append-inner': function () {
           for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
             args[_key] = arguments[_key];
@@ -14177,13 +13749,8 @@ const VSelect = genericComponent()({
           return createElementVNode(Fragment, null, [slots['append-inner']?.(...args), props.menuIcon ? createVNode(VIcon, {
             "class": "v-select__menu-icon",
             "color": vTextFieldRef.value?.fieldIconColor,
-            "icon": props.menuIcon,
-            "aria-hidden": true
-          }, null) : undefined, props.appendInnerIcon && createVNode(InputIcon, {
-            "key": "append-icon",
-            "name": "appendInner",
-            "color": args[0].iconColor.value
-          }, null)]);
+            "icon": props.menuIcon
+          }, null) : undefined]);
         }
       });
     });
@@ -14379,7 +13946,10 @@ const makeVAutocompleteProps = propsFactory({
   ...omit(makeVTextFieldProps({
     modelValue: null,
     role: 'combobox'
-  }), ['validationValue', 'dirty'])
+  }), ['validationValue', 'dirty', 'appendInnerIcon']),
+  ...makeTransitionProps({
+    transition: false
+  })
 }, 'VAutocomplete');
 const VAutocomplete = genericComponent()({
   name: 'VAutocomplete',
@@ -14404,7 +13974,6 @@ const VAutocomplete = genericComponent()({
     const vMenuRef = ref();
     const vVirtualScrollRef = ref();
     const selectionIndex = shallowRef(-1);
-    const _searchLock = shallowRef(null);
     const {
       items,
       transformIn,
@@ -14414,9 +13983,6 @@ const VAutocomplete = genericComponent()({
       textColorClasses,
       textColorStyles
     } = useTextColor(() => vTextFieldRef.value?.color);
-    const {
-      InputIcon
-    } = useInputIcon(props);
     const search = useProxiedModel(props, 'search', '');
     const model = useProxiedModel(props, 'modelValue', [], v => transformIn(v === null ? [null] : wrapInArray(v)), v => {
       const transformed = transformOut(v);
@@ -14429,20 +13995,18 @@ const VAutocomplete = genericComponent()({
     const {
       filteredItems,
       getMatches
-    } = useFilter(props, items, () => _searchLock.value ?? (isPristine.value ? '' : search.value));
+    } = useFilter(props, items, () => isPristine.value ? '' : search.value);
     const displayItems = computed(() => {
-      if (props.hideSelected && _searchLock.value === null) {
+      if (props.hideSelected) {
         return filteredItems.value.filter(filteredItem => !model.value.some(s => s.value === filteredItem.value));
       }
       return filteredItems.value;
     });
-    const closableChips = toRef(() => props.closableChips && !form.isReadonly.value && !form.isDisabled.value);
     const hasChips = computed(() => !!(props.chips || slots.chip));
     const hasSelectionSlot = computed(() => hasChips.value || !!slots.selection);
     const selectedValues = computed(() => model.value.map(selection => selection.props.value));
-    const firstSelectableItem = computed(() => displayItems.value.find(x => x.type === 'item' && !x.props.disabled));
     const highlightFirst = computed(() => {
-      const selectFirst = props.autoSelectFirst === true || props.autoSelectFirst === 'exact' && search.value === firstSelectableItem.value?.title;
+      const selectFirst = props.autoSelectFirst === true || props.autoSelectFirst === 'exact' && search.value === displayItems.value[0]?.title;
       return selectFirst && displayItems.value.length > 0 && !isPristine.value && !listHasFocus.value;
     });
     const menuDisabled = computed(() => props.hideNoData && !displayItems.value.length || form.isReadonly.value || form.isDisabled.value);
@@ -14458,7 +14022,8 @@ const VAutocomplete = genericComponent()({
     const {
       menuId,
       ariaExpanded,
-      ariaControls
+      ariaControls,
+      ariaLabel
     } = useMenuActivator(props, menu);
     const listRef = ref();
     const listEvents = useScrolling(listRef, vTextFieldRef);
@@ -14485,7 +14050,6 @@ const VAutocomplete = genericComponent()({
         vTextFieldRef.value?.focus();
       }
     }
-    // eslint-disable-next-line complexity
     function onKeydown(e) {
       if (form.isReadonly.value) return;
       const selectionStart = vTextFieldRef.value?.selectionStart;
@@ -14499,13 +14063,13 @@ const VAutocomplete = genericComponent()({
       if (['Escape'].includes(e.key)) {
         menu.value = false;
       }
-      if (highlightFirst.value && ['Enter', 'Tab'].includes(e.key) && firstSelectableItem.value && !model.value.some(_ref2 => {
+      if (highlightFirst.value && ['Enter', 'Tab'].includes(e.key) && !model.value.some(_ref2 => {
         let {
           value
         } = _ref2;
-        return value === firstSelectableItem.value.value;
+        return value === displayItems.value[0].value;
       })) {
-        select(firstSelectableItem.value);
+        select(displayItems.value[0]);
       }
       if (e.key === 'ArrowDown' && highlightFirst.value) {
         listRef.value?.focus('next');
@@ -14564,7 +14128,6 @@ const VAutocomplete = genericComponent()({
         isPristine.value = true;
         vTextFieldRef.value?.focus();
       }
-      _searchLock.value = null;
     }
     function onFocusin(e) {
       isFocused.value = true;
@@ -14600,7 +14163,6 @@ const VAutocomplete = genericComponent()({
       } else {
         const add = set !== false;
         model.value = add ? [item] : [];
-        _searchLock.value = isPristine.value ? '' : search.value ?? '';
         search.value = add && !hasSelectionSlot.value ? item.title : '';
 
         // watch for search watcher to trigger
@@ -14620,9 +14182,6 @@ const VAutocomplete = genericComponent()({
       } else {
         if (!props.multiple && search.value == null) model.value = [];
         menu.value = false;
-        if (!isPristine.value && search.value) {
-          _searchLock.value = search.value;
-        }
         search.value = '';
         selectionIndex.value = -1;
       }
@@ -14632,14 +14191,13 @@ const VAutocomplete = genericComponent()({
       if (val) menu.value = true;
       isPristine.value = !val;
     });
-    watch(menu, val => {
-      if (!props.hideSelected && val && model.value.length && isPristine.value) {
+    watch(menu, () => {
+      if (!props.hideSelected && menu.value && model.value.length) {
         const index = displayItems.value.findIndex(item => model.value.some(s => item.value === s.value));
         IN_BROWSER && window.requestAnimationFrame(() => {
           index >= 0 && vVirtualScrollRef.value?.scrollToIndex(index);
         });
       }
-      if (val) _searchLock.value = null;
     });
     watch(items, (newVal, oldVal) => {
       if (menu.value) return;
@@ -14678,170 +14236,160 @@ const VAutocomplete = genericComponent()({
         "aria-controls": ariaControls.value
       }), {
         ...slots,
-        default: _ref3 => {
-          let {
-            id
-          } = _ref3;
-          return createElementVNode(Fragment, null, [createVNode(VMenu, mergeProps({
-            "id": menuId.value,
-            "ref": vMenuRef,
-            "modelValue": menu.value,
-            "onUpdate:modelValue": $event => menu.value = $event,
-            "activator": "parent",
-            "contentClass": "v-autocomplete__content",
-            "disabled": menuDisabled.value,
-            "eager": props.eager,
-            "maxHeight": 310,
-            "openOnClick": false,
-            "closeOnContentClick": false,
-            "onAfterEnter": onAfterEnter,
-            "onAfterLeave": onAfterLeave
-          }, props.menuProps), {
-            default: () => [hasList && createVNode(VList, mergeProps({
-              "ref": listRef,
-              "filterable": true,
-              "selected": selectedValues.value,
-              "selectStrategy": props.multiple ? 'independent' : 'single-independent',
-              "onMousedown": e => e.preventDefault(),
-              "onKeydown": onListKeydown,
-              "onFocusin": onFocusin,
-              "onFocusout": onFocusout,
-              "tabindex": "-1",
-              "selectable": true,
-              "aria-live": "polite",
-              "aria-labelledby": `${id.value}-label`,
-              "aria-multiselectable": props.multiple,
-              "color": props.itemColor ?? props.color
-            }, listEvents, props.listProps), {
-              default: () => [slots['prepend-item']?.(), !displayItems.value.length && !props.hideNoData && (slots['no-data']?.() ?? createVNode(VListItem, {
-                "key": "no-data",
-                "title": t(props.noDataText)
-              }, null)), createVNode(VVirtualScroll, {
-                "ref": vVirtualScrollRef,
-                "renderless": true,
-                "items": displayItems.value,
-                "itemKey": "value"
-              }, {
-                default: _ref4 => {
-                  let {
-                    item,
-                    index,
-                    itemRef
-                  } = _ref4;
-                  const itemProps = mergeProps(item.props, {
-                    ref: itemRef,
-                    key: item.value,
-                    active: highlightFirst.value && item === firstSelectableItem.value ? true : undefined,
-                    onClick: () => select(item, null),
-                    'aria-posinset': index + 1,
-                    'aria-setsize': displayItems.value.length
-                  });
-                  if (item.type === 'divider') {
-                    return slots.divider?.({
-                      props: item.raw,
-                      index
-                    }) ?? createVNode(VDivider, mergeProps(item.props, {
-                      "key": `divider-${index}`
-                    }), null);
-                  }
-                  if (item.type === 'subheader') {
-                    return slots.subheader?.({
-                      props: item.raw,
-                      index
-                    }) ?? createVNode(VListSubheader, mergeProps(item.props, {
-                      "key": `subheader-${index}`
-                    }), null);
-                  }
-                  return slots.item?.({
-                    item,
-                    index,
-                    props: itemProps
-                  }) ?? createVNode(VListItem, mergeProps(itemProps, {
-                    "role": "option"
-                  }), {
-                    prepend: _ref5 => {
-                      let {
-                        isSelected
-                      } = _ref5;
-                      return createElementVNode(Fragment, null, [props.multiple && !props.hideSelected ? createVNode(VCheckboxBtn, {
-                        "key": item.value,
-                        "modelValue": isSelected,
-                        "ripple": false,
-                        "tabindex": "-1",
-                        "aria-hidden": true,
-                        "onClick": event => event.preventDefault()
-                      }, null) : undefined, item.props.prependAvatar && createVNode(VAvatar, {
-                        "image": item.props.prependAvatar
-                      }, null), item.props.prependIcon && createVNode(VIcon, {
-                        "icon": item.props.prependIcon
-                      }, null)]);
-                    },
-                    title: () => {
-                      return isPristine.value ? item.title : highlightResult('v-autocomplete', item.title, getMatches(item)?.title);
-                    }
-                  });
-                }
-              }), slots['append-item']?.()]
-            })]
-          }), model.value.map((item, index) => {
-            function onChipClose(e) {
-              e.stopPropagation();
-              e.preventDefault();
-              select(item, false);
-            }
-            const slotProps = mergeProps(VChip.filterProps(item.props), {
-              'onClick:close': onChipClose,
-              onKeydown(e) {
-                if (e.key !== 'Enter' && e.key !== ' ') return;
-                e.preventDefault();
-                e.stopPropagation();
-                onChipClose(e);
-              },
-              onMousedown(e) {
-                e.preventDefault();
-                e.stopPropagation();
-              },
-              modelValue: true,
-              'onUpdate:modelValue': undefined
-            });
-            const hasSlot = hasChips.value ? !!slots.chip : !!slots.selection;
-            const slotContent = hasSlot ? ensureValidVNode(hasChips.value ? slots.chip({
-              item,
-              index,
-              props: slotProps
-            }) : slots.selection({
-              item,
-              index
-            })) : undefined;
-            if (hasSlot && !slotContent) return undefined;
-            return createElementVNode("div", {
-              "key": item.value,
-              "class": normalizeClass(['v-autocomplete__selection', index === selectionIndex.value && ['v-autocomplete__selection--selected', textColorClasses.value]]),
-              "style": normalizeStyle(index === selectionIndex.value ? textColorStyles.value : {})
-            }, [hasChips.value ? !slots.chip ? createVNode(VChip, mergeProps({
-              "key": "chip",
-              "closable": closableChips.value,
-              "size": "small",
-              "text": item.title,
-              "disabled": item.props.disabled
-            }, slotProps), null) : createVNode(VDefaultsProvider, {
-              "key": "chip-defaults",
-              "defaults": {
-                VChip: {
-                  closable: closableChips.value,
-                  size: 'small',
-                  text: item.title
-                }
-              }
+        default: () => createElementVNode(Fragment, null, [createVNode(VMenu, mergeProps({
+          "id": menuId.value,
+          "ref": vMenuRef,
+          "modelValue": menu.value,
+          "onUpdate:modelValue": $event => menu.value = $event,
+          "activator": "parent",
+          "contentClass": "v-autocomplete__content",
+          "disabled": menuDisabled.value,
+          "eager": props.eager,
+          "maxHeight": 310,
+          "openOnClick": false,
+          "closeOnContentClick": false,
+          "transition": props.transition,
+          "onAfterEnter": onAfterEnter,
+          "onAfterLeave": onAfterLeave
+        }, props.menuProps), {
+          default: () => [hasList && createVNode(VList, mergeProps({
+            "ref": listRef,
+            "filterable": true,
+            "selected": selectedValues.value,
+            "selectStrategy": props.multiple ? 'independent' : 'single-independent',
+            "onMousedown": e => e.preventDefault(),
+            "onKeydown": onListKeydown,
+            "onFocusin": onFocusin,
+            "onFocusout": onFocusout,
+            "tabindex": "-1",
+            "selectable": true,
+            "aria-live": "polite",
+            "color": props.itemColor ?? props.color
+          }, listEvents, props.listProps), {
+            default: () => [slots['prepend-item']?.(), !displayItems.value.length && !props.hideNoData && (slots['no-data']?.() ?? createVNode(VListItem, {
+              "key": "no-data",
+              "title": t(props.noDataText)
+            }, null)), createVNode(VVirtualScroll, {
+              "ref": vVirtualScrollRef,
+              "renderless": true,
+              "items": displayItems.value,
+              "itemKey": "value"
             }, {
-              default: () => [slotContent]
-            }) : slotContent ?? createElementVNode("span", {
-              "class": "v-autocomplete__selection-text"
-            }, [item.title, props.multiple && index < model.value.length - 1 && createElementVNode("span", {
-              "class": "v-autocomplete__selection-comma"
-            }, [createTextVNode(",")])])]);
-          })]);
-        },
+              default: _ref3 => {
+                let {
+                  item,
+                  index,
+                  itemRef
+                } = _ref3;
+                const itemProps = mergeProps(item.props, {
+                  ref: itemRef,
+                  key: item.value,
+                  active: highlightFirst.value && index === 0 ? true : undefined,
+                  onClick: () => select(item, null)
+                });
+                if (item.type === 'divider') {
+                  return slots.divider?.({
+                    props: item.raw,
+                    index
+                  }) ?? createVNode(VDivider, mergeProps(item.props, {
+                    "key": `divider-${index}`
+                  }), null);
+                }
+                if (item.type === 'subheader') {
+                  return slots.subheader?.({
+                    props: item.raw,
+                    index
+                  }) ?? createVNode(VListSubheader, mergeProps(item.props, {
+                    "key": `subheader-${index}`
+                  }), null);
+                }
+                return slots.item?.({
+                  item,
+                  index,
+                  props: itemProps
+                }) ?? createVNode(VListItem, mergeProps(itemProps, {
+                  "role": "option"
+                }), {
+                  prepend: _ref4 => {
+                    let {
+                      isSelected
+                    } = _ref4;
+                    return createElementVNode(Fragment, null, [props.multiple && !props.hideSelected ? createVNode(VCheckboxBtn, {
+                      "key": item.value,
+                      "modelValue": isSelected,
+                      "ripple": false,
+                      "tabindex": "-1"
+                    }, null) : undefined, item.props.prependAvatar && createVNode(VAvatar, {
+                      "image": item.props.prependAvatar
+                    }, null), item.props.prependIcon && createVNode(VIcon, {
+                      "icon": item.props.prependIcon
+                    }, null)]);
+                  },
+                  title: () => {
+                    return isPristine.value ? item.title : highlightResult('v-autocomplete', item.title, getMatches(item)?.title);
+                  }
+                });
+              }
+            }), slots['append-item']?.()]
+          })]
+        }), model.value.map((item, index) => {
+          function onChipClose(e) {
+            e.stopPropagation();
+            e.preventDefault();
+            select(item, false);
+          }
+          const slotProps = {
+            'onClick:close': onChipClose,
+            onKeydown(e) {
+              if (e.key !== 'Enter' && e.key !== ' ') return;
+              e.preventDefault();
+              e.stopPropagation();
+              onChipClose(e);
+            },
+            onMousedown(e) {
+              e.preventDefault();
+              e.stopPropagation();
+            },
+            modelValue: true,
+            'onUpdate:modelValue': undefined
+          };
+          const hasSlot = hasChips.value ? !!slots.chip : !!slots.selection;
+          const slotContent = hasSlot ? ensureValidVNode(hasChips.value ? slots.chip({
+            item,
+            index,
+            props: slotProps
+          }) : slots.selection({
+            item,
+            index
+          })) : undefined;
+          if (hasSlot && !slotContent) return undefined;
+          return createElementVNode("div", {
+            "key": item.value,
+            "class": normalizeClass(['v-autocomplete__selection', index === selectionIndex.value && ['v-autocomplete__selection--selected', textColorClasses.value]]),
+            "style": normalizeStyle(index === selectionIndex.value ? textColorStyles.value : {})
+          }, [hasChips.value ? !slots.chip ? createVNode(VChip, mergeProps({
+            "key": "chip",
+            "closable": props.closableChips,
+            "size": "small",
+            "text": item.title,
+            "disabled": item.props.disabled
+          }, slotProps), null) : createVNode(VDefaultsProvider, {
+            "key": "chip-defaults",
+            "defaults": {
+              VChip: {
+                closable: props.closableChips,
+                size: 'small',
+                text: item.title
+              }
+            }
+          }, {
+            default: () => [slotContent]
+          }) : slotContent ?? createElementVNode("span", {
+            "class": "v-autocomplete__selection-text"
+          }, [item.title, props.multiple && index < model.value.length - 1 && createElementVNode("span", {
+            "class": "v-autocomplete__selection-comma"
+          }, [createTextVNode(",")])])]);
+        })]),
         'append-inner': function () {
           for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
             args[_key] = arguments[_key];
@@ -14852,13 +14400,10 @@ const VAutocomplete = genericComponent()({
             "icon": props.menuIcon,
             "onMousedown": onMousedownMenuIcon,
             "onClick": noop,
-            "aria-hidden": true,
+            "aria-label": ariaLabel.value,
+            "title": ariaLabel.value,
             "tabindex": "-1"
-          }, null) : undefined, props.appendInnerIcon && createVNode(InputIcon, {
-            "key": "append-icon",
-            "name": "appendInner",
-            "color": args[0].iconColor.value
-          }, null)]);
+          }, null) : undefined]);
         }
       });
     });
@@ -15239,17 +14784,19 @@ const VBottomNavigation = genericComponent()({
 
 const makeVDialogProps = propsFactory({
   fullscreen: Boolean,
+  retainFocus: {
+    type: Boolean,
+    default: true
+  },
   scrollable: Boolean,
-  ...omit(makeVOverlayProps({
-    captureFocus: true,
+  ...makeVOverlayProps({
     origin: 'center center',
     scrollStrategy: 'block',
     transition: {
       component: VDialogTransition
     },
-    zIndex: 2400,
-    retainFocus: true
-  }), ['disableInitialFocus'])
+    zIndex: 2400
+  })
 }, 'VDialog');
 const VDialog = genericComponent()({
   name: 'VDialog',
@@ -15269,6 +14816,55 @@ const VDialog = genericComponent()({
       scopeId
     } = useScopeId();
     const overlay = ref();
+    async function onFocusin(e) {
+      const before = e.relatedTarget;
+      const after = e.target;
+      await nextTick();
+      if (isActive.value && before !== after && overlay.value?.contentEl &&
+      // We're the topmost dialog
+      overlay.value?.globalTop &&
+      // It isn't the document or the dialog body
+      ![document, overlay.value.contentEl].includes(after) &&
+      // It isn't inside the dialog body
+      !overlay.value.contentEl.contains(after)) {
+        const focusable = focusableChildren(overlay.value.contentEl);
+        focusable[0]?.focus();
+      }
+    }
+    function onKeydown(e) {
+      if (e.key !== 'Tab' || !overlay.value?.contentEl) return;
+      const focusable = focusableChildren(overlay.value.contentEl);
+      if (!focusable.length) return;
+      const firstElement = focusable[0];
+      const lastElement = focusable[focusable.length - 1];
+      const active = document.activeElement;
+      if (e.shiftKey && active === firstElement) {
+        e.preventDefault();
+        lastElement.focus();
+      } else if (!e.shiftKey && active === lastElement) {
+        e.preventDefault();
+        firstElement.focus();
+      }
+    }
+    onBeforeUnmount(() => {
+      document.removeEventListener('focusin', onFocusin);
+      document.removeEventListener('keydown', onKeydown);
+    });
+    if (IN_BROWSER) {
+      watch(() => isActive.value && props.retainFocus, val => {
+        if (val) {
+          document.addEventListener('focusin', onFocusin, {
+            once: true
+          });
+          document.addEventListener('keydown', onKeydown);
+        } else {
+          document.removeEventListener('focusin', onFocusin);
+          document.removeEventListener('keydown', onKeydown);
+        }
+      }, {
+        immediate: true
+      });
+    }
     function onAfterEnter() {
       emit('afterEnter');
       if ((props.scrim || props.retainFocus) && overlay.value?.contentEl && !overlay.value.contentEl.contains(document.activeElement)) {
@@ -15397,7 +14993,6 @@ const makeVBreadcrumbsItemProps = propsFactory({
   disabled: Boolean,
   title: String,
   ...makeComponentProps(),
-  ...pick(makeDimensionProps(), ['width', 'maxWidth']),
   ...makeRouterProps(),
   ...makeTagProps({
     tag: 'li'
@@ -15414,9 +15009,6 @@ const VBreadcrumbsItem = genericComponent()({
     const link = useLink(props, attrs);
     const isActive = computed(() => props.active || link.isActive?.value);
     const {
-      dimensionStyles
-    } = useDimension(props);
-    const {
       textColorClasses,
       textColorStyles
     } = useTextColor(() => isActive.value ? props.activeColor : props.color);
@@ -15427,7 +15019,7 @@ const VBreadcrumbsItem = genericComponent()({
           'v-breadcrumbs-item--disabled': props.disabled,
           [`${props.activeClass}`]: isActive.value && props.activeClass
         }, textColorClasses.value, props.class]),
-        "style": normalizeStyle([textColorStyles.value, dimensionStyles.value, props.style]),
+        "style": normalizeStyle([textColorStyles.value, props.style]),
         "aria-current": isActive.value ? 'page' : undefined
       }, {
         default: () => [!link.isLink.value ? slots.default?.() ?? props.title : createElementVNode("a", mergeProps({
@@ -15457,7 +15049,6 @@ const makeVBreadcrumbsProps = propsFactory({
     type: Array,
     default: () => []
   },
-  itemProps: Boolean,
   ...makeComponentProps(),
   ...makeDensityProps(),
   ...makeRoundedProps(),
@@ -15539,7 +15130,7 @@ const VBreadcrumbs = genericComponent()({
             "disabled": index >= array.length - 1
           }, typeof item === 'string' ? {
             title: item
-          } : item, props.itemProps && isObject(raw) ? raw : {}), {
+          } : item), {
             default: slots.title ? () => slots.title?.({
               item,
               index
@@ -15554,4010 +15145,6 @@ const VBreadcrumbs = genericComponent()({
       });
     });
     return {};
-  }
-});
-
-// Types
-
-const makeVIconBtnProps = propsFactory({
-  active: {
-    type: Boolean,
-    default: undefined
-  },
-  activeColor: String,
-  activeIcon: [String, Function, Object],
-  activeVariant: String,
-  baseVariant: {
-    type: String,
-    default: 'tonal'
-  },
-  disabled: Boolean,
-  height: [Number, String],
-  width: [Number, String],
-  hideOverlay: Boolean,
-  icon: [String, Function, Object],
-  iconColor: String,
-  loading: Boolean,
-  opacity: [Number, String],
-  readonly: Boolean,
-  rotate: [Number, String],
-  size: {
-    type: [Number, String],
-    default: 'default'
-  },
-  sizes: {
-    type: Array,
-    default: () => [['x-small', 16], ['small', 24], ['default', 40], ['large', 48], ['x-large', 56]]
-  },
-  text: {
-    type: [String, Number, Boolean],
-    default: undefined
-  },
-  ...makeBorderProps(),
-  ...makeComponentProps(),
-  ...makeElevationProps(),
-  ...makeIconSizeProps(),
-  ...makeRoundedProps(),
-  ...makeTagProps({
-    tag: 'button'
-  }),
-  ...makeThemeProps(),
-  ...makeVariantProps({
-    variant: 'flat'
-  })
-}, 'VIconBtn');
-const VIconBtn = genericComponent()({
-  name: 'VIconBtn',
-  props: makeVIconBtnProps(),
-  emits: {
-    'update:active': value => true
-  },
-  setup(props, _ref) {
-    let {
-      attrs,
-      slots
-    } = _ref;
-    const isActive = useProxiedModel(props, 'active');
-    const {
-      themeClasses
-    } = provideTheme(props);
-    const {
-      borderClasses
-    } = useBorder(props);
-    const {
-      elevationClasses
-    } = useElevation(props);
-    const {
-      roundedClasses
-    } = useRounded(props);
-    const {
-      colorClasses,
-      colorStyles,
-      variantClasses
-    } = useVariant(() => ({
-      color: (() => {
-        if (props.disabled) return undefined;
-        if (!isActive.value) return props.color;
-        // Use an inline fallback as opposed to setting a default color
-        // because non-toggle buttons are default flat whereas toggle
-        // buttons are default tonal and active flat. The exact use
-        // case for this is a toggle button with no active color.
-        return props.activeColor ?? props.color ?? 'surface-variant';
-      })(),
-      variant: (() => {
-        if (isActive.value === undefined) return props.variant;
-        if (isActive.value) return props.activeVariant ?? props.variant;
-        return props.baseVariant ?? props.variant;
-      })()
-    }));
-    const btnSizeMap = new Map(props.sizes);
-    function onClick() {
-      if (props.disabled || props.readonly || isActive.value === undefined || props.tag === 'a' && attrs.href) return;
-      isActive.value = !isActive.value;
-    }
-    useRender(() => {
-      const icon = isActive.value ? props.activeIcon ?? props.icon : props.icon;
-      const _btnSize = props.size;
-      const hasNamedSize = btnSizeMap.has(_btnSize);
-      const btnSize = hasNamedSize ? btnSizeMap.get(_btnSize) : _btnSize;
-      const btnHeight = props.height ?? btnSize;
-      const btnWidth = props.width ?? btnSize;
-      const {
-        iconSize
-      } = useIconSizes(props, () => new Map(props.iconSizes).get(_btnSize));
-      const iconProps = {
-        icon,
-        size: iconSize.value,
-        color: props.iconColor,
-        opacity: props.opacity
-      };
-      return createVNode(props.tag, {
-        "type": props.tag === 'button' ? 'button' : undefined,
-        "class": normalizeClass([{
-          'v-icon-btn': true,
-          'v-icon-btn--active': isActive.value,
-          'v-icon-btn--disabled': props.disabled,
-          'v-icon-btn--loading': props.loading,
-          'v-icon-btn--readonly': props.readonly,
-          [`v-icon-btn--${props.size}`]: true
-        }, themeClasses.value, colorClasses.value, borderClasses.value, elevationClasses.value, roundedClasses.value, variantClasses.value, props.class]),
-        "style": normalizeStyle([{
-          '--v-icon-btn-rotate': convertToUnit(props.rotate, 'deg'),
-          '--v-icon-btn-height': convertToUnit(btnHeight),
-          '--v-icon-btn-width': convertToUnit(btnWidth)
-        }, colorStyles.value, props.style]),
-        "tabindex": props.disabled || props.readonly ? -1 : 0,
-        "onClick": onClick
-      }, {
-        default: () => [genOverlays(!props.hideOverlay, 'v-icon-btn'), createElementVNode("div", {
-          "class": "v-icon-btn__content",
-          "data-no-activator": ""
-        }, [!slots.default && icon ? createVNode(VIcon, mergeProps({
-          "key": "content-icon"
-        }, iconProps), null) : createVNode(VDefaultsProvider, {
-          "key": "content-defaults",
-          "disabled": !icon,
-          "defaults": {
-            VIcon: {
-              ...iconProps
-            }
-          }
-        }, {
-          default: () => slots.default?.() ?? toDisplayString(props.text)
-        })]), !!props.loading && createElementVNode("span", {
-          "key": "loader",
-          "class": "v-icon-btn__loader"
-        }, [slots.loader?.() ?? createVNode(VProgressCircular, {
-          "color": typeof props.loading === 'boolean' ? undefined : props.loading,
-          "indeterminate": "disable-shrink",
-          "width": "2",
-          "size": iconSize.value
-        }, null)])]
-      });
-    });
-    return {};
-  }
-});
-
-function isLeapYear(year) {
-  return year % 4 === 0 && year % 100 !== 0 || year % 400 === 0;
-}
-
-// Types
-
-const PARSE_REGEX = /^(\d{4})-(\d{1,2})(-(\d{1,2}))?([^\d]+(\d{1,2}))?(:(\d{1,2}))?(:(\d{1,2}))?$/;
-const PARSE_TIME = /(\d\d?)(:(\d\d?)|)(:(\d\d?)|)/;
-const DAYS_IN_MONTH = [0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
-const DAYS_IN_MONTH_LEAP = [0, 31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
-const DAYS_IN_MONTH_MIN = 28;
-const DAYS_IN_MONTH_MAX = 31;
-const MONTH_MAX = 12;
-const MONTH_MIN = 1;
-const DAY_MIN = 1;
-const DAYS_IN_WEEK = 7;
-const MINUTES_IN_HOUR = 60;
-const MINUTE_MAX = 59;
-const MINUTES_IN_DAY = 24 * 60;
-const HOURS_IN_DAY = 24;
-const HOUR_MAX = 23;
-const FIRST_HOUR = 0;
-const OFFSET_YEAR = 10000;
-const OFFSET_MONTH = 100;
-const OFFSET_HOUR = 100;
-const OFFSET_TIME = 10000;
-function getStartOfWeek(timestamp, weekdays, today) {
-  const start = copyTimestamp(timestamp);
-  findWeekday(start, weekdays[0], prevDay);
-  updateFormatted(start);
-  if (today) {
-    updateRelative(start, today, start.hasTime);
-  }
-  return start;
-}
-function getEndOfWeek(timestamp, weekdays, today) {
-  const end = copyTimestamp(timestamp);
-  findWeekday(end, weekdays[weekdays.length - 1]);
-  updateFormatted(end);
-  if (today) {
-    updateRelative(end, today, end.hasTime);
-  }
-  return end;
-}
-function getStartOfMonth(timestamp) {
-  const start = copyTimestamp(timestamp);
-  start.day = DAY_MIN;
-  updateWeekday(start);
-  updateFormatted(start);
-  return start;
-}
-function getEndOfMonth(timestamp) {
-  const end = copyTimestamp(timestamp);
-  end.day = daysInMonth(end.year, end.month);
-  updateWeekday(end);
-  updateFormatted(end);
-  return end;
-}
-function validateNumber(input) {
-  return isFinite(parseInt(input));
-}
-function validateTime(input) {
-  return typeof input === 'number' && isFinite(input) || !!PARSE_TIME.exec(input) || typeof input === 'object' && isFinite(input.hour) && isFinite(input.minute);
-}
-function parseTime(input) {
-  if (typeof input === 'number') {
-    // when a number is given, it's minutes since 12:00am
-    return input;
-  } else if (typeof input === 'string') {
-    // when a string is given, it's a hh:mm:ss format where seconds are optional
-    const parts = PARSE_TIME.exec(input);
-    if (!parts) {
-      return false;
-    }
-    return parseInt(parts[1]) * 60 + parseInt(parts[3] || 0);
-  } else if (typeof input === 'object') {
-    // when an object is given, it must have hour and minute
-    if (typeof input.hour !== 'number' || typeof input.minute !== 'number') {
-      return false;
-    }
-    return input.hour * 60 + input.minute;
-  } else {
-    // unsupported type
-    return false;
-  }
-}
-function validateTimestamp(input) {
-  return typeof input === 'number' && isFinite(input) || typeof input === 'string' && !!PARSE_REGEX.exec(input) || input instanceof Date;
-}
-function parseTimestamp(input) {
-  let required = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
-  let now = arguments.length > 2 ? arguments[2] : undefined;
-  if (typeof input === 'number' && isFinite(input)) {
-    input = new Date(input);
-  }
-  if (input instanceof Date) {
-    const date = parseDate(input);
-    if (now) {
-      updateRelative(date, now, date.hasTime);
-    }
-    return date;
-  }
-  if (typeof input !== 'string') {
-    if (required) {
-      throw new Error(`${input} is not a valid timestamp. It must be a Date, number of milliseconds since Epoch, or a string in the format of YYYY-MM-DD or YYYY-MM-DD hh:mm. Zero-padding is optional and seconds are ignored.`);
-    }
-    return null;
-  }
-
-  // YYYY-MM-DD hh:mm:ss
-  const parts = PARSE_REGEX.exec(input);
-  if (!parts) {
-    if (required) {
-      throw new Error(`${input} is not a valid timestamp. It must be a Date, number of milliseconds since Epoch, or a string in the format of YYYY-MM-DD or YYYY-MM-DD hh:mm. Zero-padding is optional and seconds are ignored.`);
-    }
-    return null;
-  }
-  const timestamp = {
-    date: input,
-    time: '',
-    year: parseInt(parts[1]),
-    month: parseInt(parts[2]),
-    day: parseInt(parts[4]) || 1,
-    hour: parseInt(parts[6]) || 0,
-    minute: parseInt(parts[8]) || 0,
-    weekday: 0,
-    hasDay: !!parts[4],
-    hasTime: !!(parts[6] && parts[8]),
-    past: false,
-    present: false,
-    future: false
-  };
-  updateWeekday(timestamp);
-  updateFormatted(timestamp);
-  if (now) {
-    updateRelative(timestamp, now, timestamp.hasTime);
-  }
-  return timestamp;
-}
-function parseDate(date) {
-  return updateFormatted({
-    date: '',
-    time: '',
-    year: date.getFullYear(),
-    month: date.getMonth() + 1,
-    day: date.getDate(),
-    weekday: date.getDay(),
-    hour: date.getHours(),
-    minute: date.getMinutes(),
-    hasDay: true,
-    hasTime: true,
-    past: false,
-    present: true,
-    future: false
-  });
-}
-function getDayIdentifier(timestamp) {
-  return timestamp.year * OFFSET_YEAR + timestamp.month * OFFSET_MONTH + timestamp.day;
-}
-function getTimeIdentifier(timestamp) {
-  return timestamp.hour * OFFSET_HOUR + timestamp.minute;
-}
-function getTimestampIdentifier(timestamp) {
-  return getDayIdentifier(timestamp) * OFFSET_TIME + getTimeIdentifier(timestamp);
-}
-function updateRelative(timestamp, now) {
-  let time = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
-  let a = getDayIdentifier(now);
-  let b = getDayIdentifier(timestamp);
-  let present = a === b;
-  if (timestamp.hasTime && time && present) {
-    a = getTimeIdentifier(now);
-    b = getTimeIdentifier(timestamp);
-    present = a === b;
-  }
-  timestamp.past = b < a;
-  timestamp.present = present;
-  timestamp.future = b > a;
-  return timestamp;
-}
-function isTimedless(input) {
-  return input instanceof Date || typeof input === 'number' && isFinite(input);
-}
-function updateHasTime(timestamp, hasTime, now) {
-  if (timestamp.hasTime !== hasTime) {
-    timestamp.hasTime = hasTime;
-    if (!hasTime) {
-      timestamp.hour = HOUR_MAX;
-      timestamp.minute = MINUTE_MAX;
-      timestamp.time = getTime(timestamp);
-    }
-  }
-  return timestamp;
-}
-function updateMinutes(timestamp, minutes, now) {
-  timestamp.hasTime = true;
-  timestamp.hour = 0;
-  timestamp.minute = 0;
-  nextMinutes(timestamp, minutes);
-  updateFormatted(timestamp);
-  if (now) {
-    updateRelative(timestamp, now, true);
-  }
-  return timestamp;
-}
-function updateWeekday(timestamp) {
-  timestamp.weekday = getWeekday(timestamp);
-  return timestamp;
-}
-function updateFormatted(timestamp) {
-  timestamp.time = getTime(timestamp);
-  timestamp.date = getDate$1(timestamp);
-  return timestamp;
-}
-function getWeekday(timestamp) {
-  if (timestamp.hasDay) {
-    const _ = Math.floor;
-    const k = timestamp.day;
-    const m = (timestamp.month + 9) % MONTH_MAX + 1;
-    const C = _(timestamp.year / 100);
-    const Y = timestamp.year % 100 - (timestamp.month <= 2 ? 1 : 0);
-    return ((k + _(2.6 * m - 0.2) - 2 * C + Y + _(Y / 4) + _(C / 4)) % 7 + 7) % 7;
-  }
-  return timestamp.weekday;
-}
-function daysInMonth(year, month) {
-  return isLeapYear(year) ? DAYS_IN_MONTH_LEAP[month] : DAYS_IN_MONTH[month];
-}
-function copyTimestamp(timestamp) {
-  if (timestamp == null) return null;
-  const {
-    date,
-    time,
-    year,
-    month,
-    day,
-    weekday,
-    hour,
-    minute,
-    hasDay,
-    hasTime,
-    past,
-    present,
-    future
-  } = timestamp;
-  return {
-    date,
-    time,
-    year,
-    month,
-    day,
-    weekday,
-    hour,
-    minute,
-    hasDay,
-    hasTime,
-    past,
-    present,
-    future
-  };
-}
-function padNumber(x, length) {
-  let padded = String(x);
-  while (padded.length < length) {
-    padded = '0' + padded;
-  }
-  return padded;
-}
-function getDate$1(timestamp) {
-  let str = `${padNumber(timestamp.year, 4)}-${padNumber(timestamp.month, 2)}`;
-  if (timestamp.hasDay) str += `-${padNumber(timestamp.day, 2)}`;
-  return str;
-}
-function getTime(timestamp) {
-  if (!timestamp.hasTime) {
-    return '';
-  }
-  return `${padNumber(timestamp.hour, 2)}:${padNumber(timestamp.minute, 2)}`;
-}
-function nextMinutes(timestamp, minutes) {
-  timestamp.minute += minutes;
-  while (timestamp.minute >= MINUTES_IN_HOUR) {
-    timestamp.minute -= MINUTES_IN_HOUR;
-    timestamp.hour++;
-    if (timestamp.hour >= HOURS_IN_DAY) {
-      nextDay(timestamp);
-      timestamp.hour = FIRST_HOUR;
-    }
-  }
-  return timestamp;
-}
-function nextDay(timestamp) {
-  timestamp.day++;
-  timestamp.weekday = (timestamp.weekday + 1) % DAYS_IN_WEEK;
-  if (timestamp.day > DAYS_IN_MONTH_MIN && timestamp.day > daysInMonth(timestamp.year, timestamp.month)) {
-    timestamp.day = DAY_MIN;
-    timestamp.month++;
-    if (timestamp.month > MONTH_MAX) {
-      timestamp.month = MONTH_MIN;
-      timestamp.year++;
-    }
-  }
-  return timestamp;
-}
-function prevDay(timestamp) {
-  timestamp.day--;
-  timestamp.weekday = (timestamp.weekday + 6) % DAYS_IN_WEEK;
-  if (timestamp.day < DAY_MIN) {
-    timestamp.month--;
-    if (timestamp.month < MONTH_MIN) {
-      timestamp.year--;
-      timestamp.month = MONTH_MAX;
-    }
-    timestamp.day = daysInMonth(timestamp.year, timestamp.month);
-  }
-  return timestamp;
-}
-function relativeDays(timestamp) {
-  let mover = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : nextDay;
-  let days = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 1;
-  while (--days >= 0) mover(timestamp);
-  return timestamp;
-}
-function diffMinutes(min, max) {
-  const Y = (max.year - min.year) * 525600;
-  const M = (max.month - min.month) * 43800;
-  const D = (max.day - min.day) * 1440;
-  const h = (max.hour - min.hour) * 60;
-  const m = max.minute - min.minute;
-  return Y + M + D + h + m;
-}
-function findWeekday(timestamp, weekday) {
-  let mover = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : nextDay;
-  let maxDays = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 6;
-  while (timestamp.weekday !== weekday && --maxDays >= 0) mover(timestamp);
-  return timestamp;
-}
-function getWeekdaySkips(weekdays) {
-  const skips = [1, 1, 1, 1, 1, 1, 1];
-  const filled = [0, 0, 0, 0, 0, 0, 0];
-  for (let i = 0; i < weekdays.length; i++) {
-    filled[weekdays[i]] = 1;
-  }
-  for (let k = 0; k < DAYS_IN_WEEK; k++) {
-    let skip = 1;
-    for (let j = 1; j < DAYS_IN_WEEK; j++) {
-      const next = (k + j) % DAYS_IN_WEEK;
-      if (filled[next]) {
-        break;
-      }
-      skip++;
-    }
-    skips[k] = filled[k] * skip;
-  }
-  return skips;
-}
-function timestampToDate(timestamp) {
-  const time = `${padNumber(timestamp.hour, 2)}:${padNumber(timestamp.minute, 2)}`;
-  const date = timestamp.date;
-  return new Date(`${date}T${time}:00+00:00`);
-}
-function createDayList(start, end, now, weekdaySkips) {
-  let max = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : 42;
-  let min = arguments.length > 5 && arguments[5] !== undefined ? arguments[5] : 0;
-  const stop = getDayIdentifier(end);
-  const days = [];
-  let current = copyTimestamp(start);
-  let currentIdentifier = 0;
-  let stopped = currentIdentifier === stop;
-  if (stop < getDayIdentifier(start)) {
-    throw new Error('End date is earlier than start date.');
-  }
-  while ((!stopped || days.length < min) && days.length < max) {
-    currentIdentifier = getDayIdentifier(current);
-    stopped = stopped || currentIdentifier === stop;
-    if (weekdaySkips[current.weekday] === 0) {
-      current = nextDay(current);
-      continue;
-    }
-    const day = copyTimestamp(current);
-    updateFormatted(day);
-    updateRelative(day, now);
-    days.push(day);
-    current = relativeDays(current, nextDay, weekdaySkips[current.weekday]);
-  }
-  if (!days.length) throw new Error('No dates found using specified start date, end date, and weekdays.');
-  return days;
-}
-function createIntervalList(timestamp, first, minutes, count, now) {
-  const intervals = [];
-  for (let i = 0; i < count; i++) {
-    const mins = first + i * minutes;
-    const int = copyTimestamp(timestamp);
-    intervals.push(updateMinutes(int, mins, now));
-  }
-  return intervals;
-}
-function createNativeLocaleFormatter(locale, getOptions) {
-  const emptyFormatter = (_t, _s) => '';
-  if (typeof Intl === 'undefined' || typeof Intl.DateTimeFormat === 'undefined') {
-    return emptyFormatter;
-  }
-  return (timestamp, short) => {
-    try {
-      const intlFormatter = new Intl.DateTimeFormat(locale || undefined, getOptions(timestamp, short));
-      return intlFormatter.format(timestampToDate(timestamp));
-    } catch (e) {
-      return '';
-    }
-  };
-}
-function validateWeekdays(input) {
-  if (typeof input === 'string') {
-    input = input.split(',');
-  }
-  if (Array.isArray(input)) {
-    const ints = input.map(x => parseInt(x));
-    if (ints.length > DAYS_IN_WEEK || ints.length === 0) {
-      return false;
-    }
-    const visited = {};
-    let wrapped = false;
-    for (let i = 0; i < ints.length; i++) {
-      const x = ints[i];
-      if (!isFinite(x) || x < 0 || x >= DAYS_IN_WEEK) {
-        return false;
-      }
-      if (i > 0) {
-        const d = x - ints[i - 1];
-        if (d < 0) {
-          if (wrapped) {
-            return false;
-          }
-          wrapped = true;
-        } else if (d === 0) {
-          return false;
-        }
-      }
-      if (visited[x]) {
-        return false;
-      }
-      visited[x] = true;
-    }
-    return true;
-  }
-  return false;
-}
-
-// Utilities
-
-// Types
-
-function useTimes(props) {
-  const times = reactive({
-    now: parseTimestamp('0000-00-00 00:00', true),
-    today: parseTimestamp('0000-00-00', true)
-  });
-  const parsedNow = computed(() => {
-    return props.now && validateTimestamp(props.now) ? parseTimestamp(props.now, true) : null;
-  });
-  function setPresent() {
-    times.now.present = times.today.present = true;
-    times.now.past = times.today.past = false;
-    times.now.future = times.today.future = false;
-  }
-  function getNow() {
-    return parseDate(new Date());
-  }
-  function updateDay(now, target) {
-    if (now.date !== target.date) {
-      target.year = now.year;
-      target.month = now.month;
-      target.day = now.day;
-      target.weekday = now.weekday;
-      target.date = now.date;
-    }
-  }
-  function updateTime(now, target) {
-    if (now.time !== target.time) {
-      target.hour = now.hour;
-      target.minute = now.minute;
-      target.time = now.time;
-    }
-  }
-  function updateTimes() {
-    const now = parsedNow.value || getNow();
-    updateDay(now, times.now);
-    updateTime(now, times.now);
-    updateDay(now, times.today);
-  }
-  watch(parsedNow, updateTimes);
-  updateTimes();
-  setPresent();
-  return {
-    times,
-    parsedNow,
-    updateTimes,
-    setPresent,
-    getNow,
-    updateDay,
-    updateTime
-  };
-}
-
-// Utilities
-
-// Types
-
-function weekInfo(locale) {
-  // https://simplelocalize.io/data/locales/
-  // then `new Intl.Locale(...).getWeekInfo()`
-  const code = locale.slice(-2).toUpperCase();
-  switch (true) {
-    case locale === 'GB-alt-variant':
-      {
-        return {
-          firstDay: 0,
-          firstWeekSize: 4
-        };
-      }
-    case locale === '001':
-      {
-        return {
-          firstDay: 1,
-          firstWeekSize: 1
-        };
-      }
-    case `AG AS BD BR BS BT BW BZ CA CO DM DO ET GT GU HK HN ID IL IN JM JP KE
-    KH KR LA MH MM MO MT MX MZ NI NP PA PE PH PK PR PY SA SG SV TH TT TW UM US
-    VE VI WS YE ZA ZW`.includes(code):
-      {
-        return {
-          firstDay: 0,
-          firstWeekSize: 1
-        };
-      }
-    case `AI AL AM AR AU AZ BA BM BN BY CL CM CN CR CY EC GE HR KG KZ LB LK LV
-    MD ME MK MN MY NZ RO RS SI TJ TM TR UA UY UZ VN XK`.includes(code):
-      {
-        return {
-          firstDay: 1,
-          firstWeekSize: 1
-        };
-      }
-    case `AD AN AT AX BE BG CH CZ DE DK EE ES FI FJ FO FR GB GF GP GR HU IE IS
-    IT LI LT LU MC MQ NL NO PL RE RU SE SK SM VA`.includes(code):
-      {
-        return {
-          firstDay: 1,
-          firstWeekSize: 4
-        };
-      }
-    case `AE AF BH DJ DZ EG IQ IR JO KW LY OM QA SD SY`.includes(code):
-      {
-        return {
-          firstDay: 6,
-          firstWeekSize: 1
-        };
-      }
-    case code === 'MV':
-      {
-        return {
-          firstDay: 5,
-          firstWeekSize: 1
-        };
-      }
-    case code === 'PT':
-      {
-        return {
-          firstDay: 0,
-          firstWeekSize: 4
-        };
-      }
-    default:
-      return null;
-  }
-}
-function getWeekArray(date, locale, firstDayOfWeek) {
-  const weeks = [];
-  let currentWeek = [];
-  const firstDayOfMonth = startOfMonth(date);
-  const lastDayOfMonth = endOfMonth(date);
-  const first = firstDayOfWeek ?? weekInfo(locale)?.firstDay ?? 0;
-  const firstDayWeekIndex = (firstDayOfMonth.getDay() - first + 7) % 7;
-  const lastDayWeekIndex = (lastDayOfMonth.getDay() - first + 7) % 7;
-  for (let i = 0; i < firstDayWeekIndex; i++) {
-    const adjacentDay = new Date(firstDayOfMonth);
-    adjacentDay.setDate(adjacentDay.getDate() - (firstDayWeekIndex - i));
-    currentWeek.push(adjacentDay);
-  }
-  for (let i = 1; i <= lastDayOfMonth.getDate(); i++) {
-    const day = new Date(date.getFullYear(), date.getMonth(), i);
-
-    // Add the day to the current week
-    currentWeek.push(day);
-
-    // If the current week has 7 days, add it to the weeks array and start a new week
-    if (currentWeek.length === 7) {
-      weeks.push(currentWeek);
-      currentWeek = [];
-    }
-  }
-  for (let i = 1; i < 7 - lastDayWeekIndex; i++) {
-    const adjacentDay = new Date(lastDayOfMonth);
-    adjacentDay.setDate(adjacentDay.getDate() + i);
-    currentWeek.push(adjacentDay);
-  }
-  if (currentWeek.length > 0) {
-    weeks.push(currentWeek);
-  }
-  return weeks;
-}
-function startOfWeek(date, locale, firstDayOfWeek) {
-  let day = (firstDayOfWeek ?? weekInfo(locale)?.firstDay ?? 0) % 7;
-
-  // prevent infinite loop
-  if (![0, 1, 2, 3, 4, 5, 6].includes(day)) {
-    consoleWarn('Invalid firstDayOfWeek, expected discrete number in range [0-6]');
-    day = 0;
-  }
-  const d = new Date(date);
-  while (d.getDay() !== day) {
-    d.setDate(d.getDate() - 1);
-  }
-  return d;
-}
-function endOfWeek(date, locale) {
-  const d = new Date(date);
-  const lastDay = ((weekInfo(locale)?.firstDay ?? 0) + 6) % 7;
-  while (d.getDay() !== lastDay) {
-    d.setDate(d.getDate() + 1);
-  }
-  return d;
-}
-function startOfMonth(date) {
-  return new Date(date.getFullYear(), date.getMonth(), 1);
-}
-function endOfMonth(date) {
-  return new Date(date.getFullYear(), date.getMonth() + 1, 0);
-}
-function parseLocalDate(value) {
-  const parts = value.split('-').map(Number);
-
-  // new Date() uses local time zone when passing individual date component values
-  return new Date(parts[0], parts[1] - 1, parts[2]);
-}
-const _YYYMMDD = /^([12]\d{3}-([1-9]|0[1-9]|1[0-2])-([1-9]|0[1-9]|[12]\d|3[01]))$/;
-function date(value) {
-  if (value == null) return new Date();
-  if (value instanceof Date) return value;
-  if (typeof value === 'string') {
-    let parsed;
-    if (_YYYMMDD.test(value)) {
-      return parseLocalDate(value);
-    } else {
-      parsed = Date.parse(value);
-    }
-    if (!isNaN(parsed)) return new Date(parsed);
-  }
-  return null;
-}
-const sundayJanuarySecond2000 = new Date(2000, 0, 2);
-function getWeekdays(locale, firstDayOfWeek, weekdayFormat) {
-  const daysFromSunday = firstDayOfWeek ?? weekInfo(locale)?.firstDay ?? 0;
-  return createRange(7).map(i => {
-    const weekday = new Date(sundayJanuarySecond2000);
-    weekday.setDate(sundayJanuarySecond2000.getDate() + daysFromSunday + i);
-    return new Intl.DateTimeFormat(locale, {
-      weekday: weekdayFormat ?? 'narrow'
-    }).format(weekday);
-  });
-}
-function format(value, formatString, locale, formats) {
-  const newDate = date(value) ?? new Date();
-  const customFormat = formats?.[formatString];
-  if (typeof customFormat === 'function') {
-    return customFormat(newDate, formatString, locale);
-  }
-  let options = {};
-  switch (formatString) {
-    case 'fullDate':
-      options = {
-        year: 'numeric',
-        month: 'short',
-        day: 'numeric'
-      };
-      break;
-    case 'fullDateWithWeekday':
-      options = {
-        weekday: 'long',
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric'
-      };
-      break;
-    case 'normalDate':
-      const day = newDate.getDate();
-      const month = new Intl.DateTimeFormat(locale, {
-        month: 'long'
-      }).format(newDate);
-      return `${day} ${month}`;
-    case 'normalDateWithWeekday':
-      options = {
-        weekday: 'short',
-        day: 'numeric',
-        month: 'short'
-      };
-      break;
-    case 'shortDate':
-      options = {
-        month: 'short',
-        day: 'numeric'
-      };
-      break;
-    case 'year':
-      options = {
-        year: 'numeric'
-      };
-      break;
-    case 'month':
-      options = {
-        month: 'long'
-      };
-      break;
-    case 'monthShort':
-      options = {
-        month: 'short'
-      };
-      break;
-    case 'monthAndYear':
-      options = {
-        month: 'long',
-        year: 'numeric'
-      };
-      break;
-    case 'monthAndDate':
-      options = {
-        month: 'long',
-        day: 'numeric'
-      };
-      break;
-    case 'weekday':
-      options = {
-        weekday: 'long'
-      };
-      break;
-    case 'weekdayShort':
-      options = {
-        weekday: 'short'
-      };
-      break;
-    case 'dayOfMonth':
-      return new Intl.NumberFormat(locale).format(newDate.getDate());
-    case 'hours12h':
-      options = {
-        hour: 'numeric',
-        hour12: true
-      };
-      break;
-    case 'hours24h':
-      options = {
-        hour: 'numeric',
-        hour12: false
-      };
-      break;
-    case 'minutes':
-      options = {
-        minute: 'numeric'
-      };
-      break;
-    case 'seconds':
-      options = {
-        second: 'numeric'
-      };
-      break;
-    case 'fullTime':
-      options = {
-        hour: 'numeric',
-        minute: 'numeric'
-      };
-      break;
-    case 'fullTime12h':
-      options = {
-        hour: 'numeric',
-        minute: 'numeric',
-        hour12: true
-      };
-      break;
-    case 'fullTime24h':
-      options = {
-        hour: 'numeric',
-        minute: 'numeric',
-        hour12: false
-      };
-      break;
-    case 'fullDateTime':
-      options = {
-        year: 'numeric',
-        month: 'short',
-        day: 'numeric',
-        hour: 'numeric',
-        minute: 'numeric'
-      };
-      break;
-    case 'fullDateTime12h':
-      options = {
-        year: 'numeric',
-        month: 'short',
-        day: 'numeric',
-        hour: 'numeric',
-        minute: 'numeric',
-        hour12: true
-      };
-      break;
-    case 'fullDateTime24h':
-      options = {
-        year: 'numeric',
-        month: 'short',
-        day: 'numeric',
-        hour: 'numeric',
-        minute: 'numeric',
-        hour12: false
-      };
-      break;
-    case 'keyboardDate':
-      options = {
-        year: 'numeric',
-        month: '2-digit',
-        day: '2-digit'
-      };
-      break;
-    case 'keyboardDateTime':
-      options = {
-        year: 'numeric',
-        month: '2-digit',
-        day: '2-digit',
-        hour: 'numeric',
-        minute: 'numeric'
-      };
-      return new Intl.DateTimeFormat(locale, options).format(newDate).replace(/, /g, ' ');
-    case 'keyboardDateTime12h':
-      options = {
-        year: 'numeric',
-        month: '2-digit',
-        day: '2-digit',
-        hour: 'numeric',
-        minute: 'numeric',
-        hour12: true
-      };
-      return new Intl.DateTimeFormat(locale, options).format(newDate).replace(/, /g, ' ');
-    case 'keyboardDateTime24h':
-      options = {
-        year: 'numeric',
-        month: '2-digit',
-        day: '2-digit',
-        hour: 'numeric',
-        minute: 'numeric',
-        hour12: false
-      };
-      return new Intl.DateTimeFormat(locale, options).format(newDate).replace(/, /g, ' ');
-    default:
-      options = customFormat ?? {
-        timeZone: 'UTC',
-        timeZoneName: 'short'
-      };
-  }
-  return new Intl.DateTimeFormat(locale, options).format(newDate);
-}
-function toISO(adapter, value) {
-  const date = adapter.toJsDate(value);
-  const year = date.getFullYear();
-  const month = padStart(String(date.getMonth() + 1), 2, '0');
-  const day = padStart(String(date.getDate()), 2, '0');
-  return `${year}-${month}-${day}`;
-}
-function parseISO(value) {
-  const [year, month, day] = value.split('-').map(Number);
-  return new Date(year, month - 1, day);
-}
-function addMinutes(date, amount) {
-  const d = new Date(date);
-  d.setMinutes(d.getMinutes() + amount);
-  return d;
-}
-function addHours(date, amount) {
-  const d = new Date(date);
-  d.setHours(d.getHours() + amount);
-  return d;
-}
-function addDays(date, amount) {
-  const d = new Date(date);
-  d.setDate(d.getDate() + amount);
-  return d;
-}
-function addWeeks(date, amount) {
-  const d = new Date(date);
-  d.setDate(d.getDate() + amount * 7);
-  return d;
-}
-function addMonths(date, amount) {
-  const d = new Date(date);
-  d.setDate(1);
-  d.setMonth(d.getMonth() + amount);
-  return d;
-}
-function getYear(date) {
-  return date.getFullYear();
-}
-function getMonth(date) {
-  return date.getMonth();
-}
-function getWeek(date, locale, firstDayOfWeek, firstDayOfYear) {
-  const weekInfoFromLocale = weekInfo(locale);
-  const weekStart = firstDayOfWeek ?? weekInfoFromLocale?.firstDay ?? 0;
-  const minWeekSize = weekInfoFromLocale?.firstWeekSize ?? 1;
-  return firstDayOfYear !== undefined ? calculateWeekWithFirstDayOfYear(date, locale, weekStart, firstDayOfYear) : calculateWeekWithMinWeekSize(date, locale, weekStart, minWeekSize);
-}
-function calculateWeekWithFirstDayOfYear(date, locale, weekStart, firstDayOfYear) {
-  const firstDayOfYearOffset = (7 + firstDayOfYear - weekStart) % 7;
-  const currentWeekStart = startOfWeek(date, locale, weekStart);
-  const currentWeekEnd = addDays(currentWeekStart, 6);
-  function yearStartWeekdayOffset(year) {
-    return (7 + new Date(year, 0, 1).getDay() - weekStart) % 7;
-  }
-  let year = getYear(currentWeekStart);
-  if (year < getYear(currentWeekEnd) && yearStartWeekdayOffset(year + 1) <= firstDayOfYearOffset) {
-    year++;
-  }
-  const yearStart = new Date(year, 0, 1);
-  const offset = yearStartWeekdayOffset(year);
-  const d1w1 = offset <= firstDayOfYearOffset ? addDays(yearStart, -offset) : addDays(yearStart, 7 - offset);
-  return 1 + getDiff(endOfDay(currentWeekStart), startOfDay(d1w1), 'weeks');
-}
-function calculateWeekWithMinWeekSize(date, locale, weekStart, minWeekSize) {
-  const currentWeekStart = startOfWeek(date, locale, weekStart);
-  const currentWeekEnd = addDays(startOfWeek(date, locale, weekStart), 6);
-  function firstWeekSize(year) {
-    const yearStart = new Date(year, 0, 1);
-    return 7 - getDiff(yearStart, startOfWeek(yearStart, locale, weekStart), 'days');
-  }
-  let year = getYear(currentWeekStart);
-  if (year < getYear(currentWeekEnd) && firstWeekSize(year + 1) >= minWeekSize) {
-    year++;
-  }
-  const yearStart = new Date(year, 0, 1);
-  const size = firstWeekSize(year);
-  const d1w1 = size >= minWeekSize ? addDays(yearStart, size - 7) : addDays(yearStart, size);
-  return 1 + getDiff(endOfDay(currentWeekStart), startOfDay(d1w1), 'weeks');
-}
-function getDate(date) {
-  return date.getDate();
-}
-function getNextMonth(date) {
-  return new Date(date.getFullYear(), date.getMonth() + 1, 1);
-}
-function getPreviousMonth(date) {
-  return new Date(date.getFullYear(), date.getMonth() - 1, 1);
-}
-function getHours(date) {
-  return date.getHours();
-}
-function getMinutes(date) {
-  return date.getMinutes();
-}
-function startOfYear(date) {
-  return new Date(date.getFullYear(), 0, 1);
-}
-function endOfYear(date) {
-  return new Date(date.getFullYear(), 11, 31);
-}
-function isWithinRange(date, range) {
-  return isAfter(date, range[0]) && isBefore(date, range[1]);
-}
-function isValid(date) {
-  const d = new Date(date);
-  return d instanceof Date && !isNaN(d.getTime());
-}
-function isAfter(date, comparing) {
-  return date.getTime() > comparing.getTime();
-}
-function isAfterDay(date, comparing) {
-  return isAfter(startOfDay(date), startOfDay(comparing));
-}
-function isBefore(date, comparing) {
-  return date.getTime() < comparing.getTime();
-}
-function isEqual(date, comparing) {
-  return date.getTime() === comparing.getTime();
-}
-function isSameDay(date, comparing) {
-  return date.getDate() === comparing.getDate() && date.getMonth() === comparing.getMonth() && date.getFullYear() === comparing.getFullYear();
-}
-function isSameMonth(date, comparing) {
-  return date.getMonth() === comparing.getMonth() && date.getFullYear() === comparing.getFullYear();
-}
-function isSameYear(date, comparing) {
-  return date.getFullYear() === comparing.getFullYear();
-}
-function getDiff(date, comparing, unit) {
-  const d = new Date(date);
-  const c = new Date(comparing);
-  switch (unit) {
-    case 'years':
-      return d.getFullYear() - c.getFullYear();
-    case 'quarters':
-      return Math.floor((d.getMonth() - c.getMonth() + (d.getFullYear() - c.getFullYear()) * 12) / 4);
-    case 'months':
-      return d.getMonth() - c.getMonth() + (d.getFullYear() - c.getFullYear()) * 12;
-    case 'weeks':
-      return Math.floor((d.getTime() - c.getTime()) / (1000 * 60 * 60 * 24 * 7));
-    case 'days':
-      return Math.floor((d.getTime() - c.getTime()) / (1000 * 60 * 60 * 24));
-    case 'hours':
-      return Math.floor((d.getTime() - c.getTime()) / (1000 * 60 * 60));
-    case 'minutes':
-      return Math.floor((d.getTime() - c.getTime()) / (1000 * 60));
-    case 'seconds':
-      return Math.floor((d.getTime() - c.getTime()) / 1000);
-    default:
-      {
-        return d.getTime() - c.getTime();
-      }
-  }
-}
-function setHours(date, count) {
-  const d = new Date(date);
-  d.setHours(count);
-  return d;
-}
-function setMinutes(date, count) {
-  const d = new Date(date);
-  d.setMinutes(count);
-  return d;
-}
-function setMonth(date, count) {
-  const d = new Date(date);
-  d.setMonth(count);
-  return d;
-}
-function setDate(date, day) {
-  const d = new Date(date);
-  d.setDate(day);
-  return d;
-}
-function setYear(date, year) {
-  const d = new Date(date);
-  d.setFullYear(year);
-  return d;
-}
-function startOfDay(date) {
-  return new Date(date.getFullYear(), date.getMonth(), date.getDate(), 0, 0, 0, 0);
-}
-function endOfDay(date) {
-  return new Date(date.getFullYear(), date.getMonth(), date.getDate(), 23, 59, 59, 999);
-}
-class VuetifyDateAdapter {
-  constructor(options) {
-    this.locale = options.locale;
-    this.formats = options.formats;
-  }
-  date(value) {
-    return date(value);
-  }
-  toJsDate(date) {
-    return date;
-  }
-  toISO(date) {
-    return toISO(this, date);
-  }
-  parseISO(date) {
-    return parseISO(date);
-  }
-  addMinutes(date, amount) {
-    return addMinutes(date, amount);
-  }
-  addHours(date, amount) {
-    return addHours(date, amount);
-  }
-  addDays(date, amount) {
-    return addDays(date, amount);
-  }
-  addWeeks(date, amount) {
-    return addWeeks(date, amount);
-  }
-  addMonths(date, amount) {
-    return addMonths(date, amount);
-  }
-  getWeekArray(date, firstDayOfWeek) {
-    const firstDay = firstDayOfWeek !== undefined ? Number(firstDayOfWeek) : undefined;
-    return getWeekArray(date, this.locale, firstDay);
-  }
-  startOfWeek(date, firstDayOfWeek) {
-    const firstDay = firstDayOfWeek !== undefined ? Number(firstDayOfWeek) : undefined;
-    return startOfWeek(date, this.locale, firstDay);
-  }
-  endOfWeek(date) {
-    return endOfWeek(date, this.locale);
-  }
-  startOfMonth(date) {
-    return startOfMonth(date);
-  }
-  endOfMonth(date) {
-    return endOfMonth(date);
-  }
-  format(date, formatString) {
-    return format(date, formatString, this.locale, this.formats);
-  }
-  isEqual(date, comparing) {
-    return isEqual(date, comparing);
-  }
-  isValid(date) {
-    return isValid(date);
-  }
-  isWithinRange(date, range) {
-    return isWithinRange(date, range);
-  }
-  isAfter(date, comparing) {
-    return isAfter(date, comparing);
-  }
-  isAfterDay(date, comparing) {
-    return isAfterDay(date, comparing);
-  }
-  isBefore(date, comparing) {
-    return !isAfter(date, comparing) && !isEqual(date, comparing);
-  }
-  isSameDay(date, comparing) {
-    return isSameDay(date, comparing);
-  }
-  isSameMonth(date, comparing) {
-    return isSameMonth(date, comparing);
-  }
-  isSameYear(date, comparing) {
-    return isSameYear(date, comparing);
-  }
-  setMinutes(date, count) {
-    return setMinutes(date, count);
-  }
-  setHours(date, count) {
-    return setHours(date, count);
-  }
-  setMonth(date, count) {
-    return setMonth(date, count);
-  }
-  setDate(date, day) {
-    return setDate(date, day);
-  }
-  setYear(date, year) {
-    return setYear(date, year);
-  }
-  getDiff(date, comparing, unit) {
-    return getDiff(date, comparing, unit);
-  }
-  getWeekdays(firstDayOfWeek, weekdayFormat) {
-    const firstDay = firstDayOfWeek !== undefined ? Number(firstDayOfWeek) : undefined;
-    return getWeekdays(this.locale, firstDay, weekdayFormat);
-  }
-  getYear(date) {
-    return getYear(date);
-  }
-  getMonth(date) {
-    return getMonth(date);
-  }
-  getWeek(date, firstDayOfWeek, firstDayOfYear) {
-    const firstDay = firstDayOfWeek !== undefined ? Number(firstDayOfWeek) : undefined;
-    const firstWeekStart = firstDayOfYear !== undefined ? Number(firstDayOfYear) : undefined;
-    return getWeek(date, this.locale, firstDay, firstWeekStart);
-  }
-  getDate(date) {
-    return getDate(date);
-  }
-  getNextMonth(date) {
-    return getNextMonth(date);
-  }
-  getPreviousMonth(date) {
-    return getPreviousMonth(date);
-  }
-  getHours(date) {
-    return getHours(date);
-  }
-  getMinutes(date) {
-    return getMinutes(date);
-  }
-  startOfDay(date) {
-    return startOfDay(date);
-  }
-  endOfDay(date) {
-    return endOfDay(date);
-  }
-  startOfYear(date) {
-    return startOfYear(date);
-  }
-  endOfYear(date) {
-    return endOfYear(date);
-  }
-}
-
-// Composables
-const DateOptionsSymbol = Symbol.for('vuetify:date-options');
-const DateAdapterSymbol = Symbol.for('vuetify:date-adapter');
-function createDate(options, locale) {
-  const _options = mergeDeep({
-    adapter: VuetifyDateAdapter,
-    locale: {
-      af: 'af-ZA',
-      // ar: '', # not the same value for all variants
-      bg: 'bg-BG',
-      ca: 'ca-ES',
-      ckb: '',
-      cs: 'cs-CZ',
-      de: 'de-DE',
-      el: 'el-GR',
-      en: 'en-US',
-      // es: '', # not the same value for all variants
-      et: 'et-EE',
-      fa: 'fa-IR',
-      fi: 'fi-FI',
-      // fr: '', #not the same value for all variants
-      hr: 'hr-HR',
-      hu: 'hu-HU',
-      he: 'he-IL',
-      id: 'id-ID',
-      it: 'it-IT',
-      ja: 'ja-JP',
-      ko: 'ko-KR',
-      lv: 'lv-LV',
-      lt: 'lt-LT',
-      nl: 'nl-NL',
-      no: 'no-NO',
-      pl: 'pl-PL',
-      pt: 'pt-PT',
-      ro: 'ro-RO',
-      ru: 'ru-RU',
-      sk: 'sk-SK',
-      sl: 'sl-SI',
-      srCyrl: 'sr-SP',
-      srLatn: 'sr-SP',
-      sv: 'sv-SE',
-      th: 'th-TH',
-      tr: 'tr-TR',
-      az: 'az-AZ',
-      uk: 'uk-UA',
-      vi: 'vi-VN',
-      zhHans: 'zh-CN',
-      zhHant: 'zh-TW'
-    }
-  }, options);
-  return {
-    options: _options,
-    instance: createInstance(_options, locale)
-  };
-}
-function createDateRange(adapter, start, stop) {
-  const diff = daysDiff(adapter, start, stop);
-  const datesInRange = [start];
-  for (let i = 1; i < diff; i++) {
-    const nextDate = adapter.addDays(start, i);
-    datesInRange.push(nextDate);
-  }
-  if (stop) {
-    datesInRange.push(adapter.endOfDay(stop));
-  }
-  return datesInRange;
-}
-function daysDiff(adapter, start, stop) {
-  const iso = [`${adapter.toISO(stop ?? start).split('T')[0]}T00:00:00Z`, `${adapter.toISO(start).split('T')[0]}T00:00:00Z`];
-  return typeof adapter.date() === 'string' ? adapter.getDiff(iso[0], iso[1], 'days') // for StringDateAdapter
-  : adapter.getDiff(adapter.date(iso[0]), adapter.date(iso[1]), 'days');
-}
-function createInstance(options, locale) {
-  const instance = reactive(typeof options.adapter === 'function'
-  // eslint-disable-next-line new-cap
-  ? new options.adapter({
-    locale: options.locale[locale.current.value] ?? locale.current.value,
-    formats: options.formats
-  }) : options.adapter);
-  watch(locale.current, value => {
-    instance.locale = options.locale[value] ?? value ?? instance.locale;
-  });
-  return instance;
-}
-function useDate() {
-  const options = inject$1(DateOptionsSymbol);
-  if (!options) throw new Error('[Vuetify] Could not find injected date options');
-  const locale = useLocale();
-  return createInstance(options, locale);
-}
-
-// Composables
-
-// Types
-
-const makeCalendarBaseProps = propsFactory({
-  start: {
-    type: [String, Number, Date],
-    validate: validateTimestamp,
-    default: () => parseDate(new Date()).date
-  },
-  end: {
-    type: [String, Number, Date],
-    validate: validateTimestamp
-  },
-  weekdays: {
-    type: [Array, String],
-    default: () => [0, 1, 2, 3, 4, 5, 6],
-    validate: validateWeekdays
-  },
-  firstDayOfWeek: [Number, String],
-  firstDayOfYear: [Number, String],
-  weekdayFormat: {
-    type: Function,
-    default: null
-  },
-  dayFormat: {
-    type: Function,
-    default: null
-  },
-  locale: String,
-  now: {
-    type: String,
-    validator: validateTimestamp
-  },
-  type: {
-    type: String,
-    default: 'month'
-  }
-}, 'VCalendar-base');
-function useCalendarBase(props) {
-  const {
-    times,
-    updateTimes
-  } = useTimes({
-    now: props.now
-  });
-  const locale = provideLocale(props);
-  const adapter = useDate();
-  const parsedStart = computed(() => {
-    if (props.type === 'month') {
-      return getStartOfMonth(parseTimestamp(props.start, true));
-    }
-    return parseTimestamp(props.start, true);
-  });
-  const parsedEnd = computed(() => {
-    const start = parsedStart.value;
-    const end = props.end ? parseTimestamp(props.end) || start : start;
-    const value = getTimestampIdentifier(end) < getTimestampIdentifier(start) ? start : end;
-    if (props.type === 'month') {
-      return getEndOfMonth(value);
-    }
-    return value;
-  });
-  const parsedValue = computed(() => {
-    return validateTimestamp(props.modelValue) ? parseTimestamp(props.modelValue, true) : parsedStart.value || times.today;
-  });
-  const parsedWeekdays = computed(() => {
-    const weekdays = Array.isArray(props.weekdays) ? props.weekdays : (props.weekdays || '').split(',').map(x => parseInt(x, 10));
-    const first = adapter.toJsDate(adapter.startOfWeek(adapter.date(), props.firstDayOfWeek)).getDay();
-    return [...weekdays.toSorted().filter(v => v >= first), ...weekdays.toSorted().filter(v => v < first)];
-  });
-  const effectiveWeekdays = computed(() => {
-    const start = parsedValue.value;
-    const days = parseInt(String(props.categoryDays)) || 1;
-    switch (props.type) {
-      case 'day':
-        return [start.weekday];
-      case '4day':
-        return [start.weekday, (start.weekday + 1) % 7, (start.weekday + 2) % 7, (start.weekday + 3) % 7];
-      case 'category':
-        return Array.from({
-          length: days
-        }, (_, i) => (start.weekday + i) % 7);
-      default:
-        return parsedWeekdays.value;
-    }
-  });
-  const weekdaySkips = computed(() => {
-    return getWeekdaySkips(parsedWeekdays.value);
-  });
-  const days = computed(() => {
-    return createDayList(parsedStart.value, parsedEnd.value, times.today, weekdaySkips.value);
-  });
-  const dayFormatter = computed(() => {
-    if (props.dayFormat) {
-      return props.dayFormat;
-    }
-    return createNativeLocaleFormatter(locale.current.value, () => ({
-      timeZone: 'UTC',
-      day: 'numeric'
-    }));
-  });
-  const weekdayFormatter = computed(() => {
-    if (props.weekdayFormat) {
-      return props.weekdayFormat;
-    }
-    return createNativeLocaleFormatter(locale.current.value, (_tms, short) => ({
-      timeZone: 'UTC',
-      weekday: short ? 'short' : 'long'
-    }));
-  });
-  function getColorProps(colors) {
-    return computeColor(colors);
-  }
-  function getRelativeClasses(timestamp) {
-    let outside = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
-    return {
-      'v-present': timestamp.present,
-      'v-past': timestamp.past,
-      'v-future': timestamp.future,
-      'v-outside': outside
-    };
-  }
-  function getWeekNumber(timestamp) {
-    return adapter.getWeek(adapter.date(timestamp.date), props.firstDayOfWeek, props.firstDayOfYear);
-  }
-  function _getStartOfWeek(timestamp) {
-    return getStartOfWeek(timestamp, parsedWeekdays.value, times.today);
-  }
-  function _getEndOfWeek(timestamp) {
-    return getEndOfWeek(timestamp, parsedWeekdays.value, times.today);
-  }
-  function getFormatter(options) {
-    return createNativeLocaleFormatter(locale.current.value, () => options);
-  }
-  return {
-    times,
-    locale,
-    parsedValue,
-    parsedWeekdays,
-    effectiveWeekdays,
-    weekdaySkips,
-    parsedStart,
-    parsedEnd,
-    days,
-    dayFormatter,
-    weekdayFormatter,
-    getColorProps,
-    getRelativeClasses,
-    getWeekNumber,
-    getStartOfWeek: _getStartOfWeek,
-    getEndOfWeek: _getEndOfWeek,
-    getFormatter,
-    updateTimes
-  };
-}
-
-// Composables
-
-// Types
-
-const makeCalendarWithIntervalsProps = propsFactory({
-  maxDays: {
-    type: Number,
-    default: 7
-  },
-  intervalHeight: {
-    type: [Number, String],
-    default: 48,
-    validate: validateNumber
-  },
-  intervalWidth: {
-    type: [Number, String],
-    default: 60,
-    validate: validateNumber
-  },
-  intervalMinutes: {
-    type: [Number, String],
-    default: 60,
-    validate: validateNumber
-  },
-  firstInterval: {
-    type: [Number, String],
-    default: 0,
-    validate: validateNumber
-  },
-  firstTime: {
-    type: [Number, String, Object],
-    validate: validateTime
-  },
-  intervalCount: {
-    type: [Number, String],
-    default: 24,
-    validate: validateNumber
-  },
-  intervalFormat: {
-    type: Function,
-    default: null
-  },
-  intervalStyle: {
-    type: Function,
-    default: null
-  },
-  showIntervalLabel: {
-    type: Function,
-    default: null
-  }
-}, 'VCalendar-intervals');
-function useCalendarWithIntervals(props) {
-  const base = useCalendarBase(props);
-  const scrollAreaRef = shallowRef();
-  const parsedFirstInterval = computed(() => {
-    return parseInt(String(props.firstInterval || 0));
-  });
-  const parsedIntervalMinutes = computed(() => {
-    return parseInt(String(props.intervalMinutes || 60));
-  });
-  const parsedIntervalCount = computed(() => {
-    return parseInt(String(props.intervalCount || 24));
-  });
-  const parsedIntervalHeight = computed(() => {
-    return parseFloat(String(props.intervalHeight || 48));
-  });
-  const parsedFirstTime = computed(() => {
-    return parseTime(props.firstTime);
-  });
-  const firstMinute = computed(() => {
-    const time = parsedFirstTime.value;
-    return time !== false && time >= 0 && time <= MINUTES_IN_DAY ? time : parsedFirstInterval.value * parsedIntervalMinutes.value;
-  });
-  const bodyHeight = computed(() => {
-    return parsedIntervalCount.value * parsedIntervalHeight.value;
-  });
-  const days = computed(() => {
-    return createDayList(base.parsedStart.value, base.parsedEnd.value, base.times.today, base.weekdaySkips.value, props.maxDays);
-  });
-  const intervals = computed(() => {
-    const daysValue = days.value;
-    const first = firstMinute.value;
-    const minutes = parsedIntervalMinutes.value;
-    const count = parsedIntervalCount.value;
-    const now = base.times.now;
-    return daysValue.map(d => createIntervalList(d, first, minutes, count, now));
-  });
-  const intervalFormatter = computed(() => {
-    if (props.intervalFormat) {
-      return props.intervalFormat;
-    }
-    return createNativeLocaleFormatter(base.locale.current.value, (tms, short) => !short ? {
-      timeZone: 'UTC',
-      hour: '2-digit',
-      minute: '2-digit'
-    } : tms.minute === 0 ? {
-      timeZone: 'UTC',
-      hour: 'numeric'
-    } : {
-      timeZone: 'UTC',
-      hour: 'numeric',
-      minute: '2-digit'
-    });
-  });
-  function showIntervalLabelDefault(interval) {
-    const first = intervals.value[0][0];
-    const isFirst = first.hour === interval.hour && first.minute === interval.minute;
-    return !isFirst;
-  }
-  function intervalStyleDefault(_interval) {
-    return undefined;
-  }
-  function getTimestampAtEvent(e, day) {
-    const timestamp = copyTimestamp(day);
-    const bounds = e.currentTarget.getBoundingClientRect();
-    const baseMinutes = firstMinute.value;
-    const touchEvent = e;
-    const mouseEvent = e;
-    const touches = touchEvent.changedTouches || touchEvent.touches;
-    const clientY = touches && touches[0] ? touches[0].clientY : mouseEvent.clientY;
-    const addIntervals = (clientY - bounds.top) / parsedIntervalHeight.value;
-    const addMinutes = Math.floor(addIntervals * parsedIntervalMinutes.value);
-    const minutes = baseMinutes + addMinutes;
-    return updateMinutes(timestamp, minutes, base.times.now);
-  }
-  function getSlotScope(timestamp) {
-    const scope = copyTimestamp(timestamp);
-    scope.timeToY = timeToY;
-    scope.timeDelta = timeDelta;
-    scope.minutesToPixels = minutesToPixels;
-    scope.week = days.value;
-    scope.intervalRange = [firstMinute.value, firstMinute.value + parsedIntervalCount.value * parsedIntervalMinutes.value];
-    return scope;
-  }
-  function scrollToTime(time) {
-    const y = timeToY(time);
-    const pane = scrollAreaRef.value;
-    if (y === false || !pane) {
-      return false;
-    }
-    pane.scrollTop = y;
-    return true;
-  }
-  function minutesToPixels(minutes) {
-    return minutes / parsedIntervalMinutes.value * parsedIntervalHeight.value;
-  }
-  function timeToY(time) {
-    let targetDateOrClamp = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
-    const clamp = targetDateOrClamp !== false;
-    const targetDate = typeof targetDateOrClamp !== 'boolean' ? targetDateOrClamp : undefined;
-    let y = timeDelta(time, targetDate);
-    if (y === false) return y;
-    y *= bodyHeight.value;
-    if (clamp) {
-      if (y < 0) {
-        y = 0;
-      } else if (y > bodyHeight.value) {
-        y = bodyHeight.value;
-      }
-    } else {
-      if (y < 0) {
-        y = y + bodyHeight.value;
-      } else if (y > bodyHeight.value) {
-        y = y - bodyHeight.value;
-      }
-    }
-    return y;
-  }
-  function timeDelta(time, targetDate) {
-    let minutes = parseTime(time);
-    if (minutes === false) {
-      return false;
-    }
-    const gap = parsedIntervalCount.value * parsedIntervalMinutes.value;
-    if (targetDate && typeof time === 'object' && 'day' in time) {
-      const a = getDayIdentifier(time);
-      const b = getDayIdentifier(targetDate);
-      minutes += (a - b) * gap;
-    }
-    const min = firstMinute.value;
-    return (minutes - min) / gap;
-  }
-  return {
-    ...base,
-    scrollAreaRef,
-    parsedFirstInterval,
-    parsedIntervalMinutes,
-    parsedIntervalCount,
-    parsedIntervalHeight,
-    parsedFirstTime,
-    firstMinute,
-    bodyHeight,
-    days,
-    intervals,
-    intervalFormatter,
-    showIntervalLabelDefault,
-    intervalStyleDefault,
-    getTimestampAtEvent,
-    getSlotScope,
-    scrollToTime,
-    minutesToPixels,
-    timeToY,
-    timeDelta
-  };
-}
-
-// Types
-
-function mounted$3(el, binding) {
-  const handler = binding.value;
-  const options = {
-    passive: !binding.modifiers?.active
-  };
-  window.addEventListener('resize', handler, options);
-  el._onResize = Object(el._onResize);
-  el._onResize[binding.instance.$.uid] = {
-    handler,
-    options
-  };
-  if (!binding.modifiers?.quiet) {
-    handler();
-  }
-}
-function unmounted$3(el, binding) {
-  if (!el._onResize?.[binding.instance.$.uid]) return;
-  const {
-    handler,
-    options
-  } = el._onResize[binding.instance.$.uid];
-  window.removeEventListener('resize', handler, options);
-  delete el._onResize[binding.instance.$.uid];
-}
-const Resize = {
-  mounted: mounted$3,
-  unmounted: unmounted$3
-};
-
-// Types
-
-const VCalendarDaily = defineComponent({
-  name: 'VCalendarDaily',
-  directives: {
-    vResize: Resize
-  },
-  props: {
-    color: String,
-    shortWeekdays: {
-      type: Boolean,
-      default: true
-    },
-    shortIntervals: {
-      type: Boolean,
-      default: true
-    },
-    hideHeader: Boolean,
-    ...makeCalendarBaseProps(),
-    ...makeCalendarWithIntervalsProps()
-  },
-  setup(props, _ref) {
-    let {
-      slots,
-      attrs
-    } = _ref;
-    const scrollPush = ref(0);
-    const pane = ref();
-    const base = useCalendarWithIntervals(props);
-    function init() {
-      nextTick(onResize);
-    }
-    function onResize() {
-      scrollPush.value = getScrollPush();
-    }
-    function getScrollPush() {
-      return base.scrollAreaRef.value && pane.value ? base.scrollAreaRef.value.offsetWidth - pane.value.offsetWidth : 0;
-    }
-    function genHead() {
-      return createElementVNode("div", {
-        "class": "v-calendar-daily__head",
-        "style": {
-          marginRight: scrollPush.value + 'px'
-        }
-      }, [genHeadIntervals(), genHeadDays()]);
-    }
-    function genHeadIntervals() {
-      const width = convertToUnit(props.intervalWidth);
-      return createElementVNode("div", {
-        "class": "v-calendar-daily__intervals-head",
-        "style": {
-          width
-        }
-      }, [slots['interval-header']?.()]);
-    }
-    function genHeadDays() {
-      return base.days.value.map(genHeadDay);
-    }
-    function genHeadDay(day, index) {
-      const events = getPrefixedEventHandlers(attrs, ':day', nativeEvent => ({
-        nativeEvent,
-        ...base.getSlotScope(day)
-      }));
-      return createElementVNode("div", mergeProps({
-        "key": day.date,
-        "class": ['v-calendar-daily_head-day', base.getRelativeClasses(day)]
-      }, events), [genHeadWeekday(day), genHeadDayLabel(day), genDayHeader(day, index)]);
-    }
-    function genDayHeader(day, index) {
-      return slots['day-header']?.({
-        week: base.days.value,
-        ...day,
-        index
-      }) ?? [];
-    }
-    function genHeadWeekday(day) {
-      const color = day.present ? props.color : undefined;
-      return createElementVNode("div", mergeProps(base.getColorProps({
-        text: color
-      }), {
-        "class": "v-calendar-daily_head-weekday"
-      }), [base.weekdayFormatter.value(day, props.shortWeekdays)]);
-    }
-    function genHeadDayLabel(day) {
-      return createElementVNode("div", {
-        "class": "v-calendar-daily_head-day-label"
-      }, [slots['day-label-header']?.(day) ?? genHeadDayButton(day)]);
-    }
-    function genHeadDayButton(day) {
-      const events = getPrefixedEventHandlers(attrs, ':date', nativeEvent => ({
-        nativeEvent,
-        ...day
-      }));
-      return createVNode(VIconBtn, mergeProps({
-        "active": day.present,
-        "activeColor": props.color,
-        "variant": "outlined",
-        "baseVariant": "text",
-        "onUpdate:active": noop
-      }, events), {
-        default: () => [base.dayFormatter.value(day, false)]
-      });
-    }
-    function genBody() {
-      return createElementVNode("div", {
-        "class": "v-calendar-daily__body"
-      }, [genScrollArea()]);
-    }
-    function genScrollArea() {
-      return createElementVNode("div", {
-        "ref": base.scrollAreaRef,
-        "class": "v-calendar-daily__scroll-area"
-      }, [genPane()]);
-    }
-    function genPane() {
-      return createElementVNode("div", {
-        "ref": pane,
-        "class": "v-calendar-daily__pane",
-        "style": {
-          height: convertToUnit(base.bodyHeight.value)
-        }
-      }, [genDayContainer()]);
-    }
-    function genDayContainer() {
-      return createElementVNode("div", {
-        "class": "v-calendar-daily__day-container"
-      }, [genBodyIntervals(), slots.days?.() ?? genDays()]);
-    }
-    function genDays() {
-      return base.days.value.map((day, index) => {
-        const events = getPrefixedEventHandlers(attrs, ':time', nativeEvent => ({
-          nativeEvent,
-          ...base.getSlotScope(base.getTimestampAtEvent(nativeEvent, day))
-        }));
-        return createElementVNode("div", mergeProps({
-          "key": day.date,
-          "class": ['v-calendar-daily__day', base.getRelativeClasses(day)]
-        }, events), [genDayIntervals(index), genDayBody(day)]);
-      });
-    }
-    function genDayBody(day) {
-      return slots['day-body']?.(base.getSlotScope(day)) ?? [];
-    }
-    function genDayIntervals(index) {
-      return base.intervals.value[index].map(genDayInterval);
-    }
-    function genDayInterval(interval) {
-      const height = convertToUnit(props.intervalHeight);
-      const styler = props.intervalStyle || base.intervalStyleDefault;
-      return createElementVNode("div", {
-        "class": "v-calendar-daily__day-interval",
-        "key": interval.time,
-        "style": normalizeStyle([{
-          height
-        }, styler(interval)])
-      }, [slots.interval?.(base.getSlotScope(interval))]);
-    }
-    function genBodyIntervals() {
-      const width = convertToUnit(props.intervalWidth);
-      const events = getPrefixedEventHandlers(attrs, ':interval', nativeEvent => ({
-        nativeEvent,
-        ...base.getTimestampAtEvent(nativeEvent, base.parsedStart.value)
-      }));
-      return createElementVNode("div", mergeProps({
-        "class": "v-calendar-daily__intervals-body",
-        "style": {
-          width
-        }
-      }, events), [genIntervalLabels()]);
-    }
-    function genIntervalLabels() {
-      if (!base.intervals.value.length) return null;
-      return base.intervals.value[0].map(genIntervalLabel);
-    }
-    function genIntervalLabel(interval) {
-      const height = convertToUnit(props.intervalHeight);
-      const short = props.shortIntervals;
-      const shower = props.showIntervalLabel || base.showIntervalLabelDefault;
-      const show = shower(interval);
-      const label = show ? base.intervalFormatter.value(interval, short) : undefined;
-      return createElementVNode("div", {
-        "key": interval.time,
-        "class": "v-calendar-daily__interval",
-        "style": {
-          height
-        }
-      }, [createElementVNode("div", {
-        "class": "v-calendar-daily__interval-text"
-      }, [label])]);
-    }
-    onMounted(init);
-    useRender(() => withDirectives(createElementVNode("div", {
-      "class": normalizeClass(['v-calendar-daily', attrs.class]),
-      "onDragstart": e => e.preventDefault()
-    }, [!props.hideHeader ? genHead() : undefined, genBody()]), [[Resize, onResize, void 0, {
-      quiet: true
-    }]]));
-    return {
-      ...base,
-      scrollPush,
-      pane,
-      init,
-      onResize,
-      getScrollPush
-    };
-  }
-});
-
-// Types
-
-function parsedCategoryText(category, categoryText) {
-  return typeof categoryText === 'function' ? categoryText(category) : typeof categoryText === 'string' && typeof category === 'object' && category ? category[categoryText] : typeof category === 'string' ? category : '';
-}
-function getParsedCategories(categories, categoryText) {
-  if (typeof categories === 'string') return categories.split(/\s*,\s/);
-  if (Array.isArray(categories)) {
-    return categories.map(category => {
-      if (typeof category === 'string') return category;
-      const categoryName = typeof category.categoryName === 'string' ? category.categoryName : parsedCategoryText(category, categoryText);
-      return {
-        ...category,
-        categoryName
-      };
-    });
-  }
-  return [];
-}
-
-// Types
-
-const VCalendarCategory = defineComponent({
-  name: 'VCalendarCategory',
-  props: {
-    categories: {
-      type: [Array, String],
-      default: ''
-    },
-    categoryText: [String, Function],
-    categoryForInvalid: {
-      type: String,
-      default: ''
-    },
-    ...makeCalendarBaseProps(),
-    ...makeCalendarWithIntervalsProps()
-  },
-  setup(props, _ref) {
-    let {
-      slots,
-      attrs
-    } = _ref;
-    const base = useCalendarWithIntervals(props);
-    const parsedCategories = computed(() => {
-      return getParsedCategories(props.categories, props.categoryText);
-    });
-    function getCategoryScope(scope, category) {
-      const cat = typeof category === 'object' && category && category.categoryName === props.categoryForInvalid ? null : category;
-      return {
-        ...scope,
-        category: cat
-      };
-    }
-    function genDayHeader(scope) {
-      return createElementVNode("div", {
-        "class": "v-calendar-category__columns"
-      }, [parsedCategories.value.map(category => {
-        return genDayHeaderCategory(scope, getCategoryScope(scope, category));
-      })]);
-    }
-    function genDayHeaderCategory(day, scope) {
-      const headerTitle = typeof scope.category === 'object' ? scope.category.categoryName : scope.category;
-      const events = getPrefixedEventHandlers(attrs, ':dayCategory', () => {
-        return getCategoryScope(base.getSlotScope(day) || day, scope.category);
-      });
-      return createElementVNode("div", mergeProps({
-        "class": "v-calendar-category__column-header"
-      }, events), [slots.category?.(scope) ?? genDayHeaderCategoryTitle(headerTitle), slots['day-header']?.(scope)]);
-    }
-    function genDayHeaderCategoryTitle(categoryName) {
-      return createElementVNode("div", {
-        "class": "v-calendar-category__category"
-      }, [categoryName === null ? props.categoryForInvalid : categoryName]);
-    }
-    function genDays() {
-      const days = [];
-      base.days.value.forEach((d, j) => {
-        const day = new Array(parsedCategories.value.length || 1);
-        day.fill(d);
-        days.push(...day.map((v, i) => genDay(v, j, i)));
-      });
-      return days;
-    }
-    function genDay(day, index, categoryIndex) {
-      const category = parsedCategories.value[categoryIndex];
-      const events = getPrefixedEventHandlers(attrs, ':time', e => {
-        return base.getSlotScope(base.getTimestampAtEvent(e, day));
-      });
-      return createElementVNode("div", mergeProps({
-        "key": day.date + '-' + categoryIndex,
-        "class": ['v-calendar-daily__day', base.getRelativeClasses(day)]
-      }, events), [genDayIntervals(index, category), genDayBody(day, category)]);
-    }
-    function genDayIntervals(index, category) {
-      return base.intervals.value[index].map(v => genDayInterval(v, category));
-    }
-    function genDayInterval(interval, category) {
-      const height = convertToUnit(props.intervalHeight);
-      const styler = props.intervalStyle || base.intervalStyleDefault;
-      return createElementVNode("div", {
-        "key": interval.time,
-        "class": "v-calendar-daily__day-interval",
-        "style": normalizeStyle([{
-          height
-        }, styler({
-          ...interval,
-          category
-        })])
-      }, [slots.interval?.(getCategoryScope(base.getSlotScope(interval), category))]);
-    }
-    function genDayBody(day, category) {
-      return createElementVNode("div", {
-        "class": "v-calendar-category__columns"
-      }, [genDayBodyCategory(day, category)]);
-    }
-    function genDayBodyCategory(day, category) {
-      const events = getPrefixedEventHandlers(attrs, ':timeCategory', e => {
-        return getCategoryScope(base.getSlotScope(base.getTimestampAtEvent(e, day)), category);
-      });
-      return createElementVNode("div", mergeProps({
-        "class": "v-calendar-category__column"
-      }, events), [slots['day-body']?.(getCategoryScope(base.getSlotScope(day), category))]);
-    }
-    useRender(() => createVNode(VCalendarDaily, mergeProps({
-      "class": ['v-calendar-daily', 'v-calendar-category']
-    }, props), {
-      ...slots,
-      days: genDays,
-      'day-header': genDayHeader
-    }));
-    return {
-      ...base,
-      parsedCategories
-    };
-  }
-});
-
-/**
- * Centralized key alias mapping for consistent key normalization across the hotkey system.
- *
- * This maps various user-friendly aliases to canonical key names that match
- * KeyboardEvent.key values (in lowercase) where possible.
- */
-const keyAliasMap = {
-  // Modifier aliases (from vue-use, other libraries, and current implementation)
-  control: 'ctrl',
-  command: 'cmd',
-  option: 'alt',
-  // Arrow key aliases (common abbreviations)
-  up: 'arrowup',
-  down: 'arrowdown',
-  left: 'arrowleft',
-  right: 'arrowright',
-  // Other common key aliases
-  esc: 'escape',
-  spacebar: ' ',
-  space: ' ',
-  return: 'enter',
-  del: 'delete',
-  // Symbol aliases (existing from hotkey-parsing.ts)
-  minus: '-',
-  hyphen: '-'
-};
-
-/**
- * Normalizes a key string to its canonical form using the alias map.
- *
- * @param key - The key string to normalize
- * @returns The canonical key name in lowercase
- */
-function normalizeKey(key) {
-  const lowerKey = key.toLowerCase();
-  return keyAliasMap[lowerKey] || lowerKey;
-}
-
-// Utilities
-
-/**
- * Splits a single combination string into individual key parts.
- *
- * A combination is a set of keys that must be pressed simultaneously.
- * e.g. `ctrl+k`, `shift--`
- */
-function splitKeyCombination(combination) {
-  let isInternal = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
-  const emptyResult = {
-    keys: [],
-    separators: []
-  };
-  if (!combination) {
-    if (!isInternal) consoleWarn('Invalid hotkey combination: empty string provided');
-    return emptyResult;
-  }
-
-  // --- VALIDATION ---
-
-  const hasInvalidLeadingSeparator = combination.length > 1 &&
-  // Starts with a single separator followed by a non-separator character (e.g. '+a', '_a')
-  ['+', '/', '_'].some(v => combination.startsWith(v)) && !['++', '//', '__'].some(v => combination.startsWith(v));
-  const hasInvalidStructure = hasInvalidLeadingSeparator ||
-  // Disallow literal + or _ keys (they require shift)
-  combination.includes('++') || combination.includes('__') || combination === '+' || combination === '_' ||
-  // Ends with a separator that is not part of a doubled literal
-  combination.length > 1 && (combination.endsWith('+') || combination.endsWith('_')) && combination.at(-2) !== combination.at(-1) ||
-  // Stand-alone doubled separators (dangling)
-  combination === '++' || combination === '--' || combination === '__';
-  if (hasInvalidStructure) {
-    if (!isInternal) consoleWarn(`Invalid hotkey combination: "${combination}" has invalid structure`);
-    return emptyResult;
-  }
-  const keys = [];
-  const separators = [];
-  let buffer = '';
-  const flushBuffer = separator => {
-    if (buffer) {
-      separator && separators.push(separator);
-      keys.push(normalizeKey(buffer));
-      buffer = '';
-    }
-  };
-  for (let i = 0; i < combination.length; i++) {
-    const char = combination[i];
-    const nextChar = combination[i + 1];
-    if (['+', '/', '_', '-'].includes(char)) {
-      if (char === nextChar) {
-        flushBuffer(char);
-        keys.push(char);
-        i++;
-      } else if (['+', '/', '_'].includes(char)) {
-        flushBuffer(char);
-      } else {
-        buffer += char;
-      }
-    } else {
-      buffer += char;
-    }
-  }
-  flushBuffer();
-
-  // Within a combination, `-` is only valid as a literal key (e.g., `ctrl+-`).
-  // `-` cannot be part of a longer key name within a combination.
-  const hasInvalidMinus = keys.some(key => key.length > 1 && key.includes('-') && key !== '--');
-  if (hasInvalidMinus) {
-    if (!isInternal) consoleWarn(`Invalid hotkey combination: "${combination}" has invalid structure`);
-    return emptyResult;
-  }
-  if (keys.length === 0 && combination) {
-    return {
-      keys: [normalizeKey(combination)],
-      separators
-    };
-  }
-  return {
-    keys,
-    separators
-  };
-}
-
-/**
- * Splits a hotkey string into its constituent combination groups.
- *
- * A sequence is a series of combinations that must be pressed in order.
- * e.g. `a-b`, `ctrl+k-p`
- */
-function splitKeySequence(str) {
-  if (!str) {
-    consoleWarn('Invalid hotkey sequence: empty string provided');
-    return [];
-  }
-
-  // A sequence is invalid if it starts or ends with a separator,
-  // unless it is part of a combination (e.g., `shift+-`).
-  const hasInvalidStart = str.startsWith('-') && !['---', '--+'].includes(str);
-  const hasInvalidEnd = str.endsWith('-') && !str.endsWith('+-') && !str.endsWith('_-') && str !== '-' && str !== '---';
-  if (hasInvalidStart || hasInvalidEnd) {
-    consoleWarn(`Invalid hotkey sequence: "${str}" contains invalid combinations`);
-    return [];
-  }
-  const result = [];
-  let buffer = '';
-  let i = 0;
-  while (i < str.length) {
-    const char = str[i];
-    if (char === '-') {
-      // Determine if this hyphen is part of the current combination
-      const prevChar = str[i - 1];
-      const prevPrevChar = i > 1 ? str[i - 2] : undefined;
-      const precededBySeparator = ['+', '_'].includes(prevChar) && !['+', '/'].includes(prevPrevChar ?? '');
-      if (precededBySeparator) {
-        // Treat as part of the combination (e.g., 'ctrl+-')
-        buffer += char;
-        i++;
-      } else {
-        // Treat as sequence separator
-        if (buffer) {
-          result.push(buffer);
-          buffer = '';
-        } else {
-          // Empty buffer means we have a literal '-' key
-          result.push('-');
-        }
-        i++;
-      }
-    } else {
-      buffer += char;
-      i++;
-    }
-  }
-
-  // Add final buffer if it exists
-  if (buffer) {
-    result.push(buffer);
-  }
-
-  // Collapse runs of '-' so that every second '-' is removed
-  const collapsed = [];
-  let minusCount = 0;
-  for (const part of result) {
-    if (part === '-') {
-      if (minusCount % 2 === 0) collapsed.push('-');
-      minusCount++;
-    } else {
-      minusCount = 0;
-      collapsed.push(part);
-    }
-  }
-
-  // Validate that each part of the sequence is a valid combination
-  const areAllValid = collapsed.every(s => splitKeyCombination(s, true).keys.length > 0);
-  if (!areAllValid) {
-    consoleWarn(`Invalid hotkey sequence: "${str}" contains invalid combinations`);
-    return [];
-  }
-  return collapsed;
-}
-
-// Composables
-
-// Types
-
-function useHotkey(keys, callback) {
-  let options = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
-  if (!IN_BROWSER) return function () {};
-  const {
-    event = 'keydown',
-    inputs = false,
-    preventDefault = true,
-    sequenceTimeout = 1000
-  } = options;
-  const isMac = navigator?.userAgent?.includes('Macintosh') ?? false;
-  let timeout = 0;
-  let keyGroups;
-  let isSequence = false;
-  let groupIndex = 0;
-  function isInputFocused() {
-    if (toValue(inputs)) return false;
-    const activeElement = document.activeElement;
-    return activeElement && (activeElement.tagName === 'INPUT' || activeElement.tagName === 'TEXTAREA' || activeElement.isContentEditable || activeElement.contentEditable === 'true');
-  }
-  function resetSequence() {
-    groupIndex = 0;
-    clearTimeout(timeout);
-  }
-  function handler(e) {
-    const group = keyGroups[groupIndex];
-    if (!group || isInputFocused()) return;
-    if (!matchesKeyGroup(e, group, isMac)) {
-      if (isSequence) resetSequence();
-      return;
-    }
-    if (toValue(preventDefault)) e.preventDefault();
-    if (!isSequence) {
-      callback(e);
-      return;
-    }
-    clearTimeout(timeout);
-    groupIndex++;
-    if (groupIndex === keyGroups.length) {
-      callback(e);
-      resetSequence();
-      return;
-    }
-    timeout = window.setTimeout(resetSequence, toValue(sequenceTimeout));
-  }
-  function cleanup() {
-    window.removeEventListener(toValue(event), handler);
-    clearTimeout(timeout);
-  }
-  watch(() => toValue(keys), newKeys => {
-    cleanup();
-    if (newKeys) {
-      const groups = splitKeySequence(newKeys.toLowerCase());
-      isSequence = groups.length > 1;
-      keyGroups = groups;
-      resetSequence();
-      window.addEventListener(toValue(event), handler);
-    }
-  }, {
-    immediate: true
-  });
-
-  // Watch for changes in the event type to re-register the listener
-  watch(() => toValue(event), (newEvent, oldEvent) => {
-    if (oldEvent && keyGroups && keyGroups.length > 0) {
-      window.removeEventListener(oldEvent, handler);
-      window.addEventListener(newEvent, handler);
-    }
-  });
-  onScopeDispose(cleanup, true);
-  return cleanup;
-}
-function matchesKeyGroup(e, group, isMac) {
-  const {
-    modifiers,
-    actualKey
-  } = parseKeyGroup(group);
-  const expectCtrl = modifiers.ctrl || !isMac && (modifiers.cmd || modifiers.meta);
-  const expectMeta = isMac && (modifiers.cmd || modifiers.meta);
-  return e.ctrlKey === expectCtrl && e.metaKey === expectMeta && e.shiftKey === modifiers.shift && e.altKey === modifiers.alt && e.key.toLowerCase() === actualKey?.toLowerCase();
-}
-function parseKeyGroup(group) {
-  const MODIFIERS = ['ctrl', 'shift', 'alt', 'meta', 'cmd'];
-
-  // Use the shared combination splitting logic
-  const {
-    keys: parts
-  } = splitKeyCombination(group.toLowerCase());
-
-  // If the combination is invalid, return empty result
-  if (parts.length === 0) {
-    return {
-      modifiers: Object.fromEntries(MODIFIERS.map(m => [m, false])),
-      actualKey: undefined
-    };
-  }
-  const modifiers = Object.fromEntries(MODIFIERS.map(m => [m, false]));
-  let actualKey;
-  for (const part of parts) {
-    if (MODIFIERS.includes(part)) {
-      modifiers[part] = true;
-    } else {
-      actualKey = part;
-    }
-  }
-  return {
-    modifiers,
-    actualKey
-  };
-}
-
-// Utilities
-
-// Types
-
-const makeMaskProps = propsFactory({
-  mask: [String, Object]
-}, 'mask');
-const defaultDelimiters = /[-!$%^&*()_+|~=`{}[\]:";'<>?,./\\ ]/;
-const presets = {
-  'credit-card': '#### - #### - #### - ####',
-  date: '##/##/####',
-  'date-time': '##/##/#### ##:##',
-  'iso-date': '####-##-##',
-  'iso-date-time': '####-##-## ##:##',
-  phone: '(###) ### - ####',
-  social: '###-##-####',
-  time: '##:##',
-  'time-with-seconds': '##:##:##'
-};
-function isMaskDelimiter(char) {
-  return char ? defaultDelimiters.test(char) : false;
-}
-const defaultTokens = {
-  '#': {
-    pattern: /[0-9]/
-  },
-  A: {
-    pattern: /[A-Z]/i,
-    convert: v => v.toUpperCase()
-  },
-  a: {
-    pattern: /[a-z]/i,
-    convert: v => v.toLowerCase()
-  },
-  N: {
-    pattern: /[0-9A-Z]/i,
-    convert: v => v.toUpperCase()
-  },
-  n: {
-    pattern: /[0-9a-z]/i,
-    convert: v => v.toLowerCase()
-  },
-  X: {
-    pattern: defaultDelimiters
-  }
-};
-function useMask(props) {
-  const mask = computed(() => {
-    if (typeof props.mask === 'string') {
-      if (props.mask in presets) return presets[props.mask];
-      return props.mask;
-    }
-    return props.mask?.mask ?? '';
-  });
-  const tokens = computed(() => {
-    return {
-      ...defaultTokens,
-      ...(isObject(props.mask) ? props.mask.tokens : null)
-    };
-  });
-  function isMask(char) {
-    return char in tokens.value;
-  }
-  function maskValidates(mask, char) {
-    if (char == null || !isMask(mask)) return false;
-    const item = tokens.value[mask];
-    if (item.pattern) return item.pattern.test(char);
-    return item.test(char);
-  }
-  function convert(mask, char) {
-    const item = tokens.value[mask];
-    return item.convert ? item.convert(char) : char;
-  }
-  function maskText(text) {
-    const trimmedText = text?.trim().replace(/\s+/g, ' ');
-    if (trimmedText == null) return '';
-    if (!mask.value.length || !trimmedText.length) return trimmedText;
-    let textIndex = 0;
-    let maskIndex = 0;
-    let newText = '';
-    while (maskIndex < mask.value.length) {
-      const mchar = mask.value[maskIndex];
-      const tchar = trimmedText[textIndex];
-
-      // Escaped character in mask, the next mask character is inserted
-      if (mchar === '\\') {
-        newText += mask.value[maskIndex + 1];
-        maskIndex += 2;
-        continue;
-      }
-      if (!isMask(mchar)) {
-        newText += mchar;
-        if (tchar === mchar) {
-          textIndex++;
-        }
-      } else if (maskValidates(mchar, tchar)) {
-        newText += convert(mchar, tchar);
-        textIndex++;
-      } else {
-        break;
-      }
-      maskIndex++;
-    }
-    return newText;
-  }
-  function unmaskText(text) {
-    if (text == null) return null;
-    if (!mask.value.length || !text.length) return text;
-    let textIndex = 0;
-    let maskIndex = 0;
-    let newText = '';
-    while (true) {
-      const mchar = mask.value[maskIndex];
-      const tchar = text[textIndex];
-      if (tchar == null) break;
-      if (mchar == null) {
-        newText += tchar;
-        textIndex++;
-        continue;
-      }
-
-      // Escaped character in mask, skip the next input character
-      if (mchar === '\\') {
-        if (tchar === mask.value[maskIndex + 1]) {
-          textIndex++;
-        }
-        maskIndex += 2;
-        continue;
-      }
-      if (maskValidates(mchar, tchar)) {
-        // masked char
-        newText += tchar;
-        textIndex++;
-        maskIndex++;
-        continue;
-      } else if (mchar !== tchar) {
-        // input doesn't match mask, skip forward until it does
-        while (true) {
-          const mchar = mask.value[maskIndex++];
-          if (mchar == null || maskValidates(mchar, tchar)) break;
-        }
-        continue;
-      }
-      textIndex++;
-      maskIndex++;
-    }
-    return newText;
-  }
-  function isValid(text) {
-    if (!text) return false;
-    return unmaskText(text) === unmaskText(maskText(text));
-  }
-  function isComplete(text) {
-    if (!text) return false;
-    const maskedText = maskText(text);
-    return maskedText.length === mask.value.length && isValid(text);
-  }
-  return {
-    isValid,
-    isComplete,
-    mask: maskText,
-    unmask: unmaskText
-  };
-}
-
-// Types
-
-const VCalendarWeekly = defineComponent({
-  name: 'VCalendarWeekly',
-  props: {
-    minWeeks: {
-      validate: validateNumber,
-      default: 1
-    },
-    monthFormat: Function,
-    showWeek: Boolean,
-    color: String,
-    shortWeekdays: {
-      type: Boolean,
-      default: true
-    },
-    showMonthOnFirst: {
-      type: Boolean,
-      default: true
-    },
-    shortMonths: {
-      type: Boolean,
-      default: true
-    },
-    hideHeader: Boolean,
-    ...makeCalendarBaseProps()
-  },
-  setup(props, _ref) {
-    let {
-      slots,
-      attrs
-    } = _ref;
-    const base = useCalendarBase(props);
-    const theme = useTheme();
-    const parsedMinWeeks = computed(() => {
-      return parseInt(String(props.minWeeks));
-    });
-    const days = computed(() => {
-      const minDays = parsedMinWeeks.value * base.parsedWeekdays.value.length;
-      const start = base.getStartOfWeek(base.parsedStart.value);
-      const end = base.getEndOfWeek(base.parsedEnd.value);
-      return createDayList(start, end, base.times.today, base.weekdaySkips.value, Number.MAX_SAFE_INTEGER, minDays);
-    });
-    const todayWeek = computed(() => {
-      const today = base.times.today;
-      const start = base.getStartOfWeek(today);
-      const end = base.getEndOfWeek(today);
-      return createDayList(start, end, today, base.weekdaySkips.value, base.parsedWeekdays.value.length, base.parsedWeekdays.value.length);
-    });
-    const monthFormatter = computed(() => {
-      if (props.monthFormat) {
-        // TODO: what happens when this is a string?
-        return props.monthFormat;
-      }
-      return createNativeLocaleFormatter(base.locale.current.value, (_tms, short) => ({
-        timeZone: 'UTC',
-        month: short ? 'short' : 'long'
-      }));
-    });
-    function isOutside(day) {
-      const dayIdentifier = getDayIdentifier(day);
-      return dayIdentifier < getDayIdentifier(base.parsedStart.value) || dayIdentifier > getDayIdentifier(base.parsedEnd.value);
-    }
-    function genHead() {
-      return createElementVNode("div", {
-        "class": "v-calendar-weekly__head",
-        "role": "row"
-      }, [genHeadDays()]);
-    }
-    function genHeadDays() {
-      const header = todayWeek.value.map(genHeadDay);
-      if (props.showWeek) {
-        header.unshift(createElementVNode("div", {
-          "class": "v-calendar-weekly__head-weeknumber"
-        }, null));
-      }
-      return header;
-    }
-    function genHeadDay(day, index) {
-      const outside = isOutside(days.value[index]);
-      const color = day.present ? props.color : undefined;
-      return createElementVNode("div", mergeProps(base.getColorProps({
-        text: color
-      }), {
-        "key": day.date,
-        "class": ['v-calendar-weekly__head-weekday', base.getRelativeClasses(day, outside)],
-        "role": "columnheader"
-      }), [base.weekdayFormatter.value(day, props.shortWeekdays)]);
-    }
-    function genWeeks() {
-      const daysValue = days.value;
-      const weekDays = base.parsedWeekdays.value.length;
-      const weeks = [];
-      for (let i = 0; i < daysValue.length; i += weekDays) {
-        weeks.push(genWeek(daysValue.slice(i, i + weekDays), getWeekNumber(daysValue[i])));
-      }
-      return weeks;
-    }
-    function genWeek(week, weekNumber) {
-      const weekNodes = week.map((day, index) => genDay(day, index, week));
-      if (props.showWeek) {
-        weekNodes.unshift(genWeekNumber(weekNumber));
-      }
-      return createElementVNode("div", {
-        "key": week[0].date,
-        "class": "v-calendar-weekly__week",
-        "role": "row"
-      }, [weekNodes]);
-    }
-    function getWeekNumber(determineDay) {
-      return base.getWeekNumber(determineDay);
-    }
-    function genWeekNumber(weekNumber) {
-      return createElementVNode("div", {
-        "class": "v-calendar-weekly__weeknumber"
-      }, [createElementVNode("small", null, [String(weekNumber)])]);
-    }
-    function genDay(day, index, week) {
-      const outside = isOutside(day);
-      const events = getPrefixedEventHandlers(attrs, ':day', nativeEvent => {
-        return {
-          nativeEvent,
-          ...day
-        };
-      });
-      return createElementVNode("div", mergeProps({
-        "key": day.date,
-        "class": ['v-calendar-weekly__day', base.getRelativeClasses(day, outside)],
-        "role": "cell"
-      }, events), [genDayLabel(day), slots.day?.({
-        outside,
-        index,
-        week,
-        ...day
-      })]);
-    }
-    function genDayLabel(day) {
-      return createElementVNode("div", {
-        "class": "v-calendar-weekly__day-label"
-      }, [slots['day-label']?.(day) ?? genDayLabelButton(day)]);
-    }
-    function genDayLabelButton(day) {
-      const hasMonth = day.day === 1 && props.showMonthOnFirst;
-      const events = getPrefixedEventHandlers(attrs, ':date', nativeEvent => ({
-        nativeEvent,
-        ...day
-      }));
-      return createVNode(VIconBtn, mergeProps({
-        "active": day.present,
-        "activeColor": props.color,
-        "variant": "outlined",
-        "baseVariant": "text",
-        "onUpdate:active": noop
-      }, events), {
-        default: () => [hasMonth ? monthFormatter.value(day, props.shortMonths) + ' ' + base.dayFormatter.value(day, false) : base.dayFormatter.value(day, false)]
-      });
-    }
-    useRender(() => createElementVNode("div", {
-      "class": normalizeClass(['v-calendar-weekly', theme.themeClasses.value]),
-      "onDragstart": e => e.preventDefault()
-    }, [!props.hideHeader ? genHead() : undefined, genWeeks()]));
-    return {
-      ...base,
-      days,
-      todayWeek,
-      monthFormatter,
-      isOutside
-    };
-  }
-});
-
-// Types
-
-const MILLIS_IN_DAY = 86400000;
-function getVisuals(events) {
-  let minStart = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
-  const visuals = events.map(event => ({
-    event,
-    columnCount: 0,
-    column: 0,
-    left: 0,
-    width: 100
-  }));
-  visuals.sort((a, b) => {
-    return Math.max(minStart, a.event.startTimestampIdentifier) - Math.max(minStart, b.event.startTimestampIdentifier) || b.event.endTimestampIdentifier - a.event.endTimestampIdentifier;
-  });
-  return visuals;
-}
-function hasOverlap(s0, e0, s1, e1) {
-  let exclude = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : true;
-  return exclude ? !(s0 >= e1 || e0 <= s1) : !(s0 > e1 || e0 < s1);
-}
-function setColumnCount(groups) {
-  groups.forEach(group => {
-    group.visuals.forEach(groupVisual => {
-      groupVisual.columnCount = groups.length;
-    });
-  });
-}
-function getRange(event) {
-  return [event.startTimestampIdentifier, event.endTimestampIdentifier];
-}
-function getDayRange(event) {
-  return [event.startIdentifier, event.endIdentifier];
-}
-function getNormalizedRange(event, dayStart) {
-  return [Math.max(dayStart, event.startTimestampIdentifier), Math.min(dayStart + MILLIS_IN_DAY, event.endTimestampIdentifier)];
-}
-function getOpenGroup(groups, start, end, timed) {
-  for (let i = 0; i < groups.length; i++) {
-    const group = groups[i];
-    let intersected = false;
-    if (hasOverlap(start, end, group.start, group.end, timed)) {
-      for (let k = 0; k < group.visuals.length; k++) {
-        const groupVisual = group.visuals[k];
-        const [groupStart, groupEnd] = timed ? getRange(groupVisual.event) : getDayRange(groupVisual.event);
-        if (hasOverlap(start, end, groupStart, groupEnd, timed)) {
-          intersected = true;
-          break;
-        }
-      }
-    }
-    if (!intersected) {
-      return i;
-    }
-  }
-  return -1;
-}
-function getOverlapGroupHandler(firstWeekday) {
-  const handler = {
-    groups: [],
-    min: -1,
-    max: -1,
-    reset: () => {
-      handler.groups = [];
-      handler.min = handler.max = -1;
-    },
-    getVisuals: function (day, dayEvents, timed) {
-      let reset = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : false;
-      if (day.weekday === firstWeekday || reset) {
-        handler.reset();
-      }
-      const dayStart = getTimestampIdentifier(day);
-      const visuals = getVisuals(dayEvents, dayStart);
-      visuals.forEach(visual => {
-        const [start, end] = timed ? getRange(visual.event) : getDayRange(visual.event);
-        if (handler.groups.length > 0 && !hasOverlap(start, end, handler.min, handler.max, timed)) {
-          setColumnCount(handler.groups);
-          handler.reset();
-        }
-        let targetGroup = getOpenGroup(handler.groups, start, end, timed);
-        if (targetGroup === -1) {
-          targetGroup = handler.groups.length;
-          handler.groups.push({
-            start,
-            end,
-            visuals: []
-          });
-        }
-        const target = handler.groups[targetGroup];
-        target.visuals.push(visual);
-        target.start = Math.min(target.start, start);
-        target.end = Math.max(target.end, end);
-        visual.column = targetGroup;
-        if (handler.min === -1) {
-          handler.min = start;
-          handler.max = end;
-        } else {
-          handler.min = Math.min(handler.min, start);
-          handler.max = Math.max(handler.max, end);
-        }
-      });
-      setColumnCount(handler.groups);
-      if (timed) {
-        handler.reset();
-      }
-      return visuals;
-    }
-  };
-  return handler;
-}
-
-// Types
-const FULL_WIDTH$1 = 100;
-const column = (events, firstWeekday, overlapThreshold) => {
-  const handler = getOverlapGroupHandler(firstWeekday);
-  return (day, dayEvents, timed, reset) => {
-    const visuals = handler.getVisuals(day, dayEvents, timed, reset);
-    if (timed) {
-      visuals.forEach(visual => {
-        visual.left = visual.column * FULL_WIDTH$1 / visual.columnCount;
-        visual.width = FULL_WIDTH$1 / visual.columnCount;
-      });
-    }
-    return visuals;
-  };
-};
-
-// Types
-const FULL_WIDTH = 100;
-const DEFAULT_OFFSET = 5;
-const WIDTH_MULTIPLIER = 1.7;
-
-/**
- * Variation of column mode where events can be stacked. The priority of this
- * mode is to stack events together taking up the least amount of space while
- * trying to ensure the content of the event is always visible as well as its
- * start and end. A sibling column has intersecting event content and must be
- * placed beside each other. Non-sibling columns are offset by 5% from the
- * previous column. The width is scaled by 1.7 so the events overlap and
- * whitespace is reduced. If there is a hole in columns the event width is
- * scaled up so it intersects with the next column. The columns have equal
- * width in the space they are given. If the event doesn't have any to the
- * right of it that intersect with it's content it's right side is extended
- * to the right side.
- */
-
-const stack = (events, firstWeekday, overlapThreshold) => {
-  const handler = getOverlapGroupHandler(firstWeekday);
-
-  // eslint-disable-next-line max-statements
-  return (day, dayEvents, timed, reset) => {
-    if (!timed) {
-      return handler.getVisuals(day, dayEvents, timed, reset);
-    }
-    const dayStart = getTimestampIdentifier(day);
-    const visuals = getVisuals(dayEvents, dayStart);
-    const groups = getGroups(visuals, dayStart);
-    for (const group of groups) {
-      const nodes = [];
-      for (const visual of group.visuals) {
-        const child = getNode(visual, dayStart);
-        const index = getNextIndex(child, nodes);
-        if (index === false) {
-          const parent = getParent(child, nodes);
-          if (parent) {
-            child.parent = parent;
-            child.sibling = hasOverlap(child.start, child.end, parent.start, addTime(parent.start, overlapThreshold));
-            child.index = parent.index + 1;
-            parent.children.push(child);
-          }
-        } else {
-          const [parent] = getOverlappingRange(child, nodes, index - 1, index - 1);
-          const children = getOverlappingRange(child, nodes, index + 1, index + nodes.length, true);
-          child.children = children;
-          child.index = index;
-          if (parent) {
-            child.parent = parent;
-            child.sibling = hasOverlap(child.start, child.end, parent.start, addTime(parent.start, overlapThreshold));
-            parent.children.push(child);
-          }
-          for (const grand of children) {
-            if (grand.parent === parent) {
-              grand.parent = child;
-            }
-            const grandNext = grand.index - child.index <= 1;
-            if (grandNext && child.sibling && hasOverlap(child.start, addTime(child.start, overlapThreshold), grand.start, grand.end)) {
-              grand.sibling = true;
-            }
-          }
-        }
-        nodes.push(child);
-      }
-      calculateBounds(nodes, overlapThreshold);
-    }
-    visuals.sort((a, b) => a.left - b.left || a.event.startTimestampIdentifier - b.event.startTimestampIdentifier);
-    return visuals;
-  };
-};
-function calculateBounds(nodes, overlapThreshold) {
-  for (const node of nodes) {
-    const {
-      visual,
-      parent
-    } = node;
-    const columns = getMaxChildIndex(node) + 1;
-    const spaceLeft = parent ? parent.visual.left : 0;
-    const spaceWidth = FULL_WIDTH - spaceLeft;
-    const offset = Math.min(DEFAULT_OFFSET, FULL_WIDTH / columns);
-    const columnWidthMultiplier = getColumnWidthMultiplier(node, nodes);
-    const columnOffset = spaceWidth / (columns - node.index + 1);
-    const columnWidth = spaceWidth / (columns - node.index + (node.sibling ? 1 : 0)) * columnWidthMultiplier;
-    if (parent) {
-      visual.left = node.sibling ? spaceLeft + columnOffset : spaceLeft + offset;
-    }
-    visual.width = hasFullWidth(node, nodes, overlapThreshold) ? FULL_WIDTH - visual.left : Math.min(FULL_WIDTH - visual.left, columnWidth * WIDTH_MULTIPLIER);
-  }
-}
-function getColumnWidthMultiplier(node, nodes) {
-  if (!node.children.length) {
-    return 1;
-  }
-  const maxColumn = node.index + nodes.length;
-  const minColumn = node.children.reduce((min, c) => Math.min(min, c.index), maxColumn);
-  return minColumn - node.index;
-}
-function getOverlappingIndices(node, nodes) {
-  const indices = [];
-  for (const other of nodes) {
-    if (hasOverlap(node.start, node.end, other.start, other.end)) {
-      indices.push(other.index);
-    }
-  }
-  return indices;
-}
-function getNextIndex(node, nodes) {
-  const indices = getOverlappingIndices(node, nodes);
-  indices.sort();
-  for (let i = 0; i < indices.length; i++) {
-    if (i < indices[i]) {
-      return i;
-    }
-  }
-  return false;
-}
-function getOverlappingRange(node, nodes, indexMin, indexMax) {
-  let returnFirstColumn = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : false;
-  const overlapping = [];
-  for (const other of nodes) {
-    if (other.index >= indexMin && other.index <= indexMax && hasOverlap(node.start, node.end, other.start, other.end)) {
-      overlapping.push(other);
-    }
-  }
-  if (returnFirstColumn && overlapping.length > 0) {
-    const first = overlapping.reduce((min, n) => Math.min(min, n.index), overlapping[0].index);
-    return overlapping.filter(n => n.index === first);
-  }
-  return overlapping;
-}
-function getParent(node, nodes) {
-  let parent = null;
-  for (const other of nodes) {
-    if (hasOverlap(node.start, node.end, other.start, other.end) && (parent === null || other.index > parent.index)) {
-      parent = other;
-    }
-  }
-  return parent;
-}
-function hasFullWidth(node, nodes, overlapThreshold) {
-  for (const other of nodes) {
-    if (other !== node && other.index > node.index && hasOverlap(node.start, addTime(node.start, overlapThreshold), other.start, other.end)) {
-      return false;
-    }
-  }
-  return true;
-}
-function getGroups(visuals, dayStart) {
-  const groups = [];
-  for (const visual of visuals) {
-    const [start, end] = getNormalizedRange(visual.event, dayStart);
-    let added = false;
-    for (const group of groups) {
-      if (hasOverlap(start, end, group.start, group.end)) {
-        group.visuals.push(visual);
-        group.end = Math.max(group.end, end);
-        added = true;
-        break;
-      }
-    }
-    if (!added) {
-      groups.push({
-        start,
-        end,
-        visuals: [visual]
-      });
-    }
-  }
-  return groups;
-}
-function getNode(visual, dayStart) {
-  const [start, end] = getNormalizedRange(visual.event, dayStart);
-  return {
-    parent: null,
-    sibling: true,
-    index: 0,
-    visual,
-    start,
-    end,
-    children: []
-  };
-}
-function getMaxChildIndex(node) {
-  let max = node.index;
-  for (const child of node.children) {
-    const childMax = getMaxChildIndex(child);
-    if (childMax > max) {
-      max = childMax;
-    }
-  }
-  return max;
-}
-function addTime(identifier, minutes) {
-  const removeMinutes = identifier % 100;
-  const totalMinutes = removeMinutes + minutes;
-  const addHours = Math.floor(totalMinutes / 60);
-  const addMinutes = totalMinutes % 60;
-  return identifier - removeMinutes + addHours * 100 + addMinutes;
-}
-
-// Types
-const CalendarEventOverlapModes = {
-  stack,
-  column
-};
-
-// Types
-
-function parseEvent(input, index, startProperty, endProperty) {
-  let timed = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : false;
-  let category = arguments.length > 5 && arguments[5] !== undefined ? arguments[5] : false;
-  const startInput = input[startProperty];
-  const endInput = input[endProperty];
-  const startParsed = parseTimestamp(startInput, true);
-  const endParsed = endInput ? parseTimestamp(endInput, true) : startParsed;
-  const start = isTimedless(startInput) ? updateHasTime(startParsed, timed) : startParsed;
-  const end = isTimedless(endInput) ? updateHasTime(endParsed, timed) : endParsed;
-  const startIdentifier = getDayIdentifier(start);
-  const startTimestampIdentifier = getTimestampIdentifier(start);
-  const endIdentifier = getDayIdentifier(end);
-  const endOffset = start.hasTime ? 0 : 2359;
-  const endTimestampIdentifier = getTimestampIdentifier(end) + endOffset;
-  const allDay = !start.hasTime;
-  return {
-    input,
-    start,
-    startIdentifier,
-    startTimestampIdentifier,
-    end,
-    endIdentifier,
-    endTimestampIdentifier,
-    allDay,
-    index,
-    category
-  };
-}
-function isEventOn(event, dayIdentifier) {
-  return dayIdentifier >= event.startIdentifier && dayIdentifier <= event.endIdentifier;
-}
-function isEventOnDay(event, day, inRange) {
-  if (inRange) {
-    const dayStart = nextMinutes(copyTimestamp(day), inRange[0]);
-    const dayEnd = nextMinutes(copyTimestamp(day), inRange[1]);
-    const starts = event.startTimestampIdentifier < getTimestampIdentifier(dayEnd);
-    const ends = event.endTimestampIdentifier > getTimestampIdentifier(dayStart);
-    return starts && ends;
-  }
-  return isEventOn(event, getDayIdentifier(day));
-}
-function isEventHiddenOn(event, day) {
-  return event.end.time === '00:00' && event.end.date === day.date && event.start.date !== day.date;
-}
-function isEventStart(event, day, dayIdentifier, firstWeekday) {
-  return dayIdentifier === event.startIdentifier || firstWeekday === day.weekday && isEventOn(event, dayIdentifier);
-}
-function isEventOverlapping(event, startIdentifier, endIdentifier) {
-  return startIdentifier <= event.endIdentifier && endIdentifier >= event.startIdentifier;
-}
-
-// Types
-
-// Constants
-const WIDTH_FULL = 100;
-const WIDTH_START = 95;
-const makeCalendarWithEventsProps = propsFactory({
-  events: {
-    type: Array,
-    default: () => []
-  },
-  eventStart: {
-    type: String,
-    default: 'start'
-  },
-  eventEnd: {
-    type: String,
-    default: 'end'
-  },
-  eventTimed: {
-    type: [String, Function],
-    default: 'timed'
-  },
-  eventCategory: {
-    type: [String, Function],
-    default: 'category'
-  },
-  eventHeight: {
-    type: Number,
-    default: 20
-  },
-  eventColor: {
-    type: [String, Function],
-    default: 'primary'
-  },
-  eventTextColor: {
-    type: [String, Function]
-  },
-  eventName: {
-    type: [String, Function],
-    default: 'name'
-  },
-  eventOverlapThreshold: {
-    type: [String, Number],
-    default: 60
-  },
-  eventOverlapMode: {
-    type: [String, Function],
-    default: 'stack',
-    validate: mode => mode in CalendarEventOverlapModes || typeof mode === 'function'
-  },
-  eventMore: {
-    type: Boolean,
-    default: true
-  },
-  eventMoreText: {
-    type: String,
-    default: '$vuetify.calendar.moreEvents'
-  },
-  eventRipple: {
-    type: [Boolean, Object],
-    default: null
-  },
-  eventMarginBottom: {
-    type: Number,
-    default: 1
-  }
-}, 'VCalendar-events');
-function useCalendarWithEvents(props, slots, attrs) {
-  const base = useCalendarBase(props);
-  const noEvents = computed(() => {
-    return !Array.isArray(props.events) || props.events.length === 0;
-  });
-  const categoryMode = computed(() => {
-    return props.type === 'category';
-  });
-  const eventTimedFunction = computed(() => {
-    return typeof props.eventTimed === 'function' ? props.eventTimed : event => !!event[props.eventTimed];
-  });
-  const eventCategoryFunction = computed(() => {
-    return typeof props.eventCategory === 'function' ? props.eventCategory : event => event[props.eventCategory];
-  });
-  const parsedEvents = computed(() => {
-    if (!props.events) return [];
-    return props.events.map((event, index) => parseEvent(event, index, props.eventStart || '', props.eventEnd || '', eventTimedFunction.value(event), categoryMode.value ? eventCategoryFunction.value(event) : false));
-  });
-  const parsedEventOverlapThreshold = computed(() => {
-    return parseInt(String(props.eventOverlapThreshold || 0));
-  });
-  const eventTextColorFunction = computed(() => {
-    return typeof props.eventTextColor === 'function' ? props.eventTextColor : () => props.eventTextColor;
-  });
-  const eventNameFunction = computed(() => {
-    return typeof props.eventName === 'function' ? props.eventName : (event, timedEvent) => event.input[props.eventName] || '';
-  });
-  const eventModeFunction = computed(() => {
-    return typeof props.eventOverlapMode === 'function' ? props.eventOverlapMode : CalendarEventOverlapModes[props.eventOverlapMode];
-  });
-  const eventWeekdays = computed(() => {
-    return base.effectiveWeekdays.value;
-  });
-  function eventColorFunction(e) {
-    return typeof props.eventColor === 'function' ? props.eventColor(e) : e.color || props.eventColor;
-  }
-  const eventsRef = ref([]);
-  function updateEventVisibility() {
-    if (noEvents.value || !props.eventMore) {
-      return;
-    }
-    const eventHeight = props.eventHeight || 0;
-    const eventsMap = getEventsMap();
-    for (const date in eventsMap) {
-      const {
-        parent,
-        events,
-        more
-      } = eventsMap[date];
-      if (!more) {
-        break;
-      }
-      const parentBounds = parent.getBoundingClientRect();
-      const last = events.length - 1;
-      const eventsSorted = events.map(event => ({
-        event,
-        bottom: event.getBoundingClientRect().bottom
-      })).sort((a, b) => a.bottom - b.bottom);
-      let hidden = 0;
-      for (let i = 0; i <= last; i++) {
-        const bottom = eventsSorted[i].bottom;
-        const hide = i === last ? bottom > parentBounds.bottom : bottom + eventHeight > parentBounds.bottom;
-        if (hide) {
-          eventsSorted[i].event.style.display = 'none';
-          hidden++;
-        }
-      }
-
-      // TODO: avoid direct DOM manipulation
-      if (hidden) {
-        more.style.display = '';
-        more.innerHTML = base.locale.t(props.eventMoreText, hidden);
-      } else {
-        more.style.display = 'none';
-      }
-    }
-  }
-  function getEventsMap() {
-    const eventsMap = {};
-    const elements = eventsRef.value;
-    if (!elements || !elements.length) {
-      return eventsMap;
-    }
-    elements.forEach(el => {
-      const date = el.getAttribute('data-date');
-      if (el.parentElement && date) {
-        if (!(date in eventsMap)) {
-          eventsMap[date] = {
-            parent: el.parentElement,
-            more: null,
-            events: []
-          };
-        }
-        if (el.getAttribute('data-more')) {
-          eventsMap[date].more = el;
-        } else {
-          eventsMap[date].events.push(el);
-          el.style.display = '';
-        }
-      }
-    });
-    return eventsMap;
-  }
-  function genDayEvent(_ref, day) {
-    let {
-      event
-    } = _ref;
-    const eventHeight = props.eventHeight || 0;
-    const eventMarginBottom = props.eventMarginBottom || 0;
-    const dayIdentifier = getDayIdentifier(day);
-    const week = day.week;
-    const start = dayIdentifier === event.startIdentifier;
-    let end = dayIdentifier === event.endIdentifier;
-    let width = WIDTH_START;
-    if (!categoryMode.value) {
-      for (let i = day.index + 1; i < week.length; i++) {
-        const weekdayIdentifier = getDayIdentifier(week[i]);
-        if (event.endIdentifier >= weekdayIdentifier) {
-          width += WIDTH_FULL;
-          end = end || weekdayIdentifier === event.endIdentifier;
-        } else {
-          end = true;
-          break;
-        }
-      }
-    }
-    const scope = {
-      eventParsed: event,
-      day,
-      start,
-      end,
-      timed: false
-    };
-    return genEvent(event, scope, false, {
-      class: ['v-event', {
-        'v-event-start': start,
-        'v-event-end': end
-      }],
-      style: {
-        height: `${eventHeight}px`,
-        width: `${width}%`,
-        marginBottom: `${eventMarginBottom}px`
-      },
-      'data-date': day.date
-    });
-  }
-  function genTimedEvent(_ref2, day) {
-    let {
-      event,
-      left,
-      width
-    } = _ref2;
-    const startDelta = day.timeDelta(event.start, day);
-    const endDelta = day.timeDelta(event.end, day);
-    if (endDelta === false || startDelta === false || endDelta < 0 || startDelta >= 1 || isEventHiddenOn(event, day)) {
-      return false;
-    }
-    const dayIdentifier = getDayIdentifier(day);
-    const start = event.startIdentifier >= dayIdentifier;
-    const end = event.endIdentifier > dayIdentifier;
-    const top = day.timeToY(event.start, day);
-    const bottom = day.timeToY(event.end, day);
-    const height = Math.max(props.eventHeight || 0, bottom - top);
-    const scope = {
-      eventParsed: event,
-      day,
-      start,
-      end,
-      timed: true
-    };
-    return genEvent(event, scope, true, {
-      class: 'v-event-timed',
-      style: {
-        top: `${top}px`,
-        height: `${height}px`,
-        left: `${left}%`,
-        width: `${width}%`
-      }
-    });
-  }
-  function genEvent(event, scopeInput, timedEvent, data) {
-    const slot = slots.event;
-    const text = eventTextColorFunction.value(event.input);
-    const background = eventColorFunction(event.input);
-    const overlapsNoon = event.start.hour < 12 && event.end.hour >= 12;
-    const singline = diffMinutes(event.start, event.end) <= parsedEventOverlapThreshold.value;
-    const formatTime = (withTime, ampm) => {
-      const formatter = base.getFormatter({
-        timeZone: 'UTC',
-        hour: 'numeric',
-        minute: withTime.minute > 0 ? 'numeric' : undefined
-      });
-      return formatter(withTime, true);
-    };
-    const timeSummary = () => formatTime(event.start) + ' - ' + formatTime(event.end);
-    const eventSummary = () => {
-      const name = eventNameFunction.value(event, timedEvent);
-      if (event.start.hasTime) {
-        if (timedEvent) {
-          const time = timeSummary();
-          const delimiter = singline ? ', ' : createElementVNode("br", null, null);
-          return createElementVNode("span", {
-            "class": "v-event-summary"
-          }, [createElementVNode("strong", null, [name]), delimiter, time]);
-        } else {
-          const time = formatTime(event.start);
-          return createElementVNode("span", {
-            "class": "v-event-summary"
-          }, [createElementVNode("strong", null, [time]), createTextVNode(" "), name]);
-        }
-      }
-      return createElementVNode("span", {
-        "class": "v-event-summary"
-      }, [name]);
-    };
-    const scope = {
-      ...scopeInput,
-      event: event.input,
-      outside: scopeInput.day.outside,
-      singline,
-      overlapsNoon,
-      formatTime,
-      timeSummary,
-      eventSummary
-    };
-    const events = getPrefixedEventHandlers(attrs, ':event', nativeEvent => ({
-      ...scope,
-      nativeEvent
-    }));
-    return withDirectives(createElementVNode("div", mergeProps(base.getColorProps({
-      text,
-      background
-    }), events, data, {
-      "ref_for": true,
-      "ref": eventsRef
-    }), [slot?.(scope) ?? genName(eventSummary)]), [[Ripple, props.eventRipple ?? true]]);
-  }
-  function genName(eventSummary) {
-    return createElementVNode("div", {
-      "class": "pl-1"
-    }, [eventSummary()]);
-  }
-  function genPlaceholder(day) {
-    const height = (props.eventHeight || 0) + (props.eventMarginBottom || 0);
-    return createElementVNode("div", {
-      "style": {
-        height: `${height}px`
-      },
-      "data-date": day.date,
-      "ref_for": true,
-      "ref": eventsRef
-    }, null);
-  }
-  function genMore(day) {
-    const eventHeight = props.eventHeight || 0;
-    const eventMarginBottom = props.eventMarginBottom || 0;
-    const events = getPrefixedEventHandlers(attrs, ':more', nativeEvent => ({
-      nativeEvent,
-      ...day
-    }));
-    return withDirectives(createElementVNode("div", mergeProps({
-      "class": ['v-event-more pl-1', {
-        'v-outside': day.outside
-      }],
-      "data-date": day.date,
-      "data-more": "1",
-      "style": {
-        display: 'none',
-        height: `${eventHeight}px`,
-        marginBottom: `${eventMarginBottom}px`
-      },
-      "ref_for": true,
-      "ref": eventsRef
-    }, events), null), [[Ripple, props.eventRipple ?? true]]);
-  }
-  function getVisibleEvents() {
-    const days = base.days.value;
-    const start = getDayIdentifier(days[0]);
-    const end = getDayIdentifier(days[days.length - 1]);
-    return parsedEvents.value.filter(event => isEventOverlapping(event, start, end));
-  }
-  function isEventForCategory(event, category) {
-    return !categoryMode.value || typeof category === 'object' && category.categoryName && category.categoryName === event.category || typeof event.category === 'string' && category === event.category || typeof event.category !== 'string' && category === null;
-  }
-  function getEventsForDay(day) {
-    const identifier = getDayIdentifier(day);
-    const firstWeekday = eventWeekdays.value[0];
-    return parsedEvents.value.filter(event => isEventStart(event, day, identifier, firstWeekday));
-  }
-  function getEventsForDayAll(day) {
-    const identifier = getDayIdentifier(day);
-    const firstWeekday = eventWeekdays.value[0];
-    return parsedEvents.value.filter(event => event.allDay && (categoryMode.value ? isEventOn(event, identifier) : isEventStart(event, day, identifier, firstWeekday)) && isEventForCategory(event, day.category));
-  }
-  function getEventsForDayTimed(day) {
-    return parsedEvents.value.filter(event => !event.allDay && isEventOnDay(event, day, day.intervalRange) && isEventForCategory(event, day.category));
-  }
-  function getScopedSlots() {
-    if (noEvents.value) {
-      return {
-        ...slots
-      };
-    }
-    const mode = eventModeFunction.value(parsedEvents.value, eventWeekdays.value[0], parsedEventOverlapThreshold.value);
-    const isNode = input => !!input;
-    const getSlotChildren = (day, getter, mapper, timed) => {
-      const events = getter(day);
-      const visuals = mode(day, events, timed, categoryMode.value);
-      if (timed) {
-        return visuals.map(visual => mapper(visual, day)).filter(isNode);
-      }
-      const children = [];
-      visuals.forEach((visual, index) => {
-        while (children.length < visual.column) {
-          children.push(genPlaceholder(day));
-        }
-        const mapped = mapper(visual, day);
-        if (mapped) {
-          children.push(mapped);
-        }
-      });
-      return children;
-    };
-    return {
-      ...slots,
-      day: day => {
-        let children = getSlotChildren(day, getEventsForDay, genDayEvent, false);
-        if (children && children.length > 0 && props.eventMore) {
-          children.push(genMore(day));
-        }
-        if (slots.day) {
-          const slot = slots.day(day);
-          if (slot) {
-            children = children ? children.concat(slot) : slot;
-          }
-        }
-        return children;
-      },
-      'day-header': day => {
-        let children = getSlotChildren(day, getEventsForDayAll, genDayEvent, false);
-        if (slots['day-header']) {
-          const slot = slots['day-header'](day);
-          if (slot) {
-            children = children ? children.concat(slot) : slot;
-          }
-        }
-        return children;
-      },
-      'day-body': day => {
-        const events = getSlotChildren(day, getEventsForDayTimed, genTimedEvent, true);
-        let children = [createElementVNode("div", {
-          "class": "v-event-timed-container"
-        }, [events])];
-        if (slots['day-body']) {
-          const slot = slots['day-body'](day);
-          if (slot) {
-            children = children.concat(slot);
-          }
-        }
-        return children;
-      }
-    };
-  }
-  return {
-    ...base,
-    noEvents,
-    parsedEvents,
-    parsedEventOverlapThreshold,
-    eventTimedFunction,
-    eventCategoryFunction,
-    eventTextColorFunction,
-    eventNameFunction,
-    eventModeFunction,
-    eventWeekdays,
-    categoryMode,
-    eventColorFunction,
-    eventsRef,
-    updateEventVisibility,
-    getEventsMap,
-    genDayEvent,
-    genTimedEvent,
-    genEvent,
-    genName,
-    genPlaceholder,
-    genMore,
-    getVisibleEvents,
-    isEventForCategory,
-    getEventsForDay,
-    getEventsForDayAll,
-    getEventsForDayTimed,
-    getScopedSlots
-  };
-}
-
-// Types
-
-// Types
-
-const VCalendar = genericComponent()({
-  name: 'VCalendar',
-  directives: {
-    vResize: Resize
-  },
-  props: {
-    modelValue: {
-      type: [String, Number, Date],
-      validate: validateTimestamp
-    },
-    categoryDays: {
-      type: [Number, String],
-      default: 1,
-      validate: x => isFinite(parseInt(x)) && parseInt(x) > 0
-    },
-    categories: {
-      type: [Array, String],
-      default: ''
-    },
-    categoryText: {
-      type: [String, Function]
-    },
-    maxDays: {
-      type: Number,
-      default: 7
-    },
-    categoryHideDynamic: {
-      type: Boolean
-    },
-    categoryShowAll: {
-      type: Boolean
-    },
-    categoryForInvalid: {
-      type: String,
-      default: ''
-    },
-    ...makeCalendarBaseProps(),
-    ...makeCalendarWithEventsProps()
-  },
-  setup(props, _ref) {
-    let {
-      slots,
-      attrs,
-      emit
-    } = _ref;
-    const root = ref();
-    const base = useCalendarWithEvents(props, slots, attrs);
-    const lastStart = ref(null);
-    const lastEnd = ref(null);
-    const parsedCategoryDays = computed(() => {
-      return parseInt(String(props.categoryDays)) || 1;
-    });
-    const parsedCategories = computed(() => {
-      return getParsedCategories(props.categories, props.categoryText);
-    });
-    const renderProps = computed(() => {
-      const around = base.parsedValue.value;
-      let component = null;
-      let maxDays = props.maxDays;
-      let categories = parsedCategories.value;
-      let start = around;
-      let end = around;
-      switch (props.type) {
-        case 'month':
-          component = VCalendarWeekly;
-          start = getStartOfMonth(around);
-          end = getEndOfMonth(around);
-          break;
-        case 'week':
-          component = VCalendarDaily;
-          start = base.getStartOfWeek(around);
-          end = base.getEndOfWeek(around);
-          maxDays = 7;
-          break;
-        case 'day':
-          component = VCalendarDaily;
-          maxDays = 1;
-          break;
-        case '4day':
-          component = VCalendarDaily;
-          end = relativeDays(copyTimestamp(end), nextDay, 3);
-          updateFormatted(end);
-          maxDays = 4;
-          break;
-        case 'custom-weekly':
-          component = VCalendarWeekly;
-          start = base.parsedStart.value || around;
-          end = base.parsedEnd.value;
-          break;
-        case 'custom-daily':
-          component = VCalendarDaily;
-          start = base.parsedStart.value || around;
-          end = base.parsedEnd.value;
-          break;
-        case 'category':
-          const days = parsedCategoryDays.value;
-          component = VCalendarCategory;
-          end = relativeDays(copyTimestamp(end), nextDay, days);
-          updateFormatted(end);
-          maxDays = days;
-          categories = getCategoryList(categories);
-          break;
-        default:
-          const type = props.type;
-          throw new Error(`${type} is not a valid Calendar type`);
-      }
-      return {
-        component,
-        start,
-        end,
-        maxDays,
-        categories
-      };
-    });
-    const eventWeekdays = computed(() => {
-      return base.effectiveWeekdays.value;
-    });
-    const categoryMode = computed(() => {
-      return props.type === 'category';
-    });
-    const monthLongFormatter = computed(() => {
-      return base.getFormatter({
-        timeZone: 'UTC',
-        month: 'long'
-      });
-    });
-    const monthShortFormatter = computed(() => {
-      return base.getFormatter({
-        timeZone: 'UTC',
-        month: 'short'
-      });
-    });
-    const title = computed(() => {
-      const {
-        start,
-        end
-      } = renderProps.value;
-      const spanYears = start.year !== end.year;
-      const spanMonths = spanYears || start.month !== end.month;
-      if (spanYears) {
-        return monthShortFormatter.value(start, true) + ' ' + start.year + ' - ' + monthShortFormatter.value(end, true) + ' ' + end.year;
-      }
-      if (spanMonths) {
-        return monthShortFormatter.value(start, true) + ' - ' + monthShortFormatter.value(end, true) + ' ' + end.year;
-      } else {
-        return monthLongFormatter.value(start, false) + ' ' + start.year;
-      }
-    });
-    function checkChange() {
-      const {
-        start,
-        end
-      } = renderProps.value;
-      if (!lastStart.value || !lastEnd.value || start.date !== lastStart.value.date || end.date !== lastEnd.value.date) {
-        lastStart.value = start;
-        lastEnd.value = end;
-        emit('change', {
-          start,
-          end
-        });
-      }
-    }
-    function move() {
-      let amount = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1;
-      const moved = copyTimestamp(base.parsedValue.value);
-      const forward = amount > 0;
-      const mover = forward ? nextDay : prevDay;
-      const limit = forward ? DAYS_IN_MONTH_MAX : DAY_MIN;
-      let times = forward ? amount : -amount;
-      while (--times >= 0) {
-        switch (props.type) {
-          case 'month':
-            moved.day = limit;
-            mover(moved);
-            break;
-          case 'week':
-            relativeDays(moved, mover, DAYS_IN_WEEK);
-            break;
-          case 'day':
-            relativeDays(moved, mover, 1);
-            break;
-          case '4day':
-            relativeDays(moved, mover, 4);
-            break;
-          case 'category':
-            relativeDays(moved, mover, parsedCategoryDays.value);
-            break;
-        }
-      }
-      updateWeekday(moved);
-      updateFormatted(moved);
-      updateRelative(moved, base.times.now);
-      if (props.modelValue instanceof Date) {
-        emit('update:modelValue', timestampToDate(moved));
-      } else if (typeof props.modelValue === 'number') {
-        emit('update:modelValue', timestampToDate(moved).getTime());
-      } else {
-        emit('update:modelValue', moved.date);
-      }
-      emit('moved', moved);
-    }
-    function next() {
-      let amount = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1;
-      move(amount);
-    }
-    function prev() {
-      let amount = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1;
-      move(-amount);
-    }
-    function getCategoryList(categories) {
-      if (!base.noEvents.value) {
-        const categoryMap = categories.reduce((map, category, index) => {
-          if (typeof category === 'object' && category.categoryName) map[category.categoryName] = {
-            index,
-            count: 0
-          };else if (typeof category === 'string') map[category] = {
-            index,
-            count: 0
-          };
-          return map;
-        }, {});
-        if (!props.categoryHideDynamic || !props.categoryShowAll) {
-          let categoryLength = categories.length;
-          base.parsedEvents.value.forEach(ev => {
-            let category = ev.category;
-            if (typeof category !== 'string') {
-              category = props.categoryForInvalid;
-            }
-            if (!category) {
-              return;
-            }
-            if (category in categoryMap) {
-              categoryMap[category].count++;
-            } else if (!props.categoryHideDynamic) {
-              categoryMap[category] = {
-                index: categoryLength++,
-                count: 1
-              };
-            }
-          });
-        }
-        if (!props.categoryShowAll) {
-          for (const category in categoryMap) {
-            if (categoryMap[category].count === 0) {
-              delete categoryMap[category];
-            }
-          }
-        }
-        categories = categories.filter(category => {
-          if (typeof category === 'object' && category.categoryName) {
-            return categoryMap.hasOwnProperty(category.categoryName);
-          } else if (typeof category === 'string') {
-            return categoryMap.hasOwnProperty(category);
-          }
-          return false;
-        });
-      }
-      return categories;
-    }
-    watch(renderProps, checkChange);
-    onMounted(() => {
-      base.updateEventVisibility();
-      checkChange();
-    });
-    onUpdated(() => {
-      window.requestAnimationFrame(base.updateEventVisibility);
-    });
-    useRender(() => {
-      const {
-        start,
-        end,
-        maxDays,
-        component: Component,
-        categories
-      } = renderProps.value;
-      return withDirectives(createVNode(Component, mergeProps({
-        "ref": root,
-        "class": ['v-calendar', {
-          'v-calendar-events': !base.noEvents.value
-        }],
-        "role": "grid"
-      }, Component.filterProps(props), {
-        "start": start.date,
-        "end": end.date,
-        "maxDays": maxDays,
-        "weekdays": base.effectiveWeekdays.value,
-        "categories": categories,
-        "onClick:date": (e, day) => {
-          if (attrs['onUpdate:modelValue']) emit('update:modelValue', day.date);
-        }
-      }), base.getScopedSlots()), [[Resize, base.updateEventVisibility, void 0, {
-        quiet: true
-      }]]);
-    });
-    return forwardRefs({
-      ...base,
-      lastStart,
-      lastEnd,
-      parsedCategoryDays,
-      renderProps,
-      eventWeekdays,
-      categoryMode,
-      title,
-      monthLongFormatter,
-      monthShortFormatter,
-      parsedCategories,
-      checkChange,
-      move,
-      next,
-      prev,
-      getCategoryList
-    }, root);
   }
 });
 
@@ -19824,12 +15411,6 @@ const VCard = genericComponent()({
       roundedClasses
     } = useRounded(props);
     const link = useLink(props, attrs);
-    const loadingColor = shallowRef(undefined);
-    watch(() => props.loading, (val, old) => {
-      loadingColor.value = !val && typeof old === 'string' ? old : typeof val === 'boolean' ? undefined : val;
-    }, {
-      immediate: true
-    });
     useRender(() => {
       const isLink = props.link !== false && link.isLink.value;
       const isClickable = !props.disabled && props.link !== false && (props.link || link.isClickable.value);
@@ -19872,7 +15453,7 @@ const VCard = genericComponent()({
         }, slots.image)]), createVNode(LoaderSlot, {
           "name": "v-card",
           "active": !!props.loading,
-          "color": loadingColor.value
+          "color": typeof props.loading === 'boolean' ? undefined : props.loading
         }, {
           default: slots.loader
         }), hasCardItem && createVNode(VCardItem, {
@@ -19979,7 +15560,7 @@ function createHandlers() {
     touchmove: e => touchmove(e, wrapper)
   };
 }
-function mounted$2(el, binding) {
+function mounted$3(el, binding) {
   const value = binding.value;
   const target = value?.parent ? el.parentElement : el;
   const options = value?.options ?? {
@@ -19995,7 +15576,7 @@ function mounted$2(el, binding) {
     target.addEventListener(eventName, handlers[eventName], options);
   });
 }
-function unmounted$2(el, binding) {
+function unmounted$3(el, binding) {
   const target = binding.value?.parent ? el.parentElement : el;
   const uid = binding.instance?.$.uid;
   if (!target?._touchHandlers || uid === undefined) return;
@@ -20006,8 +15587,8 @@ function unmounted$2(el, binding) {
   delete target._touchHandlers[uid];
 }
 const Touch = {
-  mounted: mounted$2,
-  unmounted: unmounted$2
+  mounted: mounted$3,
+  unmounted: unmounted$3
 };
 
 // Types
@@ -20095,54 +15676,19 @@ const VWindow = genericComponent()({
     const activeIndex = computed(() => {
       return group.items.value.findIndex(item => group.selected.value.includes(item.id));
     });
-
-    // Fix for https://github.com/vuetifyjs/vuetify/issues/18447
     watch(activeIndex, (newVal, oldVal) => {
-      let scrollableParent;
-      const savedScrollPosition = {
-        left: 0,
-        top: 0
-      };
-      if (IN_BROWSER && oldVal >= 0) {
-        scrollableParent = getScrollParent(rootRef.value);
-        savedScrollPosition.left = scrollableParent?.scrollLeft;
-        savedScrollPosition.top = scrollableParent?.scrollTop;
-      }
       const itemsLength = group.items.value.length;
       const lastIndex = itemsLength - 1;
       if (itemsLength <= 2) {
         isReversed.value = newVal < oldVal;
       } else if (newVal === lastIndex && oldVal === 0) {
-        isReversed.value = false;
-      } else if (newVal === 0 && oldVal === lastIndex) {
         isReversed.value = true;
+      } else if (newVal === 0 && oldVal === lastIndex) {
+        isReversed.value = false;
       } else {
         isReversed.value = newVal < oldVal;
       }
-      nextTick(() => {
-        if (!IN_BROWSER || !scrollableParent) return;
-        const currentScrollY = scrollableParent.scrollTop;
-        if (currentScrollY !== savedScrollPosition.top) {
-          scrollableParent.scrollTo({
-            ...savedScrollPosition,
-            behavior: 'instant'
-          });
-        }
-        requestAnimationFrame(() => {
-          if (!scrollableParent) return;
-          const rafScrollY = scrollableParent.scrollTop;
-          if (rafScrollY !== savedScrollPosition.top) {
-            scrollableParent.scrollTo({
-              ...savedScrollPosition,
-              behavior: 'instant'
-            });
-          }
-        });
-      });
-    }, {
-      flush: 'sync'
-    }); // Run synchronously before DOM updates
-
+    });
     provide(VWindowSymbol, {
       transition,
       isReversed,
@@ -20208,9 +15754,9 @@ const VWindow = genericComponent()({
         'v-window--vertical-arrows': !!props.verticalArrows,
         'v-window--crossfade': !!props.crossfade
       }, themeClasses.value, props.class]),
-      "style": normalizeStyle([props.style, {
-        '--v-window-transition-duration': !PREFERS_REDUCED_MOTION() ? convertToUnit(props.transitionDuration, 'ms') : null
-      }])
+      "style": normalizeStyle([props.style, props.transitionDuration && !PREFERS_REDUCED_MOTION ? {
+        '--v-window-transition-duration': convertToUnit(props.transitionDuration, 'ms')
+      } : undefined])
     }, {
       default: () => [createElementVNode("div", {
         "class": "v-window__container",
@@ -21195,11 +16741,6 @@ const useSlider = _ref => {
       passive: false
     });
   }
-  onScopeDispose(() => {
-    window.removeEventListener('touchmove', onMouseMove);
-    window.removeEventListener('mousemove', onMouseMove);
-    window.removeEventListener('mouseup', onSliderMouseUp);
-  });
   const position = val => {
     const percentage = (val - min.value) / (max.value - min.value) * 100;
     return clamp(isNaN(percentage) ? 0 : percentage, 0, 100);
@@ -21368,7 +16909,7 @@ const VSliderThumb = genericComponent()({
       if (step.value) return [1, 2, 3];else return [1, 5, 10];
     });
     function parseKeydown(e, value) {
-      if (props.noKeyboard || disabled.value) return;
+      if (props.noKeyboard) return;
       if (!relevantKeys.includes(e.key)) return;
       e.preventDefault();
       const _step = step.value || 0.1;
@@ -21574,7 +17115,6 @@ const makeVSliderProps = propsFactory({
 }, 'VSlider');
 const VSlider = genericComponent()({
   name: 'VSlider',
-  inheritAttrs: false,
   props: makeVSliderProps(),
   emits: {
     'update:focused': value => true,
@@ -21585,8 +17125,7 @@ const VSlider = genericComponent()({
   setup(props, _ref) {
     let {
       slots,
-      emit,
-      attrs
+      emit
     } = _ref;
     const thumbContainerRef = ref();
     const inputRef = ref();
@@ -21614,27 +17153,21 @@ const VSlider = genericComponent()({
       props,
       steps,
       onSliderStart: () => {
-        if (!disabled.value && !readonly.value) {
-          emit('start', model.value);
-        }
+        emit('start', model.value);
       },
       onSliderEnd: _ref2 => {
         let {
           value
         } = _ref2;
         const roundedValue = roundValue(value);
-        if (!disabled.value && !readonly.value) {
-          model.value = roundedValue;
-        }
+        model.value = roundedValue;
         emit('end', roundedValue);
       },
       onSliderMove: _ref3 => {
         let {
           value
         } = _ref3;
-        if (!disabled.value && !readonly.value) {
-          model.value = roundValue(value);
-        }
+        return model.value = roundValue(value);
       },
       getActiveThumb: () => thumbContainerRef.value?.$el
     });
@@ -21646,7 +17179,6 @@ const VSlider = genericComponent()({
     const trackStop = computed(() => position(model.value));
     useRender(() => {
       const inputProps = VInput.filterProps(props);
-      const [rootAttrs, inputAttrs] = filterInputAttrs(attrs);
       const hasPrepend = !!(props.label || slots.label || slots.prepend);
       return createVNode(VInput, mergeProps({
         "ref": inputRef,
@@ -21654,10 +17186,10 @@ const VSlider = genericComponent()({
           'v-slider--has-labels': !!slots['tick-label'] || hasLabels.value,
           'v-slider--focused': isFocused.value,
           'v-slider--pressed': mousePressed.value,
-          'v-slider--disabled': disabled.value
+          'v-slider--disabled': props.disabled
         }, rtlClasses.value, props.class],
         "style": props.style
-      }, inputProps, rootAttrs, {
+      }, inputProps, {
         "focused": isFocused.value
       }), {
         ...slots,
@@ -21678,8 +17210,8 @@ const VSlider = genericComponent()({
           }, [createElementVNode("input", {
             "id": id.value,
             "name": props.name || id.value,
-            "disabled": disabled.value,
-            "readonly": readonly.value,
+            "disabled": !!disabled.value,
+            "readonly": !!readonly.value,
             "tabindex": "-1",
             "value": model.value
           }, null), createVNode(VSliderTrack, {
@@ -21688,7 +17220,7 @@ const VSlider = genericComponent()({
             "stop": trackStop.value
           }, {
             'tick-label': slots['tick-label']
-          }), createVNode(VSliderThumb, mergeProps({
+          }), createVNode(VSliderThumb, {
             "ref": thumbContainerRef,
             "aria-describedby": messagesId.value,
             "focused": isFocused.value,
@@ -21703,7 +17235,7 @@ const VSlider = genericComponent()({
             "onBlur": blur,
             "ripple": props.ripple,
             "name": props.name
-          }, inputAttrs), {
+          }, {
             'thumb-label': slots['thumb-label']
           })]);
         }
@@ -21784,13 +17316,13 @@ const VColorPickerPreview = defineComponent({
       "class": "v-color-picker-preview__sliders"
     }, [createVNode(VSlider, {
       "class": "v-color-picker-preview__track v-color-picker-preview__hue",
-      "aria-label": t('$vuetify.colorPicker.ariaLabel.hueSlider'),
+      "name": t('$vuetify.colorPicker.ariaLabel.hueSlider'),
       "modelValue": props.color?.h,
       "onUpdate:modelValue": h => emit('update:color', {
         ...(props.color ?? nullColor),
         h
       }),
-      "step": 1,
+      "step": 0,
       "min": 0,
       "max": 360,
       "disabled": props.disabled,
@@ -21800,13 +17332,13 @@ const VColorPickerPreview = defineComponent({
       "hideDetails": true
     }, null), !props.hideAlpha && createVNode(VSlider, {
       "class": "v-color-picker-preview__track v-color-picker-preview__alpha",
-      "aria-label": t('$vuetify.colorPicker.ariaLabel.alphaSlider'),
+      "name": t('$vuetify.colorPicker.ariaLabel.alphaSlider'),
       "modelValue": props.color?.a ?? 1,
       "onUpdate:modelValue": a => emit('update:color', {
         ...(props.color ?? nullColor),
         a
       }),
-      "step": 0.01,
+      "step": 1 / 256,
       "min": 0,
       "max": 1,
       "disabled": props.disabled,
@@ -22167,12 +17699,6 @@ const VColorPickerSwatches = defineComponent({
     let {
       emit
     } = _ref;
-    function onSwatchClick(hsva) {
-      if (props.disabled || !hsva) {
-        return;
-      }
-      emit('update:color', hsva);
-    }
     useRender(() => createElementVNode("div", {
       "class": normalizeClass(['v-color-picker-swatches', props.class]),
       "style": normalizeStyle([{
@@ -22185,10 +17711,8 @@ const VColorPickerSwatches = defineComponent({
       const hsva = RGBtoHSV(rgba);
       const background = RGBtoCSS(rgba);
       return createElementVNode("div", {
-        "class": normalizeClass(['v-color-picker-swatches__color', {
-          'v-color-picker-swatches__color--disabled': props.disabled
-        }]),
-        "onClick": () => onSwatchClick(hsva)
+        "class": "v-color-picker-swatches__color",
+        "onClick": () => hsva && emit('update:color', hsva)
       }, [createElementVNode("div", {
         "style": {
           background
@@ -22294,7 +17818,7 @@ const VPicker = genericComponent()({
       }), {
         default: () => [!props.hideHeader && createElementVNode("div", {
           "key": "header",
-          "class": normalizeClass(['v-picker__header-wrapper', backgroundColorClasses.value]),
+          "class": normalizeClass([backgroundColorClasses.value]),
           "style": normalizeStyle([backgroundColorStyles.value])
         }, [hasTitle && createVNode(VPickerTitle, {
           "key": "picker-title"
@@ -22321,6 +17845,1259 @@ const VPicker = genericComponent()({
     return {};
   }
 });
+
+// Utilities
+
+// Types
+
+function weekInfo(locale) {
+  // https://simplelocalize.io/data/locales/
+  // then `new Intl.Locale(...).getWeekInfo()`
+  const code = locale.slice(-2).toUpperCase();
+  switch (true) {
+    case locale === 'GB-alt-variant':
+      {
+        return {
+          firstDay: 0,
+          firstWeekSize: 4
+        };
+      }
+    case locale === '001':
+      {
+        return {
+          firstDay: 1,
+          firstWeekSize: 1
+        };
+      }
+    case `AG AS BD BR BS BT BW BZ CA CO DM DO ET GT GU HK HN ID IL IN JM JP KE
+    KH KR LA MH MM MO MT MX MZ NI NP PA PE PH PK PR PY SA SG SV TH TT TW UM US
+    VE VI WS YE ZA ZW`.includes(code):
+      {
+        return {
+          firstDay: 0,
+          firstWeekSize: 1
+        };
+      }
+    case `AI AL AM AR AU AZ BA BM BN BY CL CM CN CR CY EC GE HR KG KZ LB LK LV
+    MD ME MK MN MY NZ RO RS SI TJ TM TR UA UY UZ VN XK`.includes(code):
+      {
+        return {
+          firstDay: 1,
+          firstWeekSize: 1
+        };
+      }
+    case `AD AN AT AX BE BG CH CZ DE DK EE ES FI FJ FO FR GB GF GP GR HU IE IS
+    IT LI LT LU MC MQ NL NO PL RE RU SE SK SM VA`.includes(code):
+      {
+        return {
+          firstDay: 1,
+          firstWeekSize: 4
+        };
+      }
+    case `AE AF BH DJ DZ EG IQ IR JO KW LY OM QA SD SY`.includes(code):
+      {
+        return {
+          firstDay: 6,
+          firstWeekSize: 1
+        };
+      }
+    case code === 'MV':
+      {
+        return {
+          firstDay: 5,
+          firstWeekSize: 1
+        };
+      }
+    case code === 'PT':
+      {
+        return {
+          firstDay: 0,
+          firstWeekSize: 4
+        };
+      }
+    default:
+      return null;
+  }
+}
+function getWeekArray(date, locale, firstDayOfWeek) {
+  const weeks = [];
+  let currentWeek = [];
+  const firstDayOfMonth = startOfMonth(date);
+  const lastDayOfMonth = endOfMonth(date);
+  const first = firstDayOfWeek ?? weekInfo(locale)?.firstDay ?? 0;
+  const firstDayWeekIndex = (firstDayOfMonth.getDay() - first + 7) % 7;
+  const lastDayWeekIndex = (lastDayOfMonth.getDay() - first + 7) % 7;
+  for (let i = 0; i < firstDayWeekIndex; i++) {
+    const adjacentDay = new Date(firstDayOfMonth);
+    adjacentDay.setDate(adjacentDay.getDate() - (firstDayWeekIndex - i));
+    currentWeek.push(adjacentDay);
+  }
+  for (let i = 1; i <= lastDayOfMonth.getDate(); i++) {
+    const day = new Date(date.getFullYear(), date.getMonth(), i);
+
+    // Add the day to the current week
+    currentWeek.push(day);
+
+    // If the current week has 7 days, add it to the weeks array and start a new week
+    if (currentWeek.length === 7) {
+      weeks.push(currentWeek);
+      currentWeek = [];
+    }
+  }
+  for (let i = 1; i < 7 - lastDayWeekIndex; i++) {
+    const adjacentDay = new Date(lastDayOfMonth);
+    adjacentDay.setDate(adjacentDay.getDate() + i);
+    currentWeek.push(adjacentDay);
+  }
+  if (currentWeek.length > 0) {
+    weeks.push(currentWeek);
+  }
+  return weeks;
+}
+function startOfWeek(date, locale, firstDayOfWeek) {
+  let day = (firstDayOfWeek ?? weekInfo(locale)?.firstDay ?? 0) % 7;
+
+  // prevent infinite loop
+  if (![0, 1, 2, 3, 4, 5, 6].includes(day)) {
+    consoleWarn('Invalid firstDayOfWeek, expected discrete number in range [0-6]');
+    day = 0;
+  }
+  const d = new Date(date);
+  while (d.getDay() !== day) {
+    d.setDate(d.getDate() - 1);
+  }
+  return d;
+}
+function endOfWeek(date, locale) {
+  const d = new Date(date);
+  const lastDay = ((weekInfo(locale)?.firstDay ?? 0) + 6) % 7;
+  while (d.getDay() !== lastDay) {
+    d.setDate(d.getDate() + 1);
+  }
+  return d;
+}
+function startOfMonth(date) {
+  return new Date(date.getFullYear(), date.getMonth(), 1);
+}
+function endOfMonth(date) {
+  return new Date(date.getFullYear(), date.getMonth() + 1, 0);
+}
+function parseLocalDate(value) {
+  const parts = value.split('-').map(Number);
+
+  // new Date() uses local time zone when passing individual date component values
+  return new Date(parts[0], parts[1] - 1, parts[2]);
+}
+const _YYYMMDD = /^([12]\d{3}-([1-9]|0[1-9]|1[0-2])-([1-9]|0[1-9]|[12]\d|3[01]))$/;
+function date(value) {
+  if (value == null) return new Date();
+  if (value instanceof Date) return value;
+  if (typeof value === 'string') {
+    let parsed;
+    if (_YYYMMDD.test(value)) {
+      return parseLocalDate(value);
+    } else {
+      parsed = Date.parse(value);
+    }
+    if (!isNaN(parsed)) return new Date(parsed);
+  }
+  return null;
+}
+const sundayJanuarySecond2000 = new Date(2000, 0, 2);
+function getWeekdays(locale, firstDayOfWeek, weekdayFormat) {
+  const daysFromSunday = firstDayOfWeek ?? weekInfo(locale)?.firstDay ?? 0;
+  return createRange(7).map(i => {
+    const weekday = new Date(sundayJanuarySecond2000);
+    weekday.setDate(sundayJanuarySecond2000.getDate() + daysFromSunday + i);
+    return new Intl.DateTimeFormat(locale, {
+      weekday: weekdayFormat ?? 'narrow'
+    }).format(weekday);
+  });
+}
+function format(value, formatString, locale, formats) {
+  const newDate = date(value) ?? new Date();
+  const customFormat = formats?.[formatString];
+  if (typeof customFormat === 'function') {
+    return customFormat(newDate, formatString, locale);
+  }
+  let options = {};
+  switch (formatString) {
+    case 'fullDate':
+      options = {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric'
+      };
+      break;
+    case 'fullDateWithWeekday':
+      options = {
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+      };
+      break;
+    case 'normalDate':
+      const day = newDate.getDate();
+      const month = new Intl.DateTimeFormat(locale, {
+        month: 'long'
+      }).format(newDate);
+      return `${day} ${month}`;
+    case 'normalDateWithWeekday':
+      options = {
+        weekday: 'short',
+        day: 'numeric',
+        month: 'short'
+      };
+      break;
+    case 'shortDate':
+      options = {
+        month: 'short',
+        day: 'numeric'
+      };
+      break;
+    case 'year':
+      options = {
+        year: 'numeric'
+      };
+      break;
+    case 'month':
+      options = {
+        month: 'long'
+      };
+      break;
+    case 'monthShort':
+      options = {
+        month: 'short'
+      };
+      break;
+    case 'monthAndYear':
+      options = {
+        month: 'long',
+        year: 'numeric'
+      };
+      break;
+    case 'monthAndDate':
+      options = {
+        month: 'long',
+        day: 'numeric'
+      };
+      break;
+    case 'weekday':
+      options = {
+        weekday: 'long'
+      };
+      break;
+    case 'weekdayShort':
+      options = {
+        weekday: 'short'
+      };
+      break;
+    case 'dayOfMonth':
+      return new Intl.NumberFormat(locale).format(newDate.getDate());
+    case 'hours12h':
+      options = {
+        hour: 'numeric',
+        hour12: true
+      };
+      break;
+    case 'hours24h':
+      options = {
+        hour: 'numeric',
+        hour12: false
+      };
+      break;
+    case 'minutes':
+      options = {
+        minute: 'numeric'
+      };
+      break;
+    case 'seconds':
+      options = {
+        second: 'numeric'
+      };
+      break;
+    case 'fullTime':
+      options = {
+        hour: 'numeric',
+        minute: 'numeric'
+      };
+      break;
+    case 'fullTime12h':
+      options = {
+        hour: 'numeric',
+        minute: 'numeric',
+        hour12: true
+      };
+      break;
+    case 'fullTime24h':
+      options = {
+        hour: 'numeric',
+        minute: 'numeric',
+        hour12: false
+      };
+      break;
+    case 'fullDateTime':
+      options = {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+        hour: 'numeric',
+        minute: 'numeric'
+      };
+      break;
+    case 'fullDateTime12h':
+      options = {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+        hour: 'numeric',
+        minute: 'numeric',
+        hour12: true
+      };
+      break;
+    case 'fullDateTime24h':
+      options = {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+        hour: 'numeric',
+        minute: 'numeric',
+        hour12: false
+      };
+      break;
+    case 'keyboardDate':
+      options = {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit'
+      };
+      break;
+    case 'keyboardDateTime':
+      options = {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: 'numeric',
+        minute: 'numeric'
+      };
+      return new Intl.DateTimeFormat(locale, options).format(newDate).replace(/, /g, ' ');
+    case 'keyboardDateTime12h':
+      options = {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: 'numeric',
+        minute: 'numeric',
+        hour12: true
+      };
+      return new Intl.DateTimeFormat(locale, options).format(newDate).replace(/, /g, ' ');
+    case 'keyboardDateTime24h':
+      options = {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: 'numeric',
+        minute: 'numeric',
+        hour12: false
+      };
+      return new Intl.DateTimeFormat(locale, options).format(newDate).replace(/, /g, ' ');
+    default:
+      options = customFormat ?? {
+        timeZone: 'UTC',
+        timeZoneName: 'short'
+      };
+  }
+  return new Intl.DateTimeFormat(locale, options).format(newDate);
+}
+function toISO(adapter, value) {
+  const date = adapter.toJsDate(value);
+  const year = date.getFullYear();
+  const month = padStart(String(date.getMonth() + 1), 2, '0');
+  const day = padStart(String(date.getDate()), 2, '0');
+  return `${year}-${month}-${day}`;
+}
+function parseISO(value) {
+  const [year, month, day] = value.split('-').map(Number);
+  return new Date(year, month - 1, day);
+}
+function addMinutes(date, amount) {
+  const d = new Date(date);
+  d.setMinutes(d.getMinutes() + amount);
+  return d;
+}
+function addHours(date, amount) {
+  const d = new Date(date);
+  d.setHours(d.getHours() + amount);
+  return d;
+}
+function addDays(date, amount) {
+  const d = new Date(date);
+  d.setDate(d.getDate() + amount);
+  return d;
+}
+function addWeeks(date, amount) {
+  const d = new Date(date);
+  d.setDate(d.getDate() + amount * 7);
+  return d;
+}
+function addMonths(date, amount) {
+  const d = new Date(date);
+  d.setDate(1);
+  d.setMonth(d.getMonth() + amount);
+  return d;
+}
+function getYear(date) {
+  return date.getFullYear();
+}
+function getMonth(date) {
+  return date.getMonth();
+}
+function getWeek(date, locale, firstDayOfWeek, firstDayOfYear) {
+  const weekInfoFromLocale = weekInfo(locale);
+  const weekStart = firstDayOfWeek ?? weekInfoFromLocale?.firstDay ?? 0;
+  const minWeekSize = weekInfoFromLocale?.firstWeekSize ?? 1;
+  return firstDayOfYear !== undefined ? calculateWeekWithFirstDayOfYear(date, locale, weekStart, firstDayOfYear) : calculateWeekWithMinWeekSize(date, locale, weekStart, minWeekSize);
+}
+function calculateWeekWithFirstDayOfYear(date, locale, weekStart, firstDayOfYear) {
+  const firstDayOfYearOffset = (7 + firstDayOfYear - weekStart) % 7;
+  const currentWeekStart = startOfWeek(date, locale, weekStart);
+  const currentWeekEnd = addDays(currentWeekStart, 6);
+  function yearStartWeekdayOffset(year) {
+    return (7 + new Date(year, 0, 1).getDay() - weekStart) % 7;
+  }
+  let year = getYear(date);
+  if (year < getYear(currentWeekEnd) && yearStartWeekdayOffset(year + 1) <= firstDayOfYearOffset) {
+    year++;
+  }
+  const yearStart = new Date(year, 0, 1);
+  const offset = yearStartWeekdayOffset(year);
+  const d1w1 = offset <= firstDayOfYearOffset ? addDays(yearStart, -offset) : addDays(yearStart, 7 - offset);
+  return 1 + getDiff(endOfDay(date), startOfDay(d1w1), 'weeks');
+}
+function calculateWeekWithMinWeekSize(date, locale, weekStart, minWeekSize) {
+  const currentWeekEnd = addDays(startOfWeek(date, locale, weekStart), 6);
+  function firstWeekSize(year) {
+    const yearStart = new Date(year, 0, 1);
+    return 7 - getDiff(yearStart, startOfWeek(yearStart, locale, weekStart), 'days');
+  }
+  let year = getYear(date);
+  if (year < getYear(currentWeekEnd) && firstWeekSize(year + 1) >= minWeekSize) {
+    year++;
+  }
+  const yearStart = new Date(year, 0, 1);
+  const size = firstWeekSize(year);
+  const d1w1 = size >= minWeekSize ? addDays(yearStart, size - 7) : addDays(yearStart, size);
+  return 1 + getDiff(endOfDay(date), startOfDay(d1w1), 'weeks');
+}
+function getDate$1(date) {
+  return date.getDate();
+}
+function getNextMonth(date) {
+  return new Date(date.getFullYear(), date.getMonth() + 1, 1);
+}
+function getPreviousMonth(date) {
+  return new Date(date.getFullYear(), date.getMonth() - 1, 1);
+}
+function getHours(date) {
+  return date.getHours();
+}
+function getMinutes(date) {
+  return date.getMinutes();
+}
+function startOfYear(date) {
+  return new Date(date.getFullYear(), 0, 1);
+}
+function endOfYear(date) {
+  return new Date(date.getFullYear(), 11, 31);
+}
+function isWithinRange(date, range) {
+  return isAfter(date, range[0]) && isBefore(date, range[1]);
+}
+function isValid(date) {
+  const d = new Date(date);
+  return d instanceof Date && !isNaN(d.getTime());
+}
+function isAfter(date, comparing) {
+  return date.getTime() > comparing.getTime();
+}
+function isAfterDay(date, comparing) {
+  return isAfter(startOfDay(date), startOfDay(comparing));
+}
+function isBefore(date, comparing) {
+  return date.getTime() < comparing.getTime();
+}
+function isEqual(date, comparing) {
+  return date.getTime() === comparing.getTime();
+}
+function isSameDay(date, comparing) {
+  return date.getDate() === comparing.getDate() && date.getMonth() === comparing.getMonth() && date.getFullYear() === comparing.getFullYear();
+}
+function isSameMonth(date, comparing) {
+  return date.getMonth() === comparing.getMonth() && date.getFullYear() === comparing.getFullYear();
+}
+function isSameYear(date, comparing) {
+  return date.getFullYear() === comparing.getFullYear();
+}
+function getDiff(date, comparing, unit) {
+  const d = new Date(date);
+  const c = new Date(comparing);
+  switch (unit) {
+    case 'years':
+      return d.getFullYear() - c.getFullYear();
+    case 'quarters':
+      return Math.floor((d.getMonth() - c.getMonth() + (d.getFullYear() - c.getFullYear()) * 12) / 4);
+    case 'months':
+      return d.getMonth() - c.getMonth() + (d.getFullYear() - c.getFullYear()) * 12;
+    case 'weeks':
+      return Math.floor((d.getTime() - c.getTime()) / (1000 * 60 * 60 * 24 * 7));
+    case 'days':
+      return Math.floor((d.getTime() - c.getTime()) / (1000 * 60 * 60 * 24));
+    case 'hours':
+      return Math.floor((d.getTime() - c.getTime()) / (1000 * 60 * 60));
+    case 'minutes':
+      return Math.floor((d.getTime() - c.getTime()) / (1000 * 60));
+    case 'seconds':
+      return Math.floor((d.getTime() - c.getTime()) / 1000);
+    default:
+      {
+        return d.getTime() - c.getTime();
+      }
+  }
+}
+function setHours(date, count) {
+  const d = new Date(date);
+  d.setHours(count);
+  return d;
+}
+function setMinutes(date, count) {
+  const d = new Date(date);
+  d.setMinutes(count);
+  return d;
+}
+function setMonth(date, count) {
+  const d = new Date(date);
+  d.setMonth(count);
+  return d;
+}
+function setDate(date, day) {
+  const d = new Date(date);
+  d.setDate(day);
+  return d;
+}
+function setYear(date, year) {
+  const d = new Date(date);
+  d.setFullYear(year);
+  return d;
+}
+function startOfDay(date) {
+  return new Date(date.getFullYear(), date.getMonth(), date.getDate(), 0, 0, 0, 0);
+}
+function endOfDay(date) {
+  return new Date(date.getFullYear(), date.getMonth(), date.getDate(), 23, 59, 59, 999);
+}
+class VuetifyDateAdapter {
+  constructor(options) {
+    this.locale = options.locale;
+    this.formats = options.formats;
+  }
+  date(value) {
+    return date(value);
+  }
+  toJsDate(date) {
+    return date;
+  }
+  toISO(date) {
+    return toISO(this, date);
+  }
+  parseISO(date) {
+    return parseISO(date);
+  }
+  addMinutes(date, amount) {
+    return addMinutes(date, amount);
+  }
+  addHours(date, amount) {
+    return addHours(date, amount);
+  }
+  addDays(date, amount) {
+    return addDays(date, amount);
+  }
+  addWeeks(date, amount) {
+    return addWeeks(date, amount);
+  }
+  addMonths(date, amount) {
+    return addMonths(date, amount);
+  }
+  getWeekArray(date, firstDayOfWeek) {
+    const firstDay = firstDayOfWeek !== undefined ? Number(firstDayOfWeek) : undefined;
+    return getWeekArray(date, this.locale, firstDay);
+  }
+  startOfWeek(date, firstDayOfWeek) {
+    const firstDay = firstDayOfWeek !== undefined ? Number(firstDayOfWeek) : undefined;
+    return startOfWeek(date, this.locale, firstDay);
+  }
+  endOfWeek(date) {
+    return endOfWeek(date, this.locale);
+  }
+  startOfMonth(date) {
+    return startOfMonth(date);
+  }
+  endOfMonth(date) {
+    return endOfMonth(date);
+  }
+  format(date, formatString) {
+    return format(date, formatString, this.locale, this.formats);
+  }
+  isEqual(date, comparing) {
+    return isEqual(date, comparing);
+  }
+  isValid(date) {
+    return isValid(date);
+  }
+  isWithinRange(date, range) {
+    return isWithinRange(date, range);
+  }
+  isAfter(date, comparing) {
+    return isAfter(date, comparing);
+  }
+  isAfterDay(date, comparing) {
+    return isAfterDay(date, comparing);
+  }
+  isBefore(date, comparing) {
+    return !isAfter(date, comparing) && !isEqual(date, comparing);
+  }
+  isSameDay(date, comparing) {
+    return isSameDay(date, comparing);
+  }
+  isSameMonth(date, comparing) {
+    return isSameMonth(date, comparing);
+  }
+  isSameYear(date, comparing) {
+    return isSameYear(date, comparing);
+  }
+  setMinutes(date, count) {
+    return setMinutes(date, count);
+  }
+  setHours(date, count) {
+    return setHours(date, count);
+  }
+  setMonth(date, count) {
+    return setMonth(date, count);
+  }
+  setDate(date, day) {
+    return setDate(date, day);
+  }
+  setYear(date, year) {
+    return setYear(date, year);
+  }
+  getDiff(date, comparing, unit) {
+    return getDiff(date, comparing, unit);
+  }
+  getWeekdays(firstDayOfWeek, weekdayFormat) {
+    const firstDay = firstDayOfWeek !== undefined ? Number(firstDayOfWeek) : undefined;
+    return getWeekdays(this.locale, firstDay, weekdayFormat);
+  }
+  getYear(date) {
+    return getYear(date);
+  }
+  getMonth(date) {
+    return getMonth(date);
+  }
+  getWeek(date, firstDayOfWeek, firstDayOfYear) {
+    const firstDay = firstDayOfWeek !== undefined ? Number(firstDayOfWeek) : undefined;
+    const firstWeekStart = firstDayOfYear !== undefined ? Number(firstDayOfYear) : undefined;
+    return getWeek(date, this.locale, firstDay, firstWeekStart);
+  }
+  getDate(date) {
+    return getDate$1(date);
+  }
+  getNextMonth(date) {
+    return getNextMonth(date);
+  }
+  getPreviousMonth(date) {
+    return getPreviousMonth(date);
+  }
+  getHours(date) {
+    return getHours(date);
+  }
+  getMinutes(date) {
+    return getMinutes(date);
+  }
+  startOfDay(date) {
+    return startOfDay(date);
+  }
+  endOfDay(date) {
+    return endOfDay(date);
+  }
+  startOfYear(date) {
+    return startOfYear(date);
+  }
+  endOfYear(date) {
+    return endOfYear(date);
+  }
+}
+
+// Composables
+const DateOptionsSymbol = Symbol.for('vuetify:date-options');
+const DateAdapterSymbol = Symbol.for('vuetify:date-adapter');
+function createDate(options, locale) {
+  const _options = mergeDeep({
+    adapter: VuetifyDateAdapter,
+    locale: {
+      af: 'af-ZA',
+      // ar: '', # not the same value for all variants
+      bg: 'bg-BG',
+      ca: 'ca-ES',
+      ckb: '',
+      cs: 'cs-CZ',
+      de: 'de-DE',
+      el: 'el-GR',
+      en: 'en-US',
+      // es: '', # not the same value for all variants
+      et: 'et-EE',
+      fa: 'fa-IR',
+      fi: 'fi-FI',
+      // fr: '', #not the same value for all variants
+      hr: 'hr-HR',
+      hu: 'hu-HU',
+      he: 'he-IL',
+      id: 'id-ID',
+      it: 'it-IT',
+      ja: 'ja-JP',
+      ko: 'ko-KR',
+      lv: 'lv-LV',
+      lt: 'lt-LT',
+      nl: 'nl-NL',
+      no: 'no-NO',
+      pl: 'pl-PL',
+      pt: 'pt-PT',
+      ro: 'ro-RO',
+      ru: 'ru-RU',
+      sk: 'sk-SK',
+      sl: 'sl-SI',
+      srCyrl: 'sr-SP',
+      srLatn: 'sr-SP',
+      sv: 'sv-SE',
+      th: 'th-TH',
+      tr: 'tr-TR',
+      az: 'az-AZ',
+      uk: 'uk-UA',
+      vi: 'vi-VN',
+      zhHans: 'zh-CN',
+      zhHant: 'zh-TW'
+    }
+  }, options);
+  return {
+    options: _options,
+    instance: createInstance(_options, locale)
+  };
+}
+function createDateRange(adapter, start, stop) {
+  const diff = adapter.getDiff(adapter.endOfDay(stop ?? start), adapter.startOfDay(start), 'days');
+  const datesInRange = [start];
+  for (let i = 1; i < diff; i++) {
+    const nextDate = adapter.addDays(start, i);
+    datesInRange.push(nextDate);
+  }
+  if (stop) {
+    datesInRange.push(adapter.endOfDay(stop));
+  }
+  return datesInRange;
+}
+function createInstance(options, locale) {
+  const instance = reactive(typeof options.adapter === 'function'
+  // eslint-disable-next-line new-cap
+  ? new options.adapter({
+    locale: options.locale[locale.current.value] ?? locale.current.value,
+    formats: options.formats
+  }) : options.adapter);
+  watch(locale.current, value => {
+    instance.locale = options.locale[value] ?? value ?? instance.locale;
+  });
+  return instance;
+}
+function useDate() {
+  const options = inject$1(DateOptionsSymbol);
+  if (!options) throw new Error('[Vuetify] Could not find injected date options');
+  const locale = useLocale();
+  return createInstance(options, locale);
+}
+
+/**
+ * Centralized key alias mapping for consistent key normalization across the hotkey system.
+ *
+ * This maps various user-friendly aliases to canonical key names that match
+ * KeyboardEvent.key values (in lowercase) where possible.
+ */
+const keyAliasMap = {
+  // Modifier aliases (from vue-use, other libraries, and current implementation)
+  control: 'ctrl',
+  command: 'cmd',
+  option: 'alt',
+  // Arrow key aliases (common abbreviations)
+  up: 'arrowup',
+  down: 'arrowdown',
+  left: 'arrowleft',
+  right: 'arrowright',
+  // Other common key aliases
+  esc: 'escape',
+  spacebar: ' ',
+  space: ' ',
+  return: 'enter',
+  del: 'delete',
+  // Symbol aliases (existing from hotkey-parsing.ts)
+  minus: '-',
+  hyphen: '-'
+};
+
+/**
+ * Normalizes a key string to its canonical form using the alias map.
+ *
+ * @param key - The key string to normalize
+ * @returns The canonical key name in lowercase
+ */
+function normalizeKey(key) {
+  const lowerKey = key.toLowerCase();
+  return keyAliasMap[lowerKey] || lowerKey;
+}
+
+// Utilities
+
+/**
+ * Splits a single combination string into individual key parts.
+ *
+ * A combination is a set of keys that must be pressed simultaneously.
+ * e.g. `ctrl+k`, `shift--`
+ */
+function splitKeyCombination(combination) {
+  let isInternal = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
+  if (!combination) {
+    if (!isInternal) consoleWarn('Invalid hotkey combination: empty string provided');
+    return [];
+  }
+
+  // --- VALIDATION ---
+  const startsWithPlusOrUnderscore = combination.startsWith('+') || combination.startsWith('_');
+  const hasInvalidLeadingSeparator =
+  // Starts with a single '+' or '_' followed by a non-separator character (e.g. '+a', '_a')
+  startsWithPlusOrUnderscore && !(combination.startsWith('++') || combination.startsWith('__'));
+  const hasInvalidStructure =
+  // Invalid leading separator patterns
+  combination.length > 1 && hasInvalidLeadingSeparator ||
+  // Disallow literal + or _ keys (they require shift)
+  combination.includes('++') || combination.includes('__') || combination === '+' || combination === '_' ||
+  // Ends with a separator that is not part of a doubled literal
+  combination.length > 1 && (combination.endsWith('+') || combination.endsWith('_')) && combination.at(-2) !== combination.at(-1) ||
+  // Stand-alone doubled separators (dangling)
+  combination === '++' || combination === '--' || combination === '__';
+  if (hasInvalidStructure) {
+    if (!isInternal) consoleWarn(`Invalid hotkey combination: "${combination}" has invalid structure`);
+    return [];
+  }
+  const keys = [];
+  let buffer = '';
+  const flushBuffer = () => {
+    if (buffer) {
+      keys.push(normalizeKey(buffer));
+      buffer = '';
+    }
+  };
+  for (let i = 0; i < combination.length; i++) {
+    const char = combination[i];
+    const nextChar = combination[i + 1];
+    if (char === '+' || char === '_' || char === '-') {
+      if (char === nextChar) {
+        flushBuffer();
+        keys.push(char);
+        i++;
+      } else if (char === '+' || char === '_') {
+        flushBuffer();
+      } else {
+        buffer += char;
+      }
+    } else {
+      buffer += char;
+    }
+  }
+  flushBuffer();
+
+  // Within a combination, `-` is only valid as a literal key (e.g., `ctrl+-`).
+  // `-` cannot be part of a longer key name within a combination.
+  const hasInvalidMinus = keys.some(key => key.length > 1 && key.includes('-') && key !== '--');
+  if (hasInvalidMinus) {
+    if (!isInternal) consoleWarn(`Invalid hotkey combination: "${combination}" has invalid structure`);
+    return [];
+  }
+  if (keys.length === 0 && combination) {
+    return [normalizeKey(combination)];
+  }
+  return keys;
+}
+
+/**
+ * Splits a hotkey string into its constituent combination groups.
+ *
+ * A sequence is a series of combinations that must be pressed in order.
+ * e.g. `a-b`, `ctrl+k-p`
+ */
+function splitKeySequence(str) {
+  if (!str) {
+    consoleWarn('Invalid hotkey sequence: empty string provided');
+    return [];
+  }
+
+  // A sequence is invalid if it starts or ends with a separator,
+  // unless it is part of a combination (e.g., `shift+-`).
+  const hasInvalidStart = str.startsWith('-') && !['---', '--+'].includes(str);
+  const hasInvalidEnd = str.endsWith('-') && !str.endsWith('+-') && !str.endsWith('_-') && str !== '-' && str !== '---';
+  if (hasInvalidStart || hasInvalidEnd) {
+    consoleWarn(`Invalid hotkey sequence: "${str}" contains invalid combinations`);
+    return [];
+  }
+  const result = [];
+  let buffer = '';
+  let i = 0;
+  while (i < str.length) {
+    const char = str[i];
+    if (char === '-') {
+      // Determine if this hyphen is part of the current combination
+      const prevChar = str[i - 1];
+      const prevPrevChar = i > 1 ? str[i - 2] : undefined;
+      const precededBySinglePlusOrUnderscore = (prevChar === '+' || prevChar === '_') && prevPrevChar !== '+';
+      if (precededBySinglePlusOrUnderscore) {
+        // Treat as part of the combination (e.g., 'ctrl+-')
+        buffer += char;
+        i++;
+      } else {
+        // Treat as sequence separator
+        if (buffer) {
+          result.push(buffer);
+          buffer = '';
+        } else {
+          // Empty buffer means we have a literal '-' key
+          result.push('-');
+        }
+        i++;
+      }
+    } else {
+      buffer += char;
+      i++;
+    }
+  }
+
+  // Add final buffer if it exists
+  if (buffer) {
+    result.push(buffer);
+  }
+
+  // Collapse runs of '-' so that every second '-' is removed
+  const collapsed = [];
+  let minusCount = 0;
+  for (const part of result) {
+    if (part === '-') {
+      if (minusCount % 2 === 0) collapsed.push('-');
+      minusCount++;
+    } else {
+      minusCount = 0;
+      collapsed.push(part);
+    }
+  }
+
+  // Validate that each part of the sequence is a valid combination
+  const areAllValid = collapsed.every(s => splitKeyCombination(s, true).length > 0);
+  if (!areAllValid) {
+    consoleWarn(`Invalid hotkey sequence: "${str}" contains invalid combinations`);
+    return [];
+  }
+  return collapsed;
+}
+
+// Composables
+
+// Types
+
+function useHotkey(keys, callback) {
+  let options = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+  if (!IN_BROWSER) return function () {};
+  const {
+    event = 'keydown',
+    inputs = false,
+    preventDefault = true,
+    sequenceTimeout = 1000
+  } = options;
+  const isMac = navigator?.userAgent?.includes('Macintosh') ?? false;
+  let timeout = 0;
+  let keyGroups;
+  let isSequence = false;
+  let groupIndex = 0;
+  function clearTimer() {
+    if (!timeout) return;
+    clearTimeout(timeout);
+    timeout = 0;
+  }
+  function isInputFocused() {
+    if (toValue(inputs)) return false;
+    const activeElement = document.activeElement;
+    return activeElement && (activeElement.tagName === 'INPUT' || activeElement.tagName === 'TEXTAREA' || activeElement.isContentEditable || activeElement.contentEditable === 'true');
+  }
+  function resetSequence() {
+    groupIndex = 0;
+    clearTimer();
+  }
+  function handler(e) {
+    const group = keyGroups[groupIndex];
+    if (!group || isInputFocused()) return;
+    if (!matchesKeyGroup(e, group)) {
+      if (isSequence) resetSequence();
+      return;
+    }
+    if (toValue(preventDefault)) e.preventDefault();
+    if (!isSequence) {
+      callback(e);
+      return;
+    }
+    clearTimer();
+    groupIndex++;
+    if (groupIndex === keyGroups.length) {
+      callback(e);
+      resetSequence();
+      return;
+    }
+    timeout = window.setTimeout(resetSequence, toValue(sequenceTimeout));
+  }
+  function cleanup() {
+    window.removeEventListener(toValue(event), handler);
+    clearTimer();
+  }
+  watch(() => toValue(keys), function (unrefKeys) {
+    cleanup();
+    if (unrefKeys) {
+      const groups = splitKeySequence(unrefKeys.toLowerCase());
+      isSequence = groups.length > 1;
+      keyGroups = groups;
+      resetSequence();
+      window.addEventListener(toValue(event), handler);
+    }
+  }, {
+    immediate: true
+  });
+
+  // Watch for changes in the event type to re-register the listener
+  watch(() => toValue(event), function (newEvent, oldEvent) {
+    if (oldEvent && keyGroups && keyGroups.length > 0) {
+      window.removeEventListener(oldEvent, handler);
+      window.addEventListener(newEvent, handler);
+    }
+  });
+  try {
+    getCurrentInstance('useHotkey');
+    onBeforeUnmount(cleanup);
+  } catch {
+    // Not in Vue setup context
+  }
+  function parseKeyGroup(group) {
+    const MODIFIERS = ['ctrl', 'shift', 'alt', 'meta', 'cmd'];
+
+    // Use the shared combination splitting logic
+    const parts = splitKeyCombination(group.toLowerCase());
+
+    // If the combination is invalid, return empty result
+    if (parts.length === 0) {
+      return {
+        modifiers: Object.fromEntries(MODIFIERS.map(m => [m, false])),
+        actualKey: undefined
+      };
+    }
+    const modifiers = Object.fromEntries(MODIFIERS.map(m => [m, false]));
+    let actualKey;
+    for (const part of parts) {
+      if (MODIFIERS.includes(part)) {
+        modifiers[part] = true;
+      } else {
+        actualKey = part;
+      }
+    }
+    return {
+      modifiers,
+      actualKey
+    };
+  }
+  function matchesKeyGroup(e, group) {
+    const {
+      modifiers,
+      actualKey
+    } = parseKeyGroup(group);
+    const expectCtrl = modifiers.ctrl || !isMac && (modifiers.cmd || modifiers.meta);
+    const expectMeta = isMac && (modifiers.cmd || modifiers.meta);
+    return e.ctrlKey === expectCtrl && e.metaKey === expectMeta && e.shiftKey === modifiers.shift && e.altKey === modifiers.alt && e.key.toLowerCase() === actualKey?.toLowerCase();
+  }
+  return cleanup;
+}
+
+// Utilities
+
+// Types
+
+const makeMaskProps = propsFactory({
+  mask: [String, Object]
+}, 'mask');
+const defaultDelimiters = /[-!$%^&*()_+|~=`{}[\]:";'<>?,./\\ ]/;
+const presets = {
+  'credit-card': '#### - #### - #### - ####',
+  date: '##/##/####',
+  'date-time': '##/##/#### ##:##',
+  'iso-date': '####-##-##',
+  'iso-date-time': '####-##-## ##:##',
+  phone: '(###) ### - ####',
+  social: '###-##-####',
+  time: '##:##',
+  'time-with-seconds': '##:##:##'
+};
+function isMaskDelimiter(char) {
+  return char ? defaultDelimiters.test(char) : false;
+}
+const defaultTokens = {
+  '#': {
+    pattern: /[0-9]/
+  },
+  A: {
+    pattern: /[A-Z]/i,
+    convert: v => v.toUpperCase()
+  },
+  a: {
+    pattern: /[a-z]/i,
+    convert: v => v.toLowerCase()
+  },
+  N: {
+    pattern: /[0-9A-Z]/i,
+    convert: v => v.toUpperCase()
+  },
+  n: {
+    pattern: /[0-9a-z]/i,
+    convert: v => v.toLowerCase()
+  },
+  X: {
+    pattern: defaultDelimiters
+  }
+};
+function useMask(props) {
+  const mask = computed(() => {
+    if (typeof props.mask === 'string') {
+      if (props.mask in presets) return presets[props.mask];
+      return props.mask;
+    }
+    return props.mask?.mask ?? '';
+  });
+  const tokens = computed(() => {
+    return {
+      ...defaultTokens,
+      ...(isObject(props.mask) ? props.mask.tokens : null)
+    };
+  });
+  function isMask(char) {
+    return char in tokens.value;
+  }
+  function maskValidates(mask, char) {
+    if (char == null || !isMask(mask)) return false;
+    const item = tokens.value[mask];
+    if (item.pattern) return item.pattern.test(char);
+    return item.test(char);
+  }
+  function convert(mask, char) {
+    const item = tokens.value[mask];
+    return item.convert ? item.convert(char) : char;
+  }
+  function maskText(text) {
+    const trimmedText = text?.trim().replace(/\s+/g, ' ');
+    if (trimmedText == null) return '';
+    if (!mask.value.length || !trimmedText.length) return trimmedText;
+    let textIndex = 0;
+    let maskIndex = 0;
+    let newText = '';
+    while (maskIndex < mask.value.length) {
+      const mchar = mask.value[maskIndex];
+      const tchar = trimmedText[textIndex];
+
+      // Escaped character in mask, the next mask character is inserted
+      if (mchar === '\\') {
+        newText += mask.value[maskIndex + 1];
+        maskIndex += 2;
+        continue;
+      }
+      if (!isMask(mchar)) {
+        newText += mchar;
+        if (tchar === mchar) {
+          textIndex++;
+        }
+      } else if (maskValidates(mchar, tchar)) {
+        newText += convert(mchar, tchar);
+        textIndex++;
+      } else {
+        break;
+      }
+      maskIndex++;
+    }
+    return newText;
+  }
+  function unmaskText(text) {
+    if (text == null) return null;
+    if (!mask.value.length || !text.length) return text;
+    let textIndex = 0;
+    let maskIndex = 0;
+    let newText = '';
+    while (true) {
+      const mchar = mask.value[maskIndex];
+      const tchar = text[textIndex];
+      if (tchar == null) break;
+      if (mchar == null) {
+        newText += tchar;
+        textIndex++;
+        continue;
+      }
+
+      // Escaped character in mask, skip the next input character
+      if (mchar === '\\') {
+        if (tchar === mask.value[maskIndex + 1]) {
+          textIndex++;
+        }
+        maskIndex += 2;
+        continue;
+      }
+      if (maskValidates(mchar, tchar)) {
+        // masked char
+        newText += tchar;
+        textIndex++;
+        maskIndex++;
+        continue;
+      } else if (mchar !== tchar) {
+        // input doesn't match mask, skip forward until it does
+        while (true) {
+          const mchar = mask.value[maskIndex++];
+          if (mchar == null || maskValidates(mchar, tchar)) break;
+        }
+        continue;
+      }
+      textIndex++;
+      maskIndex++;
+    }
+    return newText;
+  }
+  function isValid(text) {
+    if (!text) return false;
+    return unmaskText(text) === unmaskText(maskText(text));
+  }
+  function isComplete(text) {
+    if (!text) return false;
+    const maskedText = maskText(text);
+    return maskedText.length === mask.value.length && isValid(text);
+  }
+  return {
+    isValid,
+    isComplete,
+    mask: maskText,
+    unmask: unmaskText
+  };
+}
 
 // Types
 
@@ -22499,7 +19276,10 @@ const makeVComboboxProps = propsFactory({
   ...omit(makeVTextFieldProps({
     modelValue: null,
     role: 'combobox'
-  }), ['validationValue', 'dirty'])
+  }), ['validationValue', 'dirty', 'appendInnerIcon']),
+  ...makeTransitionProps({
+    transition: false
+  })
 }, 'VCombobox');
 const VCombobox = genericComponent()({
   name: 'VCombobox',
@@ -22535,35 +19315,35 @@ const VCombobox = genericComponent()({
       textColorClasses,
       textColorStyles
     } = useTextColor(() => vTextFieldRef.value?.color);
-    const {
-      InputIcon
-    } = useInputIcon(props);
     const model = useProxiedModel(props, 'modelValue', [], v => transformIn(wrapInArray(v)), v => {
       const transformed = transformOut(v);
       return props.multiple ? transformed : transformed[0] ?? null;
     });
     const form = useForm(props);
-    const closableChips = toRef(() => props.closableChips && !form.isReadonly.value && !form.isDisabled.value);
     const hasChips = computed(() => !!(props.chips || slots.chip));
     const hasSelectionSlot = computed(() => hasChips.value || !!slots.selection);
     const _search = shallowRef(!props.multiple && !hasSelectionSlot.value ? model.value[0]?.title ?? '' : '');
-    const _searchLock = shallowRef(null);
     const search = computed({
       get: () => {
         return _search.value;
       },
       set: async val => {
         _search.value = val ?? '';
-        if (val === null || val === '' && !props.multiple && !hasSelectionSlot.value) {
-          model.value = [];
-        } else if (!props.multiple && !hasSelectionSlot.value) {
+        if (!props.multiple && !hasSelectionSlot.value) {
           model.value = [transformItem$3(props, val)];
           nextTick(() => vVirtualScrollRef.value?.scrollToIndex(0));
         }
         if (val && props.multiple && props.delimiters?.length) {
-          const values = splitByDelimiters(val);
+          const signsToMatch = props.delimiters.map(escapeForRegex).join('|');
+          const values = val.split(new RegExp(`(?:${signsToMatch})+`));
           if (values.length > 1) {
-            selectMultiple(values);
+            for (let v of values) {
+              v = v.trim();
+              if (v) {
+                select(transformItem$3(props, v));
+                await nextTick();
+              }
+            }
             _search.value = '';
           }
         }
@@ -22577,9 +19357,9 @@ const VCombobox = genericComponent()({
     const {
       filteredItems,
       getMatches
-    } = useFilter(props, items, () => _searchLock.value ?? (props.alwaysFilter || !isPristine.value ? search.value : ''));
+    } = useFilter(props, items, () => props.alwaysFilter || !isPristine.value ? search.value : '');
     const displayItems = computed(() => {
-      if (props.hideSelected && _searchLock.value === null) {
+      if (props.hideSelected) {
         return filteredItems.value.filter(filteredItem => !model.value.some(s => s.value === filteredItem.value));
       }
       return filteredItems.value;
@@ -22597,7 +19377,8 @@ const VCombobox = genericComponent()({
     const {
       menuId,
       ariaExpanded,
-      ariaControls
+      ariaControls,
+      ariaLabel
     } = useMenuActivator(props, menu);
     watch(_search, value => {
       if (cleared) {
@@ -22615,9 +19396,8 @@ const VCombobox = genericComponent()({
       }
     });
     const selectedValues = computed(() => model.value.map(selection => selection.value));
-    const firstSelectableItem = computed(() => displayItems.value.find(x => x.type === 'item' && !x.props.disabled));
     const highlightFirst = computed(() => {
-      const selectFirst = props.autoSelectFirst === true || props.autoSelectFirst === 'exact' && search.value === firstSelectableItem.value?.title;
+      const selectFirst = props.autoSelectFirst === true || props.autoSelectFirst === 'exact' && search.value === displayItems.value[0]?.title;
       return selectFirst && displayItems.value.length > 0 && !isPristine.value && !listHasFocus.value;
     });
     const listRef = ref();
@@ -22660,19 +19440,22 @@ const VCombobox = genericComponent()({
       if (['Escape'].includes(e.key)) {
         menu.value = false;
       }
-      if (highlightFirst.value && ['Enter', 'Tab'].includes(e.key) && firstSelectableItem.value && !model.value.some(_ref2 => {
-        let {
-          value
-        } = _ref2;
-        return value === firstSelectableItem.value.value;
-      })) {
-        select(firstSelectableItem.value);
+      if (['Enter', 'Escape', 'Tab'].includes(e.key)) {
+        if (highlightFirst.value && ['Enter', 'Tab'].includes(e.key) && !model.value.some(_ref2 => {
+          let {
+            value
+          } = _ref2;
+          return value === displayItems.value[0].value;
+        })) {
+          select(filteredItems.value[0]);
+        }
+        isPristine.value = true;
       }
       if (e.key === 'ArrowDown' && highlightFirst.value) {
         listRef.value?.focus('next');
       }
       if (e.key === 'Enter' && search.value) {
-        select(transformItem$3(props, search.value), true, true);
+        select(transformItem$3(props, search.value));
         if (hasSelectionSlot.value) _search.value = '';
       }
       if (['Backspace', 'Delete'].includes(e.key)) {
@@ -22710,14 +19493,6 @@ const VCombobox = genericComponent()({
         selectionIndex.value = -1;
       }
     }
-    function onPaste(e) {
-      const clipboardText = e?.clipboardData?.getData('Text') ?? '';
-      const values = splitByDelimiters(clipboardText);
-      if (values.length > 1 && props.multiple) {
-        e.preventDefault();
-        selectMultiple(values);
-      }
-    }
     function onAfterEnter() {
       if (props.eager) {
         vVirtualScrollRef.value?.calculateVisibleItems();
@@ -22725,15 +19500,13 @@ const VCombobox = genericComponent()({
     }
     function onAfterLeave() {
       if (isFocused.value) {
+        isPristine.value = true;
         vTextFieldRef.value?.focus();
       }
-      isPristine.value = true;
-      _searchLock.value = null;
     }
     /** @param set - null means toggle */
     function select(item) {
       let set = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
-      let keepMenu = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
       if (!item || item.props.disabled) return;
       if (props.multiple) {
         const index = model.value.findIndex(selection => (props.valueComparator || deepEqual)(selection.value, item.value));
@@ -22751,30 +19524,13 @@ const VCombobox = genericComponent()({
       } else {
         const add = set !== false;
         model.value = add ? [item] : [];
-        if ((!isPristine.value || props.alwaysFilter) && _search.value) {
-          _searchLock.value = _search.value;
-        }
         _search.value = add && !hasSelectionSlot.value ? item.title : '';
 
         // watch for search watcher to trigger
         nextTick(() => {
-          menu.value = keepMenu;
+          menu.value = false;
           isPristine.value = true;
         });
-      }
-    }
-    function splitByDelimiters(val) {
-      const effectiveDelimiters = ['\n', ...(props.delimiters ?? [])];
-      const signsToMatch = effectiveDelimiters.map(escapeForRegex).join('|');
-      return val.split(new RegExp(`(?:${signsToMatch})+`));
-    }
-    async function selectMultiple(values) {
-      for (let value of values) {
-        value = value.trim();
-        if (value) {
-          select(transformItem$3(props, value));
-          await nextTick();
-        }
       }
     }
     function onFocusin(e) {
@@ -22785,6 +19541,9 @@ const VCombobox = genericComponent()({
     }
     function onFocusout(e) {
       listHasFocus.value = false;
+    }
+    function onUpdateModelValue(v) {
+      if (v == null || v === '' && !props.multiple && !hasSelectionSlot.value) model.value = [];
     }
     watch(isFocused, (val, oldVal) => {
       if (val || val === oldVal) return;
@@ -22808,14 +19567,13 @@ const VCombobox = genericComponent()({
         }
       }
     });
-    watch(menu, val => {
-      if (!props.hideSelected && val && model.value.length && isPristine.value) {
+    watch(menu, () => {
+      if (!props.hideSelected && menu.value && model.value.length) {
         const index = displayItems.value.findIndex(item => model.value.some(s => (props.valueComparator || deepEqual)(s.value, item.value)));
         IN_BROWSER && window.requestAnimationFrame(() => {
           index >= 0 && vVirtualScrollRef.value?.scrollToIndex(index);
         });
       }
-      if (val) _searchLock.value = null;
     });
     watch(items, (newVal, oldVal) => {
       if (menu.value) return;
@@ -22831,7 +19589,7 @@ const VCombobox = genericComponent()({
         "ref": vTextFieldRef
       }, textFieldProps, {
         "modelValue": search.value,
-        "onUpdate:modelValue": $event => search.value = $event,
+        "onUpdate:modelValue": [$event => search.value = $event, onUpdateModelValue],
         "focused": isFocused.value,
         "onUpdate:focused": $event => isFocused.value = $event,
         "validationValue": model.externalValue,
@@ -22850,175 +19608,164 @@ const VCombobox = genericComponent()({
         "onClick:clear": onClear,
         "onMousedown:control": onMousedownControl,
         "onKeydown": onKeydown,
-        "onPaste": onPaste,
         "aria-expanded": ariaExpanded.value,
         "aria-controls": ariaControls.value
       }), {
         ...slots,
-        default: _ref4 => {
-          let {
-            id
-          } = _ref4;
-          return createElementVNode(Fragment, null, [createVNode(VMenu, mergeProps({
-            "id": menuId.value,
-            "ref": vMenuRef,
-            "modelValue": menu.value,
-            "onUpdate:modelValue": $event => menu.value = $event,
-            "activator": "parent",
-            "contentClass": "v-combobox__content",
-            "disabled": menuDisabled.value,
-            "eager": props.eager,
-            "maxHeight": 310,
-            "openOnClick": false,
-            "closeOnContentClick": false,
-            "onAfterEnter": onAfterEnter,
-            "onAfterLeave": onAfterLeave
-          }, props.menuProps), {
-            default: () => [hasList && createVNode(VList, mergeProps({
-              "ref": listRef,
-              "filterable": true,
-              "selected": selectedValues.value,
-              "selectStrategy": props.multiple ? 'independent' : 'single-independent',
-              "onMousedown": e => e.preventDefault(),
-              "selectable": true,
-              "onKeydown": onListKeydown,
-              "onFocusin": onFocusin,
-              "onFocusout": onFocusout,
-              "tabindex": "-1",
-              "aria-live": "polite",
-              "aria-labelledby": `${id.value}-label`,
-              "aria-multiselectable": props.multiple,
-              "color": props.itemColor ?? props.color
-            }, listEvents, props.listProps), {
-              default: () => [slots['prepend-item']?.(), !displayItems.value.length && !props.hideNoData && (slots['no-data']?.() ?? createVNode(VListItem, {
-                "key": "no-data",
-                "title": t(props.noDataText)
-              }, null)), createVNode(VVirtualScroll, {
-                "ref": vVirtualScrollRef,
-                "renderless": true,
-                "items": displayItems.value,
-                "itemKey": "value"
-              }, {
-                default: _ref5 => {
-                  let {
-                    item,
-                    index,
-                    itemRef
-                  } = _ref5;
-                  const itemProps = mergeProps(item.props, {
-                    ref: itemRef,
-                    key: item.value,
-                    active: highlightFirst.value && item === firstSelectableItem.value ? true : undefined,
-                    onClick: () => select(item, null),
-                    'aria-posinset': index + 1,
-                    'aria-setsize': displayItems.value.length
-                  });
-                  if (item.type === 'divider') {
-                    return slots.divider?.({
-                      props: item.raw,
-                      index
-                    }) ?? createVNode(VDivider, mergeProps(item.props, {
-                      "key": `divider-${index}`
-                    }), null);
-                  }
-                  if (item.type === 'subheader') {
-                    return slots.subheader?.({
-                      props: item.raw,
-                      index
-                    }) ?? createVNode(VListSubheader, mergeProps(item.props, {
-                      "key": `subheader-${index}`
-                    }), null);
-                  }
-                  return slots.item?.({
-                    item,
-                    index,
-                    props: itemProps
-                  }) ?? createVNode(VListItem, mergeProps(itemProps, {
-                    "role": "option"
-                  }), {
-                    prepend: _ref6 => {
-                      let {
-                        isSelected
-                      } = _ref6;
-                      return createElementVNode(Fragment, null, [props.multiple && !props.hideSelected ? createVNode(VCheckboxBtn, {
-                        "key": item.value,
-                        "modelValue": isSelected,
-                        "ripple": false,
-                        "tabindex": "-1",
-                        "aria-hidden": true,
-                        "onClick": event => event.preventDefault()
-                      }, null) : undefined, item.props.prependAvatar && createVNode(VAvatar, {
-                        "image": item.props.prependAvatar
-                      }, null), item.props.prependIcon && createVNode(VIcon, {
-                        "icon": item.props.prependIcon
-                      }, null)]);
-                    },
-                    title: () => {
-                      return isPristine.value ? item.title : highlightResult('v-combobox', item.title, getMatches(item)?.title);
-                    }
-                  });
-                }
-              }), slots['append-item']?.()]
-            })]
-          }), model.value.map((item, index) => {
-            function onChipClose(e) {
-              e.stopPropagation();
-              e.preventDefault();
-              select(item, false);
-            }
-            const slotProps = mergeProps(VChip.filterProps(item.props), {
-              'onClick:close': onChipClose,
-              onKeydown(e) {
-                if (e.key !== 'Enter' && e.key !== ' ') return;
-                e.preventDefault();
-                e.stopPropagation();
-                onChipClose(e);
-              },
-              onMousedown(e) {
-                e.preventDefault();
-                e.stopPropagation();
-              },
-              modelValue: true,
-              'onUpdate:modelValue': undefined
-            });
-            const hasSlot = hasChips.value ? !!slots.chip : !!slots.selection;
-            const slotContent = hasSlot ? ensureValidVNode(hasChips.value ? slots.chip({
-              item,
-              index,
-              props: slotProps
-            }) : slots.selection({
-              item,
-              index
-            })) : undefined;
-            if (hasSlot && !slotContent) return undefined;
-            return createElementVNode("div", {
-              "key": item.value,
-              "class": normalizeClass(['v-combobox__selection', index === selectionIndex.value && ['v-combobox__selection--selected', textColorClasses.value]]),
-              "style": normalizeStyle(index === selectionIndex.value ? textColorStyles.value : {})
-            }, [hasChips.value ? !slots.chip ? createVNode(VChip, mergeProps({
-              "key": "chip",
-              "closable": closableChips.value,
-              "size": "small",
-              "text": item.title,
-              "disabled": item.props.disabled
-            }, slotProps), null) : createVNode(VDefaultsProvider, {
-              "key": "chip-defaults",
-              "defaults": {
-                VChip: {
-                  closable: closableChips.value,
-                  size: 'small',
-                  text: item.title
-                }
-              }
+        default: () => createElementVNode(Fragment, null, [createVNode(VMenu, mergeProps({
+          "id": menuId.value,
+          "ref": vMenuRef,
+          "modelValue": menu.value,
+          "onUpdate:modelValue": $event => menu.value = $event,
+          "activator": "parent",
+          "contentClass": "v-combobox__content",
+          "disabled": menuDisabled.value,
+          "eager": props.eager,
+          "maxHeight": 310,
+          "openOnClick": false,
+          "closeOnContentClick": false,
+          "transition": props.transition,
+          "onAfterEnter": onAfterEnter,
+          "onAfterLeave": onAfterLeave
+        }, props.menuProps), {
+          default: () => [hasList && createVNode(VList, mergeProps({
+            "ref": listRef,
+            "filterable": true,
+            "selected": selectedValues.value,
+            "selectStrategy": props.multiple ? 'independent' : 'single-independent',
+            "onMousedown": e => e.preventDefault(),
+            "selectable": true,
+            "onKeydown": onListKeydown,
+            "onFocusin": onFocusin,
+            "onFocusout": onFocusout,
+            "tabindex": "-1",
+            "aria-live": "polite",
+            "color": props.itemColor ?? props.color
+          }, listEvents, props.listProps), {
+            default: () => [slots['prepend-item']?.(), !displayItems.value.length && !props.hideNoData && (slots['no-data']?.() ?? createVNode(VListItem, {
+              "key": "no-data",
+              "title": t(props.noDataText)
+            }, null)), createVNode(VVirtualScroll, {
+              "ref": vVirtualScrollRef,
+              "renderless": true,
+              "items": displayItems.value,
+              "itemKey": "value"
             }, {
-              default: () => [slotContent]
-            }) : slotContent ?? createElementVNode("span", {
-              "class": "v-combobox__selection-text"
-            }, [item.title, props.multiple && index < model.value.length - 1 && createElementVNode("span", {
-              "class": "v-combobox__selection-comma"
-            }, [createTextVNode(",")])])]);
-          })]);
-        },
+              default: _ref4 => {
+                let {
+                  item,
+                  index,
+                  itemRef
+                } = _ref4;
+                const itemProps = mergeProps(item.props, {
+                  ref: itemRef,
+                  key: item.value,
+                  active: highlightFirst.value && index === 0 ? true : undefined,
+                  onClick: () => select(item, null)
+                });
+                if (item.type === 'divider') {
+                  return slots.divider?.({
+                    props: item.raw,
+                    index
+                  }) ?? createVNode(VDivider, mergeProps(item.props, {
+                    "key": `divider-${index}`
+                  }), null);
+                }
+                if (item.type === 'subheader') {
+                  return slots.subheader?.({
+                    props: item.raw,
+                    index
+                  }) ?? createVNode(VListSubheader, mergeProps(item.props, {
+                    "key": `subheader-${index}`
+                  }), null);
+                }
+                return slots.item?.({
+                  item,
+                  index,
+                  props: itemProps
+                }) ?? createVNode(VListItem, mergeProps(itemProps, {
+                  "role": "option"
+                }), {
+                  prepend: _ref5 => {
+                    let {
+                      isSelected
+                    } = _ref5;
+                    return createElementVNode(Fragment, null, [props.multiple && !props.hideSelected ? createVNode(VCheckboxBtn, {
+                      "key": item.value,
+                      "modelValue": isSelected,
+                      "ripple": false,
+                      "tabindex": "-1"
+                    }, null) : undefined, item.props.prependAvatar && createVNode(VAvatar, {
+                      "image": item.props.prependAvatar
+                    }, null), item.props.prependIcon && createVNode(VIcon, {
+                      "icon": item.props.prependIcon
+                    }, null)]);
+                  },
+                  title: () => {
+                    return isPristine.value ? item.title : highlightResult('v-combobox', item.title, getMatches(item)?.title);
+                  }
+                });
+              }
+            }), slots['append-item']?.()]
+          })]
+        }), model.value.map((item, index) => {
+          function onChipClose(e) {
+            e.stopPropagation();
+            e.preventDefault();
+            select(item, false);
+          }
+          const slotProps = {
+            'onClick:close': onChipClose,
+            onKeydown(e) {
+              if (e.key !== 'Enter' && e.key !== ' ') return;
+              e.preventDefault();
+              e.stopPropagation();
+              onChipClose(e);
+            },
+            onMousedown(e) {
+              e.preventDefault();
+              e.stopPropagation();
+            },
+            modelValue: true,
+            'onUpdate:modelValue': undefined
+          };
+          const hasSlot = hasChips.value ? !!slots.chip : !!slots.selection;
+          const slotContent = hasSlot ? ensureValidVNode(hasChips.value ? slots.chip({
+            item,
+            index,
+            props: slotProps
+          }) : slots.selection({
+            item,
+            index
+          })) : undefined;
+          if (hasSlot && !slotContent) return undefined;
+          return createElementVNode("div", {
+            "key": item.value,
+            "class": normalizeClass(['v-combobox__selection', index === selectionIndex.value && ['v-combobox__selection--selected', textColorClasses.value]]),
+            "style": normalizeStyle(index === selectionIndex.value ? textColorStyles.value : {})
+          }, [hasChips.value ? !slots.chip ? createVNode(VChip, mergeProps({
+            "key": "chip",
+            "closable": props.closableChips,
+            "size": "small",
+            "text": item.title,
+            "disabled": item.props.disabled
+          }, slotProps), null) : createVNode(VDefaultsProvider, {
+            "key": "chip-defaults",
+            "defaults": {
+              VChip: {
+                closable: props.closableChips,
+                size: 'small',
+                text: item.title
+              }
+            }
+          }, {
+            default: () => [slotContent]
+          }) : slotContent ?? createElementVNode("span", {
+            "class": "v-combobox__selection-text"
+          }, [item.title, props.multiple && index < model.value.length - 1 && createElementVNode("span", {
+            "class": "v-combobox__selection-comma"
+          }, [createTextVNode(",")])])]);
+        })]),
         'append-inner': function () {
           for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
             args[_key] = arguments[_key];
@@ -23029,13 +19776,10 @@ const VCombobox = genericComponent()({
             "icon": props.menuIcon,
             "onMousedown": onMousedownMenuIcon,
             "onClick": noop,
-            "aria-hidden": true,
+            "aria-label": ariaLabel.value,
+            "title": ariaLabel.value,
             "tabindex": "-1"
-          }, null) : undefined, props.appendInnerIcon && createVNode(InputIcon, {
-            "key": "append-icon",
-            "name": "appendInner",
-            "color": args[0].iconColor.value
-          }, null)]);
+          }, null) : undefined]);
         }
       });
     });
@@ -23086,7 +19830,7 @@ const VConfirmEdit = genericComponent()({
     const model = useProxiedModel(props, 'modelValue');
     const internalModel = ref();
     watchEffect(() => {
-      internalModel.value = structuredClone(deepToRaw(model.value));
+      internalModel.value = structuredClone(toRaw(model.value));
     });
     const {
       t
@@ -23110,7 +19854,7 @@ const VConfirmEdit = genericComponent()({
       emit('save', internalModel.value);
     }
     function cancel() {
-      internalModel.value = structuredClone(deepToRaw(model.value));
+      internalModel.value = structuredClone(toRaw(model.value));
       emit('cancel');
     }
     function actions(actionsProps) {
@@ -23560,9 +20304,14 @@ const allSelectStrategy = {
   selectAll: _ref8 => {
     let {
       value,
-      allItems
+      allItems,
+      selected
     } = _ref8;
-    return new Set(value ? allItems.map(item => item.value) : []);
+    return allSelectStrategy.select({
+      items: allItems,
+      value,
+      selected
+    });
   }
 };
 const makeDataTableSelectProps = propsFactory({
@@ -23575,7 +20324,10 @@ const makeDataTableSelectProps = propsFactory({
     type: Array,
     default: () => []
   },
-  valueComparator: Function
+  valueComparator: {
+    type: Function,
+    default: deepEqual
+  }
 }, 'DataTable-select');
 const VDataTableSelectionSymbol = Symbol.for('vuetify:data-table-selection');
 function provideSelection(props, _ref9) {
@@ -23584,14 +20336,8 @@ function provideSelection(props, _ref9) {
     currentPage
   } = _ref9;
   const selected = useProxiedModel(props, 'modelValue', props.modelValue, v => {
-    const customComparator = props.valueComparator;
-    if (customComparator) {
-      return new Set(wrapInArray(v).map(v => {
-        return allItems.value.find(item => customComparator(v, item.value))?.value ?? v;
-      }));
-    }
     return new Set(wrapInArray(v).map(v => {
-      return isPrimitive(v) ? allItems.value.find(item => v === item.value)?.value ?? v : allItems.value.find(item => deepEqual(v, item.value))?.value ?? v;
+      return allItems.value.find(item => props.valueComparator(v, item.value))?.value ?? v;
     }));
   }, v => {
     return [...v.values()];
@@ -23681,99 +20427,58 @@ function useSelection() {
 // Types
 
 const makeDataTableSortProps = propsFactory({
-  initialSortOrder: {
-    type: String,
-    default: 'asc',
-    validator: v => !v || ['asc', 'desc'].includes(v)
-  },
   sortBy: {
     type: Array,
     default: () => []
   },
   customKeySort: Object,
-  multiSort: {
-    type: [Boolean, Object],
-    default: false
-  },
+  multiSort: Boolean,
   mustSort: Boolean
 }, 'DataTable-sort');
 const VDataTableSortSymbol = Symbol.for('vuetify:data-table-sort');
 function createSort(props) {
-  const initialSortOrder = toRef(() => props.initialSortOrder);
   const sortBy = useProxiedModel(props, 'sortBy');
   const mustSort = toRef(() => props.mustSort);
   const multiSort = toRef(() => props.multiSort);
   return {
-    initialSortOrder,
     sortBy,
-    multiSort,
-    mustSort
-  };
-}
-function resolveMultiSort(multiSort, event) {
-  if (!isObject(multiSort)) {
-    return {
-      active: !!multiSort
-    };
-  }
-  const {
-    key,
-    mode,
-    modifier
-  } = multiSort;
-  const reverseMode = modifier === 'alt' && event?.altKey || modifier === 'shift' && event?.shiftKey;
-  return {
-    active: !key || event?.ctrlKey || event?.metaKey || false,
-    mode: reverseMode ? mode === 'append' ? 'prepend' : 'append' : mode
+    mustSort,
+    multiSort
   };
 }
 function provideSort(options) {
   const {
-    initialSortOrder,
     sortBy,
     mustSort,
     multiSort,
     page
   } = options;
-  const toggleSort = (column, event) => {
+  const toggleSort = column => {
     if (column.key == null) return;
     let newSortBy = sortBy.value.map(x => ({
       ...x
     })) ?? [];
     const item = newSortBy.find(x => x.key === column.key);
-    const initialOrder = initialSortOrder.value;
-    const secondaryOrder = initialSortOrder.value === 'desc' ? 'asc' : 'desc';
     if (!item) {
-      const {
-        active,
-        mode
-      } = resolveMultiSort(multiSort.value, event);
-      if (active) {
-        if (mode === 'prepend') {
-          newSortBy.unshift({
-            key: column.key,
-            order: initialOrder
-          });
-        } else {
-          newSortBy.push({
-            key: column.key,
-            order: initialOrder
-          });
-        }
+      if (multiSort.value) {
+        newSortBy.push({
+          key: column.key,
+          order: 'asc'
+        });
       } else {
         newSortBy = [{
           key: column.key,
-          order: initialOrder
+          order: 'asc'
         }];
       }
-    } else if (item.order === secondaryOrder) {
+    } else if (item.order === 'desc') {
       if (mustSort.value && newSortBy.length === 1) {
-        item.order = initialSortOrder.value;
+        item.order = 'asc';
       } else {
         newSortBy = newSortBy.filter(x => x.key !== column.key);
       }
     } else {
-      item.order = secondaryOrder;
+      item.order = 'desc';
     }
     sortBy.value = newSortBy;
     if (page) page.value = 1;
@@ -23963,7 +20668,6 @@ const VDataIterator = genericComponent()({
       transform: item => item.raw
     });
     const {
-      initialSortOrder,
       sortBy,
       multiSort,
       mustSort
@@ -23975,7 +20679,6 @@ const VDataIterator = genericComponent()({
     const {
       toggleSort
     } = provideSort({
-      initialSortOrder,
       sortBy,
       multiSort,
       mustSort,
@@ -24425,7 +21128,6 @@ const VPagination = genericComponent()({
 // Types
 
 const makeVDataTableFooterProps = propsFactory({
-  color: String,
   prevIcon: {
     type: IconValue,
     default: '$prev'
@@ -24524,14 +21226,14 @@ const VDataTableFooter = genericComponent()({
         "class": "v-data-table-footer"
       }, [slots.prepend?.(), createElementVNode("div", {
         "class": "v-data-table-footer__items-per-page"
-      }, [createElementVNode("span", null, [t(props.itemsPerPageText)]), createVNode(VSelect, {
+      }, [createElementVNode("span", {
+        "aria-label": t(props.itemsPerPageText)
+      }, [t(props.itemsPerPageText)]), createVNode(VSelect, {
         "items": itemsPerPageOptions.value,
-        "itemColor": props.color,
         "modelValue": itemsPerPage.value,
         "onUpdate:modelValue": v => setItemsPerPage(Number(v)),
         "density": "compact",
         "variant": "outlined",
-        "aria-label": t(props.itemsPerPageText),
         "hideDetails": true
       }, null)]), createElementVNode("div", {
         "class": "v-data-table-footer__info"
@@ -24550,7 +21252,7 @@ const VDataTableFooter = genericComponent()({
         "showFirstLastPage": true,
         "totalVisible": props.showCurrentPage ? 1 : 0,
         "variant": "plain"
-      }, omit(paginationProps, ['color'])), null)])]);
+      }, paginationProps), null)])]);
     });
     return {};
   }
@@ -24923,7 +21625,6 @@ const makeVDataTableHeadersProps = propsFactory({
   disableSort: Boolean,
   fixedHeader: Boolean,
   multiSort: Boolean,
-  initialSortOrder: String,
   sortAscIcon: {
     type: IconValue,
     default: '$sortAsc'
@@ -24981,12 +21682,13 @@ const VDataTableHeaders = genericComponent()({
     }
     function handleEnterKeyPress(event, column) {
       if (event.key === 'Enter' && !props.disableSort) {
-        toggleSort(column, event);
+        toggleSort(column);
       }
     }
     function getSortIcon(column) {
       const item = sortBy.value.find(item => item.key === column.key);
-      return !item && props.initialSortOrder === 'asc' || item?.order === 'asc' ? props.sortAscIcon : props.sortDescIcon;
+      if (!item) return props.sortAscIcon;
+      return item.order === 'asc' ? props.sortAscIcon : props.sortDescIcon;
     }
     const {
       backgroundColorClasses,
@@ -25042,7 +21744,7 @@ const VDataTableHeaders = genericComponent()({
         "noPadding": noPadding,
         "empty": isEmpty,
         "tabindex": column.sortable ? 0 : undefined,
-        "onClick": column.sortable ? event => toggleSort(column, event) : undefined,
+        "onClick": column.sortable ? () => toggleSort(column) : undefined,
         "onKeydown": column.sortable ? event => handleEnterKeyPress(event, column) : undefined
       }, headerProps), {
         default: () => {
@@ -25061,7 +21763,6 @@ const VDataTableHeaders = genericComponent()({
           if (isEmpty) return '';
           if (column.key === 'data-table-select') {
             return slots['header.data-table-select']?.(columnSlotProps) ?? (showSelectAll.value && createVNode(VCheckboxBtn, {
-              "color": props.color,
               "density": props.density,
               "modelValue": allSelected.value,
               "indeterminate": someSelected.value && !allSelected.value,
@@ -25086,7 +21787,11 @@ const VDataTableHeaders = genericComponent()({
       const displayItems = computed(() => {
         return columns.value.filter(column => column?.sortable && !props.disableSort);
       });
-      const showSelectColumn = columns.value.find(column => column.key === 'data-table-select');
+      const appendIcon = computed(() => {
+        const showSelectColumn = columns.value.find(column => column.key === 'data-table-select');
+        if (showSelectColumn == null) return;
+        return allSelected.value ? '$checkboxOn' : someSelected.value ? '$checkboxIndeterminate' : '$checkboxOff';
+      });
       return createVNode(VDataTableColumn, mergeProps({
         "tag": "th",
         "class": [...headerCellClasses.value],
@@ -25096,7 +21801,6 @@ const VDataTableHeaders = genericComponent()({
           "class": "v-data-table-header__content"
         }, [createVNode(VSelect, {
           "chips": true,
-          "color": props.color,
           "class": "v-data-table__td-sort-select",
           "clearable": true,
           "density": "default",
@@ -25104,15 +21808,10 @@ const VDataTableHeaders = genericComponent()({
           "label": t('$vuetify.dataTable.sortBy'),
           "multiple": props.multiSort,
           "variant": "underlined",
-          "onClick:clear": () => sortBy.value = []
+          "onClick:clear": () => sortBy.value = [],
+          "appendIcon": appendIcon.value,
+          "onClick:append": () => selectAll(!allSelected.value)
         }, {
-          append: showSelectColumn ? () => createVNode(VCheckboxBtn, {
-            "color": props.color,
-            "density": "compact",
-            "modelValue": allSelected.value,
-            "indeterminate": someSelected.value && !allSelected.value,
-            "onUpdate:modelValue": () => selectAll(!allSelected.value)
-          }, null) : undefined,
           chip: props => createVNode(VChip, {
             "onClick": props.item.raw?.sortable ? () => toggleSort(props.item.raw) : undefined,
             "onMousedown": e => {
@@ -25142,7 +21841,7 @@ const VDataTableHeaders = genericComponent()({
         "name": "v-data-table-progress",
         "absolute": true,
         "active": true,
-        "color": typeof props.loading === 'boolean' || props.loading === 'true' ? props.color : props.loading,
+        "color": typeof props.loading === 'boolean' ? undefined : props.loading,
         "indeterminate": true
       }, {
         default: slots.loader
@@ -25220,10 +21919,9 @@ const VDataTableGroupHeaderRow = genericComponent()({
           }, null), createElementVNode("span", null, [props.item.value]), createElementVNode("span", null, [createTextVNode("("), rows.value.length, createTextVNode(")")])]
         });
       } else if (column.key === 'data-table-select') {
-        const selectableRows = rows.value.filter(x => x.selectable);
-        const modelValue = selectableRows.length > 0 && isSelected(selectableRows);
-        const indeterminate = isSomeSelected(selectableRows) && !modelValue;
-        const selectGroup = v => select(selectableRows, v);
+        const modelValue = isSelected(rows.value);
+        const indeterminate = isSomeSelected(rows.value) && !modelValue;
+        const selectGroup = v => select(rows.value, v);
         return slots['data-table-select']?.({
           props: {
             modelValue,
@@ -25236,7 +21934,6 @@ const VDataTableGroupHeaderRow = genericComponent()({
         }, {
           default: () => [createVNode(VCheckboxBtn, {
             "density": props.density,
-            "disabled": selectableRows.length === 0,
             "modelValue": modelValue,
             "indeterminate": indeterminate,
             "onUpdate:modelValue": selectGroup
@@ -25251,7 +21948,6 @@ const VDataTableGroupHeaderRow = genericComponent()({
 // Types
 
 const makeVDataTableRowProps = propsFactory({
-  color: String,
   index: Number,
   item: Object,
   cellProps: [Object, Function],
@@ -25348,7 +22044,7 @@ const VDataTableRow = genericComponent()({
       const isEmpty = column.key === 'data-table-group' && column.width === 0 && !column.title;
       return createVNode(VDataTableColumn, mergeProps({
         "align": column.align,
-        "indent": column.indent,
+        "indent": column.intent,
         "class": {
           'v-data-table__td--expanded-row': column.key === 'data-table-expand',
           'v-data-table__td--select-row': column.key === 'data-table-select'
@@ -25369,13 +22065,11 @@ const VDataTableRow = genericComponent()({
             return slots['item.data-table-select']?.({
               ...slotProps,
               props: {
-                color: props.color,
                 disabled: !item.selectable,
                 modelValue: isSelected([item]),
                 onClick: withModifiers(() => toggleSelect(item), ['stop'])
               }
             }) ?? createVNode(VCheckboxBtn, {
-              "color": props.color,
               "disabled": !item.selectable,
               "density": props.density,
               "modelValue": isSelected([item]),
@@ -25414,7 +22108,6 @@ const VDataTableRow = genericComponent()({
 // Types
 
 const makeVDataTableRowsProps = propsFactory({
-  color: String,
   loading: [Boolean, String],
   loadingText: {
     type: String,
@@ -25512,7 +22205,7 @@ const VDataTableRows = genericComponent()({
           return slots['group-summary']?.(slotProps) ?? '';
         }
         const slotProps = {
-          index: item.virtualIndex ?? index,
+          index,
           item: item.raw,
           internalItem: item,
           columns: columns.value,
@@ -25530,7 +22223,6 @@ const VDataTableRows = genericComponent()({
             } : undefined,
             index,
             item,
-            color: props.color,
             cellProps: props.cellProps,
             collapseIcon: props.collapseIcon,
             expandIcon: props.expandIcon,
@@ -25670,7 +22362,7 @@ const makeDataTableProps = propsFactory({
   ...makeDataTableItemsProps(),
   ...makeDataTableSelectProps(),
   ...makeDataTableSortProps(),
-  ...omit(makeVDataTableHeadersProps(), ['multiSort', 'initialSortOrder']),
+  ...makeVDataTableHeadersProps(),
   ...makeVTableProps()
 }, 'DataTable');
 const makeVDataTableProps = propsFactory({
@@ -25701,7 +22393,6 @@ const VDataTable = genericComponent()({
       groupBy
     } = createGroupBy(props);
     const {
-      initialSortOrder,
       sortBy,
       multiSort,
       mustSort
@@ -25737,7 +22428,6 @@ const VDataTable = genericComponent()({
     const {
       toggleSort
     } = provideSort({
-      initialSortOrder,
       sortBy,
       multiSort,
       mustSort,
@@ -25842,7 +22532,7 @@ const VDataTable = genericComponent()({
     }));
     useRender(() => {
       const dataTableFooterProps = VDataTableFooter.filterProps(props);
-      const dataTableHeadersProps = VDataTableHeaders.filterProps(omit(props, ['multiSort']));
+      const dataTableHeadersProps = VDataTableHeaders.filterProps(props);
       const dataTableRowsProps = VDataTableRows.filterProps(props);
       const tableProps = VTable.filterProps(props);
       return createVNode(VTable, mergeProps({
@@ -25857,9 +22547,7 @@ const VDataTable = genericComponent()({
         top: () => slots.top?.(slotProps.value),
         default: () => slots.default ? slots.default(slotProps.value) : createElementVNode(Fragment, null, [slots.colgroup?.(slotProps.value), !props.hideDefaultHeader && createElementVNode("thead", {
           "key": "thead"
-        }, [createVNode(VDataTableHeaders, mergeProps(dataTableHeadersProps, {
-          "multiSort": !!props.multiSort
-        }), slots)]), slots.thead?.(slotProps.value), !props.hideDefaultBody && createElementVNode("tbody", null, [slots['body.prepend']?.(slotProps.value), slots.body ? slots.body(slotProps.value) : createVNode(VDataTableRows, mergeProps(attrs, dataTableRowsProps, {
+        }, [createVNode(VDataTableHeaders, dataTableHeadersProps, slots)]), slots.thead?.(slotProps.value), !props.hideDefaultBody && createElementVNode("tbody", null, [slots['body.prepend']?.(slotProps.value), slots.body ? slots.body(slotProps.value) : createVNode(VDataTableRows, mergeProps(attrs, dataTableRowsProps, {
           "items": paginatedItems.value
         }), slots), slots['body.append']?.(slotProps.value)]), slots.tbody?.(slotProps.value), slots.tfoot?.(slotProps.value)]),
         bottom: () => slots.bottom ? slots.bottom(slotProps.value) : !props.hideDefaultFooter && createElementVNode(Fragment, null, [createVNode(VDivider, null, null), createVNode(VDataTableFooter, dataTableFooterProps, {
@@ -25898,7 +22586,6 @@ const VDataTableVirtual = genericComponent()({
       groupBy
     } = createGroupBy(props);
     const {
-      initialSortOrder,
       sortBy,
       multiSort,
       mustSort
@@ -25930,7 +22617,6 @@ const VDataTableVirtual = genericComponent()({
     const {
       toggleSort
     } = provideSort({
-      initialSortOrder,
       sortBy,
       multiSort,
       mustSort
@@ -25987,10 +22673,7 @@ const VDataTableVirtual = genericComponent()({
       calculateVisibleItems,
       scrollToIndex
     } = useVirtual(props, flatItems);
-    const displayItems = computed(() => computedItems.value.map(item => ({
-      ...item.raw,
-      virtualIndex: item.index
-    })));
+    const displayItems = computed(() => computedItems.value.map(item => item.raw));
     useOptions({
       sortBy,
       page: shallowRef(1),
@@ -26026,7 +22709,7 @@ const VDataTableVirtual = genericComponent()({
       headers: headers.value
     }));
     useRender(() => {
-      const dataTableHeadersProps = VDataTableHeaders.filterProps(omit(props, ['multiSort']));
+      const dataTableHeadersProps = VDataTableHeaders.filterProps(props);
       const dataTableRowsProps = VDataTableRows.filterProps(props);
       const tableProps = VTable.filterProps(props);
       return createVNode(VTable, mergeProps({
@@ -26048,9 +22731,7 @@ const VDataTableVirtual = genericComponent()({
           }
         }, [createElementVNode("table", null, [slots.colgroup?.(slotProps.value), !props.hideDefaultHeader && createElementVNode("thead", {
           "key": "thead"
-        }, [createVNode(VDataTableHeaders, mergeProps(dataTableHeadersProps, {
-          "multiSort": !!props.multiSort
-        }), slots)]), slots.thead?.(slotProps.value), !props.hideDefaultBody && createElementVNode("tbody", {
+        }, [createVNode(VDataTableHeaders, dataTableHeadersProps, slots)]), slots.thead?.(slotProps.value), !props.hideDefaultBody && createElementVNode("tbody", {
           "key": "tbody"
         }, [createElementVNode("tr", {
           "ref": markerRef,
@@ -26083,7 +22764,7 @@ const VDataTableVirtual = genericComponent()({
               }) ?? createVNode(VDataTableRow, mergeProps(itemSlotProps.props, {
                 "ref": itemRef,
                 "key": itemSlotProps.internalItem.index,
-                "index": itemSlotProps.index
+                "index": itemSlotProps.internalItem.index
               }), slots);
             }
           })
@@ -26141,7 +22822,6 @@ const VDataTableServer = genericComponent()({
       groupBy
     } = createGroupBy(props);
     const {
-      initialSortOrder,
       sortBy,
       multiSort,
       mustSort
@@ -26168,7 +22848,6 @@ const VDataTableServer = genericComponent()({
     const {
       toggleSort
     } = provideSort({
-      initialSortOrder,
       sortBy,
       multiSort,
       mustSort,
@@ -26255,7 +22934,7 @@ const VDataTableServer = genericComponent()({
     }));
     useRender(() => {
       const dataTableFooterProps = VDataTableFooter.filterProps(props);
-      const dataTableHeadersProps = VDataTableHeaders.filterProps(omit(props, ['multiSort']));
+      const dataTableHeadersProps = VDataTableHeaders.filterProps(props);
       const dataTableRowsProps = VDataTableRows.filterProps(props);
       const tableProps = VTable.filterProps(props);
       return createVNode(VTable, mergeProps({
@@ -26271,9 +22950,7 @@ const VDataTableServer = genericComponent()({
           "key": "thead",
           "class": "v-data-table__thead",
           "role": "rowgroup"
-        }, [createVNode(VDataTableHeaders, mergeProps(dataTableHeadersProps, {
-          "multiSort": !!props.multiSort
-        }), slots)]), slots.thead?.(slotProps.value), !props.hideDefaultBody && createElementVNode("tbody", {
+        }, [createVNode(VDataTableHeaders, dataTableHeadersProps, slots)]), slots.thead?.(slotProps.value), !props.hideDefaultBody && createElementVNode("tbody", {
           "class": "v-data-table__tbody",
           "role": "rowgroup"
         }, [slots['body.prepend']?.(slotProps.value), slots.body ? slots.body(slotProps.value) : createVNode(VDataTableRows, mergeProps(attrs, dataTableRowsProps, {
@@ -26570,11 +23247,6 @@ const makeVDatePickerControlsProps = propsFactory({
     default: undefined
   },
   controlHeight: [Number, String],
-  controlVariant: {
-    type: String,
-    default: 'docked'
-  },
-  noMonthPicker: Boolean,
   disabled: {
     type: [Boolean, String, Array],
     default: null
@@ -26592,8 +23264,6 @@ const makeVDatePickerControlsProps = propsFactory({
     default: '$subgroup'
   },
   text: String,
-  monthText: String,
-  yearText: String,
   viewMode: {
     type: String,
     default: 'month'
@@ -26607,13 +23277,11 @@ const VDatePickerControls = genericComponent()({
     'click:month': () => true,
     'click:prev': () => true,
     'click:next': () => true,
-    'click:prev-year': () => true,
-    'click:next-year': () => true
+    'click:text': () => true
   },
   setup(props, _ref) {
     let {
-      emit,
-      slots
+      emit
     } = _ref;
     const {
       t
@@ -26624,29 +23292,17 @@ const VDatePickerControls = genericComponent()({
     const disableYear = computed(() => {
       return Array.isArray(props.disabled) ? props.disabled.includes('mode') : !!props.disabled;
     });
-    const disablePrevMonth = computed(() => {
-      return Array.isArray(props.disabled) ? props.disabled.includes('prev-month') : !!props.disabled;
+    const disablePrev = computed(() => {
+      return Array.isArray(props.disabled) ? props.disabled.includes('prev') : !!props.disabled;
     });
-    const disableNextMonth = computed(() => {
-      return Array.isArray(props.disabled) ? props.disabled.includes('next-month') : !!props.disabled;
+    const disableNext = computed(() => {
+      return Array.isArray(props.disabled) ? props.disabled.includes('next') : !!props.disabled;
     });
-    const disablePrevYear = computed(() => {
-      return Array.isArray(props.disabled) ? props.disabled.includes('prev-year') : !!props.disabled;
-    });
-    const disableNextYear = computed(() => {
-      return Array.isArray(props.disabled) ? props.disabled.includes('next-year') : !!props.disabled;
-    });
-    function onClickPrevMonth() {
+    function onClickPrev() {
       emit('click:prev');
     }
-    function onClickNextMonth() {
+    function onClickNext() {
       emit('click:next');
-    }
-    function onClickPrevYear() {
-      emit('click:prev-year');
-    }
-    function onClickNextYear() {
-      emit('click:next-year');
     }
     function onClickYear() {
       emit('click:year');
@@ -26655,121 +23311,48 @@ const VDatePickerControls = genericComponent()({
       emit('click:month');
     }
     useRender(() => {
-      const innerDefaults = {
-        VBtn: {
-          density: 'comfortable',
-          variant: 'text'
+      // TODO: add slot support and scope defaults
+      return createElementVNode("div", {
+        "class": normalizeClass(['v-date-picker-controls']),
+        "style": {
+          '--v-date-picker-controls-height': convertToUnit(props.controlHeight)
         }
-      };
-      const prevMonth = createVNode(VBtn, {
-        "data-testid": "prev-month",
-        "disabled": disablePrevMonth.value,
-        "icon": props.prevIcon,
-        "aria-label": t('$vuetify.datePicker.ariaLabel.previousMonth'),
-        "onClick": onClickPrevMonth
-      }, null);
-      const nextMonth = createVNode(VBtn, {
-        "data-testid": "next-month",
-        "disabled": disableNextMonth.value,
-        "icon": props.nextIcon,
-        "aria-label": t('$vuetify.datePicker.ariaLabel.nextMonth'),
-        "onClick": onClickNextMonth
-      }, null);
-      const prevYear = createVNode(VBtn, {
-        "data-testid": "prev-year",
-        "disabled": disablePrevYear.value,
-        "icon": props.prevIcon,
-        "aria-label": t('$vuetify.datePicker.ariaLabel.previousYear'),
-        "onClick": onClickPrevYear
-      }, null);
-      const nextYear = createVNode(VBtn, {
-        "data-testid": "next-year",
-        "disabled": disableNextYear.value,
-        "icon": props.nextIcon,
-        "aria-label": t('$vuetify.datePicker.ariaLabel.nextYear'),
-        "onClick": onClickNextYear
-      }, null);
-      const onlyMonthBtn = createVNode(VBtn, {
-        "class": "v-date-picker-controls__only-month-btn",
-        "data-testid": "month-btn",
-        "density": "default",
-        "disabled": disableMonth.value,
-        "text": props.monthText,
-        "appendIcon": props.modeIcon,
-        "rounded": true,
-        "aria-label": t('$vuetify.datePicker.ariaLabel.selectMonth'),
-        "onClick": onClickMonth
-      }, null);
-      const onlyYearBtn = createVNode(VBtn, {
-        "class": "v-date-picker-controls__only-year-btn",
-        "data-testid": "year-btn",
-        "density": "default",
-        "disabled": disableYear.value,
-        "text": props.yearText,
-        "appendIcon": props.modeIcon,
-        "rounded": true,
-        "aria-label": t('$vuetify.datePicker.ariaLabel.selectYear'),
-        "onClick": onClickYear
-      }, null);
-      const monthYearBtn = createVNode(VBtn, {
-        "class": "v-date-picker-controls__year-btn",
-        "data-testid": "year-btn",
-        "density": "default",
-        "disabled": disableYear.value,
-        "text": props.text,
-        "appendIcon": props.modeIcon,
-        "rounded": true,
-        "aria-label": t('$vuetify.datePicker.ariaLabel.selectYear'),
-        "onClick": onClickYear
-      }, null);
-      const monthYearSplit = createElementVNode(Fragment, null, [createVNode(VBtn, {
+      }, [createVNode(VBtn, {
         "class": "v-date-picker-controls__month-btn",
         "data-testid": "month-btn",
-        "height": "36",
         "disabled": disableMonth.value,
         "text": props.text,
+        "variant": "text",
         "rounded": true,
-        "aria-label": t('$vuetify.datePicker.ariaLabel.selectMonth'),
         "onClick": onClickMonth
       }, null), createVNode(VBtn, {
         "class": "v-date-picker-controls__mode-btn",
         "data-testid": "year-btn",
         "disabled": disableYear.value,
+        "density": "comfortable",
         "icon": props.modeIcon,
+        "variant": "text",
         "aria-label": t('$vuetify.datePicker.ariaLabel.selectYear'),
         "onClick": onClickYear
-      }, null)]);
-      const slotProps = {
-        viewMode: props.viewMode,
-        disabled: Array.isArray(props.disabled) ? props.disabled : [],
-        monthYearText: props.text ?? '',
-        monthText: props.monthText ?? '',
-        yearText: props.yearText ?? '',
-        openMonths: onClickMonth,
-        openYears: onClickYear,
-        prevMonth: onClickPrevMonth,
-        nextMonth: onClickNextMonth,
-        prevYear: onClickPrevYear,
-        nextYear: onClickNextYear
-      };
-      const modalControls = createElementVNode(Fragment, null, [props.noMonthPicker ? monthYearBtn : monthYearSplit, createVNode(VSpacer, null, null), createElementVNode("div", {
+      }, null), createVNode(VSpacer, null, null), createElementVNode("div", {
         "class": "v-date-picker-controls__month"
-      }, [prevMonth, nextMonth])]);
-      const dockedControls = createElementVNode(Fragment, null, [createElementVNode("div", {
-        "class": "v-date-picker-controls__month"
-      }, [prevMonth, onlyMonthBtn, nextMonth]), createVNode(VSpacer, null, null), createElementVNode("div", {
-        "class": "v-date-picker-controls__year"
-      }, [prevYear, onlyYearBtn, nextYear])]);
-      return createVNode(VDefaultsProvider, {
-        "defaults": innerDefaults
-      }, {
-        default: () => [createElementVNode("div", {
-          "class": normalizeClass(['v-date-picker-controls', `v-date-picker-controls--variant-${props.controlVariant}`]),
-          "style": {
-            '--v-date-picker-controls-height': convertToUnit(props.controlHeight)
-          }
-        }, [slots.default?.(slotProps) ?? createElementVNode(Fragment, null, [props.controlVariant === 'modal' && modalControls, props.controlVariant === 'docked' && dockedControls])])]
-      });
+      }, [createVNode(VBtn, {
+        "data-testid": "prev-month",
+        "disabled": disablePrev.value,
+        "density": "comfortable",
+        "icon": props.prevIcon,
+        "variant": "text",
+        "aria-label": t('$vuetify.datePicker.ariaLabel.previousMonth'),
+        "onClick": onClickPrev
+      }, null), createVNode(VBtn, {
+        "data-testid": "next-month",
+        "disabled": disableNext.value,
+        "icon": props.nextIcon,
+        "density": "comfortable",
+        "variant": "text",
+        "aria-label": t('$vuetify.datePicker.ariaLabel.nextMonth'),
+        "onClick": onClickNext
+      }, null)])]);
     });
     return {};
   }
@@ -26980,15 +23563,11 @@ function useCalendar(props) {
       return week.length ? adapter.getWeek(week[0], props.firstDayOfWeek, props.firstDayOfYear) : null;
     });
   });
-  const {
-    minDate,
-    maxDate
-  } = useCalendarRange(props);
   function isDisabled(value) {
     if (props.disabled) return true;
     const date = adapter.date(value);
-    if (minDate.value && adapter.isBefore(adapter.endOfDay(date), minDate.value)) return true;
-    if (maxDate.value && adapter.isAfter(date, maxDate.value)) return true;
+    if (props.min && adapter.isBefore(adapter.endOfDay(date), adapter.date(props.min))) return true;
+    if (props.max && adapter.isAfter(date, adapter.date(props.max))) return true;
     if (Array.isArray(props.allowedDates) && props.allowedDates.length > 0) {
       return !props.allowedDates.some(d => adapter.isSameDay(adapter.date(d), date));
     }
@@ -27008,37 +23587,6 @@ function useCalendar(props) {
     weekNumbers
   };
 }
-function useCalendarRange(props) {
-  const adapter = useDate();
-  const minDate = computed(() => {
-    if (!props.min) return null;
-    const date = adapter.date(props.min);
-    return adapter.isValid(date) ? date : null;
-  });
-  const maxDate = computed(() => {
-    if (!props.max) return null;
-    const date = adapter.date(props.max);
-    return adapter.isValid(date) ? date : null;
-  });
-  function clampDate(date) {
-    if (minDate.value && adapter.isBefore(date, minDate.value)) {
-      return minDate.value;
-    }
-    if (maxDate.value && adapter.isAfter(date, maxDate.value)) {
-      return maxDate.value;
-    }
-    return date;
-  }
-  function isInAllowedRange(date) {
-    return (!minDate.value || adapter.isAfter(date, minDate.value)) && (!maxDate.value || adapter.isBefore(date, maxDate.value));
-  }
-  return {
-    minDate,
-    maxDate,
-    clampDate,
-    isInAllowedRange
-  };
-}
 
 // Types
 
@@ -27054,14 +23602,6 @@ const makeVDatePickerMonthProps = propsFactory({
   reverseTransition: {
     type: String,
     default: 'picker-reverse-transition'
-  },
-  events: {
-    type: [Array, Function, Object],
-    default: () => null
-  },
-  eventColor: {
-    type: [Array, Function, Object, String],
-    default: () => null
   },
   ...omit(makeCalendarProps(), ['displayValue'])
 }, 'VDatePickerMonth');
@@ -27162,49 +23702,6 @@ const VDatePickerMonth = genericComponent()({
         model.value = [value];
       }
     }
-    function getEventColors(date) {
-      const {
-        events,
-        eventColor
-      } = props;
-      let eventData;
-      let eventColors = [];
-      if (Array.isArray(events)) {
-        eventData = events.includes(date);
-      } else if (events instanceof Function) {
-        eventData = events(date) || false;
-      } else if (events) {
-        eventData = events[date] || false;
-      } else {
-        eventData = false;
-      }
-      if (!eventData) {
-        return [];
-      } else if (eventData !== true) {
-        eventColors = wrapInArray(eventData);
-      } else if (typeof eventColor === 'string') {
-        eventColors = [eventColor];
-      } else if (typeof eventColor === 'function') {
-        eventColors = wrapInArray(eventColor(date));
-      } else if (Array.isArray(eventColor)) {
-        eventColors = eventColor;
-      } else if (typeof eventColor === 'object' && eventColor !== null) {
-        eventColors = wrapInArray(eventColor[date]);
-      }
-
-      // Fallback to default color if no color is found
-      return !eventColors.length ? ['surface-variant'] : eventColors.filter(Boolean).map(color => typeof color === 'string' ? color : 'surface-variant');
-    }
-    function genEvents(date) {
-      const eventColors = getEventColors(date);
-      if (!eventColors.length) return null;
-      return createElementVNode("div", {
-        "class": "v-date-picker-month__events"
-      }, [eventColors.map(color => createVNode(VBadge, {
-        "dot": true,
-        "color": color
-      }, null))]);
-    }
     useRender(() => createElementVNode("div", {
       "class": "v-date-picker-month",
       "style": {
@@ -27235,6 +23732,7 @@ const VDatePickerMonth = genericComponent()({
             disabled: item.isDisabled,
             icon: true,
             ripple: false,
+            text: item.localized,
             variant: item.isSelected ? 'flat' : item.isToday ? 'outlined' : 'text',
             'aria-label': getDateAriaLabel(item),
             'aria-current': item.isToday ? 'date' : undefined,
@@ -27255,9 +23753,7 @@ const VDatePickerMonth = genericComponent()({
             'v-date-picker-month__day--week-start': item.isWeekStart
           }]),
           "data-v-date": !item.isDisabled ? item.isoDate : undefined
-        }, [(props.showAdjacentMonths || !item.isAdjacent) && (slots.day?.(slotProps) ?? createVNode(VBtn, slotProps.props, {
-          default: () => [item.localized, genEvents(item.isoDate)]
-        }))]);
+        }, [(props.showAdjacentMonths || !item.isAdjacent) && (slots.day?.(slotProps) ?? createVNode(VBtn, slotProps.props, null))]);
       })])]
     })]));
   }
@@ -27382,7 +23878,6 @@ const VDatePickerYears = genericComponent()({
     } = _ref;
     const adapter = useDate();
     const model = useProxiedModel(props, 'modelValue');
-    const hasFocusedItem = shallowRef(false);
     const years = computed(() => {
       const year = adapter.getYear(adapter.date());
       let min = year - 100;
@@ -27410,6 +23905,7 @@ const VDatePickerYears = genericComponent()({
     });
     const yearRef = templateRef();
     function focusSelectedYear() {
+      yearRef.el?.focus();
       yearRef.el?.scrollIntoView({
         block: 'center'
       });
@@ -27429,11 +23925,7 @@ const VDatePickerYears = genericComponent()({
         height: convertToUnit(props.height)
       }
     }, [createElementVNode("div", {
-      "class": "v-date-picker-years__content",
-      "onFocus": () => yearRef.el?.focus(),
-      "onFocusin": () => hasFocusedItem.value = true,
-      "onFocusout": () => hasFocusedItem.value = false,
-      "tabindex": hasFocusedItem.value ? -1 : 0
+      "class": "v-date-picker-years__content"
     }, [years.value.map((year, i) => {
       const btnProps = {
         ref: model.value === year.value ? yearRef : undefined,
@@ -27498,12 +23990,7 @@ const makeVDatePickerProps = propsFactory({
     default: '$vuetify.datePicker.header'
   },
   headerColor: String,
-  headerDateFormat: {
-    type: String,
-    default: 'normalDateWithWeekday'
-  },
-  landscapeHeaderWidth: [Number, String],
-  ...omit(makeVDatePickerControlsProps(), ['active', 'monthText', 'yearText']),
+  ...makeVDatePickerControlsProps(),
   ...makeVDatePickerMonthProps({
     weeksInMonth: 'static'
   }),
@@ -27540,14 +24027,24 @@ const VDatePicker = genericComponent()({
     const viewMode = useProxiedModel(props, 'viewMode');
     // const inputMode = useProxiedModel(props, 'inputMode')
 
-    const {
-      minDate,
-      maxDate,
-      clampDate
-    } = useCalendarRange(props);
+    const minDate = computed(() => {
+      const date = adapter.date(props.min);
+      return props.min && adapter.isValid(date) ? date : null;
+    });
+    const maxDate = computed(() => {
+      const date = adapter.date(props.max);
+      return props.max && adapter.isValid(date) ? date : null;
+    });
     const internal = computed(() => {
       const today = adapter.date();
-      const value = model.value?.[0] ? adapter.date(model.value[0]) : clampDate(today);
+      let value = today;
+      if (model.value?.[0]) {
+        value = adapter.date(model.value[0]);
+      } else if (minDate.value && adapter.isBefore(today, minDate.value)) {
+        value = minDate.value;
+      } else if (maxDate.value && adapter.isAfter(today, maxDate.value)) {
+        value = maxDate.value;
+      }
       return value && adapter.isValid(value) ? value : today;
     });
     const headerColor = toRef(() => props.headerColor ?? props.color);
@@ -27566,43 +24063,34 @@ const VDatePicker = genericComponent()({
       if (props.multiple && model.value.length > 1) {
         return t('$vuetify.datePicker.itemsSelected', model.value.length);
       }
-      const formattedDate = model.value[0] && adapter.isValid(model.value[0]) ? adapter.format(adapter.date(model.value[0]), props.headerDateFormat) : t(props.header);
-      return props.landscape && formattedDate.split(' ').length === 3 ? formattedDate.replace(' ', '\n') : formattedDate;
+      return model.value[0] && adapter.isValid(model.value[0]) ? adapter.format(adapter.date(model.value[0]), 'normalDateWithWeekday') : t(props.header);
     });
-    const monthStart = toRef(() => {
+    const text = computed(() => {
       let date = adapter.date();
       date = adapter.setDate(date, 1);
       date = adapter.setMonth(date, month.value);
-      date = adapter.setYear(date, year.value); // year is not always ISO
-      return date;
+      date = adapter.setYear(date, year.value);
+      return adapter.format(date, 'monthAndYear');
     });
-    const monthYearText = toRef(() => adapter.format(monthStart.value, 'monthAndYear'));
-    const monthText = toRef(() => adapter.format(monthStart.value, 'monthShort'));
-    const yearText = toRef(() => adapter.format(monthStart.value, 'year'));
-
     // const headerIcon = toRef(() => props.inputMode === 'calendar' ? props.keyboardIcon : props.calendarIcon)
     const headerTransition = toRef(() => `date-picker-header${isReversing.value ? '-reverse' : ''}-transition`);
     const disabled = computed(() => {
       if (props.disabled) return true;
       const targets = [];
       if (viewMode.value !== 'month') {
-        targets.push(...['prev-month', 'next-month', 'prev-year', 'next-year']);
+        targets.push(...['prev', 'next']);
       } else {
         let _date = adapter.date();
         _date = adapter.startOfMonth(_date);
         _date = adapter.setMonth(_date, month.value);
         _date = adapter.setYear(_date, year.value);
         if (minDate.value) {
-          const prevMonthEnd = adapter.addDays(adapter.startOfMonth(_date), -1);
-          const prevYearEnd = adapter.addDays(adapter.startOfYear(_date), -1);
-          adapter.isAfter(minDate.value, prevMonthEnd) && targets.push('prev-month');
-          adapter.isAfter(minDate.value, prevYearEnd) && targets.push('prev-year');
+          const date = adapter.addDays(adapter.startOfMonth(_date), -1);
+          adapter.isAfter(minDate.value, date) && targets.push('prev');
         }
         if (maxDate.value) {
-          const nextMonthStart = adapter.addDays(adapter.endOfMonth(_date), 1);
-          const nextYearStart = adapter.addDays(adapter.endOfYear(_date), 1);
-          adapter.isAfter(nextMonthStart, maxDate.value) && targets.push('next-month');
-          adapter.isAfter(nextYearStart, maxDate.value) && targets.push('next-year');
+          const date = adapter.addDays(adapter.endOfMonth(_date), 1);
+          adapter.isAfter(date, maxDate.value) && targets.push('next');
         }
       }
       return targets;
@@ -27616,7 +24104,7 @@ const VDatePicker = genericComponent()({
     function isAllowedInRange(start, end) {
       const allowedDates = props.allowedDates;
       if (typeof allowedDates !== 'function') return true;
-      const days = 1 + daysDiff(adapter, start, end);
+      const days = adapter.getDiff(end, start, 'days');
       for (let i = 0; i < days; i++) {
         if (allowedDates(adapter.addDays(start, i))) return true;
       }
@@ -27654,7 +24142,7 @@ const VDatePicker = genericComponent()({
     //   inputMode.value = inputMode.value === 'calendar' ? 'keyboard' : 'calendar'
     // }
 
-    function onClickNextMonth() {
+    function onClickNext() {
       if (month.value < 11) {
         month.value++;
       } else {
@@ -27664,7 +24152,7 @@ const VDatePicker = genericComponent()({
       }
       onUpdateMonth();
     }
-    function onClickPrevMonth() {
+    function onClickPrev() {
       if (month.value > 0) {
         month.value--;
       } else {
@@ -27673,28 +24161,6 @@ const VDatePicker = genericComponent()({
         onUpdateYear();
       }
       onUpdateMonth();
-    }
-    function onClickNextYear() {
-      year.value++;
-      if (maxDate.value) {
-        const monthTwoDigits = String(month.value + 1).padStart(2, '0');
-        const monthStart = adapter.parseISO(`${year.value}-${monthTwoDigits}-01`);
-        if (adapter.isAfter(monthStart, maxDate.value)) {
-          month.value = adapter.getMonth(maxDate.value);
-        }
-      }
-      onUpdateYear();
-    }
-    function onClickPrevYear() {
-      year.value--;
-      if (minDate.value) {
-        const monthTwoDigits = String(month.value + 1).padStart(2, '0');
-        const monthStart = adapter.endOfMonth(adapter.parseISO(`${year.value}-${monthTwoDigits}-01`));
-        if (adapter.isAfter(minDate.value, monthStart)) {
-          month.value = adapter.getMonth(minDate.value);
-        }
-      }
-      onUpdateYear();
     }
     function onClickDate() {
       viewMode.value = 'month';
@@ -27717,7 +24183,6 @@ const VDatePicker = genericComponent()({
       if (!arrAfter.length) return;
       const before = adapter.date(arrBefore[arrBefore.length - 1]);
       const after = adapter.date(arrAfter[arrAfter.length - 1]);
-      if (adapter.isSameDay(before, after)) return;
       const newMonth = adapter.getMonth(after);
       const newYear = adapter.getYear(after);
       if (newMonth !== month.value) {
@@ -27732,7 +24197,7 @@ const VDatePicker = genericComponent()({
     });
     useRender(() => {
       const pickerProps = VPicker.filterProps(props);
-      const datePickerControlsProps = omit(VDatePickerControls.filterProps(props), ['viewMode']);
+      const datePickerControlsProps = VDatePickerControls.filterProps(props);
       const datePickerHeaderProps = VDatePickerHeader.filterProps(props);
       const datePickerMonthProps = VDatePickerMonth.filterProps(props);
       const datePickerMonthsProps = omit(VDatePickerMonths.filterProps(props), ['modelValue']);
@@ -27747,9 +24212,7 @@ const VDatePicker = genericComponent()({
         "class": ['v-date-picker', `v-date-picker--${viewMode.value}`, {
           'v-date-picker--show-week': props.showWeek
         }, rtlClasses.value, props.class],
-        "style": [{
-          '--v-date-picker-landscape-header-width': convertToUnit(props.landscapeHeaderWidth)
-        }, props.style]
+        "style": props.style
       }), {
         title: () => slots.title?.() ?? createElementVNode("div", {
           "class": "v-date-picker__title"
@@ -27772,19 +24235,12 @@ const VDatePicker = genericComponent()({
         }),
         default: () => createElementVNode(Fragment, null, [createVNode(VDatePickerControls, mergeProps(datePickerControlsProps, {
           "disabled": disabled.value,
-          "viewMode": viewMode.value,
-          "text": monthYearText.value,
-          "monthText": monthText.value,
-          "yearText": yearText.value,
-          "onClick:next": onClickNextMonth,
-          "onClick:prev": onClickPrevMonth,
-          "onClick:nextYear": onClickNextYear,
-          "onClick:prevYear": onClickPrevYear,
+          "text": text.value,
+          "onClick:next": onClickNext,
+          "onClick:prev": onClickPrev,
           "onClick:month": onClickMonth,
           "onClick:year": onClickYear
-        }), {
-          default: slots.controls
-        }), createVNode(VFadeTransition, {
+        }), null), createVNode(VFadeTransition, {
           "hideOnLeave": true
         }, {
           default: () => [viewMode.value === 'months' ? createVNode(VDatePickerMonths, mergeProps({
@@ -28671,11 +25127,10 @@ const VFileInput = genericComponent()({
                 props: {
                   class: fieldClass,
                   ...slotProps
-                },
-                controlRef
+                }
               } = _ref4;
               return createElementVNode(Fragment, null, [createElementVNode("input", mergeProps({
-                "ref": val => inputRef.value = controlRef.value = val,
+                "ref": inputRef,
                 "type": "file",
                 "accept": inputAccept,
                 "readonly": isReadonly.value,
@@ -28842,401 +25297,6 @@ const VForm = genericComponent()({
       "onSubmit": onSubmit
     }, [slots.default?.(form)]));
     return forwardRefs(form, formRef);
-  }
-});
-
-const makeVKbdProps = propsFactory({
-  color: String,
-  ...makeBorderProps(),
-  ...makeComponentProps(),
-  ...makeRoundedProps(),
-  ...makeTagProps({
-    tag: 'kbd'
-  }),
-  ...makeThemeProps(),
-  ...makeElevationProps()
-}, 'VKbd');
-const VKbd = genericComponent()({
-  name: 'VKbd',
-  props: makeVKbdProps(),
-  setup(props, _ref) {
-    let {
-      slots
-    } = _ref;
-    const {
-      themeClasses
-    } = provideTheme(props);
-    const {
-      borderClasses
-    } = useBorder(props);
-    const {
-      roundedClasses
-    } = useRounded(props);
-    const {
-      backgroundColorClasses,
-      backgroundColorStyles
-    } = useBackgroundColor(() => props.color);
-    const {
-      elevationClasses
-    } = useElevation(props);
-    useRender(() => createVNode(props.tag, {
-      "class": normalizeClass(['v-kbd', themeClasses.value, backgroundColorClasses.value, borderClasses.value, elevationClasses.value, roundedClasses.value, props.class]),
-      "style": normalizeStyle([backgroundColorStyles.value, props.style])
-    }, slots));
-    return {};
-  }
-});
-
-// Types
-
-// Display mode types for different visual representations
-
-// Extended variant type that includes our custom 'contained' variant
-
-// Key display tuple: [mode, content] where content is string or IconValue
-
-// Key tuple: [mode, content, keycode] where content is string or IconValue
-
-function processKey(config, requestedMode, isMac) {
-  const keyCfg = isMac && config.mac ? config.mac : config.default;
-
-  // 1. Resolve the safest display mode for the current platform
-  const mode = (() => {
-    // If the requested mode lacks an asset, fall back to text
-    if (requestedMode === 'icon' && !keyCfg.icon) return 'text';
-    if (requestedMode === 'symbol' && !keyCfg.symbol) return 'text';
-    return requestedMode;
-  })();
-
-  // 2. Pick value for the chosen mode, defaulting to text representation
-  let value = keyCfg[mode] ?? keyCfg.text;
-
-  // 3. Guard against icon tokens leaking into text mode (e.g. "$ctrl")
-  if (mode === 'text' && typeof value === 'string' && value.startsWith('$') && !value.startsWith('$vuetify.')) {
-    value = value.slice(1).toUpperCase(); // "$ctrl" → "CTRL"
-  }
-  return mode === 'icon' ? ['icon', value] : [mode, value];
-}
-const hotkeyMap = {
-  ctrl: {
-    mac: {
-      symbol: '⌃',
-      icon: '$ctrl',
-      text: '$vuetify.hotkey.ctrl'
-    },
-    default: {
-      text: 'Ctrl'
-    }
-  },
-  meta: {
-    mac: {
-      symbol: '⌘',
-      icon: '$command',
-      text: '$vuetify.hotkey.command'
-    },
-    default: {
-      text: 'Ctrl'
-    }
-  },
-  cmd: {
-    mac: {
-      symbol: '⌘',
-      icon: '$command',
-      text: '$vuetify.hotkey.command'
-    },
-    default: {
-      text: 'Ctrl'
-    }
-  },
-  shift: {
-    mac: {
-      symbol: '⇧',
-      icon: '$shift',
-      text: '$vuetify.hotkey.shift'
-    },
-    default: {
-      text: 'Shift'
-    }
-  },
-  alt: {
-    mac: {
-      symbol: '⌥',
-      icon: '$alt',
-      text: '$vuetify.hotkey.option'
-    },
-    default: {
-      text: 'Alt'
-    }
-  },
-  enter: {
-    default: {
-      symbol: '↵',
-      icon: '$enter',
-      text: '$vuetify.hotkey.enter'
-    }
-  },
-  arrowup: {
-    default: {
-      symbol: '↑',
-      icon: '$arrowup',
-      text: '$vuetify.hotkey.upArrow'
-    }
-  },
-  arrowdown: {
-    default: {
-      symbol: '↓',
-      icon: '$arrowdown',
-      text: '$vuetify.hotkey.downArrow'
-    }
-  },
-  arrowleft: {
-    default: {
-      symbol: '←',
-      icon: '$arrowleft',
-      text: '$vuetify.hotkey.leftArrow'
-    }
-  },
-  arrowright: {
-    default: {
-      symbol: '→',
-      icon: '$arrowright',
-      text: '$vuetify.hotkey.rightArrow'
-    }
-  },
-  backspace: {
-    default: {
-      symbol: '⌫',
-      icon: '$backspace',
-      text: '$vuetify.hotkey.backspace'
-    }
-  },
-  escape: {
-    default: {
-      text: '$vuetify.hotkey.escape'
-    }
-  },
-  ' ': {
-    mac: {
-      symbol: '␣',
-      icon: '$space',
-      text: '$vuetify.hotkey.space'
-    },
-    default: {
-      text: '$vuetify.hotkey.space'
-    }
-  },
-  '-': {
-    default: {
-      text: '-'
-    }
-  }
-};
-const makeVHotkeyProps = propsFactory({
-  // String representing keyboard shortcuts (e.g., "ctrl+k", "meta+shift+p")
-  keys: String,
-  // How to display keys: 'symbol' uses special characters (⌘, ⌃), 'icon' uses SVG icons, 'text' uses words
-  displayMode: {
-    type: String,
-    default: 'icon'
-  },
-  // Custom key mapping configuration. Users can import and modify the exported hotkeyMap as needed
-  keyMap: {
-    type: Object,
-    default: () => hotkeyMap
-  },
-  platform: {
-    type: String,
-    default: 'auto'
-  },
-  inline: Boolean,
-  disabled: Boolean,
-  prefix: String,
-  suffix: String,
-  variant: {
-    type: String,
-    default: 'elevated',
-    validator: v => ['elevated', 'flat', 'tonal', 'outlined', 'text', 'plain', 'contained'].includes(v)
-  },
-  ...makeComponentProps(),
-  ...makeThemeProps(),
-  ...makeBorderProps(),
-  ...makeRoundedProps(),
-  ...makeElevationProps(),
-  color: String
-}, 'VHotkey');
-const AND_DELINEATOR = Symbol('VHotkey:AND_DELINEATOR'); // For + separators
-const SLASH_DELINEATOR = Symbol('VHotkey:SLASH_DELINEATOR'); // For / separators
-const THEN_DELINEATOR = Symbol('VHotkey:THEN_DELINEATOR'); // For - separators
-
-function getKeyText(keyMap, key, isMac) {
-  const lowerKey = key.toLowerCase();
-  if (lowerKey in keyMap) {
-    const result = processKey(keyMap[lowerKey], 'text', isMac);
-    return typeof result[1] === 'string' ? result[1] : String(result[1]);
-  }
-  return key.toUpperCase();
-}
-function applyDisplayModeToKey(keyMap, mode, key, isMac) {
-  const lowerKey = key.toLowerCase();
-  if (lowerKey in keyMap) {
-    const result = processKey(keyMap[lowerKey], mode, isMac);
-    if (result[0] === 'text' && typeof result[1] === 'string' && result[1].startsWith('$') && !result[1].startsWith('$vuetify.')) {
-      return ['text', result[1].replace('$', '').toUpperCase(), key];
-    }
-    return [...result, key];
-  }
-  return ['text', key.toUpperCase(), key];
-}
-const VHotkey = genericComponent()({
-  name: 'VHotkey',
-  props: makeVHotkeyProps(),
-  setup(props) {
-    const {
-      t
-    } = useLocale();
-    const {
-      themeClasses
-    } = provideTheme(props);
-    const {
-      rtlClasses
-    } = useRtl();
-    const {
-      borderClasses
-    } = useBorder(props);
-    const {
-      roundedClasses
-    } = useRounded(props);
-    const {
-      elevationClasses
-    } = useElevation(props);
-    const {
-      colorClasses,
-      colorStyles,
-      variantClasses
-    } = useVariant(() => ({
-      color: props.color,
-      variant: props.variant === 'contained' ? 'elevated' : props.variant
-    }));
-    const isMac = computed(() => props.platform === 'auto' ? typeof navigator !== 'undefined' && /macintosh/i.test(navigator.userAgent) : props.platform === 'mac');
-    const keyCombinations = computed(() => {
-      if (!props.keys) return [];
-
-      // Split by spaces to handle multiple key combinations
-      // Example: "ctrl+k meta+p" -> ["ctrl+k", "meta+p"]
-      return props.keys.split(' ').map(combination => {
-        const result = [];
-        const sequenceGroups = splitKeySequence(combination);
-        for (let i = 0; i < sequenceGroups.length; i++) {
-          const group = sequenceGroups[i];
-
-          // Add THEN delineator between sequence groups
-          if (i > 0) result.push(THEN_DELINEATOR);
-          const {
-            keys: keyParts,
-            separators
-          } = splitKeyCombination(group);
-          for (let j = 0; j < keyParts.length; j++) {
-            const part = keyParts[j];
-
-            // Add AND delineator between keys
-            if (j > 0) {
-              result.push(separators[j - 1] === '/' ? SLASH_DELINEATOR : AND_DELINEATOR);
-            }
-            result.push(applyDisplayModeToKey(props.keyMap, props.displayMode, part, isMac.value));
-          }
-        }
-        return result;
-      });
-    });
-    const accessibleLabel = computed(() => {
-      if (!props.keys) return '';
-
-      // Convert the parsed key combinations into readable text
-      const readableShortcuts = keyCombinations.value.map(combination => {
-        const readableParts = [];
-        for (const key of combination) {
-          if (Array.isArray(key)) {
-            // Always use text representation for screen readers
-            const textKey = key[0] === 'icon' || key[0] === 'symbol' ? applyDisplayModeToKey(mergeDeep(hotkeyMap, props.keyMap), 'text', String(key[1]), isMac.value)[1] : key[1];
-            readableParts.push(translateKey(textKey));
-          } else {
-            if (key === AND_DELINEATOR) {
-              readableParts.push(t('$vuetify.hotkey.plus'));
-            } else if (key === SLASH_DELINEATOR) {
-              readableParts.push(t('$vuetify.hotkey.or'));
-            } else if (key === THEN_DELINEATOR) {
-              readableParts.push(t('$vuetify.hotkey.then'));
-            }
-          }
-        }
-        return readableParts.join(' ');
-      });
-      const shortcutText = readableShortcuts.join(', ');
-      return t('$vuetify.hotkey.shortcut', shortcutText);
-    });
-    function translateKey(key) {
-      return key.startsWith('$vuetify.') ? t(key) : key;
-    }
-    function getKeyTooltip(key) {
-      if (props.displayMode === 'text') return undefined;
-      const textKey = getKeyText(props.keyMap, String(key[2]), isMac.value);
-      return translateKey(textKey);
-    }
-    function renderKey(key, keyIndex) {
-      const isContained = props.variant === 'contained';
-      const KeyComponent = isContained ? 'kbd' : VKbd;
-      const keyClasses = ['v-hotkey__key', `v-hotkey__key-${key[0]}`, ...(isContained ? ['v-hotkey__key--nested'] : [borderClasses.value, roundedClasses.value, elevationClasses.value, colorClasses.value])];
-      return createVNode(KeyComponent, {
-        "key": keyIndex,
-        "class": normalizeClass(keyClasses),
-        "style": normalizeStyle(isContained ? undefined : colorStyles.value),
-        "aria-hidden": "true",
-        "title": getKeyTooltip(key)
-      }, {
-        default: () => [key[0] === 'icon' ? createVNode(VIcon, {
-          "icon": key[1],
-          "aria-hidden": "true"
-        }, null) : translateKey(key[1])]
-      });
-    }
-    function renderDivider(key, keyIndex) {
-      return createElementVNode("span", {
-        "key": keyIndex,
-        "class": "v-hotkey__divider",
-        "aria-hidden": "true"
-      }, [key === AND_DELINEATOR ? '+' : key === SLASH_DELINEATOR ? '/' : t('$vuetify.hotkey.then')]);
-    }
-    useRender(() => {
-      const content = createElementVNode(Fragment, null, [props.prefix && createElementVNode("span", {
-        "key": "prefix",
-        "class": "v-hotkey__prefix"
-      }, [props.prefix]), keyCombinations.value.map((combination, comboIndex) => createElementVNode("span", {
-        "class": "v-hotkey__combination",
-        "key": comboIndex
-      }, [combination.map((key, keyIndex) => Array.isArray(key) ? renderKey(key, keyIndex) : renderDivider(key, keyIndex)), comboIndex < keyCombinations.value.length - 1 && createElementVNode("span", {
-        "aria-hidden": "true"
-      }, [createTextVNode("\xA0")])])), props.suffix && createElementVNode("span", {
-        "key": "suffix",
-        "class": "v-hotkey__suffix"
-      }, [props.suffix])]);
-      return createElementVNode("div", {
-        "class": normalizeClass(['v-hotkey', {
-          'v-hotkey--disabled': props.disabled,
-          'v-hotkey--inline': props.inline,
-          'v-hotkey--contained': props.variant === 'contained'
-        }, themeClasses.value, rtlClasses.value, variantClasses.value, props.class]),
-        "style": normalizeStyle(props.style),
-        "role": "img",
-        "aria-label": accessibleLabel.value
-      }, [props.variant !== 'contained' ? content : createVNode(VKbd, {
-        "key": "contained",
-        "class": normalizeClass(['v-hotkey__contained-wrapper', borderClasses.value, roundedClasses.value, elevationClasses.value, colorClasses.value]),
-        "style": normalizeStyle(colorStyles.value),
-        "aria-hidden": "true"
-      }, {
-        default: () => [content]
-      })]);
-    });
   }
 });
 
@@ -29508,9 +25568,7 @@ const VInfiniteScroll = genericComponent()({
       const effectiveSide = side ?? props.side;
       setStatus(effectiveSide, 'ok');
       nextTick(() => {
-        if (effectiveSide !== 'end') {
-          setScrollAmount(getScrollSize() - previousScrollSize + getScrollAmount());
-        }
+        setScrollAmount(getScrollSize() - previousScrollSize + getScrollAmount());
         if (props.mode !== 'manual') {
           nextTick(() => {
             // See #17475
@@ -29609,6 +25667,48 @@ const VItem = genericComponent()({
       value: value.value,
       disabled: disabled.value
     });
+  }
+});
+
+const makeVKbdProps = propsFactory({
+  color: String,
+  ...makeBorderProps(),
+  ...makeComponentProps(),
+  ...makeRoundedProps(),
+  ...makeTagProps({
+    tag: 'kbd'
+  }),
+  ...makeThemeProps(),
+  ...makeElevationProps()
+}, 'VKbd');
+const VKbd = genericComponent()({
+  name: 'VKbd',
+  props: makeVKbdProps(),
+  setup(props, _ref) {
+    let {
+      slots
+    } = _ref;
+    const {
+      themeClasses
+    } = provideTheme(props);
+    const {
+      borderClasses
+    } = useBorder(props);
+    const {
+      roundedClasses
+    } = useRounded(props);
+    const {
+      backgroundColorClasses,
+      backgroundColorStyles
+    } = useBackgroundColor(() => props.color);
+    const {
+      elevationClasses
+    } = useElevation(props);
+    useRender(() => createVNode(props.tag, {
+      "class": normalizeClass(['v-kbd', themeClasses.value, backgroundColorClasses.value, borderClasses.value, elevationClasses.value, roundedClasses.value, props.class]),
+      "style": normalizeStyle([backgroundColorStyles.value, props.style])
+    }, slots));
+    return {};
   }
 });
 
@@ -30179,7 +26279,6 @@ const makeVNavigationDrawerProps = propsFactory({
   ...makeElevationProps(),
   ...makeLayoutItemProps(),
   ...makeRoundedProps(),
-  ...omit(makeFocusTrapProps(), ['disableInitialFocus']),
   ...makeTagProps({
     tag: 'nav'
   }),
@@ -30246,11 +26345,6 @@ const VNavigationDrawer = genericComponent()({
     const isPersistent = toRef(() => props.persistent);
     const isTemporary = computed(() => !props.permanent && (mobile.value || props.temporary));
     const isSticky = computed(() => props.sticky && !isTemporary.value && location.value !== 'bottom');
-    useFocusTrap(props, {
-      isActive,
-      localTop: isTemporary,
-      contentEl: rootEl
-    });
     useToggleScope(() => props.expandOnHover && props.rail != null, () => {
       watch(isHovering, val => emit('update:rail', !val));
     });
@@ -30335,8 +26429,7 @@ const VNavigationDrawer = genericComponent()({
           'v-navigation-drawer--active': isActive.value,
           'v-navigation-drawer--sticky': isSticky.value
         }, themeClasses.value, backgroundColorClasses.value, borderClasses.value, displayClasses.value, elevationClasses.value, roundedClasses.value, props.class],
-        "style": [backgroundColorStyles.value, layoutItemStyles.value, ssrBootStyles.value, stickyStyles.value, props.style],
-        "inert": !isActive.value
+        "style": [backgroundColorStyles.value, layoutItemStyles.value, ssrBootStyles.value, stickyStyles.value, props.style]
       }, scopeId, attrs), {
         default: () => [hasImage && createElementVNode("div", {
           "key": "image",
@@ -30421,7 +26514,6 @@ function useHold(_ref) {
     window.removeEventListener('pointerup', holdStop);
     document.removeEventListener('blur', holdStop);
   }
-  onScopeDispose(holdStop);
   function tick(value) {
     toggleUpDown(value === 'up');
   }
@@ -30514,17 +26606,12 @@ const VNumberInput = genericComponent()({
     }
     const model = useProxiedModel(props, 'modelValue', null, val => val ?? null, val => val == null ? val ?? null : clamp(Number(val), props.min, props.max));
     const _inputText = shallowRef(null);
-    const _lastParsedValue = shallowRef(null);
-    watch(model, val => {
-      if (isFocused.value && !controlsDisabled.value && Number(_inputText.value?.replace(decimalSeparator.value, '.')) === val) ; else if (val == null) {
+    watchEffect(() => {
+      if (isFocused.value && !controlsDisabled.value && Number(_inputText.value) === model.value) ; else if (model.value == null) {
         _inputText.value = null;
-        _lastParsedValue.value = null;
-      } else if (!isNaN(val)) {
-        _inputText.value = correctPrecision(val);
-        _lastParsedValue.value = Number(_inputText.value.replace(decimalSeparator.value, '.'));
+      } else if (!isNaN(model.value)) {
+        _inputText.value = correctPrecision(model.value);
       }
-    }, {
-      immediate: true
     });
     const inputText = computed({
       get: () => _inputText.value,
@@ -30532,23 +26619,14 @@ const VNumberInput = genericComponent()({
         if (val === null || val === '') {
           model.value = null;
           _inputText.value = null;
-          _lastParsedValue.value = null;
           return;
         }
         const parsedValue = Number(val.replace(decimalSeparator.value, '.'));
-        if (!isNaN(parsedValue)) {
+        if (!isNaN(parsedValue) && parsedValue <= props.max && parsedValue >= props.min) {
+          model.value = parsedValue;
           _inputText.value = val;
-          _lastParsedValue.value = parsedValue;
-          if (parsedValue <= props.max && parsedValue >= props.min) {
-            model.value = parsedValue;
-          }
         }
       }
-    });
-    const isOutOfRange = computed(() => {
-      if (_lastParsedValue.value === null) return false;
-      const numberFromText = Number(_inputText.value?.replace(decimalSeparator.value, '.'));
-      return numberFromText !== clamp(numberFromText, props.min, props.max);
     });
     const canIncrease = computed(() => {
       if (controlsDisabled.value) return false;
@@ -30624,7 +26702,6 @@ const VNumberInput = genericComponent()({
       if (!new RegExp(`^-?\\d*${escapeForRegex(decimalSeparator.value)}?\\d*$`).test(potentialNewInputVal)) {
         e.preventDefault();
         inputElement.value = potentialNewNumber;
-        nextTick(() => inputText.value = potentialNewNumber);
       }
       if (props.precision == null) return;
 
@@ -30632,15 +26709,13 @@ const VNumberInput = genericComponent()({
       if (potentialNewInputVal.split(decimalSeparator.value)[1]?.length > props.precision) {
         e.preventDefault();
         inputElement.value = potentialNewNumber;
-        nextTick(() => inputText.value = potentialNewNumber);
         const cursorPosition = (selectionStart ?? 0) + e.data.length;
         inputElement.setSelectionRange(cursorPosition, cursorPosition);
       }
       // Ignore decimal separator when precision = 0
-      if (props.precision === 0 && potentialNewInputVal.endsWith(decimalSeparator.value)) {
+      if (props.precision === 0 && potentialNewInputVal.includes(decimalSeparator.value)) {
         e.preventDefault();
         inputElement.value = potentialNewNumber;
-        nextTick(() => inputText.value = potentialNewNumber);
       }
     }
     async function onKeydown(e) {
@@ -30808,7 +26883,6 @@ const VNumberInput = genericComponent()({
         "focused": isFocused.value,
         "onUpdate:focused": $event => isFocused.value = $event,
         "validationValue": model.value,
-        "error": props.error || isOutOfRange.value || undefined,
         "onBeforeinput": onBeforeinput,
         "onFocus": onFocus,
         "onBlur": onBlur,
@@ -31005,8 +27079,7 @@ const VOtpInput = genericComponent()({
         baseColor: toRef(() => props.baseColor),
         disabled: toRef(() => props.disabled),
         error: toRef(() => props.error),
-        variant: toRef(() => props.variant),
-        rounded: toRef(() => props.rounded)
+        variant: toRef(() => props.variant)
       }
     }, {
       scoped: true
@@ -31316,7 +27389,6 @@ const makeVRangeSliderProps = propsFactory({
 }, 'VRangeSlider');
 const VRangeSlider = genericComponent()({
   name: 'VRangeSlider',
-  inheritAttrs: false,
   props: makeVRangeSliderProps(),
   emits: {
     'update:focused': value => true,
@@ -31327,8 +27399,7 @@ const VRangeSlider = genericComponent()({
   setup(props, _ref) {
     let {
       slots,
-      emit,
-      attrs
+      emit
     } = _ref;
     const startThumbRef = ref();
     const stopThumbRef = ref();
@@ -31359,29 +27430,20 @@ const VRangeSlider = genericComponent()({
       onSliderTouchstart,
       position,
       trackContainerRef,
-      disabled,
       readonly
     } = useSlider({
       props,
       steps,
       onSliderStart: () => {
-        if (disabled.value || readonly.value) {
-          activeThumbRef.value?.blur();
-          return;
-        }
         emit('start', model.value);
       },
       onSliderEnd: _ref2 => {
         let {
           value
         } = _ref2;
-        if (disabled.value || readonly.value) {
-          activeThumbRef.value?.blur();
-        } else {
-          const newValue = activeThumbRef.value === startThumbRef.value?.$el ? [value, model.value[1]] : [model.value[0], value];
-          if (!props.strict && newValue[0] < newValue[1]) {
-            model.value = newValue;
-          }
+        const newValue = activeThumbRef.value === startThumbRef.value?.$el ? [value, model.value[1]] : [model.value[0], value];
+        if (!props.strict && newValue[0] < newValue[1]) {
+          model.value = newValue;
         }
         emit('end', model.value);
       },
@@ -31390,10 +27452,6 @@ const VRangeSlider = genericComponent()({
           value
         } = _ref3;
         const [start, stop] = model.value;
-        if (disabled.value || readonly.value) {
-          activeThumbRef.value?.blur();
-          return;
-        }
         if (!props.strict && start === stop && start !== min.value) {
           activeThumbRef.value = value > start ? stopThumbRef.value?.$el : startThumbRef.value?.$el;
           activeThumbRef.value?.focus();
@@ -31415,18 +27473,17 @@ const VRangeSlider = genericComponent()({
     const trackStop = computed(() => position(model.value[1]));
     useRender(() => {
       const inputProps = VInput.filterProps(props);
-      const [rootAttrs, inputAttrs] = filterInputAttrs(attrs);
       const hasPrepend = !!(props.label || slots.label || slots.prepend);
       return createVNode(VInput, mergeProps({
         "class": ['v-slider', 'v-range-slider', {
           'v-slider--has-labels': !!slots['tick-label'] || hasLabels.value,
           'v-slider--focused': isFocused.value,
           'v-slider--pressed': mousePressed.value,
-          'v-slider--disabled': disabled.value
+          'v-slider--disabled': props.disabled
         }, rtlClasses.value, props.class],
         "style": props.style,
         "ref": inputRef
-      }, inputProps, rootAttrs, {
+      }, inputProps, {
         "focused": isFocused.value
       }), {
         ...slots,
@@ -31446,15 +27503,15 @@ const VRangeSlider = genericComponent()({
           }, [createElementVNode("input", {
             "id": `${id.value}_start`,
             "name": props.name || id.value,
-            "disabled": disabled.value,
-            "readonly": readonly.value,
+            "disabled": !!props.disabled,
+            "readonly": !!props.readonly,
             "tabindex": "-1",
             "value": model.value[0]
           }, null), createElementVNode("input", {
             "id": `${id.value}_stop`,
             "name": props.name || id.value,
-            "disabled": disabled.value,
-            "readonly": readonly.value,
+            "disabled": !!props.disabled,
+            "readonly": !!props.readonly,
             "tabindex": "-1",
             "value": model.value[1]
           }, null), createVNode(VSliderTrack, {
@@ -31463,7 +27520,7 @@ const VRangeSlider = genericComponent()({
             "stop": trackStop.value
           }, {
             'tick-label': slots['tick-label']
-          }), createVNode(VSliderThumb, mergeProps({
+          }), createVNode(VSliderThumb, {
             "ref": startThumbRef,
             "aria-describedby": messagesId.value,
             "focused": isFocused && activeThumbRef.value === startThumbRef.value?.$el,
@@ -31490,9 +27547,9 @@ const VRangeSlider = genericComponent()({
             "max": model.value[1],
             "position": trackStart.value,
             "ripple": props.ripple
-          }, inputAttrs), {
+          }, {
             'thumb-label': slots['thumb-label']
-          }), createVNode(VSliderThumb, mergeProps({
+          }), createVNode(VSliderThumb, {
             "ref": stopThumbRef,
             "aria-describedby": messagesId.value,
             "focused": isFocused && activeThumbRef.value === stopThumbRef.value?.$el,
@@ -31519,7 +27576,7 @@ const VRangeSlider = genericComponent()({
             "max": max.value,
             "position": trackStop.value,
             "ripple": props.ripple
-          }, inputAttrs), {
+          }, {
             'thumb-label': slots['thumb-label']
           })]);
         }
@@ -31591,7 +27648,6 @@ const VRating = genericComponent()({
     const {
       themeClasses
     } = provideTheme(props);
-    const root = ref();
     const rating = useProxiedModel(props, 'modelValue');
     const normalizedValue = computed(() => clamp(parseFloat(rating.value), 0, Number(props.length)));
     const range = computed(() => createRange(Number(props.length), 1));
@@ -31629,28 +27685,6 @@ const VRating = genericComponent()({
         onClick
       };
     }));
-    const currentItemIndex = computed(() => {
-      return props.halfIncrements ? 1 + Math.floor(Math.max(0, Number(rating.value ?? 0) - 0.5)) * 2 : Math.floor(Math.max(0, Number(rating.value ?? 0) - 1));
-    });
-    function moveCurrentFocus() {
-      const currentItem = root.value?.querySelector('[tabindex="0"]');
-      currentItem?.focus();
-    }
-    function onItemKeydown(event) {
-      if (props.disabled || props.readonly) return;
-      if (event.ctrlKey || event.altKey) return;
-      const step = props.halfIncrements ? 0.5 : 1;
-      if (event.key === 'ArrowRight') {
-        const newValue = Math.min(Number(props.length), Number(rating.value ?? 0) + step);
-        rating.value = newValue;
-        nextTick(() => moveCurrentFocus());
-      }
-      if (event.key === 'ArrowLeft') {
-        const newValue = Math.max(0, Number(rating.value ?? 0) - step);
-        rating.value = newValue;
-        nextTick(() => moveCurrentFocus());
-      }
-    }
     const uid = useId();
     const name = computed(() => props.name ?? `v-rating-${uid}`);
     function VRatingItem(_ref2) {
@@ -31665,7 +27699,6 @@ const VRating = genericComponent()({
         onClick
       } = eventState.value[index + 1];
       const id = `${name.value}-${String(value).replace('.', '-')}`;
-      const isFocusable = index === currentItemIndex.value;
       const btnProps = {
         color: itemState.value[index]?.color,
         density: props.density,
@@ -31673,9 +27706,7 @@ const VRating = genericComponent()({
         icon: itemState.value[index]?.icon,
         ripple: props.ripple,
         size: props.size,
-        variant: 'plain',
-        tabindex: isFocusable ? 0 : -1,
-        onKeydown: onItemKeydown
+        variant: 'plain'
       };
       return createElementVNode(Fragment, null, [createElementVNode("label", {
         "for": id,
@@ -31720,8 +27751,7 @@ const VRating = genericComponent()({
           'v-rating--hover': props.hover,
           'v-rating--readonly': props.readonly
         }, themeClasses.value, props.class]),
-        "style": normalizeStyle(props.style),
-        "ref": root
+        "style": normalizeStyle(props.style)
       }, {
         default: () => [createVNode(VRatingItem, {
           "value": 0,
@@ -31881,12 +27911,12 @@ const VSkeletonLoader = genericComponent()({
         ariaLabel: t(props.loadingText),
         role: 'alert'
       };
-      return isLoading ? createElementVNode("div", mergeProps({
+      return createElementVNode(Fragment, null, [isLoading ? createElementVNode("div", mergeProps({
         "class": ['v-skeleton-loader', {
           'v-skeleton-loader--boilerplate': props.boilerplate
         }, themeClasses.value, backgroundColorClasses.value, elevationClasses.value],
         "style": [backgroundColorStyles.value, dimensionStyles.value]
-      }, loadingProps, attrs), [items.value]) : createElementVNode(Fragment, null, [slots.default?.()]);
+      }, loadingProps, attrs), [items.value]) : slots.default?.()]);
     });
     return {};
   }
@@ -31951,7 +27981,6 @@ function useCountdown(milliseconds) {
   };
 }
 const makeVSnackbarProps = propsFactory({
-  /* @deprecated */
   multiLine: Boolean,
   text: String,
   timer: [Boolean, String],
@@ -31969,7 +27998,7 @@ const makeVSnackbarProps = propsFactory({
   ...makeThemeProps(),
   ...omit(makeVOverlayProps({
     transition: 'v-snackbar-transition'
-  }), ['persistent', 'noClickAnimation', 'retainFocus', 'captureFocus', 'disableInitialFocus', 'scrim', 'scrollStrategy', 'stickToTarget', 'viewportMargin'])
+  }), ['persistent', 'noClickAnimation', 'scrim', 'scrollStrategy', 'stickToTarget'])
 }, 'VSnackbar');
 const VSnackbar = genericComponent()({
   name: 'VSnackbar',
@@ -32945,8 +28974,6 @@ const VStepperItem = genericComponent()({
   }
 });
 
-// Types
-
 const makeVStepperWindowProps = propsFactory({
   ...omit(makeVWindowProps(), ['continuous', 'nextIcon', 'prevIcon', 'showArrows', 'touch', 'mandatory'])
 }, 'VStepperWindow');
@@ -33031,16 +29058,12 @@ const makeStepperProps = propsFactory({
     default: () => []
   },
   itemTitle: {
-    type: [String, Array, Function],
+    type: String,
     default: 'title'
   },
   itemValue: {
-    type: [String, Array, Function],
+    type: String,
     default: 'value'
-  },
-  itemProps: {
-    type: [Boolean, String, Array, Function],
-    default: 'props'
   },
   nonLinear: Boolean,
   flat: Boolean,
@@ -33087,16 +29110,9 @@ const VStepper = genericComponent()({
     const items = computed(() => props.items.map((item, index) => {
       const title = getPropertyFromItem(item, props.itemTitle, item);
       const value = getPropertyFromItem(item, props.itemValue, index + 1);
-      const itemProps = props.itemProps === true ? item : getPropertyFromItem(item, props.itemProps);
-      const _props = {
+      return {
         title,
         value,
-        ...itemProps
-      };
-      return {
-        title: _props.title,
-        value: _props.value,
-        props: _props,
         raw: item
       };
     }));
@@ -33148,7 +29164,7 @@ const VStepper = genericComponent()({
               raw,
               ...item
             } = _ref2;
-            return createElementVNode(Fragment, null, [!!index && createVNode(VDivider, null, null), createVNode(VStepperItem, item.props, {
+            return createElementVNode(Fragment, null, [!!index && createVNode(VDivider, null, null), createVNode(VStepperItem, item, {
               default: slots[`header-item.${item.value}`] ?? slots.header,
               icon: slots.icon,
               title: slots.title,
@@ -33420,10 +29436,7 @@ const VTabsSymbol = Symbol.for('vuetify:v-tabs');
 const makeVTabProps = propsFactory({
   fixed: Boolean,
   sliderColor: String,
-  sliderTransition: String,
-  sliderTransitionDuration: [String, Number],
   hideSlider: Boolean,
-  inset: Boolean,
   direction: {
     type: String,
     default: 'horizontal'
@@ -33445,46 +29458,10 @@ const VTab = genericComponent()({
       textColorClasses: sliderColorClasses,
       textColorStyles: sliderColorStyles
     } = useTextColor(() => props.sliderColor);
-    const {
-      backgroundColorClasses: insetColorClasses,
-      backgroundColorStyles: insetColorStyles
-    } = useBackgroundColor(() => props.sliderColor);
     const rootEl = ref();
     const sliderEl = ref();
     const isHorizontal = computed(() => props.direction === 'horizontal');
     const isSelected = computed(() => rootEl.value?.group?.isSelected.value ?? false);
-    function fade(nextEl, prevEl) {
-      return {
-        opacity: [0, 1]
-      };
-    }
-    function grow(nextEl, prevEl) {
-      return props.direction === 'vertical' ? {
-        transform: ['scaleY(0)', 'scaleY(1)']
-      } : {
-        transform: ['scaleX(0)', 'scaleX(1)']
-      };
-    }
-    function shift(nextEl, prevEl) {
-      const prevBox = prevEl.getBoundingClientRect();
-      const nextBox = nextEl.getBoundingClientRect();
-      const xy = isHorizontal.value ? 'x' : 'y';
-      const XY = isHorizontal.value ? 'X' : 'Y';
-      const rightBottom = isHorizontal.value ? 'right' : 'bottom';
-      const widthHeight = isHorizontal.value ? 'width' : 'height';
-      const prevPos = prevBox[xy];
-      const nextPos = nextBox[xy];
-      const delta = prevPos > nextPos ? prevBox[rightBottom] - nextBox[rightBottom] : prevBox[xy] - nextBox[xy];
-      const origin = Math.sign(delta) > 0 ? isHorizontal.value ? 'right' : 'bottom' : Math.sign(delta) < 0 ? isHorizontal.value ? 'left' : 'top' : 'center';
-      const size = Math.abs(delta) + (Math.sign(delta) < 0 ? prevBox[widthHeight] : nextBox[widthHeight]);
-      const scale = size / Math.max(prevBox[widthHeight], nextBox[widthHeight]) || 0;
-      const initialScale = prevBox[widthHeight] / nextBox[widthHeight] || 0;
-      const sigma = 1.5;
-      return {
-        transform: [`translate${XY}(${delta}px) scale${XY}(${initialScale})`, `translate${XY}(${delta / sigma}px) scale${XY}(${(scale - 1) / sigma + 1})`, 'none'],
-        transformOrigin: Array(3).fill(origin)
-      };
-    }
     function updateSlider(_ref2) {
       let {
         value
@@ -33494,21 +29471,26 @@ const VTab = genericComponent()({
         const nextEl = sliderEl.value;
         if (!prevEl || !nextEl) return;
         const color = getComputedStyle(prevEl).color;
-        const keyframes = {
-          fade,
-          grow,
-          shift
-        }[props.sliderTransition ?? 'shift'] ?? shift;
-        const duration = Number(props.sliderTransitionDuration) || ({
-          fade: 400,
-          grow: 350,
-          shift: 225
-        }[props.sliderTransition ?? 'shift'] ?? 225);
+        const prevBox = prevEl.getBoundingClientRect();
+        const nextBox = nextEl.getBoundingClientRect();
+        const xy = isHorizontal.value ? 'x' : 'y';
+        const XY = isHorizontal.value ? 'X' : 'Y';
+        const rightBottom = isHorizontal.value ? 'right' : 'bottom';
+        const widthHeight = isHorizontal.value ? 'width' : 'height';
+        const prevPos = prevBox[xy];
+        const nextPos = nextBox[xy];
+        const delta = prevPos > nextPos ? prevBox[rightBottom] - nextBox[rightBottom] : prevBox[xy] - nextBox[xy];
+        const origin = Math.sign(delta) > 0 ? isHorizontal.value ? 'right' : 'bottom' : Math.sign(delta) < 0 ? isHorizontal.value ? 'left' : 'top' : 'center';
+        const size = Math.abs(delta) + (Math.sign(delta) < 0 ? prevBox[widthHeight] : nextBox[widthHeight]);
+        const scale = size / Math.max(prevBox[widthHeight], nextBox[widthHeight]) || 0;
+        const initialScale = prevBox[widthHeight] / nextBox[widthHeight] || 0;
+        const sigma = 1.5;
         animate(nextEl, {
           backgroundColor: [color, 'currentcolor'],
-          ...keyframes(nextEl, prevEl)
+          transform: [`translate${XY}(${delta}px) scale${XY}(${initialScale})`, `translate${XY}(${delta / sigma}px) scale${XY}(${(scale - 1) / sigma + 1})`, 'none'],
+          transformOrigin: Array(3).fill(origin)
         }, {
-          duration,
+          duration: 225,
           easing: standardEasing
         });
       }
@@ -33518,8 +29500,8 @@ const VTab = genericComponent()({
       return createVNode(VBtn, mergeProps({
         "symbol": VTabsSymbol,
         "ref": rootEl,
-        "class": ['v-tab', props.class, isSelected.value && props.inset ? insetColorClasses.value : []],
-        "style": [props.style, isSelected.value && props.inset ? insetColorStyles.value : []],
+        "class": ['v-tab', props.class],
+        "style": props.style,
         "tabindex": isSelected.value ? 0 : -1,
         "role": "tab",
         "aria-selected": String(isSelected.value),
@@ -33641,11 +29623,8 @@ const makeVTabsProps = propsFactory({
     default: undefined
   },
   hideSlider: Boolean,
-  inset: Boolean,
-  insetPadding: [String, Number],
-  insetRadius: [String, Number],
   sliderColor: String,
-  ...pick(makeVTabProps(), ['spaced', 'sliderTransition', 'sliderTransitionDuration']),
+  ...pick(makeVTabProps(), ['spaced']),
   ...makeVSlideGroupProps({
     mandatory: 'force',
     selectedClass: 'v-tab-item--selected'
@@ -33678,15 +29657,12 @@ const VTabs = genericComponent()({
     } = useScopeId();
     provideDefaults({
       VTab: {
-        color: toRef(props, 'color'),
-        direction: toRef(props, 'direction'),
-        stacked: toRef(props, 'stacked'),
-        fixed: toRef(props, 'fixedTabs'),
-        inset: toRef(props, 'inset'),
-        sliderColor: toRef(props, 'sliderColor'),
-        sliderTransition: toRef(props, 'sliderTransition'),
-        sliderTransitionDuration: toRef(props, 'sliderTransitionDuration'),
-        hideSlider: toRef(props, 'hideSlider')
+        color: toRef(() => props.color),
+        direction: toRef(() => props.direction),
+        stacked: toRef(() => props.stacked),
+        fixed: toRef(() => props.fixedTabs),
+        sliderColor: toRef(() => props.sliderColor),
+        hideSlider: toRef(() => props.hideSlider)
       }
     });
     useRender(() => {
@@ -33698,18 +29674,15 @@ const VTabs = genericComponent()({
         "class": ['v-tabs', `v-tabs--${props.direction}`, `v-tabs--align-tabs-${props.alignTabs}`, {
           'v-tabs--fixed-tabs': props.fixedTabs,
           'v-tabs--grow': props.grow,
-          'v-tabs--inset': props.inset,
           'v-tabs--stacked': props.stacked
         }, densityClasses.value, backgroundColorClasses.value, props.class],
         "style": [{
-          '--v-tabs-height': convertToUnit(props.height),
-          '--v-tabs-inset-padding': props.inset ? convertToUnit(props.insetPadding) : undefined,
-          '--v-tabs-inset-radius': props.inset ? convertToUnit(props.insetRadius) : undefined
+          '--v-tabs-height': convertToUnit(props.height)
         }, backgroundColorStyles.value, props.style],
         "role": "tablist",
         "symbol": VTabsSymbol
       }, scopeId, attrs), {
-        default: slots.default ?? (() => items.value.map(item => slots.tab?.({
+        default: () => [slots.default?.() ?? items.value.map(item => slots.tab?.({
           item
         }) ?? createVNode(VTab, mergeProps(item, {
           "key": item.text,
@@ -33719,9 +29692,7 @@ const VTabs = genericComponent()({
           default: slots[`tab.${item.value}`] ? () => slots[`tab.${item.value}`]?.({
             item
           }) : undefined
-        }))),
-        prev: slots.prev,
-        next: slots.next
+        }))]
       }), hasWindow && createVNode(VTabsWindow, mergeProps({
         "modelValue": model.value,
         "onUpdate:modelValue": $event => model.value = $event,
@@ -33757,10 +29728,6 @@ const makeVTextareaProps = propsFactory({
   rows: {
     type: [Number, String],
     default: 5,
-    validator: v => !isNaN(parseFloat(v))
-  },
-  maxHeight: {
-    type: [Number, String],
     validator: v => !isNaN(parseFloat(v))
   },
   maxRows: {
@@ -33814,10 +29781,6 @@ const VTextarea = genericComponent()({
     const vFieldRef = ref();
     const controlHeight = shallowRef('');
     const textareaRef = ref();
-    const scrollbarWidth = ref(0);
-    const {
-      platform
-    } = useDisplay();
     const autocomplete = useAutocomplete(props);
     const isActive = computed(() => props.persistentPlaceholder || isFocused.value || props.active);
     function onFocus() {
@@ -33846,24 +29809,14 @@ const VTextarea = genericComponent()({
     }
     function onInput(e) {
       const el = e.target;
-      if (!props.modelModifiers?.trim) {
-        model.value = el.value;
-        return;
+      model.value = el.value;
+      if (props.modelModifiers?.trim) {
+        const caretPosition = [el.selectionStart, el.selectionEnd];
+        nextTick(() => {
+          el.selectionStart = caretPosition[0];
+          el.selectionEnd = caretPosition[1];
+        });
       }
-      const value = el.value;
-      const start = el.selectionStart;
-      const end = el.selectionEnd;
-      model.value = value;
-      nextTick(() => {
-        let offset = 0;
-        if (value.trimStart().length === el.value.length) {
-          // #22307 - Whitespace has been removed from the
-          // start, offset the caret position to compensate
-          offset = value.length - el.value.length;
-        }
-        if (start != null) el.selectionStart = start - offset;
-        if (end != null) el.selectionEnd = end - offset;
-      });
     }
     const sizerRef = ref();
     const rows = ref(Number(props.rows));
@@ -33872,18 +29825,6 @@ const VTextarea = genericComponent()({
       if (!props.autoGrow) rows.value = Number(props.rows);
     });
     function calculateInputHeight() {
-      nextTick(() => {
-        if (!textareaRef.value) return;
-        if (platform.value.firefox) {
-          scrollbarWidth.value = 12;
-          return;
-        }
-        const {
-          offsetWidth,
-          clientWidth
-        } = textareaRef.value;
-        scrollbarWidth.value = Math.max(0, offsetWidth - clientWidth);
-      });
       if (!props.autoGrow) return;
       nextTick(() => {
         if (!sizerRef.value || !vFieldRef.value) return;
@@ -33893,7 +29834,7 @@ const VTextarea = genericComponent()({
         const height = sizerRef.value.scrollHeight;
         const lineHeight = parseFloat(style.lineHeight);
         const minHeight = Math.max(parseFloat(props.rows) * lineHeight + padding, parseFloat(fieldStyle.getPropertyValue('--v-input-control-height')));
-        const maxHeight = props.maxHeight ? parseFloat(props.maxHeight) : parseFloat(props.maxRows) * lineHeight + padding || Infinity;
+        const maxHeight = parseFloat(props.maxRows) * lineHeight + padding || Infinity;
         const newHeight = clamp(height ?? 0, minHeight, maxHeight);
         rows.value = Math.floor((newHeight - padding) / lineHeight);
         controlHeight.value = convertToUnit(newHeight);
@@ -33902,7 +29843,6 @@ const VTextarea = genericComponent()({
     onMounted(calculateInputHeight);
     watch(model, calculateInputHeight);
     watch(() => props.rows, calculateInputHeight);
-    watch(() => props.maxHeight, calculateInputHeight);
     watch(() => props.maxRows, calculateInputHeight);
     watch(() => props.density, calculateInputHeight);
     watch(rows, val => {
@@ -33945,10 +29885,7 @@ const VTextarea = genericComponent()({
           'v-textarea--no-resize': props.noResize || props.autoGrow,
           'v-input--plain-underlined': isPlainOrUnderlined.value
         }, props.class],
-        "style": [{
-          '--v-textarea-max-height': props.maxHeight ? convertToUnit(props.maxHeight) : undefined,
-          '--v-textarea-scroll-bar-width': convertToUnit(scrollbarWidth.value)
-        }, props.style]
+        "style": props.style
       }, rootAttrs, inputProps, {
         "centerAffix": rows.value === 1 && !isPlainOrUnderlined.value,
         "focused": isFocused.value
@@ -33975,7 +29912,6 @@ const VTextarea = genericComponent()({
           }, fieldProps, {
             "id": id.value,
             "active": isActive.value || isDirty.value,
-            "labelId": `${id.value}-label`,
             "centerAffix": rows.value === 1 && !isPlainOrUnderlined.value,
             "dirty": isDirty.value || props.dirty,
             "disabled": isDisabled.value,
@@ -33989,13 +29925,12 @@ const VTextarea = genericComponent()({
                 props: {
                   class: fieldClass,
                   ...slotProps
-                },
-                controlRef
+                }
               } = _ref3;
               return createElementVNode(Fragment, null, [props.prefix && createElementVNode("span", {
                 "class": "v-text-field__prefix"
               }, [props.prefix]), withDirectives(createElementVNode("textarea", mergeProps({
-                "ref": val => textareaRef.value = controlRef.value = val,
+                "ref": textareaRef,
                 "class": fieldClass,
                 "value": model.value,
                 "onInput": onInput,
@@ -34007,8 +29942,7 @@ const VTextarea = genericComponent()({
                 "name": autocomplete.fieldName.value,
                 "autocomplete": autocomplete.fieldAutocomplete.value,
                 "onFocus": onFocus,
-                "onBlur": blur,
-                "aria-labelledby": `${id.value}-label`
+                "onBlur": blur
               }, slotProps, inputAttrs), null), [[Intersect, {
                 handler: onIntersect
               }, null, {
@@ -34315,6 +30249,11 @@ const VTimeline = genericComponent()({
   }
 });
 
+function pad(n) {
+  let length = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 2;
+  return String(n).padStart(length, '0');
+}
+
 // Types
 
 const makeVTimePickerClockProps = propsFactory({
@@ -34511,19 +30450,15 @@ const VTimePickerClock = genericComponent()({
     }
     function onMouseUp(e) {
       e.stopPropagation();
-      removeListeners();
+      window.removeEventListener('mousemove', onDragMove);
+      window.removeEventListener('touchmove', onDragMove);
+      window.removeEventListener('mouseup', onMouseUp);
+      window.removeEventListener('touchend', onMouseUp);
       isDragging.value = false;
       if (valueOnMouseUp.value !== null && isAllowed(valueOnMouseUp.value)) {
         emit('change', valueOnMouseUp.value);
       }
     }
-    function removeListeners() {
-      window.removeEventListener('mousemove', onDragMove);
-      window.removeEventListener('touchmove', onDragMove);
-      window.removeEventListener('mouseup', onMouseUp);
-      window.removeEventListener('touchend', onMouseUp);
-    }
-    onScopeDispose(removeListeners);
     useRender(() => {
       return createElementVNode("div", {
         "class": normalizeClass([{
@@ -34563,138 +30498,13 @@ const VTimePickerClock = genericComponent()({
 
 // Types
 
-const makeVTimePickerFieldProps = propsFactory({
-  active: Boolean,
-  color: String,
-  disabled: Boolean,
-  label: String,
-  modelValue: String,
-  readonly: Boolean
-}, 'VTimePickerField');
-const VTimePickerField = genericComponent()({
-  name: 'VTimePickerField',
-  inheritAttrs: false,
-  props: makeVTimePickerFieldProps(),
-  emits: {
-    'update:modelValue': v => true
-  },
-  setup(props, _ref) {
-    let {
-      emit,
-      attrs
-    } = _ref;
-    const {
-      textColorClasses,
-      textColorStyles
-    } = useTextColor(() => props.color);
-    const vTextInputRef = ref();
-    const isFocused = shallowRef(false);
-    function onKeydown(e) {
-      if (['Backspace', 'Delete'].includes(e.key)) {
-        e.preventDefault();
-        const target = e.target;
-        target.value = '';
-        emit('update:modelValue', null);
-      }
-    }
-    useRender(() => {
-      return createElementVNode("div", null, [createVNode(VTextField, mergeProps({
-        "ref": vTextInputRef,
-        "_as": "VTimePickerField",
-        "autocomplete": "off",
-        "class": ['v-time-picker-controls__time__field', {
-          'v-time-picker-controls__time__field--active': props.active
-        }, props.active ? textColorClasses.value : []],
-        "style": props.active ? textColorStyles.value : [],
-        "disabled": props.disabled,
-        "variant": "solo-filled",
-        "inputmode": "numeric",
-        "hideDetails": true,
-        "flat": true,
-        "modelValue": props.modelValue ?? (isFocused.value ? '' : '--'),
-        "onUpdate:modelValue": v => emit('update:modelValue', v),
-        "onKeydown": onKeydown,
-        "onFocus": () => isFocused.value = true,
-        "onBlur": () => isFocused.value = false
-      }, attrs), null), createElementVNode("div", {
-        "class": "v-time-picker-controls__field-label"
-      }, [props.label])]);
-    });
-    return forwardRefs({}, vTextInputRef);
-  }
-});
-
-// Types
-
-function pad(n) {
-  let length = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 2;
-  return String(n).padStart(length, '0');
-}
-function convert24to12(hour) {
-  return hour ? (hour - 1) % 12 + 1 : 12;
-}
-function convert12to24(hour, period) {
-  return hour % 12 + (period === 'pm' ? 12 : 0);
-}
-function extractInteger(v) {
-  const digits = v.replaceAll(/\D/g, '');
-  return digits.length > 0 ? Number(digits) : null;
-}
-function incrementHour(hour, increment, period) {
-  if (period) {
-    if (hour === 12 && increment) {
-      return {
-        value: 1
-      };
-    }
-    if (hour === 11 && increment) {
-      return {
-        value: 12,
-        togglePeriod: true
-      };
-    }
-    if (hour === 12 && !increment) {
-      return {
-        value: 11,
-        togglePeriod: true
-      };
-    }
-    if (hour === 1 && !increment) {
-      return {
-        value: 12
-      };
-    }
-  } else {
-    if (hour === 23 && increment) {
-      return {
-        value: 0
-      };
-    }
-    if (hour === 0 && !increment) {
-      return {
-        value: 23
-      };
-    }
-  }
-  return {
-    value: hour + (increment ? 1 : -1)
-  };
-}
-function incrementMinuteOrSecond(val, increment) {
-  if (val === 59 && increment) return 0;
-  if (val === 0 && !increment) return 59;
-  return val + (increment ? 1 : -1);
-}
-
-// Types
-
 const makeVTimePickerControlsProps = propsFactory({
   ampm: Boolean,
   color: String,
   disabled: Boolean,
-  hour: [Number, String],
-  minute: [Number, String],
-  second: [Number, String],
+  hour: Number,
+  minute: Number,
+  second: Number,
   period: String,
   readonly: Boolean,
   useSeconds: Boolean,
@@ -34706,10 +30516,7 @@ const VTimePickerControls = genericComponent()({
   props: makeVTimePickerControlsProps(),
   emits: {
     'update:period': data => true,
-    'update:viewMode': data => true,
-    'update:hour': v => true,
-    'update:minute': v => true,
-    'update:second': v => true
+    'update:viewMode': data => true
   },
   setup(props, _ref) {
     let {
@@ -34719,171 +30526,65 @@ const VTimePickerControls = genericComponent()({
     const {
       t
     } = useLocale();
-    const transformHours = {
-      in: v => {
-        if (v == null || isNaN(Number(v))) return null;
-        const val = Number(v);
-        return props.ampm ? pad(convert24to12(val)) : pad(val);
-      },
-      out: v => {
-        if (isNaN(Number(v)) || v == null || v === '') return null;
-        const val = typeof v === 'string' ? extractInteger(v) : Number(v);
-        if (val === null) return null;
-        return props.ampm ? convert12to24(val, props.period ?? 'am') : clamp(val, 0, 23);
-      }
-    };
-    const hour = useProxiedModel(props, 'hour', undefined, transformHours.in, transformHours.out);
-    const transformMinutesOrSeconds = {
-      in: v => v != null && !isNaN(Number(v)) ? pad(`${v}`) : null,
-      out: v => {
-        if (isNaN(Number(v)) || v == null || v === '') return null;
-        const val = typeof v === 'string' ? extractInteger(v) : Number(v);
-        return val !== null ? clamp(val, 0, 59) : null;
-      }
-    };
-    const minute = useProxiedModel(props, 'minute', undefined, transformMinutesOrSeconds.in, transformMinutesOrSeconds.out);
-    const second = useProxiedModel(props, 'second', undefined, transformMinutesOrSeconds.in, transformMinutesOrSeconds.out);
-    function onHourFieldKeydown(e) {
-      if (!['ArrowUp', 'ArrowDown'].includes(e.key)) return;
-      e.preventDefault();
-      e.stopPropagation();
-      const current = Number(hour.value ?? 0);
-      const period = props.ampm ? props.period ?? 'am' : null;
-      const {
-        value,
-        togglePeriod
-      } = incrementHour(current, e.key === 'ArrowUp', period);
-      hour.value = pad(value);
-      if (togglePeriod) {
-        emit('update:period', props.period === 'am' ? 'pm' : 'am');
-      }
-    }
-    function onMinuteFieldKeydown(e) {
-      if (!['ArrowUp', 'ArrowDown'].includes(e.key)) return;
-      e.preventDefault();
-      e.stopPropagation();
-      minute.value = incrementMinuteOrSecond(Number(minute.value), e.key === 'ArrowUp');
-    }
-    function onSecondFieldKeydown(e) {
-      if (!['ArrowUp', 'ArrowDown'].includes(e.key)) return;
-      e.preventDefault();
-      e.stopPropagation();
-      second.value = incrementMinuteOrSecond(Number(second.value), e.key === 'ArrowUp');
-    }
-    function createInputInterceptor(valueTransformOut, compare, apply) {
-      return e => {
-        if (!e.data) return;
-        const inputElement = e.target;
-        const {
-          value: existingTxt,
-          selectionStart,
-          selectionEnd
-        } = inputElement ?? {};
-        if (extractInteger(e.data) === null) {
-          e.preventDefault();
-          return;
-        }
-        const potentialNewInputVal = existingTxt ? existingTxt.slice(0, selectionStart) + e.data + existingTxt.slice(selectionEnd) : e.data;
-        if (potentialNewInputVal.length > 2) {
-          if (selectionStart === selectionEnd && selectionEnd === 0 && e.data.trim().startsWith('0')) {
-            e.preventDefault();
-            inputElement.value = potentialNewInputVal.trim().substring(0, 2);
-            apply(inputElement.value);
-            if (e.data.trim().length === 1) {
-              inputElement.setSelectionRange(1, 1);
-            }
-            return;
-          }
-          if (selectionStart === selectionEnd && selectionEnd === 1 && existingTxt.startsWith('0')) {
-            e.preventDefault();
-            inputElement.value = potentialNewInputVal.trim().substring(0, 2);
-            apply(inputElement.value);
-            return;
-          }
-          const maxValue = props.viewMode === 'hour' ? props.ampm ? 12 : 23 : 59;
-          const value = extractInteger(potentialNewInputVal);
-          if (value > maxValue) {
-            e.preventDefault();
-            inputElement.value = pad(String(extractInteger(e.data)).substring(0, 2));
-            apply(inputElement.value);
-            return;
-          }
-        }
-        const potentialNewNumber = valueTransformOut(potentialNewInputVal);
-        if (compare(potentialNewNumber)) {
-          // ignore input when results in the same number
-          // prevents typing more digits
-          e.preventDefault();
-        }
-      };
-    }
-    const hourInputRef = ref();
-    const minuteInputRef = ref();
-    const secondInputRef = ref();
-    watch(() => props.viewMode, (_, old) => {
-      switch (old) {
-        case 'hour':
-          hourInputRef.value.blur();
-          break;
-        case 'minute':
-          minuteInputRef.value.blur();
-          break;
-        case 'second':
-          secondInputRef.value.blur();
-          break;
-      }
-    });
-    const hourInputFilter = createInputInterceptor(transformHours.out, v => transformHours.in(v) === hour.value, v => hour.value = v);
-    const minuteInputFilter = createInputInterceptor(transformMinutesOrSeconds.out, v => transformMinutesOrSeconds.in(v) === minute.value, v => minute.value = v);
-    const secondInputFilter = createInputInterceptor(transformMinutesOrSeconds.out, v => transformMinutesOrSeconds.in(v) === second.value, v => second.value = v);
     useRender(() => {
+      let hour = props.hour;
+      if (props.ampm) {
+        hour = hour ? (hour - 1) % 12 + 1 : 12;
+      }
       return createElementVNode("div", {
         "class": "v-time-picker-controls"
       }, [createElementVNode("div", {
         "class": normalizeClass({
           'v-time-picker-controls__time': true,
-          'v-time-picker-controls__time--with-ampm': props.ampm,
           'v-time-picker-controls__time--with-seconds': props.useSeconds
         })
-      }, [createVNode(VTimePickerField, {
-        "ref": hourInputRef,
+      }, [createVNode(VBtn, {
         "active": props.viewMode === 'hour',
-        "color": props.color,
+        "color": props.viewMode === 'hour' ? props.color : undefined,
         "disabled": props.disabled,
-        "label": t('$vuetify.timePicker.hour'),
-        "modelValue": hour.value,
-        "onUpdate:modelValue": v => hour.value = v,
-        "onKeydown": onHourFieldKeydown,
-        "onBeforeinput": hourInputFilter,
-        "onFocus": () => emit('update:viewMode', 'hour')
+        "variant": "tonal",
+        "class": normalizeClass({
+          'v-time-picker-controls__time__btn': true,
+          'v-time-picker-controls__time--with-ampm__btn': props.ampm,
+          'v-time-picker-controls__time--with-seconds__btn': props.useSeconds
+        }),
+        "text": props.hour == null ? '--' : pad(`${hour}`),
+        "onClick": () => emit('update:viewMode', 'hour')
       }, null), createElementVNode("span", {
-        "class": "v-time-picker-controls__time__separator"
-      }, [createTextVNode(":")]), createVNode(VTimePickerField, {
-        "ref": minuteInputRef,
+        "class": normalizeClass(['v-time-picker-controls__time__separator', {
+          'v-time-picker-controls--with-seconds__time__separator': props.useSeconds
+        }])
+      }, [createTextVNode(":")]), createVNode(VBtn, {
         "active": props.viewMode === 'minute',
-        "color": props.color,
+        "color": props.viewMode === 'minute' ? props.color : undefined,
+        "class": normalizeClass({
+          'v-time-picker-controls__time__btn': true,
+          'v-time-picker-controls__time__btn__active': props.viewMode === 'minute',
+          'v-time-picker-controls__time--with-ampm__btn': props.ampm,
+          'v-time-picker-controls__time--with-seconds__btn': props.useSeconds
+        }),
         "disabled": props.disabled,
-        "label": t('$vuetify.timePicker.minute'),
-        "modelValue": minute.value,
-        "onUpdate:modelValue": v => minute.value = v,
-        "onKeydown": onMinuteFieldKeydown,
-        "onBeforeinput": minuteInputFilter,
-        "onFocus": () => emit('update:viewMode', 'minute')
+        "variant": "tonal",
+        "text": props.minute == null ? '--' : pad(props.minute),
+        "onClick": () => emit('update:viewMode', 'minute')
       }, null), props.useSeconds && createElementVNode("span", {
-        "key": "secondsDivider",
-        "class": "v-time-picker-controls__time__separator"
-      }, [createTextVNode(":")]), props.useSeconds && createVNode(VTimePickerField, {
+        "class": normalizeClass(['v-time-picker-controls__time__separator', {
+          'v-time-picker-controls--with-seconds__time__separator': props.useSeconds
+        }]),
+        "key": "secondsDivider"
+      }, [createTextVNode(":")]), props.useSeconds && createVNode(VBtn, {
         "key": "secondsVal",
-        "ref": secondInputRef,
         "active": props.viewMode === 'second',
-        "color": props.color,
+        "color": props.viewMode === 'second' ? props.color : undefined,
+        "variant": "tonal",
+        "onClick": () => emit('update:viewMode', 'second'),
+        "class": normalizeClass({
+          'v-time-picker-controls__time__btn': true,
+          'v-time-picker-controls__time__btn__active': props.viewMode === 'second',
+          'v-time-picker-controls__time--with-seconds__btn': props.useSeconds
+        }),
         "disabled": props.disabled,
-        "label": t('$vuetify.timePicker.second'),
-        "modelValue": second.value,
-        "onUpdate:modelValue": v => second.value = v,
-        "onKeydown": onSecondFieldKeydown,
-        "onBeforeinput": secondInputFilter,
-        "onFocus": () => emit('update:viewMode', 'second')
+        "text": props.second == null ? '--' : pad(props.second)
       }, null), props.ampm && createElementVNode("div", {
         "class": "v-time-picker-controls__ampm"
       }, [createVNode(VBtn, {
@@ -34946,14 +30647,9 @@ const makeVTimePickerProps = propsFactory({
   readonly: Boolean,
   scrollable: Boolean,
   useSeconds: Boolean,
-  variant: {
-    type: String,
-    default: 'dial'
-  },
   ...omit(makeVPickerProps({
     title: '$vuetify.timePicker.title'
-  }), ['landscape']),
-  ...makeDensityProps()
+  }), ['landscape'])
 }, 'VTimePicker');
 const VTimePicker = genericComponent()({
   name: 'VTimePicker',
@@ -34974,9 +30670,6 @@ const VTimePicker = genericComponent()({
     const {
       t
     } = useLocale();
-    const {
-      densityClasses
-    } = useDensity(props);
     const inputHour = ref(null);
     const inputMinute = ref(null);
     const inputSecond = ref(null);
@@ -35045,31 +30738,8 @@ const VTimePicker = genericComponent()({
     const isAmPm = computed(() => {
       return props.format === 'ampm';
     });
-    const shouldClear = toRef(() => {
-      return props.modelValue !== null && inputHour.value === null && inputMinute.value === null && (!props.useSeconds || inputSecond.value === null);
-    });
-    function emitValue() {
-      const value = genValue();
-      if (value !== null && value !== props.modelValue) {
-        emit('update:modelValue', value);
-      }
-      if (shouldClear.value) {
-        emit('update:modelValue', null);
-      }
-    }
-    watch(inputHour, emitValue);
-    watch(inputMinute, emitValue);
-    watch(inputSecond, emitValue);
     watch(() => props.period, val => setPeriod(val));
     watch(() => props.modelValue, val => setInputData(val));
-    watch(() => props.useSeconds, (val, old) => {
-      if (old && !val && viewMode.value === 'second') {
-        viewMode.value = 'minute';
-      }
-      if (!val && inputSecond.value !== null) {
-        inputSecond.value = null;
-      }
-    });
     onMounted(() => {
       setInputData(props.modelValue);
     });
@@ -35078,6 +30748,16 @@ const VTimePicker = genericComponent()({
         return `${pad(inputHour.value)}:${pad(inputMinute.value)}` + (props.useSeconds ? `:${pad(inputSecond.value)}` : '');
       }
       return null;
+    }
+    function emitValue() {
+      const value = genValue();
+      if (value !== null) emit('update:modelValue', value);
+    }
+    function convert24to12(hour) {
+      return hour ? (hour - 1) % 12 + 1 : 12;
+    }
+    function convert12to24(hour, period) {
+      return hour % 12 + (period === 'pm' ? 12 : 0);
     }
     function setInputData(value) {
       if (value == null || value === '') {
@@ -35151,13 +30831,12 @@ const VTimePicker = genericComponent()({
       emitChange && emitValue();
     }
     useRender(() => {
-      const pickerProps = omit(VPicker.filterProps(props), ['hideHeader']);
+      const pickerProps = VPicker.filterProps(props);
       const timePickerControlsProps = VTimePickerControls.filterProps(props);
       const timePickerClockProps = VTimePickerClock.filterProps(omit(props, ['format', 'modelValue', 'min', 'max']));
       return createVNode(VPicker, mergeProps(pickerProps, {
         "color": undefined,
-        "class": ['v-time-picker', `v-time-picker--variant-${props.variant}`, props.class, densityClasses.value],
-        "hideHeader": props.hideHeader && props.variant !== 'input',
+        "class": ['v-time-picker', props.class],
         "style": props.style
       }), {
         title: () => slots.title?.() ?? createElementVNode("div", {
@@ -35170,10 +30849,7 @@ const VTimePicker = genericComponent()({
           "period": period.value,
           "second": inputSecond.value,
           "viewMode": viewMode.value,
-          "onUpdate:hour": val => inputHour.value = val,
-          "onUpdate:minute": val => inputMinute.value = val,
           "onUpdate:period": val => setPeriod(val),
-          "onUpdate:second": val => inputSecond.value = val,
           "onUpdate:viewMode": value => viewMode.value = value,
           "ref": controlsRef
         }), null),
@@ -35243,7 +30919,7 @@ const makeVTooltipProps = propsFactory({
     scrim: false,
     scrollStrategy: 'reposition',
     transition: null
-  }), ['absolute', 'retainFocus', 'captureFocus', 'disableInitialFocus'])
+  }), ['absolute', 'persistent'])
 }, 'VTooltip');
 const VTooltip = genericComponent()({
   name: 'VTooltip',
@@ -35291,6 +30967,7 @@ const VTooltip = genericComponent()({
         "absolute": true,
         "location": location.value,
         "origin": origin.value,
+        "persistent": true,
         "role": "tooltip",
         "activatorProps": activatorProps.value,
         "_disableGlobalStack": true
@@ -35599,7 +31276,7 @@ const VTreeviewChildren = genericComponent()({
           default: () => [createVNode(VCheckboxBtn, {
             "key": item.value,
             "modelValue": slotProps.isSelected,
-            "disabled": props.disabled || itemProps.disabled,
+            "disabled": props.disabled,
             "loading": loading,
             "color": props.selectedColor,
             "density": props.density,
@@ -35643,10 +31320,6 @@ const VTreeviewChildren = genericComponent()({
         ...props,
         ...treeItemProps
       });
-      const footerProps = {
-        hideActions: props.hideActions,
-        indentLines: indentLines.footer
-      };
       return children ? createVNode(VTreeviewGroup, mergeProps(treeviewGroupProps, {
         "value": props.returnObject ? item.raw : treeviewGroupProps?.value,
         "rawId": treeviewGroupProps?.value
@@ -35659,10 +31332,9 @@ const VTreeviewChildren = genericComponent()({
             ...itemProps,
             ...activatorProps,
             value: itemProps?.value,
-            hideActions: props.hideActions,
             indentLines: indentLines.node,
             onToggleExpand: [() => checkChildren(item), activatorProps.onClick],
-            onClick: props.disabled || itemProps.disabled ? undefined : isClickOnOpen.value ? [() => checkChildren(item), activatorProps.onClick] : () => selectItem(activatorItems.value[index]?.select, !activatorItems.value[index]?.isSelected)
+            onClick: isClickOnOpen.value ? [() => checkChildren(item), activatorProps.onClick] : () => selectItem(activatorItems.value[index]?.select, !activatorItems.value[index]?.isSelected)
           };
           return renderSlot(slots.header, {
             props: listItemProps,
@@ -35673,22 +31345,18 @@ const VTreeviewChildren = genericComponent()({
             "ref": el => activatorItems.value[index] = el
           }, listItemProps, {
             "hasCustomPrepend": !!slots.prepend,
+            "hideActions": props.hideActions,
             "value": props.returnObject ? item.raw : itemProps.value,
             "loading": loading
           }), slotsWithItem));
         },
-        default: () => createElementVNode(Fragment, null, [createVNode(VTreeviewChildren, mergeProps(treeviewChildrenProps, {
+        default: () => createVNode(VTreeviewChildren, mergeProps(treeviewChildrenProps, {
           "items": children,
           "indentLinesVariant": props.indentLinesVariant,
           "parentIndentLines": indentLines.children,
           "isLastGroup": nextItemHasChildren,
           "returnObject": props.returnObject
-        }), slots), slots.footer?.({
-          props: footerProps,
-          item: item.raw,
-          internalItem: item,
-          loading
-        })])
+        }), slots)
       }) : renderSlot(slots.item, {
         props: itemProps,
         item: item.raw,
@@ -35727,11 +31395,6 @@ const makeVTreeviewProps = propsFactory({
   openAll: Boolean,
   indentLines: [Boolean, String],
   search: String,
-  hideNoData: Boolean,
-  noDataText: {
-    type: String,
-    default: '$vuetify.noDataText'
-  },
   ...makeFilterProps({
     filterKeys: ['title']
   }),
@@ -35759,9 +31422,6 @@ const VTreeview = genericComponent()({
       slots,
       emit
     } = _ref;
-    const {
-      t
-    } = useLocale();
     const {
       items
     } = useListItems(props);
@@ -35855,10 +31515,7 @@ const VTreeview = genericComponent()({
         "selected": selected.value,
         "onUpdate:selected": $event => selected.value = $event
       }), {
-        default: () => [visibleIds.value?.size === 0 && !props.hideNoData && (slots['no-data']?.() ?? createVNode(VListItem, {
-          "key": "no-data",
-          "title": t(props.noDataText)
-        }, null)), createVNode(VTreeviewChildren, mergeProps(treeviewChildrenProps, {
+        default: () => [createVNode(VTreeviewChildren, mergeProps(treeviewChildrenProps, {
           "density": props.density,
           "returnObject": props.returnObject,
           "items": items.value,
@@ -35892,6 +31549,2750 @@ const VValidation = genericComponent()({
 
 // Types
 
+const makeVIconBtnProps = propsFactory({
+  active: {
+    type: Boolean,
+    default: undefined
+  },
+  activeColor: String,
+  activeIcon: [String, Function, Object],
+  activeVariant: String,
+  baseVariant: {
+    type: String,
+    default: 'tonal'
+  },
+  disabled: Boolean,
+  height: [Number, String],
+  width: [Number, String],
+  hideOverlay: Boolean,
+  icon: [String, Function, Object],
+  iconColor: String,
+  loading: Boolean,
+  opacity: [Number, String],
+  readonly: Boolean,
+  rotate: [Number, String],
+  size: {
+    type: [Number, String],
+    default: 'default'
+  },
+  sizes: {
+    type: Array,
+    default: () => [['x-small', 16], ['small', 24], ['default', 40], ['large', 48], ['x-large', 56]]
+  },
+  text: {
+    type: [String, Number, Boolean],
+    default: undefined
+  },
+  ...makeBorderProps(),
+  ...makeComponentProps(),
+  ...makeElevationProps(),
+  ...makeIconSizeProps(),
+  ...makeRoundedProps(),
+  ...makeTagProps({
+    tag: 'button'
+  }),
+  ...makeThemeProps(),
+  ...makeVariantProps({
+    variant: 'flat'
+  })
+}, 'VIconBtn');
+const VIconBtn = genericComponent()({
+  name: 'VIconBtn',
+  props: makeVIconBtnProps(),
+  emits: {
+    'update:active': value => true
+  },
+  setup(props, _ref) {
+    let {
+      attrs,
+      slots
+    } = _ref;
+    const isActive = useProxiedModel(props, 'active');
+    const {
+      themeClasses
+    } = provideTheme(props);
+    const {
+      borderClasses
+    } = useBorder(props);
+    const {
+      elevationClasses
+    } = useElevation(props);
+    const {
+      roundedClasses
+    } = useRounded(props);
+    const {
+      colorClasses,
+      colorStyles,
+      variantClasses
+    } = useVariant(() => ({
+      color: (() => {
+        if (props.disabled) return undefined;
+        if (!isActive.value) return props.color;
+        // Use an inline fallback as opposed to setting a default color
+        // because non-toggle buttons are default flat whereas toggle
+        // buttons are default tonal and active flat. The exact use
+        // case for this is a toggle button with no active color.
+        return props.activeColor ?? props.color ?? 'surface-variant';
+      })(),
+      variant: (() => {
+        if (isActive.value === undefined) return props.variant;
+        if (isActive.value) return props.activeVariant ?? props.variant;
+        return props.baseVariant ?? props.variant;
+      })()
+    }));
+    const btnSizeMap = new Map(props.sizes);
+    function onClick() {
+      if (props.disabled || props.readonly || isActive.value === undefined || props.tag === 'a' && attrs.href) return;
+      isActive.value = !isActive.value;
+    }
+    useRender(() => {
+      const icon = isActive.value ? props.activeIcon ?? props.icon : props.icon;
+      const _btnSize = props.size;
+      const hasNamedSize = btnSizeMap.has(_btnSize);
+      const btnSize = hasNamedSize ? btnSizeMap.get(_btnSize) : _btnSize;
+      const btnHeight = props.height ?? btnSize;
+      const btnWidth = props.width ?? btnSize;
+      const {
+        iconSize
+      } = useIconSizes(props, () => new Map(props.iconSizes).get(_btnSize));
+      const iconProps = {
+        icon,
+        size: iconSize.value,
+        color: props.iconColor,
+        opacity: props.opacity
+      };
+      return createVNode(props.tag, {
+        "type": props.tag === 'button' ? 'button' : undefined,
+        "class": normalizeClass([{
+          'v-icon-btn': true,
+          'v-icon-btn--active': isActive.value,
+          'v-icon-btn--disabled': props.disabled,
+          'v-icon-btn--loading': props.loading,
+          'v-icon-btn--readonly': props.readonly,
+          [`v-icon-btn--${props.size}`]: true
+        }, themeClasses.value, colorClasses.value, borderClasses.value, elevationClasses.value, roundedClasses.value, variantClasses.value, props.class]),
+        "style": normalizeStyle([{
+          '--v-icon-btn-rotate': convertToUnit(props.rotate, 'deg'),
+          '--v-icon-btn-height': convertToUnit(btnHeight),
+          '--v-icon-btn-width': convertToUnit(btnWidth)
+        }, colorStyles.value, props.style]),
+        "tabindex": props.disabled || props.readonly ? -1 : 0,
+        "onClick": onClick
+      }, {
+        default: () => [genOverlays(!props.hideOverlay, 'v-icon-btn'), createElementVNode("div", {
+          "class": "v-icon-btn__content",
+          "data-no-activator": ""
+        }, [!slots.default && icon ? createVNode(VIcon, mergeProps({
+          "key": "content-icon"
+        }, iconProps), null) : createVNode(VDefaultsProvider, {
+          "key": "content-defaults",
+          "disabled": !icon,
+          "defaults": {
+            VIcon: {
+              ...iconProps
+            }
+          }
+        }, {
+          default: () => slots.default?.() ?? toDisplayString(props.text)
+        })]), !!props.loading && createElementVNode("span", {
+          "key": "loader",
+          "class": "v-icon-btn__loader"
+        }, [slots.loader?.() ?? createVNode(VProgressCircular, {
+          "color": typeof props.loading === 'boolean' ? undefined : props.loading,
+          "indeterminate": "disable-shrink",
+          "width": "2",
+          "size": iconSize.value
+        }, null)])]
+      });
+    });
+    return {};
+  }
+});
+
+function createUTCDate(year) {
+  let month = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
+  let day = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 1;
+  let date;
+  if (year < 100 && year >= 0) {
+    date = new Date(Date.UTC(year, month, day));
+    if (isFinite(date.getUTCFullYear())) {
+      date.setUTCFullYear(year);
+    }
+  } else {
+    date = new Date(Date.UTC(year, month, day));
+  }
+  return date;
+}
+function firstWeekOffset(year, firstDayOfWeek, firstDayOfYear) {
+  const firstWeekDayInFirstWeek = 7 + firstDayOfWeek - firstDayOfYear;
+  const firstWeekDayOfYear = (7 + createUTCDate(year, 0, firstWeekDayInFirstWeek).getUTCDay() - firstDayOfWeek) % 7;
+  return -firstWeekDayOfYear + firstWeekDayInFirstWeek - 1;
+}
+function dayOfYear(year, month, day, firstDayOfWeek) {
+  let dayOfYear = [0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334][month];
+  if (month > 1 && isLeapYear(year)) {
+    dayOfYear++;
+  }
+  return dayOfYear + day;
+}
+function weeksInYear(year, firstDayOfWeek, firstDayOfYear) {
+  const weekOffset = firstWeekOffset(year, firstDayOfWeek, firstDayOfYear);
+  const weekOffsetNext = firstWeekOffset(year + 1, firstDayOfWeek, firstDayOfYear);
+  const daysInYear = isLeapYear(year) ? 366 : 365;
+  return (daysInYear - weekOffset + weekOffsetNext) / 7;
+}
+function weekNumber(year, month, day, firstDayOfWeek, localeFirstDayOfYear) {
+  const weekOffset = firstWeekOffset(year, firstDayOfWeek, localeFirstDayOfYear);
+  const week = Math.ceil((dayOfYear(year, month, day) - weekOffset) / 7);
+  if (week < 1) {
+    return week + weeksInYear(year - 1, firstDayOfWeek, localeFirstDayOfYear);
+  } else if (week > weeksInYear(year, firstDayOfWeek, localeFirstDayOfYear)) {
+    return week - weeksInYear(year, firstDayOfWeek, localeFirstDayOfYear);
+  } else {
+    return week;
+  }
+}
+function isLeapYear(year) {
+  return year % 4 === 0 && year % 100 !== 0 || year % 400 === 0;
+}
+
+// Types
+
+const PARSE_REGEX = /^(\d{4})-(\d{1,2})(-(\d{1,2}))?([^\d]+(\d{1,2}))?(:(\d{1,2}))?(:(\d{1,2}))?$/;
+const PARSE_TIME = /(\d\d?)(:(\d\d?)|)(:(\d\d?)|)/;
+const DAYS_IN_MONTH = [0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+const DAYS_IN_MONTH_LEAP = [0, 31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+const DAYS_IN_MONTH_MIN = 28;
+const DAYS_IN_MONTH_MAX = 31;
+const MONTH_MAX = 12;
+const MONTH_MIN = 1;
+const DAY_MIN = 1;
+const DAYS_IN_WEEK = 7;
+const MINUTES_IN_HOUR = 60;
+const MINUTE_MAX = 59;
+const MINUTES_IN_DAY$1 = 24 * 60;
+const HOUR_MAX = 23;
+const OFFSET_YEAR = 10000;
+const OFFSET_MONTH = 100;
+const OFFSET_HOUR = 100;
+const OFFSET_TIME = 10000;
+function getStartOfWeek(timestamp, weekdays, today) {
+  const start = copyTimestamp(timestamp);
+  findWeekday(start, weekdays[0], prevDay);
+  updateFormatted(start);
+  if (today) {
+    updateRelative(start, today, start.hasTime);
+  }
+  return start;
+}
+function getEndOfWeek(timestamp, weekdays, today) {
+  const end = copyTimestamp(timestamp);
+  findWeekday(end, weekdays[weekdays.length - 1]);
+  updateFormatted(end);
+  if (today) {
+    updateRelative(end, today, end.hasTime);
+  }
+  return end;
+}
+function getStartOfMonth(timestamp) {
+  const start = copyTimestamp(timestamp);
+  start.day = DAY_MIN;
+  updateWeekday(start);
+  updateFormatted(start);
+  return start;
+}
+function getEndOfMonth(timestamp) {
+  const end = copyTimestamp(timestamp);
+  end.day = daysInMonth(end.year, end.month);
+  updateWeekday(end);
+  updateFormatted(end);
+  return end;
+}
+function validateNumber(input) {
+  return isFinite(parseInt(input));
+}
+function validateTime(input) {
+  return typeof input === 'number' && isFinite(input) || !!PARSE_TIME.exec(input) || typeof input === 'object' && isFinite(input.hour) && isFinite(input.minute);
+}
+function parseTime(input) {
+  if (typeof input === 'number') {
+    // when a number is given, it's minutes since 12:00am
+    return input;
+  } else if (typeof input === 'string') {
+    // when a string is given, it's a hh:mm:ss format where seconds are optional
+    const parts = PARSE_TIME.exec(input);
+    if (!parts) {
+      return false;
+    }
+    return parseInt(parts[1]) * 60 + parseInt(parts[3] || 0);
+  } else if (typeof input === 'object') {
+    // when an object is given, it must have hour and minute
+    if (typeof input.hour !== 'number' || typeof input.minute !== 'number') {
+      return false;
+    }
+    return input.hour * 60 + input.minute;
+  } else {
+    // unsupported type
+    return false;
+  }
+}
+function validateTimestamp(input) {
+  return typeof input === 'number' && isFinite(input) || typeof input === 'string' && !!PARSE_REGEX.exec(input) || input instanceof Date;
+}
+function parseTimestamp(input) {
+  let required = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
+  let now = arguments.length > 2 ? arguments[2] : undefined;
+  if (typeof input === 'number' && isFinite(input)) {
+    input = new Date(input);
+  }
+  if (input instanceof Date) {
+    const date = parseDate(input);
+    if (now) {
+      updateRelative(date, now, date.hasTime);
+    }
+    return date;
+  }
+  if (typeof input !== 'string') {
+    if (required) {
+      throw new Error(`${input} is not a valid timestamp. It must be a Date, number of milliseconds since Epoch, or a string in the format of YYYY-MM-DD or YYYY-MM-DD hh:mm. Zero-padding is optional and seconds are ignored.`);
+    }
+    return null;
+  }
+
+  // YYYY-MM-DD hh:mm:ss
+  const parts = PARSE_REGEX.exec(input);
+  if (!parts) {
+    if (required) {
+      throw new Error(`${input} is not a valid timestamp. It must be a Date, number of milliseconds since Epoch, or a string in the format of YYYY-MM-DD or YYYY-MM-DD hh:mm. Zero-padding is optional and seconds are ignored.`);
+    }
+    return null;
+  }
+  const timestamp = {
+    date: input,
+    time: '',
+    year: parseInt(parts[1]),
+    month: parseInt(parts[2]),
+    day: parseInt(parts[4]) || 1,
+    hour: parseInt(parts[6]) || 0,
+    minute: parseInt(parts[8]) || 0,
+    weekday: 0,
+    hasDay: !!parts[4],
+    hasTime: !!(parts[6] && parts[8]),
+    past: false,
+    present: false,
+    future: false
+  };
+  updateWeekday(timestamp);
+  updateFormatted(timestamp);
+  if (now) {
+    updateRelative(timestamp, now, timestamp.hasTime);
+  }
+  return timestamp;
+}
+function parseDate(date) {
+  return updateFormatted({
+    date: '',
+    time: '',
+    year: date.getFullYear(),
+    month: date.getMonth() + 1,
+    day: date.getDate(),
+    weekday: date.getDay(),
+    hour: date.getHours(),
+    minute: date.getMinutes(),
+    hasDay: true,
+    hasTime: true,
+    past: false,
+    present: true,
+    future: false
+  });
+}
+function getDayIdentifier(timestamp) {
+  return timestamp.year * OFFSET_YEAR + timestamp.month * OFFSET_MONTH + timestamp.day;
+}
+function getTimeIdentifier(timestamp) {
+  return timestamp.hour * OFFSET_HOUR + timestamp.minute;
+}
+function getTimestampIdentifier(timestamp) {
+  return getDayIdentifier(timestamp) * OFFSET_TIME + getTimeIdentifier(timestamp);
+}
+function updateRelative(timestamp, now) {
+  let time = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
+  let a = getDayIdentifier(now);
+  let b = getDayIdentifier(timestamp);
+  let present = a === b;
+  if (timestamp.hasTime && time && present) {
+    a = getTimeIdentifier(now);
+    b = getTimeIdentifier(timestamp);
+    present = a === b;
+  }
+  timestamp.past = b < a;
+  timestamp.present = present;
+  timestamp.future = b > a;
+  return timestamp;
+}
+function isTimedless(input) {
+  return input instanceof Date || typeof input === 'number' && isFinite(input);
+}
+function updateHasTime(timestamp, hasTime, now) {
+  if (timestamp.hasTime !== hasTime) {
+    timestamp.hasTime = hasTime;
+    if (!hasTime) {
+      timestamp.hour = HOUR_MAX;
+      timestamp.minute = MINUTE_MAX;
+      timestamp.time = getTime(timestamp);
+    }
+  }
+  return timestamp;
+}
+function updateMinutes(timestamp, minutes, now) {
+  timestamp.hasTime = true;
+  timestamp.hour = Math.floor(minutes / MINUTES_IN_HOUR);
+  timestamp.minute = minutes % MINUTES_IN_HOUR;
+  timestamp.time = getTime(timestamp);
+  if (now) {
+    updateRelative(timestamp, now, true);
+  }
+  return timestamp;
+}
+function updateWeekday(timestamp) {
+  timestamp.weekday = getWeekday(timestamp);
+  return timestamp;
+}
+function updateFormatted(timestamp) {
+  timestamp.time = getTime(timestamp);
+  timestamp.date = getDate(timestamp);
+  return timestamp;
+}
+function getWeekday(timestamp) {
+  if (timestamp.hasDay) {
+    const _ = Math.floor;
+    const k = timestamp.day;
+    const m = (timestamp.month + 9) % MONTH_MAX + 1;
+    const C = _(timestamp.year / 100);
+    const Y = timestamp.year % 100 - (timestamp.month <= 2 ? 1 : 0);
+    return ((k + _(2.6 * m - 0.2) - 2 * C + Y + _(Y / 4) + _(C / 4)) % 7 + 7) % 7;
+  }
+  return timestamp.weekday;
+}
+function daysInMonth(year, month) {
+  return isLeapYear(year) ? DAYS_IN_MONTH_LEAP[month] : DAYS_IN_MONTH[month];
+}
+function copyTimestamp(timestamp) {
+  if (timestamp == null) return null;
+  const {
+    date,
+    time,
+    year,
+    month,
+    day,
+    weekday,
+    hour,
+    minute,
+    hasDay,
+    hasTime,
+    past,
+    present,
+    future
+  } = timestamp;
+  return {
+    date,
+    time,
+    year,
+    month,
+    day,
+    weekday,
+    hour,
+    minute,
+    hasDay,
+    hasTime,
+    past,
+    present,
+    future
+  };
+}
+function padNumber(x, length) {
+  let padded = String(x);
+  while (padded.length < length) {
+    padded = '0' + padded;
+  }
+  return padded;
+}
+function getDate(timestamp) {
+  let str = `${padNumber(timestamp.year, 4)}-${padNumber(timestamp.month, 2)}`;
+  if (timestamp.hasDay) str += `-${padNumber(timestamp.day, 2)}`;
+  return str;
+}
+function getTime(timestamp) {
+  if (!timestamp.hasTime) {
+    return '';
+  }
+  return `${padNumber(timestamp.hour, 2)}:${padNumber(timestamp.minute, 2)}`;
+}
+function nextDay(timestamp) {
+  timestamp.day++;
+  timestamp.weekday = (timestamp.weekday + 1) % DAYS_IN_WEEK;
+  if (timestamp.day > DAYS_IN_MONTH_MIN && timestamp.day > daysInMonth(timestamp.year, timestamp.month)) {
+    timestamp.day = DAY_MIN;
+    timestamp.month++;
+    if (timestamp.month > MONTH_MAX) {
+      timestamp.month = MONTH_MIN;
+      timestamp.year++;
+    }
+  }
+  return timestamp;
+}
+function prevDay(timestamp) {
+  timestamp.day--;
+  timestamp.weekday = (timestamp.weekday + 6) % DAYS_IN_WEEK;
+  if (timestamp.day < DAY_MIN) {
+    timestamp.month--;
+    if (timestamp.month < MONTH_MIN) {
+      timestamp.year--;
+      timestamp.month = MONTH_MAX;
+    }
+    timestamp.day = daysInMonth(timestamp.year, timestamp.month);
+  }
+  return timestamp;
+}
+function relativeDays(timestamp) {
+  let mover = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : nextDay;
+  let days = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 1;
+  while (--days >= 0) mover(timestamp);
+  return timestamp;
+}
+function diffMinutes(min, max) {
+  const Y = (max.year - min.year) * 525600;
+  const M = (max.month - min.month) * 43800;
+  const D = (max.day - min.day) * 1440;
+  const h = (max.hour - min.hour) * 60;
+  const m = max.minute - min.minute;
+  return Y + M + D + h + m;
+}
+function findWeekday(timestamp, weekday) {
+  let mover = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : nextDay;
+  let maxDays = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 6;
+  while (timestamp.weekday !== weekday && --maxDays >= 0) mover(timestamp);
+  return timestamp;
+}
+function getWeekdaySkips(weekdays) {
+  const skips = [1, 1, 1, 1, 1, 1, 1];
+  const filled = [0, 0, 0, 0, 0, 0, 0];
+  for (let i = 0; i < weekdays.length; i++) {
+    filled[weekdays[i]] = 1;
+  }
+  for (let k = 0; k < DAYS_IN_WEEK; k++) {
+    let skip = 1;
+    for (let j = 1; j < DAYS_IN_WEEK; j++) {
+      const next = (k + j) % DAYS_IN_WEEK;
+      if (filled[next]) {
+        break;
+      }
+      skip++;
+    }
+    skips[k] = filled[k] * skip;
+  }
+  return skips;
+}
+function timestampToDate(timestamp) {
+  const time = `${padNumber(timestamp.hour, 2)}:${padNumber(timestamp.minute, 2)}`;
+  const date = timestamp.date;
+  return new Date(`${date}T${time}:00+00:00`);
+}
+function createDayList(start, end, now, weekdaySkips) {
+  let max = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : 42;
+  let min = arguments.length > 5 && arguments[5] !== undefined ? arguments[5] : 0;
+  const stop = getDayIdentifier(end);
+  const days = [];
+  let current = copyTimestamp(start);
+  let currentIdentifier = 0;
+  let stopped = currentIdentifier === stop;
+  if (stop < getDayIdentifier(start)) {
+    throw new Error('End date is earlier than start date.');
+  }
+  while ((!stopped || days.length < min) && days.length < max) {
+    currentIdentifier = getDayIdentifier(current);
+    stopped = stopped || currentIdentifier === stop;
+    if (weekdaySkips[current.weekday] === 0) {
+      current = nextDay(current);
+      continue;
+    }
+    const day = copyTimestamp(current);
+    updateFormatted(day);
+    updateRelative(day, now);
+    days.push(day);
+    current = relativeDays(current, nextDay, weekdaySkips[current.weekday]);
+  }
+  if (!days.length) throw new Error('No dates found using specified start date, end date, and weekdays.');
+  return days;
+}
+function createIntervalList(timestamp, first, minutes, count, now) {
+  const intervals = [];
+  for (let i = 0; i < count; i++) {
+    const mins = first + i * minutes;
+    const int = copyTimestamp(timestamp);
+    intervals.push(updateMinutes(int, mins, now));
+  }
+  return intervals;
+}
+function createNativeLocaleFormatter(locale, getOptions) {
+  const emptyFormatter = (_t, _s) => '';
+  if (typeof Intl === 'undefined' || typeof Intl.DateTimeFormat === 'undefined') {
+    return emptyFormatter;
+  }
+  return (timestamp, short) => {
+    try {
+      const intlFormatter = new Intl.DateTimeFormat(locale || undefined, getOptions(timestamp, short));
+      return intlFormatter.format(timestampToDate(timestamp));
+    } catch (e) {
+      return '';
+    }
+  };
+}
+function validateWeekdays(input) {
+  if (typeof input === 'string') {
+    input = input.split(',');
+  }
+  if (Array.isArray(input)) {
+    const ints = input.map(x => parseInt(x));
+    if (ints.length > DAYS_IN_WEEK || ints.length === 0) {
+      return false;
+    }
+    const visited = {};
+    let wrapped = false;
+    for (let i = 0; i < ints.length; i++) {
+      const x = ints[i];
+      if (!isFinite(x) || x < 0 || x >= DAYS_IN_WEEK) {
+        return false;
+      }
+      if (i > 0) {
+        const d = x - ints[i - 1];
+        if (d < 0) {
+          if (wrapped) {
+            return false;
+          }
+          wrapped = true;
+        } else if (d === 0) {
+          return false;
+        }
+      }
+      if (visited[x]) {
+        return false;
+      }
+      visited[x] = true;
+    }
+    return true;
+  }
+  return false;
+}
+
+// Utilities
+
+// Types
+
+function useTimes(props) {
+  const times = reactive({
+    now: parseTimestamp('0000-00-00 00:00', true),
+    today: parseTimestamp('0000-00-00', true)
+  });
+  const parsedNow = computed(() => {
+    return props.now && validateTimestamp(props.now) ? parseTimestamp(props.now, true) : null;
+  });
+  function setPresent() {
+    times.now.present = times.today.present = true;
+    times.now.past = times.today.past = false;
+    times.now.future = times.today.future = false;
+  }
+  function getNow() {
+    return parseDate(new Date());
+  }
+  function updateDay(now, target) {
+    if (now.date !== target.date) {
+      target.year = now.year;
+      target.month = now.month;
+      target.day = now.day;
+      target.weekday = now.weekday;
+      target.date = now.date;
+    }
+  }
+  function updateTime(now, target) {
+    if (now.time !== target.time) {
+      target.hour = now.hour;
+      target.minute = now.minute;
+      target.time = now.time;
+    }
+  }
+  function updateTimes() {
+    const now = parsedNow.value || getNow();
+    updateDay(now, times.now);
+    updateTime(now, times.now);
+    updateDay(now, times.today);
+  }
+  watch(parsedNow, updateTimes);
+  updateTimes();
+  setPresent();
+  return {
+    times,
+    parsedNow,
+    updateTimes,
+    setPresent,
+    getNow,
+    updateDay,
+    updateTime
+  };
+}
+
+// Composables
+
+// Types
+
+const makeCalendarBaseProps = propsFactory({
+  start: {
+    type: [String, Number, Date],
+    validate: validateTimestamp,
+    default: () => parseDate(new Date()).date
+  },
+  end: {
+    type: [String, Number, Date],
+    validate: validateTimestamp
+  },
+  weekdays: {
+    type: [Array, String],
+    default: () => [0, 1, 2, 3, 4, 5, 6],
+    validate: validateWeekdays
+  },
+  weekdayFormat: {
+    type: Function,
+    default: null
+  },
+  dayFormat: {
+    type: Function,
+    default: null
+  },
+  locale: String,
+  now: {
+    type: String,
+    validator: validateTimestamp
+  },
+  type: {
+    type: String,
+    default: 'month'
+  }
+}, 'VCalendar-base');
+function useCalendarBase(props) {
+  const {
+    times
+  } = useTimes({
+    now: props.now
+  });
+  const locale = provideLocale(props);
+  const parsedStart = computed(() => {
+    if (props.type === 'month') {
+      return getStartOfMonth(parseTimestamp(props.start, true));
+    }
+    return parseTimestamp(props.start, true);
+  });
+  const parsedEnd = computed(() => {
+    const start = parsedStart.value;
+    const end = props.end ? parseTimestamp(props.end) || start : start;
+    const value = getTimestampIdentifier(end) < getTimestampIdentifier(start) ? start : end;
+    if (props.type === 'month') {
+      return getEndOfMonth(value);
+    }
+    return value;
+  });
+  const parsedValue = computed(() => {
+    return validateTimestamp(props.modelValue) ? parseTimestamp(props.modelValue, true) : parsedStart.value || times.today;
+  });
+  const parsedWeekdays = computed(() => {
+    return Array.isArray(props.weekdays) ? props.weekdays : (props.weekdays || '').split(',').map(x => parseInt(x, 10));
+  });
+  const effectiveWeekdays = computed(() => {
+    const start = parsedValue.value;
+    const days = parseInt(String(props.categoryDays)) || 1;
+    switch (props.type) {
+      case 'day':
+        return [start.weekday];
+      case '4day':
+        return [start.weekday, (start.weekday + 1) % 7, (start.weekday + 2) % 7, (start.weekday + 3) % 7];
+      case 'category':
+        return Array.from({
+          length: days
+        }, (_, i) => (start.weekday + i) % 7);
+      default:
+        return parsedWeekdays.value;
+    }
+  });
+  const weekdaySkips = computed(() => {
+    return getWeekdaySkips(parsedWeekdays.value);
+  });
+  const days = computed(() => {
+    return createDayList(parsedStart.value, parsedEnd.value, times.today, weekdaySkips.value);
+  });
+  const dayFormatter = computed(() => {
+    if (props.dayFormat) {
+      return props.dayFormat;
+    }
+    return createNativeLocaleFormatter(locale.current.value, () => ({
+      timeZone: 'UTC',
+      day: 'numeric'
+    }));
+  });
+  const weekdayFormatter = computed(() => {
+    if (props.weekdayFormat) {
+      return props.weekdayFormat;
+    }
+    return createNativeLocaleFormatter(locale.current.value, (_tms, short) => ({
+      timeZone: 'UTC',
+      weekday: short ? 'short' : 'long'
+    }));
+  });
+  function getColorProps(colors) {
+    return computeColor(colors);
+  }
+  function getRelativeClasses(timestamp) {
+    let outside = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
+    return {
+      'v-present': timestamp.present,
+      'v-past': timestamp.past,
+      'v-future': timestamp.future,
+      'v-outside': outside
+    };
+  }
+  function _getStartOfWeek(timestamp) {
+    return getStartOfWeek(timestamp, parsedWeekdays.value, times.today);
+  }
+  function _getEndOfWeek(timestamp) {
+    return getEndOfWeek(timestamp, parsedWeekdays.value, times.today);
+  }
+  function getFormatter(options) {
+    return createNativeLocaleFormatter(locale.current.value, () => options);
+  }
+  return {
+    times,
+    locale,
+    parsedValue,
+    parsedWeekdays,
+    effectiveWeekdays,
+    weekdaySkips,
+    parsedStart,
+    parsedEnd,
+    days,
+    dayFormatter,
+    weekdayFormatter,
+    getColorProps,
+    getRelativeClasses,
+    getStartOfWeek: _getStartOfWeek,
+    getEndOfWeek: _getEndOfWeek,
+    getFormatter
+  };
+}
+
+// Composables
+
+// Types
+
+const makeCalendarWithIntervalsProps = propsFactory({
+  maxDays: {
+    type: Number,
+    default: 7
+  },
+  intervalHeight: {
+    type: [Number, String],
+    default: 48,
+    validate: validateNumber
+  },
+  intervalWidth: {
+    type: [Number, String],
+    default: 60,
+    validate: validateNumber
+  },
+  intervalMinutes: {
+    type: [Number, String],
+    default: 60,
+    validate: validateNumber
+  },
+  firstInterval: {
+    type: [Number, String],
+    default: 0,
+    validate: validateNumber
+  },
+  firstTime: {
+    type: [Number, String, Object],
+    validate: validateTime
+  },
+  intervalCount: {
+    type: [Number, String],
+    default: 24,
+    validate: validateNumber
+  },
+  intervalFormat: {
+    type: Function,
+    default: null
+  },
+  intervalStyle: {
+    type: Function,
+    default: null
+  },
+  showIntervalLabel: {
+    type: Function,
+    default: null
+  }
+}, 'VCalendar-intervals');
+function useCalendarWithIntervals(props) {
+  const base = useCalendarBase(props);
+  const scrollAreaRef = shallowRef();
+  const parsedFirstInterval = computed(() => {
+    return parseInt(String(props.firstInterval || 0));
+  });
+  const parsedIntervalMinutes = computed(() => {
+    return parseInt(String(props.intervalMinutes || 60));
+  });
+  const parsedIntervalCount = computed(() => {
+    return parseInt(String(props.intervalCount || 24));
+  });
+  const parsedIntervalHeight = computed(() => {
+    return parseFloat(String(props.intervalHeight || 48));
+  });
+  const parsedFirstTime = computed(() => {
+    return parseTime(props.firstTime);
+  });
+  const firstMinute = computed(() => {
+    const time = parsedFirstTime.value;
+    return time !== false && time >= 0 && time <= MINUTES_IN_DAY$1 ? time : parsedFirstInterval.value * parsedIntervalMinutes.value;
+  });
+  const bodyHeight = computed(() => {
+    return parsedIntervalCount.value * parsedIntervalHeight.value;
+  });
+  const days = computed(() => {
+    return createDayList(base.parsedStart.value, base.parsedEnd.value, base.times.today, base.weekdaySkips.value, props.maxDays);
+  });
+  const intervals = computed(() => {
+    const daysValue = days.value;
+    const first = firstMinute.value;
+    const minutes = parsedIntervalMinutes.value;
+    const count = parsedIntervalCount.value;
+    const now = base.times.now;
+    return daysValue.map(d => createIntervalList(d, first, minutes, count, now));
+  });
+  const intervalFormatter = computed(() => {
+    if (props.intervalFormat) {
+      return props.intervalFormat;
+    }
+    return createNativeLocaleFormatter(base.locale.current.value, (tms, short) => !short ? {
+      timeZone: 'UTC',
+      hour: '2-digit',
+      minute: '2-digit'
+    } : tms.minute === 0 ? {
+      timeZone: 'UTC',
+      hour: 'numeric'
+    } : {
+      timeZone: 'UTC',
+      hour: 'numeric',
+      minute: '2-digit'
+    });
+  });
+  function showIntervalLabelDefault(interval) {
+    const first = intervals.value[0][0];
+    const isFirst = first.hour === interval.hour && first.minute === interval.minute;
+    return !isFirst;
+  }
+  function intervalStyleDefault(_interval) {
+    return undefined;
+  }
+  function getTimestampAtEvent(e, day) {
+    const timestamp = copyTimestamp(day);
+    const bounds = e.currentTarget.getBoundingClientRect();
+    const baseMinutes = firstMinute.value;
+    const touchEvent = e;
+    const mouseEvent = e;
+    const touches = touchEvent.changedTouches || touchEvent.touches;
+    const clientY = touches && touches[0] ? touches[0].clientY : mouseEvent.clientY;
+    const addIntervals = (clientY - bounds.top) / parsedIntervalHeight.value;
+    const addMinutes = Math.floor(addIntervals * parsedIntervalMinutes.value);
+    const minutes = baseMinutes + addMinutes;
+    return updateMinutes(timestamp, minutes, base.times.now);
+  }
+  function getSlotScope(timestamp) {
+    const scope = copyTimestamp(timestamp);
+    scope.timeToY = timeToY;
+    scope.timeDelta = timeDelta;
+    scope.minutesToPixels = minutesToPixels;
+    scope.week = days.value;
+    return scope;
+  }
+  function scrollToTime(time) {
+    const y = timeToY(time);
+    const pane = scrollAreaRef.value;
+    if (y === false || !pane) {
+      return false;
+    }
+    pane.scrollTop = y;
+    return true;
+  }
+  function minutesToPixels(minutes) {
+    return minutes / parsedIntervalMinutes.value * parsedIntervalHeight.value;
+  }
+  function timeToY(time) {
+    let clamp = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
+    let y = timeDelta(time);
+    if (y !== false) {
+      y *= bodyHeight.value;
+      if (clamp) {
+        if (y < 0) {
+          y = 0;
+        }
+        if (y > bodyHeight.value) {
+          y = bodyHeight.value;
+        }
+      }
+    }
+    return y;
+  }
+  function timeDelta(time) {
+    const minutes = parseTime(time);
+    if (minutes === false) {
+      return false;
+    }
+    const min = firstMinute.value;
+    const gap = parsedIntervalCount.value * parsedIntervalMinutes.value;
+    return (minutes - min) / gap;
+  }
+  return {
+    ...base,
+    scrollAreaRef,
+    parsedFirstInterval,
+    parsedIntervalMinutes,
+    parsedIntervalCount,
+    parsedIntervalHeight,
+    parsedFirstTime,
+    firstMinute,
+    bodyHeight,
+    days,
+    intervals,
+    intervalFormatter,
+    showIntervalLabelDefault,
+    intervalStyleDefault,
+    getTimestampAtEvent,
+    getSlotScope,
+    scrollToTime,
+    minutesToPixels,
+    timeToY,
+    timeDelta
+  };
+}
+
+// Types
+
+function mounted$2(el, binding) {
+  const handler = binding.value;
+  const options = {
+    passive: !binding.modifiers?.active
+  };
+  window.addEventListener('resize', handler, options);
+  el._onResize = Object(el._onResize);
+  el._onResize[binding.instance.$.uid] = {
+    handler,
+    options
+  };
+  if (!binding.modifiers?.quiet) {
+    handler();
+  }
+}
+function unmounted$2(el, binding) {
+  if (!el._onResize?.[binding.instance.$.uid]) return;
+  const {
+    handler,
+    options
+  } = el._onResize[binding.instance.$.uid];
+  window.removeEventListener('resize', handler, options);
+  delete el._onResize[binding.instance.$.uid];
+}
+const Resize = {
+  mounted: mounted$2,
+  unmounted: unmounted$2
+};
+
+// Types
+
+const VCalendarDaily = defineComponent({
+  name: 'VCalendarDaily',
+  directives: {
+    vResize: Resize
+  },
+  props: {
+    color: String,
+    shortWeekdays: {
+      type: Boolean,
+      default: true
+    },
+    shortIntervals: {
+      type: Boolean,
+      default: true
+    },
+    hideHeader: Boolean,
+    ...makeCalendarBaseProps(),
+    ...makeCalendarWithIntervalsProps()
+  },
+  setup(props, _ref) {
+    let {
+      slots,
+      attrs
+    } = _ref;
+    const scrollPush = ref(0);
+    const scrollArea = ref();
+    const pane = ref();
+    const base = useCalendarWithIntervals(props);
+    function init() {
+      nextTick(onResize);
+    }
+    function onResize() {
+      scrollPush.value = getScrollPush();
+    }
+    function getScrollPush() {
+      return scrollArea.value && pane.value ? scrollArea.value.offsetWidth - pane.value.offsetWidth : 0;
+    }
+    function genHead() {
+      return createElementVNode("div", {
+        "class": "v-calendar-daily__head",
+        "style": {
+          marginRight: scrollPush.value + 'px'
+        }
+      }, [genHeadIntervals(), genHeadDays()]);
+    }
+    function genHeadIntervals() {
+      const width = convertToUnit(props.intervalWidth);
+      return createElementVNode("div", {
+        "class": "v-calendar-daily__intervals-head",
+        "style": {
+          width
+        }
+      }, [slots['interval-header']?.()]);
+    }
+    function genHeadDays() {
+      return base.days.value.map(genHeadDay);
+    }
+    function genHeadDay(day, index) {
+      const events = getPrefixedEventHandlers(attrs, ':day', nativeEvent => ({
+        nativeEvent,
+        ...base.getSlotScope(day)
+      }));
+      return createElementVNode("div", mergeProps({
+        "key": day.date,
+        "class": ['v-calendar-daily_head-day', base.getRelativeClasses(day)]
+      }, events), [genHeadWeekday(day), genHeadDayLabel(day), genDayHeader(day, index)]);
+    }
+    function genDayHeader(day, index) {
+      return slots['day-header']?.({
+        week: base.days.value,
+        ...day,
+        index
+      }) ?? [];
+    }
+    function genHeadWeekday(day) {
+      const color = day.present ? props.color : undefined;
+      return createElementVNode("div", mergeProps(base.getColorProps({
+        text: color
+      }), {
+        "class": "v-calendar-daily_head-weekday"
+      }), [base.weekdayFormatter.value(day, props.shortWeekdays)]);
+    }
+    function genHeadDayLabel(day) {
+      return createElementVNode("div", {
+        "class": "v-calendar-daily_head-day-label"
+      }, [slots['day-label-header']?.(day) ?? genHeadDayButton(day)]);
+    }
+    function genHeadDayButton(day) {
+      const events = getPrefixedEventHandlers(attrs, ':date', nativeEvent => ({
+        nativeEvent,
+        ...day
+      }));
+      return createVNode(VIconBtn, mergeProps({
+        "active": day.present,
+        "activeColor": props.color,
+        "variant": props.color ? 'flat' : 'tonal',
+        "baseVariant": "text"
+      }, events), {
+        default: () => [base.dayFormatter.value(day, false)]
+      });
+    }
+    function genBody() {
+      return createElementVNode("div", {
+        "class": "v-calendar-daily__body"
+      }, [genScrollArea()]);
+    }
+    function genScrollArea() {
+      return createElementVNode("div", {
+        "ref": scrollArea,
+        "class": "v-calendar-daily__scroll-area"
+      }, [genPane()]);
+    }
+    function genPane() {
+      return createElementVNode("div", {
+        "ref": pane,
+        "class": "v-calendar-daily__pane",
+        "style": {
+          height: convertToUnit(base.bodyHeight.value)
+        }
+      }, [genDayContainer()]);
+    }
+    function genDayContainer() {
+      return createElementVNode("div", {
+        "class": "v-calendar-daily__day-container"
+      }, [genBodyIntervals(), slots.days?.() ?? genDays()]);
+    }
+    function genDays() {
+      return base.days.value.map((day, index) => {
+        const events = getPrefixedEventHandlers(attrs, ':time', nativeEvent => ({
+          nativeEvent,
+          ...base.getSlotScope(base.getTimestampAtEvent(nativeEvent, day))
+        }));
+        return createElementVNode("div", mergeProps({
+          "key": day.date,
+          "class": ['v-calendar-daily__day', base.getRelativeClasses(day)]
+        }, events), [genDayIntervals(index), genDayBody(day)]);
+      });
+    }
+    function genDayBody(day) {
+      return slots['day-body']?.(base.getSlotScope(day)) ?? [];
+    }
+    function genDayIntervals(index) {
+      return base.intervals.value[index].map(genDayInterval);
+    }
+    function genDayInterval(interval) {
+      const height = convertToUnit(props.intervalHeight);
+      const styler = props.intervalStyle || base.intervalStyleDefault;
+      return createElementVNode("div", {
+        "class": "v-calendar-daily__day-interval",
+        "key": interval.time,
+        "style": normalizeStyle([{
+          height
+        }, styler(interval)])
+      }, [slots.interval?.(base.getSlotScope(interval))]);
+    }
+    function genBodyIntervals() {
+      const width = convertToUnit(props.intervalWidth);
+      const events = getPrefixedEventHandlers(attrs, ':interval', nativeEvent => ({
+        nativeEvent,
+        ...base.getTimestampAtEvent(nativeEvent, base.parsedStart.value)
+      }));
+      return createElementVNode("div", mergeProps({
+        "class": "v-calendar-daily__intervals-body",
+        "style": {
+          width
+        }
+      }, events), [genIntervalLabels()]);
+    }
+    function genIntervalLabels() {
+      if (!base.intervals.value.length) return null;
+      return base.intervals.value[0].map(genIntervalLabel);
+    }
+    function genIntervalLabel(interval) {
+      const height = convertToUnit(props.intervalHeight);
+      const short = props.shortIntervals;
+      const shower = props.showIntervalLabel || base.showIntervalLabelDefault;
+      const show = shower(interval);
+      const label = show ? base.intervalFormatter.value(interval, short) : undefined;
+      return createElementVNode("div", {
+        "key": interval.time,
+        "class": "v-calendar-daily__interval",
+        "style": {
+          height
+        }
+      }, [createElementVNode("div", {
+        "class": "v-calendar-daily__interval-text"
+      }, [label])]);
+    }
+    onMounted(init);
+    useRender(() => withDirectives(createElementVNode("div", {
+      "class": normalizeClass(['v-calendar-daily', attrs.class]),
+      "onDragstart": e => e.preventDefault()
+    }, [!props.hideHeader ? genHead() : undefined, genBody()]), [[Resize, onResize, void 0, {
+      quiet: true
+    }]]));
+    return {
+      ...base,
+      scrollPush,
+      scrollArea,
+      pane,
+      init,
+      onResize,
+      getScrollPush
+    };
+  }
+});
+
+// Types
+
+function parsedCategoryText(category, categoryText) {
+  return typeof categoryText === 'function' ? categoryText(category) : typeof categoryText === 'string' && typeof category === 'object' && category ? category[categoryText] : typeof category === 'string' ? category : '';
+}
+function getParsedCategories(categories, categoryText) {
+  if (typeof categories === 'string') return categories.split(/\s*,\s/);
+  if (Array.isArray(categories)) {
+    return categories.map(category => {
+      if (typeof category === 'string') return category;
+      const categoryName = typeof category.categoryName === 'string' ? category.categoryName : parsedCategoryText(category, categoryText);
+      return {
+        ...category,
+        categoryName
+      };
+    });
+  }
+  return [];
+}
+
+// Types
+
+const VCalendarCategory = defineComponent({
+  name: 'VCalendarCategory',
+  props: {
+    categories: {
+      type: [Array, String],
+      default: ''
+    },
+    categoryText: [String, Function],
+    categoryForInvalid: {
+      type: String,
+      default: ''
+    },
+    ...makeCalendarBaseProps(),
+    ...makeCalendarWithIntervalsProps()
+  },
+  setup(props, _ref) {
+    let {
+      slots,
+      attrs
+    } = _ref;
+    const base = useCalendarWithIntervals(props);
+    const parsedCategories = computed(() => {
+      return getParsedCategories(props.categories, props.categoryText);
+    });
+    function getCategoryScope(scope, category) {
+      const cat = typeof category === 'object' && category && category.categoryName === props.categoryForInvalid ? null : category;
+      return {
+        ...scope,
+        category: cat
+      };
+    }
+    function genDayHeader(scope) {
+      return createElementVNode("div", {
+        "class": "v-calendar-category__columns"
+      }, [parsedCategories.value.map(category => {
+        return genDayHeaderCategory(scope, getCategoryScope(scope, category));
+      })]);
+    }
+    function genDayHeaderCategory(day, scope) {
+      const headerTitle = typeof scope.category === 'object' ? scope.category.categoryName : scope.category;
+      const events = getPrefixedEventHandlers(attrs, ':dayCategory', () => {
+        return getCategoryScope(base.getSlotScope(day) || day, scope.category);
+      });
+      return createElementVNode("div", mergeProps({
+        "class": "v-calendar-category__column-header"
+      }, events), [slots.category?.(scope) ?? genDayHeaderCategoryTitle(headerTitle), slots['day-header']?.(scope)]);
+    }
+    function genDayHeaderCategoryTitle(categoryName) {
+      return createElementVNode("div", {
+        "class": "v-calendar-category__category"
+      }, [categoryName === null ? props.categoryForInvalid : categoryName]);
+    }
+    function genDays() {
+      const days = [];
+      base.days.value.forEach((d, j) => {
+        const day = new Array(parsedCategories.value.length || 1);
+        day.fill(d);
+        days.push(...day.map((v, i) => genDay(v, j, i)));
+      });
+      return days;
+    }
+    function genDay(day, index, categoryIndex) {
+      const category = parsedCategories.value[categoryIndex];
+      const events = getPrefixedEventHandlers(attrs, ':time', e => {
+        return base.getSlotScope(base.getTimestampAtEvent(e, day));
+      });
+      return createElementVNode("div", mergeProps({
+        "key": day.date + '-' + categoryIndex,
+        "class": ['v-calendar-daily__day', base.getRelativeClasses(day)]
+      }, events), [genDayIntervals(index, category), genDayBody(day, category)]);
+    }
+    function genDayIntervals(index, category) {
+      return base.intervals.value[index].map(v => genDayInterval(v, category));
+    }
+    function genDayInterval(interval, category) {
+      const height = convertToUnit(props.intervalHeight);
+      const styler = props.intervalStyle || base.intervalStyleDefault;
+      return createElementVNode("div", {
+        "key": interval.time,
+        "class": "v-calendar-daily__day-interval",
+        "style": normalizeStyle([{
+          height
+        }, styler({
+          ...interval,
+          category
+        })])
+      }, [slots.interval?.(getCategoryScope(base.getSlotScope(interval), category))]);
+    }
+    function genDayBody(day, category) {
+      return createElementVNode("div", {
+        "class": "v-calendar-category__columns"
+      }, [genDayBodyCategory(day, category)]);
+    }
+    function genDayBodyCategory(day, category) {
+      const events = getPrefixedEventHandlers(attrs, ':timeCategory', e => {
+        return getCategoryScope(base.getSlotScope(base.getTimestampAtEvent(e, day)), category);
+      });
+      return createElementVNode("div", mergeProps({
+        "class": "v-calendar-category__column"
+      }, events), [slots['day-body']?.(getCategoryScope(base.getSlotScope(day), category))]);
+    }
+    useRender(() => createVNode(VCalendarDaily, mergeProps({
+      "class": ['v-calendar-daily', 'v-calendar-category']
+    }, props), {
+      ...slots,
+      days: genDays,
+      'day-header': genDayHeader
+    }));
+    return {
+      ...base,
+      parsedCategories
+    };
+  }
+});
+
+// Types
+
+const VCalendarWeekly = defineComponent({
+  name: 'VCalendarWeekly',
+  props: {
+    minWeeks: {
+      validate: validateNumber,
+      default: 1
+    },
+    monthFormat: Function,
+    showWeek: Boolean,
+    color: String,
+    shortWeekdays: {
+      type: Boolean,
+      default: true
+    },
+    localeFirstDayOfYear: {
+      type: [String, Number],
+      default: 0
+    },
+    showMonthOnFirst: {
+      type: Boolean,
+      default: true
+    },
+    shortMonths: {
+      type: Boolean,
+      default: true
+    },
+    hideHeader: Boolean,
+    ...makeCalendarBaseProps()
+  },
+  setup(props, _ref) {
+    let {
+      slots,
+      attrs
+    } = _ref;
+    const base = useCalendarBase(props);
+    const theme = useTheme();
+    const parsedMinWeeks = computed(() => {
+      return parseInt(String(props.minWeeks));
+    });
+    const days = computed(() => {
+      const minDays = parsedMinWeeks.value * base.parsedWeekdays.value.length;
+      const start = base.getStartOfWeek(base.parsedStart.value);
+      const end = base.getEndOfWeek(base.parsedEnd.value);
+      return createDayList(start, end, base.times.today, base.weekdaySkips.value, Number.MAX_SAFE_INTEGER, minDays);
+    });
+    const todayWeek = computed(() => {
+      const today = base.times.today;
+      const start = base.getStartOfWeek(today);
+      const end = base.getEndOfWeek(today);
+      return createDayList(start, end, today, base.weekdaySkips.value, base.parsedWeekdays.value.length, base.parsedWeekdays.value.length);
+    });
+    const monthFormatter = computed(() => {
+      if (props.monthFormat) {
+        // TODO: what happens when this is a string?
+        return props.monthFormat;
+      }
+      return createNativeLocaleFormatter(base.locale.current.value, (_tms, short) => ({
+        timeZone: 'UTC',
+        month: short ? 'short' : 'long'
+      }));
+    });
+    function isOutside(day) {
+      const dayIdentifier = getDayIdentifier(day);
+      return dayIdentifier < getDayIdentifier(base.parsedStart.value) || dayIdentifier > getDayIdentifier(base.parsedEnd.value);
+    }
+    function genHead() {
+      return createElementVNode("div", {
+        "class": "v-calendar-weekly__head",
+        "role": "row"
+      }, [genHeadDays()]);
+    }
+    function genHeadDays() {
+      const header = todayWeek.value.map(genHeadDay);
+      if (props.showWeek) {
+        header.unshift(createElementVNode("div", {
+          "class": "v-calendar-weekly__head-weeknumber"
+        }, null));
+      }
+      return header;
+    }
+    function genHeadDay(day, index) {
+      const outside = isOutside(days.value[index]);
+      const color = day.present ? props.color : undefined;
+      return createElementVNode("div", mergeProps(base.getColorProps({
+        text: color
+      }), {
+        "key": day.date,
+        "class": ['v-calendar-weekly__head-weekday', base.getRelativeClasses(day, outside)],
+        "role": "columnheader"
+      }), [base.weekdayFormatter.value(day, props.shortWeekdays)]);
+    }
+    function genWeeks() {
+      const daysValue = days.value;
+      const weekDays = base.parsedWeekdays.value.length;
+      const weeks = [];
+      for (let i = 0; i < daysValue.length; i += weekDays) {
+        weeks.push(genWeek(daysValue.slice(i, i + weekDays), getWeekNumber(daysValue[i])));
+      }
+      return weeks;
+    }
+    function genWeek(week, weekNumber) {
+      const weekNodes = week.map((day, index) => genDay(day, index, week));
+      if (props.showWeek) {
+        weekNodes.unshift(genWeekNumber(weekNumber));
+      }
+      return createElementVNode("div", {
+        "key": week[0].date,
+        "class": "v-calendar-weekly__week",
+        "role": "row"
+      }, [weekNodes]);
+    }
+    function getWeekNumber(determineDay) {
+      return weekNumber(determineDay.year, determineDay.month - 1, determineDay.day, base.parsedWeekdays.value[0], parseInt(String(props.localeFirstDayOfYear)));
+    }
+    function genWeekNumber(weekNumber) {
+      return createElementVNode("div", {
+        "class": "v-calendar-weekly__weeknumber"
+      }, [createElementVNode("small", null, [String(weekNumber)])]);
+    }
+    function genDay(day, index, week) {
+      const outside = isOutside(day);
+      const events = getPrefixedEventHandlers(attrs, ':day', nativeEvent => {
+        return {
+          nativeEvent,
+          ...day
+        };
+      });
+      return createElementVNode("div", mergeProps({
+        "key": day.date,
+        "class": ['v-calendar-weekly__day', base.getRelativeClasses(day, outside)],
+        "role": "cell"
+      }, events), [genDayLabel(day), slots.day?.({
+        outside,
+        index,
+        week,
+        ...day
+      })]);
+    }
+    function genDayLabel(day) {
+      return createElementVNode("div", {
+        "class": "v-calendar-weekly__day-label"
+      }, [slots['day-label']?.(day) ?? genDayLabelButton(day)]);
+    }
+    function genDayLabelButton(day) {
+      const hasMonth = day.day === 1 && props.showMonthOnFirst;
+      const events = getPrefixedEventHandlers(attrs, ':date', nativeEvent => ({
+        nativeEvent,
+        ...day
+      }));
+      return createVNode(VIconBtn, mergeProps({
+        "active": day.present,
+        "activeColor": props.color,
+        "variant": props.color ? 'flat' : 'tonal',
+        "baseVariant": "text"
+      }, events), {
+        default: () => [hasMonth ? monthFormatter.value(day, props.shortMonths) + ' ' + base.dayFormatter.value(day, false) : base.dayFormatter.value(day, false)]
+      });
+    }
+    useRender(() => createElementVNode("div", {
+      "class": normalizeClass(['v-calendar-weekly', theme.themeClasses.value]),
+      "onDragstart": e => e.preventDefault()
+    }, [!props.hideHeader ? genHead() : undefined, genWeeks()]));
+    return {
+      ...base,
+      days,
+      todayWeek,
+      monthFormatter,
+      isOutside
+    };
+  }
+});
+
+// Types
+
+const MILLIS_IN_DAY = 86400000;
+function getVisuals(events) {
+  let minStart = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
+  const visuals = events.map(event => ({
+    event,
+    columnCount: 0,
+    column: 0,
+    left: 0,
+    width: 100
+  }));
+  visuals.sort((a, b) => {
+    return Math.max(minStart, a.event.startTimestampIdentifier) - Math.max(minStart, b.event.startTimestampIdentifier) || b.event.endTimestampIdentifier - a.event.endTimestampIdentifier;
+  });
+  return visuals;
+}
+function hasOverlap(s0, e0, s1, e1) {
+  let exclude = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : true;
+  return exclude ? !(s0 >= e1 || e0 <= s1) : !(s0 > e1 || e0 < s1);
+}
+function setColumnCount(groups) {
+  groups.forEach(group => {
+    group.visuals.forEach(groupVisual => {
+      groupVisual.columnCount = groups.length;
+    });
+  });
+}
+function getRange(event) {
+  return [event.startTimestampIdentifier, event.endTimestampIdentifier];
+}
+function getDayRange(event) {
+  return [event.startIdentifier, event.endIdentifier];
+}
+function getNormalizedRange(event, dayStart) {
+  return [Math.max(dayStart, event.startTimestampIdentifier), Math.min(dayStart + MILLIS_IN_DAY, event.endTimestampIdentifier)];
+}
+function getOpenGroup(groups, start, end, timed) {
+  for (let i = 0; i < groups.length; i++) {
+    const group = groups[i];
+    let intersected = false;
+    if (hasOverlap(start, end, group.start, group.end, timed)) {
+      for (let k = 0; k < group.visuals.length; k++) {
+        const groupVisual = group.visuals[k];
+        const [groupStart, groupEnd] = timed ? getRange(groupVisual.event) : getDayRange(groupVisual.event);
+        if (hasOverlap(start, end, groupStart, groupEnd, timed)) {
+          intersected = true;
+          break;
+        }
+      }
+    }
+    if (!intersected) {
+      return i;
+    }
+  }
+  return -1;
+}
+function getOverlapGroupHandler(firstWeekday) {
+  const handler = {
+    groups: [],
+    min: -1,
+    max: -1,
+    reset: () => {
+      handler.groups = [];
+      handler.min = handler.max = -1;
+    },
+    getVisuals: function (day, dayEvents, timed) {
+      let reset = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : false;
+      if (day.weekday === firstWeekday || reset) {
+        handler.reset();
+      }
+      const dayStart = getTimestampIdentifier(day);
+      const visuals = getVisuals(dayEvents, dayStart);
+      visuals.forEach(visual => {
+        const [start, end] = timed ? getRange(visual.event) : getDayRange(visual.event);
+        if (handler.groups.length > 0 && !hasOverlap(start, end, handler.min, handler.max, timed)) {
+          setColumnCount(handler.groups);
+          handler.reset();
+        }
+        let targetGroup = getOpenGroup(handler.groups, start, end, timed);
+        if (targetGroup === -1) {
+          targetGroup = handler.groups.length;
+          handler.groups.push({
+            start,
+            end,
+            visuals: []
+          });
+        }
+        const target = handler.groups[targetGroup];
+        target.visuals.push(visual);
+        target.start = Math.min(target.start, start);
+        target.end = Math.max(target.end, end);
+        visual.column = targetGroup;
+        if (handler.min === -1) {
+          handler.min = start;
+          handler.max = end;
+        } else {
+          handler.min = Math.min(handler.min, start);
+          handler.max = Math.max(handler.max, end);
+        }
+      });
+      setColumnCount(handler.groups);
+      if (timed) {
+        handler.reset();
+      }
+      return visuals;
+    }
+  };
+  return handler;
+}
+
+// Types
+const FULL_WIDTH$1 = 100;
+const column = (events, firstWeekday, overlapThreshold) => {
+  const handler = getOverlapGroupHandler(firstWeekday);
+  return (day, dayEvents, timed, reset) => {
+    const visuals = handler.getVisuals(day, dayEvents, timed, reset);
+    if (timed) {
+      visuals.forEach(visual => {
+        visual.left = visual.column * FULL_WIDTH$1 / visual.columnCount;
+        visual.width = FULL_WIDTH$1 / visual.columnCount;
+      });
+    }
+    return visuals;
+  };
+};
+
+// Types
+const FULL_WIDTH = 100;
+const DEFAULT_OFFSET = 5;
+const WIDTH_MULTIPLIER = 1.7;
+
+/**
+ * Variation of column mode where events can be stacked. The priority of this
+ * mode is to stack events together taking up the least amount of space while
+ * trying to ensure the content of the event is always visible as well as its
+ * start and end. A sibling column has intersecting event content and must be
+ * placed beside each other. Non-sibling columns are offset by 5% from the
+ * previous column. The width is scaled by 1.7 so the events overlap and
+ * whitespace is reduced. If there is a hole in columns the event width is
+ * scaled up so it intersects with the next column. The columns have equal
+ * width in the space they are given. If the event doesn't have any to the
+ * right of it that intersect with it's content it's right side is extended
+ * to the right side.
+ */
+
+const stack = (events, firstWeekday, overlapThreshold) => {
+  const handler = getOverlapGroupHandler(firstWeekday);
+
+  // eslint-disable-next-line max-statements
+  return (day, dayEvents, timed, reset) => {
+    if (!timed) {
+      return handler.getVisuals(day, dayEvents, timed, reset);
+    }
+    const dayStart = getTimestampIdentifier(day);
+    const visuals = getVisuals(dayEvents, dayStart);
+    const groups = getGroups(visuals, dayStart);
+    for (const group of groups) {
+      const nodes = [];
+      for (const visual of group.visuals) {
+        const child = getNode(visual, dayStart);
+        const index = getNextIndex(child, nodes);
+        if (index === false) {
+          const parent = getParent(child, nodes);
+          if (parent) {
+            child.parent = parent;
+            child.sibling = hasOverlap(child.start, child.end, parent.start, addTime(parent.start, overlapThreshold));
+            child.index = parent.index + 1;
+            parent.children.push(child);
+          }
+        } else {
+          const [parent] = getOverlappingRange(child, nodes, index - 1, index - 1);
+          const children = getOverlappingRange(child, nodes, index + 1, index + nodes.length, true);
+          child.children = children;
+          child.index = index;
+          if (parent) {
+            child.parent = parent;
+            child.sibling = hasOverlap(child.start, child.end, parent.start, addTime(parent.start, overlapThreshold));
+            parent.children.push(child);
+          }
+          for (const grand of children) {
+            if (grand.parent === parent) {
+              grand.parent = child;
+            }
+            const grandNext = grand.index - child.index <= 1;
+            if (grandNext && child.sibling && hasOverlap(child.start, addTime(child.start, overlapThreshold), grand.start, grand.end)) {
+              grand.sibling = true;
+            }
+          }
+        }
+        nodes.push(child);
+      }
+      calculateBounds(nodes, overlapThreshold);
+    }
+    visuals.sort((a, b) => a.left - b.left || a.event.startTimestampIdentifier - b.event.startTimestampIdentifier);
+    return visuals;
+  };
+};
+function calculateBounds(nodes, overlapThreshold) {
+  for (const node of nodes) {
+    const {
+      visual,
+      parent
+    } = node;
+    const columns = getMaxChildIndex(node) + 1;
+    const spaceLeft = parent ? parent.visual.left : 0;
+    const spaceWidth = FULL_WIDTH - spaceLeft;
+    const offset = Math.min(DEFAULT_OFFSET, FULL_WIDTH / columns);
+    const columnWidthMultiplier = getColumnWidthMultiplier(node, nodes);
+    const columnOffset = spaceWidth / (columns - node.index + 1);
+    const columnWidth = spaceWidth / (columns - node.index + (node.sibling ? 1 : 0)) * columnWidthMultiplier;
+    if (parent) {
+      visual.left = node.sibling ? spaceLeft + columnOffset : spaceLeft + offset;
+    }
+    visual.width = hasFullWidth(node, nodes, overlapThreshold) ? FULL_WIDTH - visual.left : Math.min(FULL_WIDTH - visual.left, columnWidth * WIDTH_MULTIPLIER);
+  }
+}
+function getColumnWidthMultiplier(node, nodes) {
+  if (!node.children.length) {
+    return 1;
+  }
+  const maxColumn = node.index + nodes.length;
+  const minColumn = node.children.reduce((min, c) => Math.min(min, c.index), maxColumn);
+  return minColumn - node.index;
+}
+function getOverlappingIndices(node, nodes) {
+  const indices = [];
+  for (const other of nodes) {
+    if (hasOverlap(node.start, node.end, other.start, other.end)) {
+      indices.push(other.index);
+    }
+  }
+  return indices;
+}
+function getNextIndex(node, nodes) {
+  const indices = getOverlappingIndices(node, nodes);
+  indices.sort();
+  for (let i = 0; i < indices.length; i++) {
+    if (i < indices[i]) {
+      return i;
+    }
+  }
+  return false;
+}
+function getOverlappingRange(node, nodes, indexMin, indexMax) {
+  let returnFirstColumn = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : false;
+  const overlapping = [];
+  for (const other of nodes) {
+    if (other.index >= indexMin && other.index <= indexMax && hasOverlap(node.start, node.end, other.start, other.end)) {
+      overlapping.push(other);
+    }
+  }
+  if (returnFirstColumn && overlapping.length > 0) {
+    const first = overlapping.reduce((min, n) => Math.min(min, n.index), overlapping[0].index);
+    return overlapping.filter(n => n.index === first);
+  }
+  return overlapping;
+}
+function getParent(node, nodes) {
+  let parent = null;
+  for (const other of nodes) {
+    if (hasOverlap(node.start, node.end, other.start, other.end) && (parent === null || other.index > parent.index)) {
+      parent = other;
+    }
+  }
+  return parent;
+}
+function hasFullWidth(node, nodes, overlapThreshold) {
+  for (const other of nodes) {
+    if (other !== node && other.index > node.index && hasOverlap(node.start, addTime(node.start, overlapThreshold), other.start, other.end)) {
+      return false;
+    }
+  }
+  return true;
+}
+function getGroups(visuals, dayStart) {
+  const groups = [];
+  for (const visual of visuals) {
+    const [start, end] = getNormalizedRange(visual.event, dayStart);
+    let added = false;
+    for (const group of groups) {
+      if (hasOverlap(start, end, group.start, group.end)) {
+        group.visuals.push(visual);
+        group.end = Math.max(group.end, end);
+        added = true;
+        break;
+      }
+    }
+    if (!added) {
+      groups.push({
+        start,
+        end,
+        visuals: [visual]
+      });
+    }
+  }
+  return groups;
+}
+function getNode(visual, dayStart) {
+  const [start, end] = getNormalizedRange(visual.event, dayStart);
+  return {
+    parent: null,
+    sibling: true,
+    index: 0,
+    visual,
+    start,
+    end,
+    children: []
+  };
+}
+function getMaxChildIndex(node) {
+  let max = node.index;
+  for (const child of node.children) {
+    const childMax = getMaxChildIndex(child);
+    if (childMax > max) {
+      max = childMax;
+    }
+  }
+  return max;
+}
+function addTime(identifier, minutes) {
+  const removeMinutes = identifier % 100;
+  const totalMinutes = removeMinutes + minutes;
+  const addHours = Math.floor(totalMinutes / 60);
+  const addMinutes = totalMinutes % 60;
+  return identifier - removeMinutes + addHours * 100 + addMinutes;
+}
+
+// Types
+const CalendarEventOverlapModes = {
+  stack,
+  column
+};
+
+// Types
+
+function parseEvent(input, index, startProperty, endProperty) {
+  let timed = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : false;
+  let category = arguments.length > 5 && arguments[5] !== undefined ? arguments[5] : false;
+  const startInput = input[startProperty];
+  const endInput = input[endProperty];
+  const startParsed = parseTimestamp(startInput, true);
+  const endParsed = endInput ? parseTimestamp(endInput, true) : startParsed;
+  const start = isTimedless(startInput) ? updateHasTime(startParsed, timed) : startParsed;
+  const end = isTimedless(endInput) ? updateHasTime(endParsed, timed) : endParsed;
+  const startIdentifier = getDayIdentifier(start);
+  const startTimestampIdentifier = getTimestampIdentifier(start);
+  const endIdentifier = getDayIdentifier(end);
+  const endOffset = start.hasTime ? 0 : 2359;
+  const endTimestampIdentifier = getTimestampIdentifier(end) + endOffset;
+  const allDay = !start.hasTime;
+  return {
+    input,
+    start,
+    startIdentifier,
+    startTimestampIdentifier,
+    end,
+    endIdentifier,
+    endTimestampIdentifier,
+    allDay,
+    index,
+    category
+  };
+}
+function isEventOn(event, dayIdentifier) {
+  return dayIdentifier >= event.startIdentifier && dayIdentifier <= event.endIdentifier;
+}
+function isEventHiddenOn(event, day) {
+  return event.end.time === '00:00' && event.end.date === day.date && event.start.date !== day.date;
+}
+function isEventStart(event, day, dayIdentifier, firstWeekday) {
+  return dayIdentifier === event.startIdentifier || firstWeekday === day.weekday && isEventOn(event, dayIdentifier);
+}
+function isEventOverlapping(event, startIdentifier, endIdentifier) {
+  return startIdentifier <= event.endIdentifier && endIdentifier >= event.startIdentifier;
+}
+
+// Types
+
+// Constants
+const WIDTH_FULL = 100;
+const WIDTH_START = 95;
+const MINUTES_IN_DAY = 1440;
+const makeCalendarWithEventsProps = propsFactory({
+  events: {
+    type: Array,
+    default: () => []
+  },
+  eventStart: {
+    type: String,
+    default: 'start'
+  },
+  eventEnd: {
+    type: String,
+    default: 'end'
+  },
+  eventTimed: {
+    type: [String, Function],
+    default: 'timed'
+  },
+  eventCategory: {
+    type: [String, Function],
+    default: 'category'
+  },
+  eventHeight: {
+    type: Number,
+    default: 20
+  },
+  eventColor: {
+    type: [String, Function],
+    default: 'primary'
+  },
+  eventTextColor: {
+    type: [String, Function]
+  },
+  eventName: {
+    type: [String, Function],
+    default: 'name'
+  },
+  eventOverlapThreshold: {
+    type: [String, Number],
+    default: 60
+  },
+  eventOverlapMode: {
+    type: [String, Function],
+    default: 'stack',
+    validate: mode => mode in CalendarEventOverlapModes || typeof mode === 'function'
+  },
+  eventMore: {
+    type: Boolean,
+    default: true
+  },
+  eventMoreText: {
+    type: String,
+    default: '$vuetify.calendar.moreEvents'
+  },
+  eventRipple: {
+    type: [Boolean, Object],
+    default: null
+  },
+  eventMarginBottom: {
+    type: Number,
+    default: 1
+  }
+}, 'VCalendar-events');
+function useCalendarWithEvents(props, slots, attrs) {
+  const base = useCalendarBase(props);
+  const noEvents = computed(() => {
+    return !Array.isArray(props.events) || props.events.length === 0;
+  });
+  const categoryMode = computed(() => {
+    return props.type === 'category';
+  });
+  const eventTimedFunction = computed(() => {
+    return typeof props.eventTimed === 'function' ? props.eventTimed : event => !!event[props.eventTimed];
+  });
+  const eventCategoryFunction = computed(() => {
+    return typeof props.eventCategory === 'function' ? props.eventCategory : event => event[props.eventCategory];
+  });
+  const parsedEvents = computed(() => {
+    if (!props.events) return [];
+    return props.events.map((event, index) => parseEvent(event, index, props.eventStart || '', props.eventEnd || '', eventTimedFunction.value(event), categoryMode.value ? eventCategoryFunction.value(event) : false));
+  });
+  const parsedEventOverlapThreshold = computed(() => {
+    return parseInt(String(props.eventOverlapThreshold || 0));
+  });
+  const eventTextColorFunction = computed(() => {
+    return typeof props.eventTextColor === 'function' ? props.eventTextColor : () => props.eventTextColor;
+  });
+  const eventNameFunction = computed(() => {
+    return typeof props.eventName === 'function' ? props.eventName : (event, timedEvent) => event.input[props.eventName] || '';
+  });
+  const eventModeFunction = computed(() => {
+    return typeof props.eventOverlapMode === 'function' ? props.eventOverlapMode : CalendarEventOverlapModes[props.eventOverlapMode];
+  });
+  const eventWeekdays = computed(() => {
+    return base.effectiveWeekdays.value;
+  });
+  function eventColorFunction(e) {
+    return typeof props.eventColor === 'function' ? props.eventColor(e) : e.color || props.eventColor;
+  }
+  const eventsRef = ref([]);
+  function updateEventVisibility() {
+    if (noEvents.value || !props.eventMore) {
+      return;
+    }
+    const eventHeight = props.eventHeight || 0;
+    const eventsMap = getEventsMap();
+    for (const date in eventsMap) {
+      const {
+        parent,
+        events,
+        more
+      } = eventsMap[date];
+      if (!more) {
+        break;
+      }
+      const parentBounds = parent.getBoundingClientRect();
+      const last = events.length - 1;
+      const eventsSorted = events.map(event => ({
+        event,
+        bottom: event.getBoundingClientRect().bottom
+      })).sort((a, b) => a.bottom - b.bottom);
+      let hidden = 0;
+      for (let i = 0; i <= last; i++) {
+        const bottom = eventsSorted[i].bottom;
+        const hide = i === last ? bottom > parentBounds.bottom : bottom + eventHeight > parentBounds.bottom;
+        if (hide) {
+          eventsSorted[i].event.style.display = 'none';
+          hidden++;
+        }
+      }
+
+      // TODO: avoid direct DOM manipulation
+      if (hidden) {
+        more.style.display = '';
+        more.innerHTML = base.locale.t(props.eventMoreText, hidden);
+      } else {
+        more.style.display = 'none';
+      }
+    }
+  }
+  function getEventsMap() {
+    const eventsMap = {};
+    const elements = eventsRef.value;
+    if (!elements || !elements.length) {
+      return eventsMap;
+    }
+    elements.forEach(el => {
+      const date = el.getAttribute('data-date');
+      if (el.parentElement && date) {
+        if (!(date in eventsMap)) {
+          eventsMap[date] = {
+            parent: el.parentElement,
+            more: null,
+            events: []
+          };
+        }
+        if (el.getAttribute('data-more')) {
+          eventsMap[date].more = el;
+        } else {
+          eventsMap[date].events.push(el);
+          el.style.display = '';
+        }
+      }
+    });
+    return eventsMap;
+  }
+  function genDayEvent(_ref, day) {
+    let {
+      event
+    } = _ref;
+    const eventHeight = props.eventHeight || 0;
+    const eventMarginBottom = props.eventMarginBottom || 0;
+    const dayIdentifier = getDayIdentifier(day);
+    const week = day.week;
+    const start = dayIdentifier === event.startIdentifier;
+    let end = dayIdentifier === event.endIdentifier;
+    let width = WIDTH_START;
+    if (!categoryMode.value) {
+      for (let i = day.index + 1; i < week.length; i++) {
+        const weekdayIdentifier = getDayIdentifier(week[i]);
+        if (event.endIdentifier >= weekdayIdentifier) {
+          width += WIDTH_FULL;
+          end = end || weekdayIdentifier === event.endIdentifier;
+        } else {
+          end = true;
+          break;
+        }
+      }
+    }
+    const scope = {
+      eventParsed: event,
+      day,
+      start,
+      end,
+      timed: false
+    };
+    return genEvent(event, scope, false, {
+      class: ['v-event', {
+        'v-event-start': start,
+        'v-event-end': end
+      }],
+      style: {
+        height: `${eventHeight}px`,
+        width: `${width}%`,
+        marginBottom: `${eventMarginBottom}px`
+      },
+      'data-date': day.date
+    });
+  }
+  function genTimedEvent(_ref2, day) {
+    let {
+      event,
+      left,
+      width
+    } = _ref2;
+    const endDelta = day.timeDelta(event.end);
+    const startDelta = day.timeDelta(event.start);
+    if (endDelta === false || startDelta === false || endDelta < 0 || startDelta >= 1 || isEventHiddenOn(event, day)) {
+      return false;
+    }
+    const dayIdentifier = getDayIdentifier(day);
+    const start = event.startIdentifier >= dayIdentifier;
+    const end = event.endIdentifier > dayIdentifier;
+    const top = start ? day.timeToY(event.start) : 0;
+    const bottom = end ? day.timeToY(MINUTES_IN_DAY) : day.timeToY(event.end);
+    const height = Math.max(props.eventHeight || 0, bottom - top);
+    const scope = {
+      eventParsed: event,
+      day,
+      start,
+      end,
+      timed: true
+    };
+    return genEvent(event, scope, true, {
+      class: 'v-event-timed',
+      style: {
+        top: `${top}px`,
+        height: `${height}px`,
+        left: `${left}%`,
+        width: `${width}%`
+      }
+    });
+  }
+  function genEvent(event, scopeInput, timedEvent, data) {
+    const slot = slots.event;
+    const text = eventTextColorFunction.value(event.input);
+    const background = eventColorFunction(event.input);
+    const overlapsNoon = event.start.hour < 12 && event.end.hour >= 12;
+    const singline = diffMinutes(event.start, event.end) <= parsedEventOverlapThreshold.value;
+    const formatTime = (withTime, ampm) => {
+      const formatter = base.getFormatter({
+        timeZone: 'UTC',
+        hour: 'numeric',
+        minute: withTime.minute > 0 ? 'numeric' : undefined
+      });
+      return formatter(withTime, true);
+    };
+    const timeSummary = () => formatTime(event.start) + ' - ' + formatTime(event.end);
+    const eventSummary = () => {
+      const name = eventNameFunction.value(event, timedEvent);
+      if (event.start.hasTime) {
+        if (timedEvent) {
+          const time = timeSummary();
+          const delimiter = singline ? ', ' : createElementVNode("br", null, null);
+          return createElementVNode("span", {
+            "class": "v-event-summary"
+          }, [createElementVNode("strong", null, [name]), delimiter, time]);
+        } else {
+          const time = formatTime(event.start);
+          return createElementVNode("span", {
+            "class": "v-event-summary"
+          }, [createElementVNode("strong", null, [time]), createTextVNode(" "), name]);
+        }
+      }
+      return createElementVNode("span", {
+        "class": "v-event-summary"
+      }, [name]);
+    };
+    const scope = {
+      ...scopeInput,
+      event: event.input,
+      outside: scopeInput.day.outside,
+      singline,
+      overlapsNoon,
+      formatTime,
+      timeSummary,
+      eventSummary
+    };
+    const events = getPrefixedEventHandlers(attrs, ':event', nativeEvent => ({
+      ...scope,
+      nativeEvent
+    }));
+    return withDirectives(createElementVNode("div", mergeProps(base.getColorProps({
+      text,
+      background
+    }), events, data, {
+      "ref_for": true,
+      "ref": eventsRef
+    }), [slot?.(scope) ?? genName(eventSummary)]), [[Ripple, props.eventRipple ?? true]]);
+  }
+  function genName(eventSummary) {
+    return createElementVNode("div", {
+      "class": "pl-1"
+    }, [eventSummary()]);
+  }
+  function genPlaceholder(day) {
+    const height = (props.eventHeight || 0) + (props.eventMarginBottom || 0);
+    return createElementVNode("div", {
+      "style": {
+        height: `${height}px`
+      },
+      "data-date": day.date,
+      "ref_for": true,
+      "ref": eventsRef
+    }, null);
+  }
+  function genMore(day) {
+    const eventHeight = props.eventHeight || 0;
+    const eventMarginBottom = props.eventMarginBottom || 0;
+    const events = getPrefixedEventHandlers(attrs, ':more', nativeEvent => ({
+      nativeEvent,
+      ...day
+    }));
+    return withDirectives(createElementVNode("div", mergeProps({
+      "class": ['v-event-more pl-1', {
+        'v-outside': day.outside
+      }],
+      "data-date": day.date,
+      "data-more": "1",
+      "style": {
+        display: 'none',
+        height: `${eventHeight}px`,
+        marginBottom: `${eventMarginBottom}px`
+      },
+      "ref_for": true,
+      "ref": eventsRef
+    }, events), null), [[Ripple, props.eventRipple ?? true]]);
+  }
+  function getVisibleEvents() {
+    const days = base.days.value;
+    const start = getDayIdentifier(days[0]);
+    const end = getDayIdentifier(days[days.length - 1]);
+    return parsedEvents.value.filter(event => isEventOverlapping(event, start, end));
+  }
+  function isEventForCategory(event, category) {
+    return !categoryMode.value || typeof category === 'object' && category.categoryName && category.categoryName === event.category || typeof event.category === 'string' && category === event.category || typeof event.category !== 'string' && category === null;
+  }
+  function getEventsForDay(day) {
+    const identifier = getDayIdentifier(day);
+    const firstWeekday = eventWeekdays.value[0];
+    return parsedEvents.value.filter(event => isEventStart(event, day, identifier, firstWeekday));
+  }
+  function getEventsForDayAll(day) {
+    const identifier = getDayIdentifier(day);
+    const firstWeekday = eventWeekdays.value[0];
+    return parsedEvents.value.filter(event => event.allDay && (categoryMode.value ? isEventOn(event, identifier) : isEventStart(event, day, identifier, firstWeekday)) && isEventForCategory(event, day.category));
+  }
+  function getEventsForDayTimed(day) {
+    const identifier = getDayIdentifier(day);
+    return parsedEvents.value.filter(event => !event.allDay && isEventOn(event, identifier) && isEventForCategory(event, day.category));
+  }
+  function getScopedSlots() {
+    if (noEvents.value) {
+      return {
+        ...slots
+      };
+    }
+    const mode = eventModeFunction.value(parsedEvents.value, eventWeekdays.value[0], parsedEventOverlapThreshold.value);
+    const isNode = input => !!input;
+    const getSlotChildren = (day, getter, mapper, timed) => {
+      const events = getter(day);
+      const visuals = mode(day, events, timed, categoryMode.value);
+      if (timed) {
+        return visuals.map(visual => mapper(visual, day)).filter(isNode);
+      }
+      const children = [];
+      visuals.forEach((visual, index) => {
+        while (children.length < visual.column) {
+          children.push(genPlaceholder(day));
+        }
+        const mapped = mapper(visual, day);
+        if (mapped) {
+          children.push(mapped);
+        }
+      });
+      return children;
+    };
+    return {
+      ...slots,
+      day: day => {
+        let children = getSlotChildren(day, getEventsForDay, genDayEvent, false);
+        if (children && children.length > 0 && props.eventMore) {
+          children.push(genMore(day));
+        }
+        if (slots.day) {
+          const slot = slots.day(day);
+          if (slot) {
+            children = children ? children.concat(slot) : slot;
+          }
+        }
+        return children;
+      },
+      'day-header': day => {
+        let children = getSlotChildren(day, getEventsForDayAll, genDayEvent, false);
+        if (slots['day-header']) {
+          const slot = slots['day-header'](day);
+          if (slot) {
+            children = children ? children.concat(slot) : slot;
+          }
+        }
+        return children;
+      },
+      'day-body': day => {
+        const events = getSlotChildren(day, getEventsForDayTimed, genTimedEvent, true);
+        let children = [createElementVNode("div", {
+          "class": "v-event-timed-container"
+        }, [events])];
+        if (slots['day-body']) {
+          const slot = slots['day-body'](day);
+          if (slot) {
+            children = children.concat(slot);
+          }
+        }
+        return children;
+      }
+    };
+  }
+  return {
+    ...base,
+    noEvents,
+    parsedEvents,
+    parsedEventOverlapThreshold,
+    eventTimedFunction,
+    eventCategoryFunction,
+    eventTextColorFunction,
+    eventNameFunction,
+    eventModeFunction,
+    eventWeekdays,
+    categoryMode,
+    eventColorFunction,
+    eventsRef,
+    updateEventVisibility,
+    getEventsMap,
+    genDayEvent,
+    genTimedEvent,
+    genEvent,
+    genName,
+    genPlaceholder,
+    genMore,
+    getVisibleEvents,
+    isEventForCategory,
+    getEventsForDay,
+    getEventsForDayAll,
+    getEventsForDayTimed,
+    getScopedSlots
+  };
+}
+
+// Types
+
+// Types
+
+const VCalendar = genericComponent()({
+  name: 'VCalendar',
+  directives: {
+    vResize: Resize
+  },
+  props: {
+    modelValue: {
+      type: [String, Number, Date],
+      validate: validateTimestamp
+    },
+    categoryDays: {
+      type: [Number, String],
+      default: 1,
+      validate: x => isFinite(parseInt(x)) && parseInt(x) > 0
+    },
+    categories: {
+      type: [Array, String],
+      default: ''
+    },
+    categoryText: {
+      type: [String, Function]
+    },
+    maxDays: {
+      type: Number,
+      default: 7
+    },
+    categoryHideDynamic: {
+      type: Boolean
+    },
+    categoryShowAll: {
+      type: Boolean
+    },
+    categoryForInvalid: {
+      type: String,
+      default: ''
+    },
+    ...makeCalendarBaseProps(),
+    ...makeCalendarWithEventsProps()
+  },
+  setup(props, _ref) {
+    let {
+      slots,
+      attrs,
+      emit
+    } = _ref;
+    const root = ref();
+    const base = useCalendarWithEvents(props, slots, attrs);
+    const lastStart = ref(null);
+    const lastEnd = ref(null);
+    const parsedCategoryDays = computed(() => {
+      return parseInt(String(props.categoryDays)) || 1;
+    });
+    const parsedCategories = computed(() => {
+      return getParsedCategories(props.categories, props.categoryText);
+    });
+    const renderProps = computed(() => {
+      const around = base.parsedValue.value;
+      let component = null;
+      let maxDays = props.maxDays;
+      let categories = parsedCategories.value;
+      let start = around;
+      let end = around;
+      switch (props.type) {
+        case 'month':
+          component = VCalendarWeekly;
+          start = getStartOfMonth(around);
+          end = getEndOfMonth(around);
+          break;
+        case 'week':
+          component = VCalendarDaily;
+          start = base.getStartOfWeek(around);
+          end = base.getEndOfWeek(around);
+          maxDays = 7;
+          break;
+        case 'day':
+          component = VCalendarDaily;
+          maxDays = 1;
+          break;
+        case '4day':
+          component = VCalendarDaily;
+          end = relativeDays(copyTimestamp(end), nextDay, 3);
+          updateFormatted(end);
+          maxDays = 4;
+          break;
+        case 'custom-weekly':
+          component = VCalendarWeekly;
+          start = base.parsedStart.value || around;
+          end = base.parsedEnd.value;
+          break;
+        case 'custom-daily':
+          component = VCalendarDaily;
+          start = base.parsedStart.value || around;
+          end = base.parsedEnd.value;
+          break;
+        case 'category':
+          const days = parsedCategoryDays.value;
+          component = VCalendarCategory;
+          end = relativeDays(copyTimestamp(end), nextDay, days);
+          updateFormatted(end);
+          maxDays = days;
+          categories = getCategoryList(categories);
+          break;
+        default:
+          const type = props.type;
+          throw new Error(`${type} is not a valid Calendar type`);
+      }
+      return {
+        component,
+        start,
+        end,
+        maxDays,
+        categories
+      };
+    });
+    const eventWeekdays = computed(() => {
+      return base.effectiveWeekdays.value;
+    });
+    const categoryMode = computed(() => {
+      return props.type === 'category';
+    });
+    const monthLongFormatter = computed(() => {
+      return base.getFormatter({
+        timeZone: 'UTC',
+        month: 'long'
+      });
+    });
+    const monthShortFormatter = computed(() => {
+      return base.getFormatter({
+        timeZone: 'UTC',
+        month: 'short'
+      });
+    });
+    const title = computed(() => {
+      const {
+        start,
+        end
+      } = renderProps.value;
+      const spanYears = start.year !== end.year;
+      const spanMonths = spanYears || start.month !== end.month;
+      if (spanYears) {
+        return monthShortFormatter.value(start, true) + ' ' + start.year + ' - ' + monthShortFormatter.value(end, true) + ' ' + end.year;
+      }
+      if (spanMonths) {
+        return monthShortFormatter.value(start, true) + ' - ' + monthShortFormatter.value(end, true) + ' ' + end.year;
+      } else {
+        return monthLongFormatter.value(start, false) + ' ' + start.year;
+      }
+    });
+    function checkChange() {
+      const {
+        start,
+        end
+      } = renderProps.value;
+      if (!lastStart.value || !lastEnd.value || start.date !== lastStart.value.date || end.date !== lastEnd.value.date) {
+        lastStart.value = start;
+        lastEnd.value = end;
+        emit('change', {
+          start,
+          end
+        });
+      }
+    }
+    function move() {
+      let amount = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1;
+      const moved = copyTimestamp(base.parsedValue.value);
+      const forward = amount > 0;
+      const mover = forward ? nextDay : prevDay;
+      const limit = forward ? DAYS_IN_MONTH_MAX : DAY_MIN;
+      let times = forward ? amount : -amount;
+      while (--times >= 0) {
+        switch (props.type) {
+          case 'month':
+            moved.day = limit;
+            mover(moved);
+            break;
+          case 'week':
+            relativeDays(moved, mover, DAYS_IN_WEEK);
+            break;
+          case 'day':
+            relativeDays(moved, mover, 1);
+            break;
+          case '4day':
+            relativeDays(moved, mover, 4);
+            break;
+          case 'category':
+            relativeDays(moved, mover, parsedCategoryDays.value);
+            break;
+        }
+      }
+      updateWeekday(moved);
+      updateFormatted(moved);
+      updateRelative(moved, base.times.now);
+      if (props.modelValue instanceof Date) {
+        emit('update:modelValue', timestampToDate(moved));
+      } else if (typeof props.modelValue === 'number') {
+        emit('update:modelValue', timestampToDate(moved).getTime());
+      } else {
+        emit('update:modelValue', moved.date);
+      }
+      emit('moved', moved);
+    }
+    function next() {
+      let amount = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1;
+      move(amount);
+    }
+    function prev() {
+      let amount = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1;
+      move(-amount);
+    }
+    function getCategoryList(categories) {
+      if (!base.noEvents.value) {
+        const categoryMap = categories.reduce((map, category, index) => {
+          if (typeof category === 'object' && category.categoryName) map[category.categoryName] = {
+            index,
+            count: 0
+          };else if (typeof category === 'string') map[category] = {
+            index,
+            count: 0
+          };
+          return map;
+        }, {});
+        if (!props.categoryHideDynamic || !props.categoryShowAll) {
+          let categoryLength = categories.length;
+          base.parsedEvents.value.forEach(ev => {
+            let category = ev.category;
+            if (typeof category !== 'string') {
+              category = props.categoryForInvalid;
+            }
+            if (!category) {
+              return;
+            }
+            if (category in categoryMap) {
+              categoryMap[category].count++;
+            } else if (!props.categoryHideDynamic) {
+              categoryMap[category] = {
+                index: categoryLength++,
+                count: 1
+              };
+            }
+          });
+        }
+        if (!props.categoryShowAll) {
+          for (const category in categoryMap) {
+            if (categoryMap[category].count === 0) {
+              delete categoryMap[category];
+            }
+          }
+        }
+        categories = categories.filter(category => {
+          if (typeof category === 'object' && category.categoryName) {
+            return categoryMap.hasOwnProperty(category.categoryName);
+          } else if (typeof category === 'string') {
+            return categoryMap.hasOwnProperty(category);
+          }
+          return false;
+        });
+      }
+      return categories;
+    }
+    watch(renderProps, checkChange);
+    onMounted(() => {
+      base.updateEventVisibility();
+      checkChange();
+    });
+    onUpdated(() => {
+      window.requestAnimationFrame(base.updateEventVisibility);
+    });
+    useRender(() => {
+      const {
+        start,
+        end,
+        maxDays,
+        component: Component,
+        categories
+      } = renderProps.value;
+      return withDirectives(createVNode(Component, mergeProps({
+        "ref": root,
+        "class": ['v-calendar', {
+          'v-calendar-events': !base.noEvents.value
+        }],
+        "role": "grid"
+      }, Component.filterProps(props), {
+        "start": start.date,
+        "end": end.date,
+        "maxDays": maxDays,
+        "weekdays": base.effectiveWeekdays.value,
+        "categories": categories,
+        "onClick:date": (e, day) => {
+          if (attrs['onUpdate:modelValue']) emit('update:modelValue', day.date);
+        }
+      }), base.getScopedSlots()), [[Resize, base.updateEventVisibility, void 0, {
+        quiet: true
+      }]]);
+    });
+    return forwardRefs({
+      ...base,
+      lastStart,
+      lastEnd,
+      parsedCategoryDays,
+      renderProps,
+      eventWeekdays,
+      categoryMode,
+      title,
+      monthLongFormatter,
+      monthShortFormatter,
+      parsedCategories,
+      checkChange,
+      move,
+      next,
+      prev,
+      getCategoryList
+    }, root);
+  }
+});
+
+// Types
+
 const availablePipLocations = ['prepend', 'prepend-inner', 'append', 'append-inner'];
 const makeVColorInputProps = propsFactory({
   hidePip: Boolean,
@@ -35909,11 +34310,10 @@ const makeVColorInputProps = propsFactory({
     type: String,
     default: 'text'
   },
-  pickerProps: Object,
   ...makeFocusProps(),
   ...makeVConfirmEditProps(),
   ...makeVTextFieldProps(),
-  ...omit(makeVColorPickerProps(), ['location', 'height', 'minHeight', 'maxHeight'])
+  ...omit(makeVColorPickerProps(), ['width'])
 }, 'VColorInput');
 const VColorInput = genericComponent()({
   name: 'VColorInput',
@@ -35952,10 +34352,7 @@ const VColorInput = genericComponent()({
     }
     useRender(() => {
       const confirmEditProps = VConfirmEdit.filterProps(props);
-      const colorPickerProps = {
-        ...VColorPicker.filterProps(omit(props, ['active', 'bgColor', 'color', 'rounded', 'maxWidth', 'minWidth', 'width'])),
-        ...props.pickerProps
-      };
+      const colorPickerProps = VColorPicker.filterProps(omit(props, ['active', 'color']));
       const textFieldProps = VTextField.filterProps(props);
       const slotWithPip = props.hidePip ? undefined : {
         [props.pipLocation]: arg => createElementVNode(Fragment, null, [createVNode(VAvatar, {
@@ -36159,7 +34556,6 @@ const makeVDateInputProps = propsFactory({
     type: Array,
     default: () => ['blur', 'enter']
   },
-  pickerProps: Object,
   ...makeDateFormatProps(),
   ...makeDisplayProps({
     mobile: null
@@ -36174,7 +34570,7 @@ const makeVDateInputProps = propsFactory({
   ...omit(makeVDatePickerProps({
     hideHeader: true,
     showAdjacentMonths: true
-  }), ['location', 'rounded', 'height', 'minHeight', 'maxHeight'])
+  }), ['active', 'location', 'rounded'])
 }, 'VDateInput');
 const VDateInput = genericComponent()({
   name: 'VDateInput',
@@ -36205,13 +34601,6 @@ const VDateInput = genericComponent()({
     const {
       mobile
     } = useDisplay(props);
-    const {
-      InputIcon
-    } = useInputIcon(props);
-    const {
-      clampDate,
-      isInAllowedRange
-    } = useCalendarRange(props);
     const emptyModelValue = () => props.multiple ? [] : null;
     const model = useProxiedModel(props, 'modelValue', emptyModelValue(), val => Array.isArray(val) ? val.map(item => adapter.toJsDate(item)) : val ? adapter.toJsDate(val) : val, val => Array.isArray(val) ? val.map(item => adapter.date(item)) : val ? adapter.date(val) : val);
     const menu = useProxiedModel(props, 'menu');
@@ -36262,7 +34651,7 @@ const VDateInput = genericComponent()({
       if (!menu.value || !isFocused.value) {
         menu.value = true;
       }
-      if (props.updateOn.includes('enter') && !props.readonly) {
+      if (props.updateOn.includes('enter')) {
         onUserInput(e.target);
       }
     }
@@ -36289,7 +34678,7 @@ const VDateInput = genericComponent()({
       model.value = emptyModelValue();
     }
     function onBlur(e) {
-      if (props.updateOn.includes('blur') && !props.readonly) {
+      if (props.updateOn.includes('blur')) {
         onUserInput(e.target);
       }
 
@@ -36307,33 +34696,29 @@ const VDateInput = genericComponent()({
         model.value = emptyModelValue();
       } else if (!props.multiple) {
         if (isValid(value)) {
-          model.value = clampDate(parseDate(value));
+          model.value = parseDate(value);
         }
       } else {
         const parts = value.trim().split(/\D+-\D+|[^\d\-/.]+/);
         if (parts.every(isValid)) {
           if (props.multiple === 'range') {
-            const [start, stop] = parts.map(parseDate).map(clampDate).toSorted((a, b) => adapter.isAfter(a, b) ? 1 : -1);
+            const [start, stop] = parts.map(parseDate).toSorted((a, b) => adapter.isAfter(a, b) ? 1 : -1);
             model.value = createDateRange(adapter, start, stop);
           } else {
-            model.value = parts.map(parseDate).filter(isInAllowedRange);
+            model.value = parts.map(parseDate);
           }
         }
       }
     }
     useRender(() => {
-      const hasPrepend = !!(props.prependIcon || slots.prepend);
       const confirmEditProps = VConfirmEdit.filterProps(props);
-      const datePickerProps = {
-        ...VDatePicker.filterProps(omit(props, ['active', 'bgColor', 'color', 'location', 'rounded', 'maxWidth', 'minWidth', 'width'])),
-        ...props.pickerProps
-      };
+      const datePickerProps = VDatePicker.filterProps(omit(props, ['active', 'location', 'rounded']));
       const datePickerSlots = pick(slots, ['title', 'header', 'day', 'month', 'year']);
       const textFieldProps = VTextField.filterProps(omit(props, ['placeholder']));
       return createVNode(VTextField, mergeProps({
         "ref": vTextFieldRef
       }, textFieldProps, {
-        "class": ['v-date-input', props.class],
+        "class": props.class,
         "style": props.style,
         "modelValue": display.value,
         "inputmode": inputmode.value,
@@ -36344,6 +34729,7 @@ const VDateInput = genericComponent()({
         "onBlur": onBlur,
         "validationValue": model.value,
         "onClick:control": isInteractive.value ? onClick : undefined,
+        "onClick:prepend": isInteractive.value ? onClick : undefined,
         "onUpdate:modelValue": onUpdateDisplayModel,
         "onUpdate:focused": event => isFocused.value = event
       }), {
@@ -36399,13 +34785,7 @@ const VDateInput = genericComponent()({
               });
             }
           })]
-        }), slots.default?.()]),
-        prepend: hasPrepend ? prependSlotProps => slots.prepend ? slots.prepend(prependSlotProps) : props.prependIcon && createVNode(InputIcon, {
-          "key": "prepend-icon",
-          "name": "prepend",
-          "tabindex": props['onClick:prepend'] ? undefined : -1,
-          "onClick": isInteractive.value ? onClick : undefined
-        }, null) : undefined
+        }), slots.default?.()])
       });
     });
     return forwardRefs({}, vTextFieldRef);
@@ -36777,7 +35157,7 @@ const VMaskInput = genericComponent()({
     // Always display masked value in input when mask is applied
     val => props.mask ? mask.mask(mask.unmask(val)) : val, val => {
       if (props.mask) {
-        const valueWithoutDelimiters = val ? removeMaskDelimiters(val) : '';
+        const valueWithoutDelimiters = removeMaskDelimiters(val);
 
         // E.g. mask is #-# and the input value is '2-23'
         // model-value should be enforced to '2-2'
@@ -36838,8 +35218,8 @@ const VMaskInput = genericComponent()({
     }
     async function onCut(e) {
       e.preventDefault();
-      await copySelectionToClipboard(e);
-      await deleteSelection(e);
+      copySelectionToClipboard(e);
+      deleteSelection(e);
     }
     async function onPaste(e) {
       e.preventDefault();
@@ -36854,12 +35234,12 @@ const VMaskInput = genericComponent()({
         insertCharacters(inputElement, pastedCharacters);
       }
     }
-    async function copySelectionToClipboard(e) {
+    function copySelectionToClipboard(e) {
       const inputElement = e.target;
       const start = inputElement.selectionStart || 0;
       const end = inputElement.selectionEnd || 0;
       const selectedText = inputElement.value.substring(start, end);
-      await navigator.clipboard.writeText(selectedText);
+      navigator.clipboard.writeText(selectedText);
     }
     async function deleteSelection(e) {
       const inputElement = e.target;
@@ -36910,8 +35290,6 @@ const VMaskInput = genericComponent()({
         "modelValue": model.value,
         "onUpdate:modelValue": $event => model.value = $event,
         "ref": vTextFieldRef,
-        "class": ['v-mask-input', props.class],
-        "style": props.style,
         "validationValue": validationValue.value,
         "onCut": onCut,
         "onPaste": onPaste,
@@ -37455,7 +35833,7 @@ const VPie = genericComponent()({
       };
       const tooltipDefaults = {
         VAvatar: {
-          size: typeof props.tooltip === 'object' ? props.tooltip.avatarSize ?? 28 : 28
+          size: typeof props.tooltip === 'object' ? props.tooltip.avatarSize : 28
         }
       };
       const avatarSlot = _ref4 => {
@@ -37626,10 +36004,11 @@ const VStepperVerticalItem = genericComponent()({
     const vExpansionPanelRef = ref();
     const step = computed(() => !isNaN(parseInt(props.value)) ? Number(props.value) : props.value);
     const groupItem = computed(() => vExpansionPanelRef.value?.groupItem);
-    const isValid = computed(() => props.rules.every(handler => handler() === true));
+    const isSelected = computed(() => groupItem.value?.isSelected.value ?? false);
+    const isValid = computed(() => isSelected.value ? props.rules.every(handler => handler() === true) : null);
     const canEdit = computed(() => !props.disabled && props.editable);
-    const hasError = computed(() => props.error || !isValid.value);
-    const hasCompleted = computed(() => props.complete || props.rules.length > 0 && isValid.value);
+    const hasError = computed(() => props.error || isSelected.value && !isValid.value);
+    const hasCompleted = computed(() => props.complete || props.rules.length > 0 && isValid.value === true);
     const disabled = computed(() => {
       if (props.disabled) return props.disabled;
       if (groupItem.value?.isFirst.value) return 'prev';
@@ -37664,7 +36043,7 @@ const VStepperVerticalItem = genericComponent()({
       groupItem.value.group.prev();
     }
     useRender(() => {
-      const hasColor = (!groupItem.value || groupItem.value?.isSelected.value || hasCompleted.value || canEdit.value) && !hasError.value && !props.disabled;
+      const hasColor = (hasCompleted.value || groupItem.value?.isSelected.value) && !hasError.value && !props.disabled;
       const hasActions = !props.hideActions || !!slots.actions;
       const expansionPanelProps = VExpansionPanel.filterProps(props);
       return createVNode(VExpansionPanel, mergeProps({
@@ -37760,16 +36139,9 @@ const VStepperVertical = genericComponent()({
     const items = computed(() => props.items.map((item, index) => {
       const title = getPropertyFromItem(item, props.itemTitle, item);
       const value = getPropertyFromItem(item, props.itemValue, index + 1);
-      const itemProps = props.itemProps === true ? item : getPropertyFromItem(item, props.itemProps);
-      const _props = {
+      return {
         title,
         value,
-        ...itemProps
-      };
-      return {
-        title: _props.title,
-        value: _props.value,
-        props: _props,
         raw: item
       };
     }));
@@ -37812,7 +36184,7 @@ const VStepperVertical = genericComponent()({
               raw,
               ...item
             } = _ref3;
-            return createVNode(VStepperVerticalItem, item.props, {
+            return createVNode(VStepperVerticalItem, item, {
               ...slots,
               default: slots[`item.${item.value}`]
             });
@@ -37937,6 +36309,398 @@ const VPullToRefresh = genericComponent()({
   }
 });
 
+// Types
+
+// Display mode types for different visual representations
+
+// Extended variant type that includes our custom 'contained' variant
+
+// Key display tuple: [mode, content] where content is string or IconValue
+
+// Key tuple: [mode, content] where content is string or IconValue
+
+function processKey(config, requestedMode, isMac) {
+  const keyCfg = isMac && config.mac ? config.mac : config.default;
+
+  // 1. Resolve the safest display mode for the current platform
+  const mode = (() => {
+    // Non-Mac platforms rarely use icons – prefer text
+    if (requestedMode === 'icon' && !isMac) return 'text';
+
+    // If the requested mode lacks an asset, fall back to text
+    if (requestedMode === 'icon' && !keyCfg.icon) return 'text';
+    if (requestedMode === 'symbol' && !keyCfg.symbol) return 'text';
+    return requestedMode;
+  })();
+
+  // 2. Pick value for the chosen mode, defaulting to text representation
+  let value = keyCfg[mode] ?? keyCfg.text;
+
+  // 3. Guard against icon tokens leaking into text mode (e.g. "$ctrl")
+  if (mode === 'text' && typeof value === 'string' && value.startsWith('$') && !value.startsWith('$vuetify.')) {
+    value = value.slice(1).toUpperCase(); // "$ctrl" → "CTRL"
+  }
+  return mode === 'icon' ? ['icon', value] : [mode, value];
+}
+const hotkeyMap = {
+  ctrl: {
+    mac: {
+      symbol: '⌃',
+      icon: '$ctrl',
+      text: '$vuetify.hotkey.ctrl'
+    },
+    default: {
+      text: 'Ctrl'
+    }
+  },
+  meta: {
+    mac: {
+      symbol: '⌘',
+      icon: '$command',
+      text: '$vuetify.hotkey.command'
+    },
+    default: {
+      text: 'Ctrl'
+    }
+  },
+  cmd: {
+    mac: {
+      symbol: '⌘',
+      icon: '$command',
+      text: '$vuetify.hotkey.command'
+    },
+    default: {
+      text: 'Ctrl'
+    }
+  },
+  shift: {
+    mac: {
+      symbol: '⇧',
+      icon: '$shift',
+      text: '$vuetify.hotkey.shift'
+    },
+    default: {
+      text: 'Shift'
+    }
+  },
+  alt: {
+    mac: {
+      symbol: '⌥',
+      icon: '$alt',
+      text: '$vuetify.hotkey.option'
+    },
+    default: {
+      text: 'Alt'
+    }
+  },
+  enter: {
+    default: {
+      symbol: '↵',
+      icon: '$enter',
+      text: '$vuetify.hotkey.enter'
+    }
+  },
+  arrowup: {
+    default: {
+      symbol: '↑',
+      icon: '$arrowup',
+      text: '$vuetify.hotkey.upArrow'
+    }
+  },
+  arrowdown: {
+    default: {
+      symbol: '↓',
+      icon: '$arrowdown',
+      text: '$vuetify.hotkey.downArrow'
+    }
+  },
+  arrowleft: {
+    default: {
+      symbol: '←',
+      icon: '$arrowleft',
+      text: '$vuetify.hotkey.leftArrow'
+    }
+  },
+  arrowright: {
+    default: {
+      symbol: '→',
+      icon: '$arrowright',
+      text: '$vuetify.hotkey.rightArrow'
+    }
+  },
+  backspace: {
+    default: {
+      symbol: '⌫',
+      icon: '$backspace',
+      text: '$vuetify.hotkey.backspace'
+    }
+  },
+  escape: {
+    default: {
+      text: '$vuetify.hotkey.escape'
+    }
+  },
+  ' ': {
+    mac: {
+      symbol: '␣',
+      icon: '$space',
+      text: '$vuetify.hotkey.space'
+    },
+    default: {
+      text: '$vuetify.hotkey.space'
+    }
+  },
+  '-': {
+    default: {
+      text: '-'
+    }
+  }
+};
+
+// Create custom variant props that extend the base variant props with our 'contained' option
+const makeVHotkeyVariantProps = propsFactory({
+  variant: {
+    type: String,
+    default: 'elevated',
+    validator: v => ['elevated', 'flat', 'tonal', 'outlined', 'text', 'plain', 'contained'].includes(v)
+  }
+}, 'VHotkeyVariant');
+const makeVHotkeyProps = propsFactory({
+  // String representing keyboard shortcuts (e.g., "ctrl+k", "meta+shift+p")
+  keys: String,
+  // How to display keys: 'symbol' uses special characters (⌘, ⌃), 'icon' uses SVG icons, 'text' uses words
+  displayMode: {
+    type: String,
+    default: 'icon'
+  },
+  // Custom key mapping configuration. Users can import and modify the exported hotkeyMap as needed
+  keyMap: {
+    type: Object,
+    default: () => hotkeyMap
+  },
+  platform: {
+    type: String,
+    default: 'auto'
+  },
+  inline: Boolean,
+  disabled: Boolean,
+  prefix: String,
+  suffix: String,
+  ...makeComponentProps(),
+  ...makeThemeProps(),
+  ...makeBorderProps(),
+  ...makeRoundedProps(),
+  ...makeElevationProps(),
+  ...makeVHotkeyVariantProps(),
+  color: String
+}, 'VHotkey');
+class Delineator {
+  constructor(delineator) {
+    if (['and', 'then'].includes(delineator)) this.val = delineator;else {
+      throw new Error('Not a valid delineator');
+    }
+  }
+  isEqual(d) {
+    return this.val === d.val;
+  }
+}
+function isDelineator(value) {
+  return value instanceof Delineator;
+}
+function isString(value) {
+  return typeof value === 'string';
+}
+function getKeyText(keyMap, key, isMac) {
+  const lowerKey = key.toLowerCase();
+  if (lowerKey in keyMap) {
+    const result = processKey(keyMap[lowerKey], 'text', isMac);
+    return typeof result[1] === 'string' ? result[1] : String(result[1]);
+  }
+  return key.toUpperCase();
+}
+function applyDisplayModeToKey(keyMap, mode, key, isMac) {
+  const lowerKey = key.toLowerCase();
+  if (lowerKey in keyMap) {
+    const result = processKey(keyMap[lowerKey], mode, isMac);
+    if (result[0] === 'text' && typeof result[1] === 'string' && result[1].startsWith('$') && !result[1].startsWith('$vuetify.')) {
+      return ['text', result[1].replace('$', '').toUpperCase(), key];
+    }
+    return [...result, key];
+  }
+  return ['text', key.toUpperCase(), key];
+}
+const VHotkey = genericComponent()({
+  name: 'VHotkey',
+  props: makeVHotkeyProps(),
+  setup(props) {
+    const {
+      t
+    } = useLocale();
+    const {
+      themeClasses
+    } = provideTheme(props);
+    const {
+      rtlClasses
+    } = useRtl();
+    const {
+      borderClasses
+    } = useBorder(props);
+    const {
+      roundedClasses
+    } = useRounded(props);
+    const {
+      elevationClasses
+    } = useElevation(props);
+    const isContainedVariant = computed(() => props.variant === 'contained');
+    const effectiveVariantProps = computed(() => ({
+      ...props,
+      variant: isContainedVariant.value ? 'elevated' : props.variant
+    }));
+    const {
+      colorClasses,
+      colorStyles,
+      variantClasses
+    } = useVariant(effectiveVariantProps);
+    const isMac = computed(() => props.platform === 'auto' ? typeof navigator !== 'undefined' && /macintosh/i.test(navigator.userAgent) : props.platform === 'mac');
+    const effectiveDisplayMode = computed(() => props.displayMode);
+    const AND_DELINEATOR = new Delineator('and'); // For + separators
+    const THEN_DELINEATOR = new Delineator('then'); // For - separators
+
+    const effectiveKeyMap = computed(() => props.keyMap);
+    const keyCombinations = computed(() => {
+      if (!props.keys) return [];
+
+      // Split by spaces to handle multiple key combinations
+      // Example: "ctrl+k meta+p" -> ["ctrl+k", "meta+p"]
+      return props.keys.split(' ').map(combination => {
+        // Use the shared sequence splitting logic
+        const sequenceGroups = splitKeySequence(combination);
+
+        // Process each sequence group
+        return sequenceGroups.flatMap((group, groupIndex) => {
+          // Use the shared key combination splitting logic
+          const keyParts = splitKeyCombination(group);
+          const parts = keyParts.reduce((acc, part, index) => {
+            if (index !== 0) {
+              // Add AND delineator between keys
+              return [...acc, AND_DELINEATOR, part];
+            }
+            return [...acc, part];
+          }, []);
+
+          // Add THEN delineator between sequence groups
+          const result = parts.map(key => {
+            if (isString(key)) {
+              return applyDisplayModeToKey(effectiveKeyMap.value, effectiveDisplayMode.value, key, isMac.value);
+            }
+            return key;
+          });
+
+          // Add sequence separator if not the last group
+          if (groupIndex < sequenceGroups.length - 1) {
+            result.push(THEN_DELINEATOR);
+          }
+          return result;
+        });
+      });
+    });
+    const accessibleLabel = computed(() => {
+      if (!props.keys) return '';
+
+      // Convert the parsed key combinations into readable text
+      const readableShortcuts = keyCombinations.value.map(combination => {
+        const readableParts = [];
+        for (const key of combination) {
+          if (isDelineator(key)) {
+            if (AND_DELINEATOR.isEqual(key)) {
+              readableParts.push(t('$vuetify.hotkey.plus'));
+            } else if (THEN_DELINEATOR.isEqual(key)) {
+              readableParts.push(t('$vuetify.hotkey.then'));
+            }
+          } else {
+            // Always use text representation for screen readers
+            const textKey = key[0] === 'icon' || key[0] === 'symbol' ? applyDisplayModeToKey(mergeDeep(hotkeyMap, props.keyMap), 'text', String(key[1]), isMac.value)[1] : key[1];
+            readableParts.push(translateKey(textKey));
+          }
+        }
+        return readableParts.join(' ');
+      });
+      const shortcutText = readableShortcuts.join(', ');
+      return t('$vuetify.hotkey.shortcut', shortcutText);
+    });
+    function translateKey(key) {
+      return key.startsWith('$vuetify.') ? t(key) : key;
+    }
+    function getKeyTooltip(key) {
+      if (effectiveDisplayMode.value === 'text') return undefined;
+      const textKey = getKeyText(effectiveKeyMap.value, String(key[2]), isMac.value);
+      return translateKey(textKey);
+    }
+    function renderKey(key, keyIndex, isContained) {
+      const KeyComponent = isContained ? 'kbd' : VKbd;
+      const keyClasses = ['v-hotkey__key', `v-hotkey__key-${key[0]}`, ...(isContained ? ['v-hotkey__key--nested'] : [borderClasses.value, roundedClasses.value, elevationClasses.value, colorClasses.value])];
+      return createVNode(KeyComponent, {
+        "key": keyIndex,
+        "class": normalizeClass(keyClasses),
+        "style": normalizeStyle(isContained ? undefined : colorStyles.value),
+        "aria-hidden": "true",
+        "title": getKeyTooltip(key)
+      }, {
+        default: () => [key[0] === 'icon' ? createVNode(VIcon, {
+          "icon": key[1],
+          "aria-hidden": "true"
+        }, null) : translateKey(key[1])]
+      });
+    }
+    function renderDivider(key, keyIndex) {
+      return createElementVNode("span", {
+        "key": keyIndex,
+        "class": "v-hotkey__divider",
+        "aria-hidden": "true"
+      }, [AND_DELINEATOR.isEqual(key) ? '+' : t('$vuetify.hotkey.then')]);
+    }
+    useRender(() => createElementVNode("div", {
+      "class": normalizeClass(['v-hotkey', {
+        'v-hotkey--disabled': props.disabled,
+        'v-hotkey--inline': props.inline,
+        'v-hotkey--contained': isContainedVariant.value
+      }, themeClasses.value, rtlClasses.value, variantClasses.value, props.class]),
+      "style": normalizeStyle(props.style),
+      "role": "img",
+      "aria-label": accessibleLabel.value
+    }, [isContainedVariant.value ? createVNode(VKbd, {
+      "key": "contained",
+      "class": normalizeClass(['v-hotkey__contained-wrapper', borderClasses.value, roundedClasses.value, elevationClasses.value, colorClasses.value]),
+      "style": normalizeStyle(colorStyles.value),
+      "aria-hidden": "true"
+    }, {
+      default: () => [props.prefix && createElementVNode("span", {
+        "key": "contained-prefix",
+        "class": "v-hotkey__prefix"
+      }, [props.prefix]), keyCombinations.value.map((combination, comboIndex) => createElementVNode("span", {
+        "class": "v-hotkey__combination",
+        "key": comboIndex
+      }, [combination.map((key, keyIndex) => isDelineator(key) ? renderDivider(key, keyIndex) : renderKey(key, keyIndex, true)), comboIndex < keyCombinations.value.length - 1 && createElementVNode("span", {
+        "aria-hidden": "true"
+      }, [createTextVNode("\xA0")])])), props.suffix && createElementVNode("span", {
+        "key": "contained-suffix",
+        "class": "v-hotkey__suffix"
+      }, [props.suffix])]
+    }) : createElementVNode(Fragment, null, [props.prefix && createElementVNode("span", {
+      "key": "prefix",
+      "class": "v-hotkey__prefix"
+    }, [props.prefix]), keyCombinations.value.map((combination, comboIndex) => createElementVNode("span", {
+      "class": "v-hotkey__combination",
+      "key": comboIndex
+    }, [combination.map((key, keyIndex) => isDelineator(key) ? renderDivider(key, keyIndex) : renderKey(key, keyIndex, false)), comboIndex < keyCombinations.value.length - 1 && createElementVNode("span", {
+      "aria-hidden": "true"
+    }, [createTextVNode("\xA0")])])), props.suffix && createElementVNode("span", {
+      "key": "suffix",
+      "class": "v-hotkey__suffix"
+    }, [props.suffix])])]));
+  }
+});
+
 // Utilities
 
 // Types
@@ -38016,10 +36780,8 @@ function findComponentParent(vnode, root) {
 // Types
 
 const Tooltip = useDirectiveComponent(VTooltip, binding => {
-  const disabled = isObject(binding.value) ? !binding.value.text : ['', false, null].includes(binding.value); // undefined means true
-
   return {
-    activator: disabled ? null : 'parent',
+    activator: 'parent',
     location: binding.arg?.replace('-', ' '),
     text: typeof binding.value === 'boolean' ? undefined : binding.value
   };
@@ -38563,8 +37325,6 @@ const VVideo = genericComponent()({
     });
     onBeforeUnmount(() => {
       videoRef.value?.removeEventListener('timeupdate', onTimeupdate);
-      document.body.removeEventListener('keydown', fullscreenExitShortcut);
-      document.removeEventListener('fullscreenchange', onFullscreenExit);
     });
     function focusSlider() {
       const container = videoRef.value?.closest('.v-video');
@@ -39045,118 +37805,6 @@ var directives = /*#__PURE__*/Object.freeze({
 });
 
 // Composables
-
-// Types
-
-const aliases = {
-  collapse: 'mdi-chevron-up',
-  complete: 'mdi-check',
-  cancel: 'mdi-close-circle',
-  close: 'mdi-close',
-  delete: 'mdi-close-circle',
-  // delete (e.g. v-chip close)
-  clear: 'mdi-close-circle',
-  success: 'mdi-check-circle',
-  info: 'mdi-information',
-  warning: 'mdi-alert-circle',
-  error: 'mdi-close-circle',
-  prev: 'mdi-chevron-left',
-  next: 'mdi-chevron-right',
-  checkboxOn: 'mdi-checkbox-marked',
-  checkboxOff: 'mdi-checkbox-blank-outline',
-  checkboxIndeterminate: 'mdi-minus-box',
-  delimiter: 'mdi-circle',
-  // for carousel
-  sortAsc: 'mdi-arrow-up',
-  sortDesc: 'mdi-arrow-down',
-  expand: 'mdi-chevron-down',
-  menu: 'mdi-menu',
-  subgroup: 'mdi-menu-down',
-  dropdown: 'mdi-menu-down',
-  radioOn: 'mdi-radiobox-marked',
-  radioOff: 'mdi-radiobox-blank',
-  edit: 'mdi-pencil',
-  ratingEmpty: 'mdi-star-outline',
-  ratingFull: 'mdi-star',
-  ratingHalf: 'mdi-star-half-full',
-  loading: 'mdi-cached',
-  first: 'mdi-page-first',
-  last: 'mdi-page-last',
-  unfold: 'mdi-unfold-more-horizontal',
-  file: 'mdi-paperclip',
-  plus: 'mdi-plus',
-  minus: 'mdi-minus',
-  calendar: 'mdi-calendar',
-  treeviewCollapse: 'mdi-menu-down',
-  treeviewExpand: 'mdi-menu-right',
-  tableGroupCollapse: 'mdi-chevron-down',
-  tableGroupExpand: 'mdi-chevron-right',
-  eyeDropper: 'mdi-eyedropper',
-  upload: 'mdi-cloud-upload',
-  color: 'mdi-palette',
-  command: 'mdi-apple-keyboard-command',
-  ctrl: 'mdi-apple-keyboard-control',
-  space: 'mdi-keyboard-space',
-  shift: 'mdi-apple-keyboard-shift',
-  alt: 'mdi-apple-keyboard-option',
-  enter: 'mdi-keyboard-return',
-  arrowup: 'mdi-arrow-up',
-  arrowdown: 'mdi-arrow-down',
-  arrowleft: 'mdi-arrow-left',
-  arrowright: 'mdi-arrow-right',
-  backspace: 'mdi-backspace',
-  play: 'mdi-play',
-  pause: 'mdi-pause',
-  fullscreen: 'mdi-fullscreen',
-  fullscreenExit: 'mdi-fullscreen-exit',
-  volumeHigh: 'mdi-volume-high',
-  volumeMedium: 'mdi-volume-medium',
-  volumeLow: 'mdi-volume-low',
-  volumeOff: 'mdi-volume-variant-off'
-};
-const mdi = {
-  // Not using mergeProps here, functional components merge props by default (?)
-  component: props => h(VClassIcon, {
-    ...props,
-    class: 'mdi'
-  })
-};
-
-// Composables
-
-// Types
-
-function genDefaults() {
-  return {
-    svg: {
-      component: VSvgIcon
-    },
-    class: {
-      component: VClassIcon
-    }
-  };
-}
-function createIcons(options) {
-  const sets = genDefaults();
-  const defaultSet = options?.defaultSet ?? 'mdi';
-  if (defaultSet === 'mdi' && !sets.mdi) {
-    sets.mdi = mdi;
-  }
-  return mergeDeep({
-    defaultSet,
-    sets,
-    aliases: {
-      ...aliases,
-      /* eslint-disable max-len */
-      vuetify: ['M8.2241 14.2009L12 21L22 3H14.4459L8.2241 14.2009Z', ['M7.26303 12.4733L7.00113 12L2 3H12.5261C12.5261 3 12.5261 3 12.5261 3L7.26303 12.4733Z', 0.6]],
-      'vuetify-outline': 'svg:M7.26 12.47 12.53 3H2L7.26 12.47ZM14.45 3 8.22 14.2 12 21 22 3H14.45ZM18.6 5 12 16.88 10.51 14.2 15.62 5ZM7.26 8.35 5.4 5H9.13L7.26 8.35Z',
-      'vuetify-play': ['m6.376 13.184-4.11-7.192C1.505 4.66 2.467 3 4.003 3h8.532l-.953 1.576-.006.01-.396.677c-.429.732-.214 1.507.194 2.015.404.503 1.092.878 1.869.806a3.72 3.72 0 0 1 1.005.022c.276.053.434.143.523.237.138.146.38.635-.25 2.09-.893 1.63-1.553 1.722-1.847 1.677-.213-.033-.468-.158-.756-.406a4.95 4.95 0 0 1-.8-.927c-.39-.564-1.04-.84-1.66-.846-.625-.006-1.316.27-1.693.921l-.478.826-.911 1.506Z', ['M9.093 11.552c.046-.079.144-.15.32-.148a.53.53 0 0 1 .43.207c.285.414.636.847 1.046 1.2.405.35.914.662 1.516.754 1.334.205 2.502-.698 3.48-2.495l.014-.028.013-.03c.687-1.574.774-2.852-.005-3.675-.37-.391-.861-.586-1.333-.676a5.243 5.243 0 0 0-1.447-.044c-.173.016-.393-.073-.54-.257-.145-.18-.127-.316-.082-.392l.393-.672L14.287 3h5.71c1.536 0 2.499 1.659 1.737 2.992l-7.997 13.996c-.768 1.344-2.706 1.344-3.473 0l-3.037-5.314 1.377-2.278.004-.006.004-.007.481-.831Z', 0.6]]
-      /* eslint-enable max-len */
-    }
-  }, options);
-}
-
-// Composables
 function createVuetify$1() {
   let vuetify = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
   const {
@@ -39255,7 +37903,7 @@ function createVuetify$1() {
     };
   });
 }
-const version$1 = "3.11.6";
+const version$1 = "3.10.5";
 createVuetify$1.version = version$1;
 
 // Vue's inject() can only be used in setup
@@ -39300,7 +37948,6 @@ const md1 = {
       controlHeight: 44,
       elevation: 1,
       rounded: 0,
-      controlVariant: 'modal',
       VBtn: {
         color: 'high-emphasis',
         rounded: 'circle'
@@ -39382,7 +38029,6 @@ const md2 = {
       controlHeight: 56,
       elevation: 2,
       rounded: 'md',
-      controlVariant: 'modal',
       VBtn: {
         color: 'high-emphasis',
         rounded: 'circle'
@@ -39489,9 +38135,6 @@ const md3 = {
     VFileInput: {
       variant: 'outlined'
     },
-    VList: {
-      prependGap: 16
-    },
     VNavigationDrawer: {
       // VList: {
       //   nav: true,
@@ -39558,7 +38201,7 @@ var index = /*#__PURE__*/Object.freeze({
 
 /* eslint-disable local-rules/sort-imports */
 
-const version = "3.11.6";
+const version = "3.10.5";
 
 /* eslint-disable local-rules/sort-imports */
 
