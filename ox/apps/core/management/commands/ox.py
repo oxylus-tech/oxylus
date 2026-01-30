@@ -147,7 +147,7 @@ class Command(Command):
 
         try:
             # Run in a new process
-            cmd = [settings.BASE_DIR / "manage.py", "ox", "setup", *(app.label for app in all_apps)]
+            cmd = [settings.BASE_DIR / "ox_server/manage.py", "ox", "setup", *(app.label for app in all_apps)]
             subprocess.run(cmd, check=True)
         except subprocess.CalledProcessError as err:
             self.log(f"[b red]An error occured on setup:[/b red] {err}")
